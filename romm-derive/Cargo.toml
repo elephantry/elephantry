@@ -1,0 +1,16 @@
+[package]
+name = "romm-derive"
+version = "0.1.0"
+authors = ["Sanpi <sanpi@homecomputing.fr>"]
+edition = "2018"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = "1.0"
+quote = "1.0"
+
+[dependencies.romm]
+path = "../romm"
+version = "0.1"
