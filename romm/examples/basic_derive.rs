@@ -24,7 +24,7 @@ struct EventExtra
     visitor_id: u32,
     properties: serde_json::Value,
     browser: serde_json::Value,
-    os: String,
+    os: Option<String>,
 }
 
 struct EventExtraModel;

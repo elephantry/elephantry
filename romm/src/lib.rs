@@ -73,7 +73,9 @@ pub trait Model
         let mut data = HashMap::<&'static str, (postgres::types::Type, Vec<u8>)>::new();
 
         for (name, Row {ty, content: _ }) in projection.fields {
-             data.insert(name, (ty, row.get_bytes(name).unwrap().to_vec()));
+            if let Some(bytes) = row.get_bytes(name) {
+                data.insert(name, (ty, bytes.to_vec()));
+            }
         }
 
         <Self::Entity as Entity>::from(&data)

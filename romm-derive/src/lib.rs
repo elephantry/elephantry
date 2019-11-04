@@ -23,11 +23,25 @@ fn impl_entity_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream
             let name = &field.ident;
             let ty = &field.ty;
 
+            let default = if is_option(ty) {
+                quote::quote! {
+                    None
+                }
+            }
+            else {
+                quote::quote! {
+                    panic!("Unable to find '{}' field", stringify!(#name));
+                }
+            };
+
             quote::quote_spanned! {field.span() => #name: {
-                let (t, content) = data.get(stringify!(#name))
-                    .expect(&format!("Unable to find '{}' field", stringify!(#name)));
-                #ty::from_sql(t, content)
-                    .expect(&format!("Unable to convert '{}' field of type '{}' from SQL", stringify!(#name), stringify!(#ty)))
+                if let Some((t, content)) = data.get(stringify!(#name)) {
+                    postgres::types::FromSql::from_sql(t, content)
+                        .expect(&format!("Unable to convert '{}' field of type '{}' from SQL", stringify!(#name), stringify!(#ty)))
+                }
+                else {
+                    #default
+                }
             }}
         });
 
@@ -38,8 +52,6 @@ fn impl_entity_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream
         {
             fn from(data: &std::collections::HashMap<&'static str, (postgres::types::Type, Vec<u8>)>) -> Self
             {
-                use postgres::types::FromSql;
-
                 Self {
                     #(#body, )*
                 }
@@ -48,4 +60,16 @@ fn impl_entity_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream
     };
 
     gen.into()
+}
+
+fn is_option(ty: &syn::Type) -> bool
+{
+    let typepath = match ty {
+        syn::Type::Path(typepath) => typepath,
+        _ => unimplemented!(),
+    };
+
+    typepath.path.leading_colon.is_none()
+        && typepath.path.segments.len() == 1
+        && typepath.path.segments.iter().next().unwrap().ident == "Option"
 }

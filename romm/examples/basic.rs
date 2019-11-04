@@ -65,7 +65,7 @@ struct EventExtra
     visitor_id: u32,
     properties: serde_json::Value,
     browser: serde_json::Value,
-    os: String,
+    os: Option<String>,
 }
 
 impl romm::Entity for EventExtra
@@ -80,11 +80,12 @@ impl romm::Entity for EventExtra
             visitor_id: event.visitor_id,
             properties: event.properties,
             browser: event.browser,
-            os: {
-                let (t, content) = data.get("os")
-                    .expect("Unable to find 'os' field");
-                String::from_sql(t, content)
-                    .expect("Unable to convert 'os' field of type 'String' from SQL")
+            os: match data.get("os") {
+                Some((t, content)) => Some(
+                    postgres::types::FromSql::from_sql(t, content)
+                        .expect("Unable to convert 'os' field of type 'String' from SQL")
+                ),
+                None => None,
             },
         }
     }
