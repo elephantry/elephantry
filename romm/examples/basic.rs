@@ -151,9 +151,12 @@ impl romm::RowStructure for EventStructure
 
 fn main()
 {
-    let romm = romm::Romm::new("postgres://sanpi@localhost/romm")
+
+    let romm = romm::Romm::new()
+        .add_default("romm", "postgres://sanpi@localhost/romm")
         .unwrap();
-    let connection = romm.get();
+    let connection = romm.default()
+        .unwrap();
 
     find_all::<EventModel>(connection);
     find_all::<EventExtraModel>(connection);
