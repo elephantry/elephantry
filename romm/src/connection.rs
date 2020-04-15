@@ -62,6 +62,20 @@ impl Connection
         )
     }
 
+    pub fn count_where<M>(&self, clause: &str, params: &[&dyn postgres::types::ToSql])
+        -> postgres::Result<i64> where M: crate::Model
+    {
+        let query = format!(
+            "SELECT COUNT(*) FROM {} WHERE {};",
+            M::RowStructure::relation(),
+            clause,
+        );
+
+        let results = self.connection.query(&query, params)?;
+
+        Ok(results.get(0).get("count"))
+    }
+
     pub fn insert_one<M>(&self, entity: &M::Entity)
         -> postgres::Result<M::Entity> where M: crate::Model
     {

@@ -12,6 +12,11 @@ fn main()
     let connection = romm.default()
         .unwrap();
 
+    let count = connection.count_where::<EventModel>("name = $1", &[&"pageview"]).unwrap();
+    println!("Count events: {}", count);
+    assert_eq!(count, 7);
+    println!();
+
     println!("Find one event:\n");
     find_by_pk::<EventModel>(connection, "f186b680-237d-449d-ad66-ad91c4e53d3d");
     println!();
