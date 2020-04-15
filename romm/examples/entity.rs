@@ -1,9 +1,9 @@
 #[derive(Clone, Debug)]
 struct Event
 {
-    uuid: uuid::Uuid,
+    uuid: Option<uuid::Uuid>,
     name: String,
-    visitor_id: u32,
+    visitor_id: i32,
     properties: serde_json::Value,
     browser: serde_json::Value,
 }
@@ -47,6 +47,20 @@ impl romm::Entity for Event
             },
         }
     }
+
+    fn get(&self, field: &str) -> Option<&dyn postgres::types::ToSql> {
+        match field {
+            "uuid" => match self.uuid {
+                Some(ref uuid) => Some(uuid),
+                None => None,
+            },
+            "name" => Some(&self.name),
+            "visitor_id" => Some(&self.visitor_id),
+            "properties" => Some(&self.properties),
+            "browser" => Some(&self.browser),
+            _ => None,
+        }
+    }
 }
 
 struct EventModel;
@@ -60,9 +74,9 @@ impl romm::Model for EventModel
 #[derive(Clone, Debug)]
 struct EventExtra
 {
-    uuid: uuid::Uuid,
+    uuid: Option<uuid::Uuid>,
     name: String,
-    visitor_id: u32,
+    visitor_id: i32,
     properties: serde_json::Value,
     browser: serde_json::Value,
     os: Option<String>,
@@ -87,6 +101,21 @@ impl romm::Entity for EventExtra
                 ),
                 None => None,
             },
+        }
+    }
+
+    fn get(&self, field: &str) -> Option<&dyn postgres::types::ToSql> {
+        match field {
+            "uuid" => match self.uuid {
+                Some(ref uuid) => Some(uuid),
+                None => None,
+            },
+            "name" => Some(&self.name),
+            "visitor_id" => Some(&self.visitor_id),
+            "properties" => Some(&self.properties),
+            "browser" => Some(&self.browser),
+            "os" => Some(&self.os),
+            _ => None,
         }
     }
 }

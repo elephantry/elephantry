@@ -84,4 +84,37 @@ impl Connection
             .collect()
         )
     }
+
+    pub fn insert_one<M>(&self, entity: &M::Entity)
+        -> postgres::Result<M::Entity> where M: crate::Model
+    {
+        use crate::Entity;
+
+        let projection = M::create_projection();
+
+        let mut row = Vec::new();
+        let mut params = Vec::new();
+        let mut fields = Vec::new();
+        let mut x = 1;
+
+        for field in projection.fields_name() {
+            if let Some(value) = entity.get(field) {
+                row.push(value);
+                params.push(format!("${}", x));
+                fields.push(field);
+                x += 1;
+            }
+        }
+
+        let query = format!(
+            "INSERT INTO {} ({}) VALUES({}) RETURNING *;",
+            M::RowStructure::relation(),
+            fields.join(", "),
+            params.join(", "),
+        );
+
+        let results = self.connection.query(&query, row.as_slice())?;
+
+        Ok(M::create_entity(results.get(0)))
+    }
 }

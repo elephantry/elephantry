@@ -16,7 +16,7 @@ fn impl_entity_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream
         _ => unimplemented!(),
     };
 
-    let body = fields.iter()
+    let from_body = fields.iter()
         .map(|field| {
             use syn::spanned::Spanned;
 
@@ -45,6 +45,25 @@ fn impl_entity_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream
             }}
         });
 
+    let get_body = fields.iter()
+        .map(|field| {
+            let name = &field.ident;
+            let ty = &field.ty;
+
+            if is_option(ty) {
+                quote::quote! {
+                    stringify!(#name) => match self.#name {
+                        Some(ref value) => Some(value),
+                        None => None,
+                    }
+                }
+            } else {
+                quote::quote! {
+                    stringify!(#name) => Some(&self.#name)
+                }
+            }
+        });
+
     let name = &ast.ident;
 
     let gen = quote::quote! {
@@ -53,7 +72,14 @@ fn impl_entity_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream
             fn from(data: &std::collections::HashMap<&'static str, (postgres::types::Type, Vec<u8>)>) -> Self
             {
                 Self {
-                    #(#body, )*
+                    #(#from_body, )*
+                }
+            }
+
+            fn get(&self, field: &str) -> Option<&dyn postgres::types::ToSql> {
+                match field {
+                    #(#get_body, )*
+                    _ => None,
                 }
             }
         }

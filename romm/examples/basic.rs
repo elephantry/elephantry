@@ -24,6 +24,16 @@ fn main()
     println!("Find all extra events:\n");
     find_all::<EventExtraModel>(connection);
     println!();
+
+    println!("Insert one row:\n");
+    let new_event = Event {
+        uuid: None,
+        name: "purchase".to_string(),
+        visitor_id: 15,
+        properties: serde_json::json!({ "amount": 200 }),
+        browser: serde_json::json!({ "name": "Firefox", "resolution": { "x": 1280, "y": 800 } }),
+    };
+    insert_one::<EventModel>(connection, &new_event);
 }
 
 fn find_by_pk<M>(connection: &romm::Connection, uuid: &str) where M: romm::Model, M::Entity: std::fmt::Debug
@@ -52,4 +62,12 @@ fn find_all<M>(connection: &romm::Connection) where M: romm::Model, M::Entity: s
             println!("{:?}", event);
         }
     }
+}
+
+fn insert_one<M>(connection: &romm::Connection, entity: &M::Entity) where M: romm::Model, M::Entity: std::fmt::Debug
+{
+    let new_entity = connection.insert_one::<M>(&entity)
+        .unwrap();
+
+    println!("{:?}", new_entity);
 }

@@ -1,9 +1,9 @@
 #[derive(Clone, Debug, romm::Entity)]
 struct Event
 {
-    uuid: uuid::Uuid,
+    uuid: Option<uuid::Uuid>,
     name: String,
-    visitor_id: u32,
+    visitor_id: i32,
     properties: serde_json::Value,
     browser: serde_json::Value,
 }
@@ -19,9 +19,9 @@ impl romm::Model for EventModel
 #[derive(Clone, Debug, romm::Entity)]
 struct EventExtra
 {
-    uuid: uuid::Uuid,
+    uuid: Option<uuid::Uuid>,
     name: String,
-    visitor_id: u32,
+    visitor_id: i32,
     properties: serde_json::Value,
     browser: serde_json::Value,
     os: Option<String>,

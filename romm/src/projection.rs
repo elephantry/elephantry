@@ -41,6 +41,12 @@ impl Projection
     {
         &self.fields
     }
+
+    pub fn fields_name(&self) -> Vec<&str> {
+        self.fields.keys()
+            .map(|x| *x)
+            .collect()
+    }
 }
 
 impl std::fmt::Display for Projection
