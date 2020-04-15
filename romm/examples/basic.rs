@@ -33,7 +33,14 @@ fn main()
         properties: serde_json::json!({ "amount": 200 }),
         browser: serde_json::json!({ "name": "Firefox", "resolution": { "x": 1280, "y": 800 } }),
     };
-    insert_one::<EventModel>(connection, &new_event);
+    let entity = insert_one::<EventModel>(connection, &new_event);
+    println!();
+
+    println!("Update one row:\n");
+    let entity = update_one::<EventModel>(connection, &entity, &maplit::hashmap! {
+        "name" => &"pageview" as &dyn postgres::types::ToSql,
+    });
+    assert_eq!(&entity.name, "pageview");
 }
 
 fn find_by_pk<M>(connection: &romm::Connection, uuid: &str) where M: romm::Model, M::Entity: std::fmt::Debug
@@ -64,10 +71,22 @@ fn find_all<M>(connection: &romm::Connection) where M: romm::Model, M::Entity: s
     }
 }
 
-fn insert_one<M>(connection: &romm::Connection, entity: &M::Entity) where M: romm::Model, M::Entity: std::fmt::Debug
+fn insert_one<M>(connection: &romm::Connection, entity: &M::Entity) -> M::Entity where M: romm::Model, M::Entity: std::fmt::Debug
 {
     let new_entity = connection.insert_one::<M>(&entity)
         .unwrap();
 
     println!("{:?}", new_entity);
+
+    new_entity
+}
+
+fn update_one<M>(connection: &romm::Connection, entity: &M::Entity, data: &std::collections::HashMap<&str, &dyn postgres::types::ToSql>) -> M::Entity where M: romm::Model, M::Entity: std::fmt::Debug
+{
+    let new_entity = connection.update_one::<M>(&entity, &data)
+        .unwrap();
+
+    println!("{:?}", new_entity);
+
+    new_entity
 }
