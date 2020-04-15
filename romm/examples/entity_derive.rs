@@ -84,32 +84,3 @@ impl romm::RowStructure for EventStructure
         }
     }
 }
-
-fn main()
-{
-    env_logger::init();
-
-    let romm = romm::Romm::new()
-        .add_default("romm", "postgres://sanpi@localhost/romm")
-        .unwrap();
-    let connection = romm.default()
-        .unwrap();
-
-    find_all::<EventModel>(connection);
-    find_all::<EventExtraModel>(connection);
-}
-
-fn find_all<M>(connection: &romm::Connection) where M: romm::Model, M::Entity: std::fmt::Debug
-{
-    let events = connection.find_all::<M>()
-        .unwrap();
-
-    if events.is_empty() {
-        println!("No events in database.");
-    }
-    else {
-        for event in events {
-            println!("{:?}", event);
-        }
-    }
-}
