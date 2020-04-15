@@ -26,6 +26,24 @@ impl Connection
         let results = self.connection.query(&query, &[])?;
 
         Ok(results.iter()
+            .map(M::create_entity)
+            .collect()
+        )
+    }
+
+    pub fn find_where<M>(&self, clause: &str, params: &[&dyn postgres::types::ToSql])
+        -> postgres::Result<Vec<M::Entity>> where M: crate::Model
+    {
+        let query = format!(
+            "SELECT {} FROM {} WHERE {};",
+            M::create_projection(),
+            M::RowStructure::relation(),
+            clause,
+        );
+
+        let results = self.connection.query(&query, params)?;
+
+        Ok(results.iter()
             .map(|row| M::create_entity(row))
             .collect()
         )
