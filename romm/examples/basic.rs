@@ -14,7 +14,6 @@ fn main()
 
     println!("Find one event:\n");
     find_by_pk::<EventModel>(connection, "f186b680-237d-449d-ad66-ad91c4e53d3d");
-    find_by_pk::<EventModel>(connection, "f186b680-237d-449d-ad66-ad91c4e53d4e");
     println!();
 
     println!("Find all events:\n");
@@ -41,6 +40,11 @@ fn main()
         "name" => &"pageview" as &dyn postgres::types::ToSql,
     });
     assert_eq!(&entity.name, "pageview");
+    println!();
+
+    println!("Delete one row\n");
+    connection.delete_one::<EventModel>(&entity).unwrap();
+    assert!(connection.find_by_pk::<EventModel>(&romm::pk!{uuid => entity.uuid,}).unwrap().is_none());
 }
 
 fn find_by_pk<M>(connection: &romm::Connection, uuid: &str) where M: romm::Model, M::Entity: std::fmt::Debug

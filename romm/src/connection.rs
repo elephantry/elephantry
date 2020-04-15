@@ -128,6 +128,41 @@ impl Connection
         Ok(M::create_entity(results.get(0)))
     }
 
+    pub fn delete_one<M>(&self, entity: &M::Entity)
+        -> postgres::Result<M::Entity> where M: crate::Model
+    {
+        let pk = M::primary_key(&entity);
+
+        self.delete_by_pk::<M>(&pk)
+    }
+
+    pub fn delete_by_pk<M>(&self, pk: &HashMap<&str, &dyn postgres::types::ToSql>)
+        -> postgres::Result<M::Entity> where M: crate::Model
+    {
+        let (clause, params) = self.pk_clause::<M>(&pk);
+
+        let results = self.delete_where::<M>(&clause, &params)?;
+
+        Ok(results.get(0).unwrap().clone())
+    }
+
+    pub fn delete_where<M>(&self, clause: &str, params: &[&dyn postgres::types::ToSql])
+        -> postgres::Result<Vec<M::Entity>> where M: crate::Model
+    {
+        let query = format!(
+            "DELETE FROM {} WHERE {} RETURNING *;",
+            M::RowStructure::relation(),
+            clause,
+        );
+
+        let results = self.connection.query(&query, &params)?;
+
+        Ok(results.iter()
+            .map(|row| M::create_entity(row))
+            .collect()
+        )
+    }
+
     fn pk_clause<'a, M>(&self, pk: &HashMap<&str, &'a dyn postgres::types::ToSql>)
         -> (String, Vec<&'a dyn postgres::types::ToSql>) where M: crate::Model
     {
