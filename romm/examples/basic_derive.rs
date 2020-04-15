@@ -1,4 +1,4 @@
-#[derive(Clone, Debug, romm_derive::Entity)]
+#[derive(Clone, Debug, romm::Entity)]
 struct Event
 {
     uuid: uuid::Uuid,
@@ -16,7 +16,7 @@ impl romm::Model for EventModel
     type RowStructure = EventStructure;
 }
 
-#[derive(Clone, Debug, romm_derive::Entity)]
+#[derive(Clone, Debug, romm::Entity)]
 struct EventExtra
 {
     uuid: uuid::Uuid,

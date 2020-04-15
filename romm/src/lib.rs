@@ -5,6 +5,9 @@ mod model;
 mod row;
 mod row_structure;
 
+#[cfg(feature = "romm-derive")]
+pub use romm_derive::*;
+
 pub use connection::*;
 pub use entity::*;
 pub use model::*;

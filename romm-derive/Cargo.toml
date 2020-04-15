@@ -10,7 +10,3 @@ proc-macro = true
 [dependencies]
 syn = "1.0"
 quote = "1.0"
-
-[dependencies.romm]
-path = "../romm"
-version = "0.1"
