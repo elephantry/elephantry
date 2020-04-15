@@ -76,6 +76,20 @@ impl Connection
         Ok(results.get(0).get("count"))
     }
 
+    pub fn exist_where<M>(&self, clause: &str, params: &[&dyn postgres::types::ToSql])
+        -> postgres::Result<bool> where M: crate::Model
+    {
+        let query = format!(
+            "SELECT EXISTS (SELECT true FROM {} WHERE {}) AS result;",
+            M::RowStructure::relation(),
+            clause,
+        );
+
+        let results = self.connection.query(&query, params)?;
+
+        Ok(results.get(0).get("result"))
+    }
+
     pub fn insert_one<M>(&self, entity: &M::Entity)
         -> postgres::Result<M::Entity> where M: crate::Model
     {

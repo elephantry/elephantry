@@ -50,6 +50,7 @@ fn main()
     println!("Delete one row\n");
     connection.delete_one::<EventModel>(&entity).unwrap();
     assert!(connection.find_by_pk::<EventModel>(&romm::pk!{uuid => entity.uuid,}).unwrap().is_none());
+    assert_eq!(connection.exist_where::<EventModel>("uuid = $1", &[&entity.uuid]).unwrap(), false);
 }
 
 fn find_by_pk<M>(connection: &romm::Connection, uuid: &str) where M: romm::Model, M::Entity: std::fmt::Debug
