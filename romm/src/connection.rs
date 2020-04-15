@@ -99,6 +99,13 @@ impl Connection
         -> postgres::Result<M::Entity> where M: crate::Model
     {
         let pk = M::primary_key(&entity);
+
+        self.update_by_pk::<M>(&pk, data)
+    }
+
+    pub fn update_by_pk<M>(&self, pk: &HashMap<&str, &dyn postgres::types::ToSql>, data: &HashMap<&str, &dyn postgres::types::ToSql>)
+        -> postgres::Result<M::Entity> where M: crate::Model
+    {
         let (clause, mut params) = self.pk_clause::<M>(&pk);
         let mut x = params.len() + 1;
         let mut set = Vec::new();
