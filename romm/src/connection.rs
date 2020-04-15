@@ -1,3 +1,5 @@
+use crate::RowStructure;
+
 pub struct Connection
 {
     connection: postgres::Connection,
@@ -12,11 +14,45 @@ impl Connection
         })
     }
 
+    pub fn find_by_pk<M>(&self, pk: &std::collections::HashMap<&str, &dyn postgres::types::ToSql>)
+        -> postgres::Result<Option<M::Entity>> where M: crate::Model
+    {
+
+        let keys: Vec<_> = pk.keys()
+            .map(|x| *x)
+            .collect();
+
+        if  keys != M::RowStructure::primary_key() {
+            panic!("Invalid pk");
+        }
+
+        let clause = keys.iter()
+            .enumerate()
+            .fold(String::new(), |acc, (i, x)| {
+                if acc.is_empty() {
+                   format!("{} = ${}", x, i + 1)
+                }
+                else {
+                    format!("{} AND {} = ${}", acc, x, i + 1)
+                }
+            });
+
+        let params: Vec<_> = pk.values()
+            .into_iter()
+            .map(|e| *e)
+            .collect();
+
+        let rows = self.find_where::<M>(&clause, &params)?;
+
+        Ok(match rows.get(0) {
+            Some(e) => Some(e.clone()),
+            None => None,
+        })
+    }
+
     pub fn find_all<M>(&self)
         -> postgres::Result<Vec<M::Entity>> where M: crate::Model
     {
-        use crate::RowStructure;
-
         let query = format!(
             "SELECT {} FROM {};",
             M::create_projection(),
