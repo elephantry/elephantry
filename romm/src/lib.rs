@@ -1,5 +1,6 @@
 mod connection;
 mod entity;
+mod errors;
 mod projection;
 mod model;
 mod row;
@@ -9,6 +10,7 @@ mod row_structure;
 pub use romm_derive::*;
 
 pub use connection::*;
+pub use errors::*;
 pub use entity::*;
 pub use model::*;
 pub use projection::*;
@@ -64,17 +66,17 @@ impl Romm
         }
     }
 
-    pub fn add_default(self, name: &str, url: &str) -> postgres::Result<Self>
+    pub fn add_default(self, name: &str, url: &str) -> Result<Self>
     {
         self.add(name, url, true)
     }
 
-    pub fn add_connection(self, name: &str, url: &str) -> postgres::Result<Self>
+    pub fn add_connection(self, name: &str, url: &str) -> Result<Self>
     {
         self.add(name, url, false)
     }
 
-    fn add(mut self, name: &str, url: &str, default: bool) -> postgres::Result<Self>
+    fn add(mut self, name: &str, url: &str, default: bool) -> Result<Self>
     {
         self.connections.insert(name.to_string(), Connection::new(url)?);
 

@@ -8,7 +8,7 @@ pub struct Connection
 
 impl Connection
 {
-    pub fn new(url: &str) -> postgres::Result<Self>
+    pub fn new(url: &str) -> crate::Result<Self>
     {
         Ok(Self {
             connection: postgres::Connection::connect(url, postgres::TlsMode::None)?,
@@ -16,7 +16,7 @@ impl Connection
     }
 
     pub fn find_by_pk<M>(&self, pk: &HashMap<&str, &dyn postgres::types::ToSql>)
-        -> postgres::Result<Option<M::Entity>> where M: crate::Model
+        -> crate::Result<Option<M::Entity>> where M: crate::Model
     {
         let (clause, params) = self.pk_clause::<M>(pk);
         let rows = self.find_where::<M>(&clause, &params)?;
@@ -28,7 +28,7 @@ impl Connection
     }
 
     pub fn find_all<M>(&self)
-        -> postgres::Result<Vec<M::Entity>> where M: crate::Model
+        -> crate::Result<Vec<M::Entity>> where M: crate::Model
     {
         let query = format!(
             "SELECT {} FROM {};",
@@ -45,7 +45,7 @@ impl Connection
     }
 
     pub fn find_where<M>(&self, clause: &str, params: &[&dyn postgres::types::ToSql])
-        -> postgres::Result<Vec<M::Entity>> where M: crate::Model
+        -> crate::Result<Vec<M::Entity>> where M: crate::Model
     {
         let query = format!(
             "SELECT {} FROM {} WHERE {};",
@@ -63,7 +63,7 @@ impl Connection
     }
 
     pub fn count_where<M>(&self, clause: &str, params: &[&dyn postgres::types::ToSql])
-        -> postgres::Result<i64> where M: crate::Model
+        -> crate::Result<i64> where M: crate::Model
     {
         let query = format!(
             "SELECT COUNT(*) FROM {} WHERE {};",
@@ -77,7 +77,7 @@ impl Connection
     }
 
     pub fn exist_where<M>(&self, clause: &str, params: &[&dyn postgres::types::ToSql])
-        -> postgres::Result<bool> where M: crate::Model
+        -> crate::Result<bool> where M: crate::Model
     {
         let query = format!(
             "SELECT EXISTS (SELECT true FROM {} WHERE {}) AS result;",
@@ -91,7 +91,7 @@ impl Connection
     }
 
     pub fn insert_one<M>(&self, entity: &M::Entity)
-        -> postgres::Result<M::Entity> where M: crate::Model
+        -> crate::Result<M::Entity> where M: crate::Model
     {
         use crate::Entity;
 
@@ -124,7 +124,7 @@ impl Connection
     }
 
     pub fn update_one<M>(&self, entity: &M::Entity, data: &HashMap<&str, &dyn postgres::types::ToSql>)
-        -> postgres::Result<M::Entity> where M: crate::Model
+        -> crate::Result<M::Entity> where M: crate::Model
     {
         let pk = M::primary_key(&entity);
 
@@ -132,7 +132,7 @@ impl Connection
     }
 
     pub fn update_by_pk<M>(&self, pk: &HashMap<&str, &dyn postgres::types::ToSql>, data: &HashMap<&str, &dyn postgres::types::ToSql>)
-        -> postgres::Result<M::Entity> where M: crate::Model
+        -> crate::Result<M::Entity> where M: crate::Model
     {
         let (clause, mut params) = self.pk_clause::<M>(&pk);
         let mut x = params.len() + 1;
@@ -157,7 +157,7 @@ impl Connection
     }
 
     pub fn delete_one<M>(&self, entity: &M::Entity)
-        -> postgres::Result<M::Entity> where M: crate::Model
+        -> crate::Result<M::Entity> where M: crate::Model
     {
         let pk = M::primary_key(&entity);
 
@@ -165,7 +165,7 @@ impl Connection
     }
 
     pub fn delete_by_pk<M>(&self, pk: &HashMap<&str, &dyn postgres::types::ToSql>)
-        -> postgres::Result<M::Entity> where M: crate::Model
+        -> crate::Result<M::Entity> where M: crate::Model
     {
         let (clause, params) = self.pk_clause::<M>(&pk);
 
@@ -175,7 +175,7 @@ impl Connection
     }
 
     pub fn delete_where<M>(&self, clause: &str, params: &[&dyn postgres::types::ToSql])
-        -> postgres::Result<Vec<M::Entity>> where M: crate::Model
+        -> crate::Result<Vec<M::Entity>> where M: crate::Model
     {
         let query = format!(
             "DELETE FROM {} WHERE {} RETURNING *;",
