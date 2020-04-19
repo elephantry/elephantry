@@ -26,25 +26,21 @@ use std::collections::HashMap;
  *
  * pk!(uuid)
  * pk![uuid, name]
- * pk!{"uuid" => uuid, "name" => name}
+ * pk!{uuid => "uuid", name => "name"}
  */
 #[macro_export]
 macro_rules! pk {
-    ($pk:ident) => {
-        $crate::pk!($pk,)
-    };
-
-    ($($pk:ident,)+) => {
+    ($($pk:ident),+ $(,)?) => {
         $crate::pk!($(
             $pk => $pk,
         )*)
     };
 
-    ($($key:expr => $value:expr,)+) => {{
+    ($($key:expr => $value:expr),+ $(,)?) => {{
         let mut hash = std::collections::HashMap::new();
 
         $(
-            hash.insert(stringify!($key), &$value as &dyn crate::pq::ToSql);
+            hash.insert(stringify!($key), &$value as &dyn $crate::pq::ToSql);
         )*
 
         hash
@@ -127,10 +123,10 @@ mod test {
     fn test_pk_multi() {
         let uuid = "1234";
         let name = "name";
-        let pk = crate::pk! {
+        let pk = crate::pk![
             uuid,
             name,
-        };
+        ];
 
         assert_eq!(pk.len(), 2);
         assert!(pk.contains_key("uuid"));
@@ -139,7 +135,7 @@ mod test {
 
     #[test]
     fn test_pk_hash() {
-        let pk = crate::pk! {
+        let pk = crate::pk!{
             uuid => "1234",
             name => "name",
         };
