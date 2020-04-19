@@ -18,31 +18,13 @@ fn impl_entity_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream
 
     let from_body = fields.iter()
         .map(|field| {
-            use syn::spanned::Spanned;
-
             let name = &field.ident;
             let ty = &field.ty;
 
-            let default = if is_option(ty) {
-                quote::quote! {
-                    None
-                }
+            quote::quote! {
+                #name: row.get(stringify!(#name))
+                    .expect(&format!("Unable to convert '{}' field of type '{}' from SQL", stringify!(#name), stringify!(#ty)))
             }
-            else {
-                quote::quote! {
-                    panic!("Unable to find '{}' field", stringify!(#name));
-                }
-            };
-
-            quote::quote_spanned! {field.span() => #name: {
-                if let Some((t, content)) = data.get(stringify!(#name)) {
-                    postgres::types::FromSql::from_sql(t, content)
-                        .expect(&format!("Unable to convert '{}' field of type '{}' from SQL", stringify!(#name), stringify!(#ty)))
-                }
-                else {
-                    #default
-                }
-            }}
         });
 
     let get_body = fields.iter()
@@ -69,14 +51,14 @@ fn impl_entity_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream
     let gen = quote::quote! {
         impl romm::Entity for #name
         {
-            fn from(data: &std::collections::HashMap<&'static str, (postgres::types::Type, Vec<u8>)>) -> Self
+            fn from(row: &romm::pq::Row) -> Self
             {
                 Self {
                     #(#from_body, )*
                 }
             }
 
-            fn get(&self, field: &str) -> Option<&dyn postgres::types::ToSql> {
+            fn get(&self, field: &str) -> Option<&dyn romm::pq::ToSql> {
                 match field {
                     #(#get_body, )*
                     _ => None,

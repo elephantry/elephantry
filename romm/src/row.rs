@@ -1,6 +1,6 @@
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Row
 {
     pub content: &'static str,
-    pub ty: postgres::types::Type,
+    pub ty: crate::pq::Type,
 }

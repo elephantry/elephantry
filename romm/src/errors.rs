@@ -1,1 +1,1 @@
-pub type Result<T> = std::result::Result<T, postgres::error::Error>;
+pub type Result<T> = std::result::Result<T, String>;

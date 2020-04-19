@@ -17,21 +17,12 @@ pub trait Model
         Self::default_projection()
     }
 
-    fn create_entity(row: postgres::rows::Row<'_>) -> Self::Entity
+    fn create_entity(row: &crate::pq::Row) -> Self::Entity
     {
-        let projection = Self::create_projection();
-        let mut data = HashMap::<&'static str, (postgres::types::Type, Vec<u8>)>::new();
-
-        for (name, crate::Row {ty, .. }) in projection.fields {
-            if let Some(bytes) = row.get_bytes(name) {
-                data.insert(name, (ty, bytes.to_vec()));
-            }
-        }
-
-        <Self::Entity as crate::Entity>::from(&data)
+        <Self::Entity as crate::Entity>::from(&row)
     }
 
-    fn primary_key(entity: &Self::Entity) -> HashMap<&'static str, &dyn postgres::types::ToSql>  {
+    fn primary_key(entity: &Self::Entity) -> HashMap<&'static str, &dyn crate::pq::ToSql>  {
         use crate::Entity;
         use crate::RowStructure;
 

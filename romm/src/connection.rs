@@ -3,19 +3,19 @@ use std::collections::HashMap;
 
 pub struct Connection
 {
-    connection: postgres::Connection,
+    connection: crate::pq::Connection,
 }
 
 impl Connection
 {
-    pub fn new(url: &str) -> crate::Result<Self>
+    pub fn new(dsn: &str) -> crate::Result<Self>
     {
         Ok(Self {
-            connection: postgres::Connection::connect(url, postgres::TlsMode::None)?,
+            connection: crate::pq::Connection::new(dsn)?,
         })
     }
 
-    pub fn find_by_pk<M>(&self, pk: &HashMap<&str, &dyn postgres::types::ToSql>)
+    pub fn find_by_pk<M>(&self, pk: &HashMap<&str, &dyn crate::pq::ToSql>)
         -> crate::Result<Option<M::Entity>> where M: crate::Model
     {
         let (clause, params) = self.pk_clause::<M>(pk);
@@ -38,13 +38,12 @@ impl Connection
 
         let results = self.connection.query(&query, &[])?;
 
-        Ok(results.iter()
-            .map(M::create_entity)
+        Ok(results.map(|row| M::create_entity(&row))
             .collect()
         )
     }
 
-    pub fn find_where<M>(&self, clause: &str, params: &[&dyn postgres::types::ToSql])
+    pub fn find_where<M>(&self, clause: &str, params: &[&dyn crate::pq::ToSql])
         -> crate::Result<Vec<M::Entity>> where M: crate::Model
     {
         let query = format!(
@@ -56,13 +55,12 @@ impl Connection
 
         let results = self.connection.query(&query, params)?;
 
-        Ok(results.iter()
-            .map(|row| M::create_entity(row))
+        Ok(results.map(|row| M::create_entity(&row))
             .collect()
         )
     }
 
-    pub fn count_where<M>(&self, clause: &str, params: &[&dyn postgres::types::ToSql])
+    pub fn count_where<M>(&self, clause: &str, params: &[&dyn crate::pq::ToSql])
         -> crate::Result<i64> where M: crate::Model
     {
         let query = format!(
@@ -73,10 +71,10 @@ impl Connection
 
         let results = self.connection.query(&query, params)?;
 
-        Ok(results.get(0).get("count"))
+        Ok(results.get(0).unwrap().get("count")?)
     }
 
-    pub fn exist_where<M>(&self, clause: &str, params: &[&dyn postgres::types::ToSql])
+    pub fn exist_where<M>(&self, clause: &str, params: &[&dyn crate::pq::ToSql])
         -> crate::Result<bool> where M: crate::Model
     {
         let query = format!(
@@ -87,7 +85,7 @@ impl Connection
 
         let results = self.connection.query(&query, params)?;
 
-        Ok(results.get(0).get("result"))
+        Ok(results.get(0).unwrap().get("result")?)
     }
 
     pub fn insert_one<M>(&self, entity: &M::Entity)
@@ -120,10 +118,10 @@ impl Connection
 
         let results = self.connection.query(&query, row.as_slice())?;
 
-        Ok(M::create_entity(results.get(0)))
+        Ok(M::create_entity(&results.get(0).unwrap()))
     }
 
-    pub fn update_one<M>(&self, entity: &M::Entity, data: &HashMap<&str, &dyn postgres::types::ToSql>)
+    pub fn update_one<M>(&self, entity: &M::Entity, data: &HashMap<&str, &dyn crate::pq::ToSql>)
         -> crate::Result<M::Entity> where M: crate::Model
     {
         let pk = M::primary_key(&entity);
@@ -131,7 +129,7 @@ impl Connection
         self.update_by_pk::<M>(&pk, data)
     }
 
-    pub fn update_by_pk<M>(&self, pk: &HashMap<&str, &dyn postgres::types::ToSql>, data: &HashMap<&str, &dyn postgres::types::ToSql>)
+    pub fn update_by_pk<M>(&self, pk: &HashMap<&str, &dyn crate::pq::ToSql>, data: &HashMap<&str, &dyn crate::pq::ToSql>)
         -> crate::Result<M::Entity> where M: crate::Model
     {
         let (clause, mut params) = self.pk_clause::<M>(&pk);
@@ -140,7 +138,7 @@ impl Connection
 
         for (key, value) in data.iter() {
             set.push(format!("{} = ${}", key, x));
-            params.push(value.clone());
+            params.push(*value);
             x += 1;
         }
 
@@ -153,7 +151,7 @@ impl Connection
 
         let results = self.connection.query(&query, &params)?;
 
-        Ok(M::create_entity(results.get(0)))
+        Ok(M::create_entity(&results.get(0).unwrap()))
     }
 
     pub fn delete_one<M>(&self, entity: &M::Entity)
@@ -164,7 +162,7 @@ impl Connection
         self.delete_by_pk::<M>(&pk)
     }
 
-    pub fn delete_by_pk<M>(&self, pk: &HashMap<&str, &dyn postgres::types::ToSql>)
+    pub fn delete_by_pk<M>(&self, pk: &HashMap<&str, &dyn crate::pq::ToSql>)
         -> crate::Result<M::Entity> where M: crate::Model
     {
         let (clause, params) = self.pk_clause::<M>(&pk);
@@ -174,7 +172,7 @@ impl Connection
         Ok(results.get(0).unwrap().clone())
     }
 
-    pub fn delete_where<M>(&self, clause: &str, params: &[&dyn postgres::types::ToSql])
+    pub fn delete_where<M>(&self, clause: &str, params: &[&dyn crate::pq::ToSql])
         -> crate::Result<Vec<M::Entity>> where M: crate::Model
     {
         let query = format!(
@@ -185,17 +183,17 @@ impl Connection
 
         let results = self.connection.query(&query, &params)?;
 
-        Ok(results.iter()
-            .map(|row| M::create_entity(row))
-            .collect()
+        Ok(
+            results.map(|row| M::create_entity(&row))
+                .collect()
         )
     }
 
-    fn pk_clause<'a, M>(&self, pk: &HashMap<&str, &'a dyn postgres::types::ToSql>)
-        -> (String, Vec<&'a dyn postgres::types::ToSql>) where M: crate::Model
+    fn pk_clause<'a, M>(&self, pk: &HashMap<&str, &'a dyn crate::pq::ToSql>)
+        -> (String, Vec<&'a dyn crate::pq::ToSql>) where M: crate::Model
     {
         let keys: Vec<_> = pk.keys()
-            .map(|x| *x)
+            .copied()
             .collect();
 
         if  keys != M::RowStructure::primary_key() {
@@ -214,8 +212,7 @@ impl Connection
             });
 
         let params: Vec<_> = pk.values()
-            .into_iter()
-            .map(|e| *e)
+            .copied()
             .collect();
 
         (clause, params)

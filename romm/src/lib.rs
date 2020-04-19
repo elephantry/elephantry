@@ -1,8 +1,10 @@
+pub mod pq;
+
 mod connection;
 mod entity;
 mod errors;
-mod projection;
 mod model;
+mod projection;
 mod row;
 mod row_structure;
 
@@ -23,9 +25,8 @@ use std::collections::HashMap;
  * Easily create pk argument for where clause, including find_by_pk function
  *
  * pk!(uuid)
- * pk!(&uuid)
- * pk!{ uuid, name }
- * pk!{ "uuid" => uuid, "name" => name }
+ * pk![uuid, name]
+ * pk!{"uuid" => uuid, "name" => name}
  */
 #[macro_export]
 macro_rules! pk {
@@ -43,7 +44,7 @@ macro_rules! pk {
         let mut hash = std::collections::HashMap::new();
 
         $(
-            hash.insert(stringify!($key), &$value as &dyn postgres::types::ToSql);
+            hash.insert(stringify!($key), &$value as &dyn crate::pq::ToSql);
         )*
 
         hash

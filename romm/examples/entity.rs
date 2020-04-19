@@ -10,45 +10,18 @@ struct Event
 
 impl romm::Entity for Event
 {
-    fn from(data: &std::collections::HashMap<&'static str, (postgres::types::Type, Vec<u8>)>) -> Self
+    fn from(row: &romm::pq::Row) -> Self
     {
-        use postgres::types::FromSql;
-
         Self {
-            uuid: {
-                let (t, content) = data.get("uuid")
-                    .expect("Unable to find 'uuid' field");
-                FromSql::from_sql(t, content)
-                    .expect("Unable to convert 'uuid' field of type 'Uuid' from SQL")
-            },
-            name: {
-                let (t, content) = data.get("name")
-                    .expect("Unable to find 'name' field");
-                FromSql::from_sql(t, content)
-                    .expect("Unable to convert 'name' field of type 'String' from SQL")
-            },
-            visitor_id: {
-                let (t, content) = data.get("visitor_id")
-                    .expect("Unable to find 'visitor_id' field");
-                FromSql::from_sql(t, content)
-                    .expect("Unable to convert 'visitor_id' field of type 'u32' from SQL")
-            },
-            properties: {
-                let (t, content) = data.get("properties")
-                    .expect("Unable to find 'properties' field");
-                FromSql::from_sql(t, content)
-                    .expect("Unable to convert 'properties' field of type 'json' from SQL")
-            },
-            browser: {
-                let (t, content) = data.get("browser")
-                    .expect("Unable to find 'browser' field");
-                FromSql::from_sql(t, content)
-                    .expect("Unable to convert 'browser' field of type 'json' from SQL")
-            },
+            uuid: row.get("uuid").expect("Unable to find 'uuid' field"),
+            name: row.get("name").expect("Unable to find 'name' field"),
+            visitor_id: row.get("visitor_id").expect("Unable to find 'visitor_id' field"),
+            properties: row.get("properties").expect("Unable to find 'properties' field"),
+            browser: row.get("browser").expect("Unable to find 'browser' field"),
         }
     }
 
-    fn get(&self, field: &str) -> Option<&dyn postgres::types::ToSql> {
+    fn get(&self, field: &str) -> Option<&dyn romm::pq::ToSql> {
         match field {
             "uuid" => match self.uuid {
                 Some(ref uuid) => Some(uuid),
@@ -84,9 +57,9 @@ struct EventExtra
 
 impl romm::Entity for EventExtra
 {
-    fn from(data: &std::collections::HashMap<&'static str, (postgres::types::Type, Vec<u8>)>) -> Self
+    fn from(row: &romm::pq::Row) -> Self
     {
-        let event = <Event as romm::Entity>::from(data);
+        let event = <Event as romm::Entity>::from(row);
 
         Self {
             uuid: event.uuid,
@@ -94,17 +67,11 @@ impl romm::Entity for EventExtra
             visitor_id: event.visitor_id,
             properties: event.properties,
             browser: event.browser,
-            os: match data.get("os") {
-                Some((t, content)) => Some(
-                    postgres::types::FromSql::from_sql(t, content)
-                        .expect("Unable to convert 'os' field of type 'String' from SQL")
-                ),
-                None => None,
-            },
+            os: row.get("os").expect("Unable to find 'os' field"),
         }
     }
 
-    fn get(&self, field: &str) -> Option<&dyn postgres::types::ToSql> {
+    fn get(&self, field: &str) -> Option<&dyn romm::pq::ToSql> {
         match field {
             "uuid" => match self.uuid {
                 Some(ref uuid) => Some(uuid),
@@ -114,7 +81,10 @@ impl romm::Entity for EventExtra
             "visitor_id" => Some(&self.visitor_id),
             "properties" => Some(&self.properties),
             "browser" => Some(&self.browser),
-            "os" => Some(&self.os),
+            "os" => match self.os {
+                Some(ref os) => Some(os),
+                None => None,
+            },
             _ => None,
         }
     }
@@ -132,7 +102,7 @@ impl romm::Model for EventExtraModel
         Self::default_projection()
             .set_field("os", romm::Row {
                 content: "%:browser:% ->> 'os'",
-                ty: postgres::types::VARCHAR,
+                ty: romm::pq::Type::VARCHAR,
             })
     }
 }
@@ -156,23 +126,23 @@ impl romm::RowStructure for EventStructure
         maplit::hashmap! {
             "uuid" => romm::Row {
                 content: "%:uuid:%",
-                ty: postgres::types::UUID,
+                ty: romm::pq::Type::UUID,
             },
             "name" => romm::Row {
                 content: "%:name:%",
-                ty: postgres::types::VARCHAR,
+                ty: romm::pq::Type::VARCHAR,
             },
             "visitor_id" => romm::Row {
                 content: "%:visitor_id:%",
-                ty: postgres::types::INT4,
+                ty: romm::pq::Type::INT4,
             },
             "properties" => romm::Row {
                 content: "%:properties:%",
-                ty: postgres::types::JSON,
+                ty: romm::pq::Type::JSON,
             },
             "browser" => romm::Row {
                 content: "%:browser:%",
-                ty: postgres::types::JSON,
+                ty: romm::pq::Type::JSON,
             },
         }
     }

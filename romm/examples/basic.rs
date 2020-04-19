@@ -42,15 +42,16 @@ fn main()
 
     println!("Update one row:\n");
     let entity = update_one::<EventModel>(connection, &entity, &maplit::hashmap! {
-        "name" => &"pageview" as &dyn postgres::types::ToSql,
+        "name" => &"pageview" as &dyn romm::pq::ToSql,
     });
     assert_eq!(&entity.name, "pageview");
     println!();
 
     println!("Delete one row\n");
     connection.delete_one::<EventModel>(&entity).unwrap();
-    assert!(connection.find_by_pk::<EventModel>(&romm::pk!{uuid => entity.uuid,}).unwrap().is_none());
-    assert_eq!(connection.exist_where::<EventModel>("uuid = $1", &[&entity.uuid]).unwrap(), false);
+    let uuid = entity.uuid.unwrap();
+    assert!(connection.find_by_pk::<EventModel>(&romm::pk!{uuid => uuid,}).unwrap().is_none());
+    assert_eq!(connection.exist_where::<EventModel>("uuid = $1", &[&entity.uuid.unwrap()]).unwrap(), false);
 }
 
 fn find_by_pk<M>(connection: &romm::Connection, uuid: &str) where M: romm::Model, M::Entity: std::fmt::Debug
@@ -91,7 +92,7 @@ fn insert_one<M>(connection: &romm::Connection, entity: &M::Entity) -> M::Entity
     new_entity
 }
 
-fn update_one<M>(connection: &romm::Connection, entity: &M::Entity, data: &std::collections::HashMap<&str, &dyn postgres::types::ToSql>) -> M::Entity where M: romm::Model, M::Entity: std::fmt::Debug
+fn update_one<M>(connection: &romm::Connection, entity: &M::Entity, data: &std::collections::HashMap<&str, &dyn romm::pq::ToSql>) -> M::Entity where M: romm::Model, M::Entity: std::fmt::Debug
 {
     let new_entity = connection.update_one::<M>(&entity, &data)
         .unwrap();

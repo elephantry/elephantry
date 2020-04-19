@@ -21,7 +21,7 @@ impl Projection
         self
     }
 
-    pub fn set_field_type(mut self, name: &str, ty: postgres::types::Type) -> Projection
+    pub fn set_field_type(mut self, name: &str, ty: crate::pq::Type) -> Projection
     {
         if let Some(row) = self.fields.get_mut(name) {
             row.ty = ty;
@@ -44,7 +44,7 @@ impl Projection
 
     pub fn fields_name(&self) -> Vec<&str> {
         self.fields.keys()
-            .map(|x| *x)
+            .copied()
             .collect()
     }
 }

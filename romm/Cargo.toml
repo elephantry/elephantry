@@ -5,9 +5,17 @@ authors = ["Sanpi <sanpi@homecomputing.fr>"]
 edition = "2018"
 
 [dependencies]
+bytes = "0.5"
+libpq = "0.1"
 log = "0.4"
-postgres = "0.15"
-postgres-shared = "0.4"
+
+[dependencies.serde_json]
+version = "1.0"
+optional = true
+
+[dependencies.uuid]
+version = "0.8"
+optional = true
 
 [dev-dependencies]
 maplit = "1.0"
@@ -19,6 +27,16 @@ path = "../romm-derive"
 version = "0.1"
 optional = true
 
-[dev-dependencies.postgres]
-version = "0.15"
-features = ["with-serde_json", "with-uuid"]
+[[example]]
+name = "basic"
+required-features = ["serde_json", "uuid"]
+
+[[example]]
+name = "entity"
+crate-type = ["lib"]
+required-features = ["serde_json", "uuid"]
+
+[[example]]
+name = "entity_derive"
+crate-type = ["lib"]
+required-features = ["serde_json", "uuid"]
