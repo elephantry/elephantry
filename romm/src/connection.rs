@@ -15,6 +15,10 @@ impl Connection
         })
     }
 
+    pub fn execute(&self, query: &str, params: &[&dyn crate::pq::ToSql]) -> crate::Result<crate::pq::Result> {
+        self.connection.query(&query, params)
+    }
+
     pub fn find_by_pk<M>(&self, pk: &HashMap<&str, &dyn crate::pq::ToSql>)
         -> crate::Result<Option<M::Entity>> where M: crate::Model
     {
@@ -36,7 +40,7 @@ impl Connection
             M::RowStructure::relation(),
         );
 
-        let results = self.connection.query(&query, &[])?;
+        let results = self.execute(&query, &[])?;
 
         Ok(results.map(|tuple| M::create_entity(&tuple))
             .collect()
@@ -53,7 +57,7 @@ impl Connection
             clause,
         );
 
-        let results = self.connection.query(&query, params)?;
+        let results = self.execute(&query, params)?;
 
         Ok(results.map(|tuple| M::create_entity(&tuple))
             .collect()
@@ -69,7 +73,7 @@ impl Connection
             clause,
         );
 
-        let results = self.connection.query(&query, params)?;
+        let results = self.execute(&query, params)?;
 
         Ok(results.get(0).unwrap().get("count")?)
     }
@@ -83,7 +87,7 @@ impl Connection
             clause,
         );
 
-        let results = self.connection.query(&query, params)?;
+        let results = self.execute(&query, params)?;
 
         Ok(results.get(0).unwrap().get("result")?)
     }
@@ -116,7 +120,7 @@ impl Connection
             params.join(", "),
         );
 
-        let results = self.connection.query(&query, tuple.as_slice())?;
+        let results = self.execute(&query, tuple.as_slice())?;
 
         Ok(M::create_entity(&results.get(0).unwrap()))
     }
@@ -149,7 +153,7 @@ impl Connection
             clause,
         );
 
-        let results = self.connection.query(&query, &params)?;
+        let results = self.execute(&query, &params)?;
 
         Ok(M::create_entity(&results.get(0).unwrap()))
     }
@@ -181,7 +185,7 @@ impl Connection
             clause,
         );
 
-        let results = self.connection.query(&query, &params)?;
+        let results = self.execute(&query, &params)?;
 
         Ok(
             results.map(|tuple| M::create_entity(&tuple))
