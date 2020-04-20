@@ -48,7 +48,7 @@ pub struct Result {
 
 impl Result {
     pub fn get(&self, n: usize) -> Option<Tuple> {
-        if n + 1 > self.inner.ntuples() {
+        if n + 1 > self.len() {
             return None;
         }
 
@@ -67,6 +67,10 @@ impl Result {
         let tuple = Tuple::from(&values);
 
         Some(tuple)
+    }
+
+    pub fn len(&self) -> usize {
+        self.inner.ntuples()
     }
 }
 
