@@ -1,3 +1,7 @@
+mod structure;
+
+pub use structure::*;
+
 #[derive(Clone, Debug)]
 pub struct Row
 {

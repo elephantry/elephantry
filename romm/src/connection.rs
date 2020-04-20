@@ -1,4 +1,4 @@
-use crate::RowStructure;
+use crate::row::Structure;
 use std::collections::HashMap;
 
 pub struct Connection

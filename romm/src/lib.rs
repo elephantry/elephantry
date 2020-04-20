@@ -1,12 +1,11 @@
 pub mod pq;
+pub mod row;
 
 mod connection;
 mod entity;
 mod errors;
 mod model;
 mod projection;
-mod row;
-mod row_structure;
 
 #[cfg(feature = "romm-derive")]
 pub use romm_derive::*;
@@ -17,7 +16,6 @@ pub use entity::*;
 pub use model::*;
 pub use projection::*;
 pub use row::*;
-pub use row_structure::*;
 
 use std::collections::HashMap;
 

@@ -109,7 +109,7 @@ impl romm::Model for EventExtraModel
 
 struct EventStructure;
 
-impl romm::RowStructure for EventStructure
+impl romm::row::Structure for EventStructure
 {
     fn relation() -> &'static str
     {
