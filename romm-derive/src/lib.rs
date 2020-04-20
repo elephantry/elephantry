@@ -22,7 +22,7 @@ fn impl_entity_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream
             let ty = &field.ty;
 
             quote::quote! {
-                #name: row.get(stringify!(#name))
+                #name: tuple.get(stringify!(#name))
                     .expect(&format!("Unable to convert '{}' field of type '{}' from SQL", stringify!(#name), stringify!(#ty)))
             }
         });
@@ -51,7 +51,7 @@ fn impl_entity_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream
     let gen = quote::quote! {
         impl romm::Entity for #name
         {
-            fn from(row: &romm::pq::Row) -> Self
+            fn from(tuple: &romm::pq::Tuple) -> Self
             {
                 Self {
                     #(#from_body, )*

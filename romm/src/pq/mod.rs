@@ -43,11 +43,11 @@ impl Connection {
 
 pub struct Result {
     inner: libpq::Result,
-    current_row: usize,
+    current_tuple: usize,
 }
 
 impl Result {
-    pub fn get(&self, n: usize) -> Option<Row> {
+    pub fn get(&self, n: usize) -> Option<Tuple> {
         if n + 1 > self.inner.ntuples() {
             return None;
         }
@@ -64,20 +64,20 @@ impl Result {
             values.insert(name, value);
         }
 
-        let row = Row::from(&values);
+        let tuple = Tuple::from(&values);
 
-        Some(row)
+        Some(tuple)
     }
 }
 
 impl std::iter::Iterator for Result {
-    type Item = Row;
+    type Item = Tuple;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let row = self.get(self.current_row);
-        self.current_row += 1;
+        let tuple = self.get(self.current_tuple);
+        self.current_tuple += 1;
 
-        row
+        tuple
     }
 }
 
@@ -89,17 +89,17 @@ impl std::convert::TryFrom<libpq::Result> for Result {
 
         match inner.status() {
             BadResponse | FatalError | NonFatalError => Err(inner.error_message().unwrap_or_else(|| "Unknow error".to_string())),
-            _ => Ok(Self { inner, current_row: 0 }),
+            _ => Ok(Self { inner, current_tuple: 0 }),
         }
     }
 }
 
 #[derive(Clone, Debug)]
-pub struct Row {
+pub struct Tuple {
     values: std::collections::HashMap<String, String>,
 }
 
-impl Row {
+impl Tuple {
     pub fn from(values: &std::collections::HashMap<String, String>) -> Self {
         Self {
             values: values.clone(),

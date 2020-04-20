@@ -19,9 +19,9 @@ impl Connection
         -> crate::Result<Option<M::Entity>> where M: crate::Model
     {
         let (clause, params) = self.pk_clause::<M>(pk);
-        let rows = self.find_where::<M>(&clause, &params)?;
+        let tuples = self.find_where::<M>(&clause, &params)?;
 
-        Ok(match rows.get(0) {
+        Ok(match tuples.get(0) {
             Some(e) => Some(e.clone()),
             None => None,
         })
@@ -38,7 +38,7 @@ impl Connection
 
         let results = self.connection.query(&query, &[])?;
 
-        Ok(results.map(|row| M::create_entity(&row))
+        Ok(results.map(|tuple| M::create_entity(&tuple))
             .collect()
         )
     }
@@ -55,7 +55,7 @@ impl Connection
 
         let results = self.connection.query(&query, params)?;
 
-        Ok(results.map(|row| M::create_entity(&row))
+        Ok(results.map(|tuple| M::create_entity(&tuple))
             .collect()
         )
     }
@@ -95,14 +95,14 @@ impl Connection
 
         let projection = M::create_projection();
 
-        let mut row = Vec::new();
+        let mut tuple = Vec::new();
         let mut params = Vec::new();
         let mut fields = Vec::new();
         let mut x = 1;
 
         for field in projection.fields_name() {
             if let Some(value) = entity.get(field) {
-                row.push(value);
+                tuple.push(value);
                 params.push(format!("${}", x));
                 fields.push(field);
                 x += 1;
@@ -116,7 +116,7 @@ impl Connection
             params.join(", "),
         );
 
-        let results = self.connection.query(&query, row.as_slice())?;
+        let results = self.connection.query(&query, tuple.as_slice())?;
 
         Ok(M::create_entity(&results.get(0).unwrap()))
     }
@@ -184,7 +184,7 @@ impl Connection
         let results = self.connection.query(&query, &params)?;
 
         Ok(
-            results.map(|row| M::create_entity(&row))
+            results.map(|tuple| M::create_entity(&tuple))
                 .collect()
         )
     }

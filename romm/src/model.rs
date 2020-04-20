@@ -17,9 +17,9 @@ pub trait Model
         Self::default_projection()
     }
 
-    fn create_entity(row: &crate::pq::Row) -> Self::Entity
+    fn create_entity(tuple: &crate::pq::Tuple) -> Self::Entity
     {
-        <Self::Entity as crate::Entity>::from(&row)
+        <Self::Entity as crate::Entity>::from(&tuple)
     }
 
     fn primary_key(entity: &Self::Entity) -> HashMap<&'static str, &dyn crate::pq::ToSql>  {
