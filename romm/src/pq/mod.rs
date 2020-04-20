@@ -6,8 +6,9 @@ mod from_sql;
 pub use to_sql::ToSql;
 pub use from_sql::FromSql;
 
-pub type Type = libpq::Type;
 pub type Format = libpq::Format;
+pub type Oid = libpq::Oid;
+pub type Type = libpq::Type;
 
 pub struct Connection {
     inner: libpq::Connection,

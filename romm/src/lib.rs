@@ -1,3 +1,4 @@
+pub mod inspect;
 pub mod pq;
 pub mod row;
 
