@@ -57,12 +57,16 @@ impl Result {
 
         for x in 0..self.inner.nfields() {
             let name = self.inner.field_name(x).unwrap();
-            let value = match self.inner.value(n, x) {
-                Some(value) => value,
-                None => continue,
-            };
 
-            values.insert(name, value);
+            values.insert(name, Field {
+                format: self.inner.field_format(x),
+                is_null: self.inner.is_null(n, x),
+                length: self.inner.length(n, x),
+                modifier: self.inner.field_mod(x),
+                size: self.inner.field_size(x),
+                ty: self.inner.field_type(x).unwrap(),
+                value: self.inner.value(n, x),
+            });
         }
 
         let tuple = Tuple::from(&values);
@@ -101,11 +105,11 @@ impl std::convert::TryFrom<libpq::Result> for Result {
 
 #[derive(Clone, Debug)]
 pub struct Tuple {
-    values: std::collections::HashMap<String, String>,
+    values: std::collections::HashMap<String, Field>,
 }
 
 impl Tuple {
-    pub fn from(values: &std::collections::HashMap<String, String>) -> Self {
+    pub fn from(values: &std::collections::HashMap<String, Field>) -> Self {
         Self {
             values: values.clone(),
         }
@@ -118,14 +122,27 @@ impl Tuple {
 
     pub fn try_get<T>(&self, name: &str) -> crate::Result<T> where T: FromSql
     {
-        let value = self.values.get(&name.to_string());
-
-        FromSql::from_sql(&Type::TEXT, value)
+        if let Some(field) = self.values.get(&name.to_string()) {
+            FromSql::from_sql(&field.ty, field.value.as_ref())
+        } else {
+            FromSql::from_sql(&Type::TEXT, None)
+        }
     }
 
     pub fn get_bytes(&self, name: &str) -> Option<Vec<u8>>
     {
         self.values.get(&name.to_string())
-            .map(|x| x.as_bytes().to_vec())
+            .map(|x| x.value.clone().unwrap_or_default().as_bytes().to_vec())
     }
+}
+
+#[derive(Clone, Debug)]
+pub struct Field {
+    pub format: Format,
+    pub is_null: bool,
+    pub length: usize,
+    pub modifier: Option<i32>,
+    pub size: Option<usize>,
+    pub ty: Type,
+    pub value: Option<String>,
 }
