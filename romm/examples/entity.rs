@@ -13,11 +13,11 @@ impl romm::Entity for Event
     fn from(tuple: &romm::pq::Tuple) -> Self
     {
         Self {
-            uuid: tuple.get("uuid").expect("Unable to find 'uuid' field"),
-            name: tuple.get("name").expect("Unable to find 'name' field"),
-            visitor_id: tuple.get("visitor_id").expect("Unable to find 'visitor_id' field"),
-            properties: tuple.get("properties").expect("Unable to find 'properties' field"),
-            browser: tuple.get("browser").expect("Unable to find 'browser' field"),
+            uuid: tuple.get("uuid"),
+            name: tuple.get("name"),
+            visitor_id: tuple.get("visitor_id"),
+            properties: tuple.get("properties"),
+            browser: tuple.get("browser"),
         }
     }
 
@@ -67,7 +67,7 @@ impl romm::Entity for EventExtra
             visitor_id: event.visitor_id,
             properties: event.properties,
             browser: event.browser,
-            os: tuple.get("os").expect("Unable to find 'os' field"),
+            os: tuple.get("os"),
         }
     }
 

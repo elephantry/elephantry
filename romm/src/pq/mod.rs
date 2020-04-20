@@ -110,7 +110,12 @@ impl Tuple {
         }
     }
 
-    pub fn get<T>(&self, name: &str) -> crate::Result<T> where T: FromSql
+    pub fn get<T>(&self, name: &str) -> T where T: FromSql
+    {
+        self.try_get(name).expect(&format!("Unable to find '{}' field", name))
+    }
+
+    pub fn try_get<T>(&self, name: &str) -> crate::Result<T> where T: FromSql
     {
         let value = self.values.get(&name.to_string());
 

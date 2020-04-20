@@ -75,7 +75,7 @@ impl Connection
 
         let results = self.execute(&query, params)?;
 
-        Ok(results.get(0).unwrap().get("count")?)
+        Ok(results.get(0).unwrap().try_get("count")?)
     }
 
     pub fn exist_where<M>(&self, clause: &str, params: &[&dyn crate::pq::ToSql])
@@ -89,7 +89,7 @@ impl Connection
 
         let results = self.execute(&query, params)?;
 
-        Ok(results.get(0).unwrap().get("result")?)
+        Ok(results.get(0).unwrap().try_get("result")?)
     }
 
     pub fn insert_one<M>(&self, entity: &M::Entity)

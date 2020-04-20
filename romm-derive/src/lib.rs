@@ -19,11 +19,9 @@ fn impl_entity_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream
     let from_body = fields.iter()
         .map(|field| {
             let name = &field.ident;
-            let ty = &field.ty;
 
             quote::quote! {
                 #name: tuple.get(stringify!(#name))
-                    .expect(&format!("Unable to convert '{}' field of type '{}' from SQL", stringify!(#name), stringify!(#ty)))
             }
         });
 
