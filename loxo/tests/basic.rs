@@ -6,7 +6,7 @@ include!("entity.rs");
 
 fn main() {
     let loxo = loxo::Loxo::new()
-        .add_default("loxo", "postgres://sanpi@localhost/loxo")
+        .add_default("loxo", "postgres://localhost/loxo")
         .unwrap();
     let connection = loxo.default().unwrap();
 
