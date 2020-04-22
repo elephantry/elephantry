@@ -1,9 +1,11 @@
 use std::collections::HashMap;
 
-pub trait Model
+pub trait Model<'a>
 {
     type Entity: crate::Entity;
     type RowStructure: crate::row::Structure;
+
+    fn new(connection: &'a crate::Connection) -> Self;
 
     fn default_projection() -> crate::Projection
     {

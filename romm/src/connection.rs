@@ -15,6 +15,10 @@ impl Connection
         })
     }
 
+    pub fn model<'a, M>(&'a self) -> M where M: crate::Model<'a> {
+        M::new(self)
+    }
+
     pub fn execute(&self, query: &str, params: &[&dyn crate::pq::ToSql]) -> crate::Result<crate::pq::Result> {
         self.connection.query(&query, params)
     }
@@ -24,8 +28,8 @@ impl Connection
             .map(|result| result.map(|tuple| E::from(&tuple)).collect())
     }
 
-    pub fn find_by_pk<M>(&self, pk: &HashMap<&str, &dyn crate::pq::ToSql>)
-        -> crate::Result<Option<M::Entity>> where M: crate::Model
+    pub fn find_by_pk<'a, M>(&self, pk: &HashMap<&str, &dyn crate::pq::ToSql>)
+        -> crate::Result<Option<M::Entity>> where M: crate::Model<'a>
     {
         let (clause, params) = self.pk_clause::<M>(pk);
         let tuples = self.find_where::<M>(&clause, &params)?;
@@ -36,8 +40,8 @@ impl Connection
         })
     }
 
-    pub fn find_all<M>(&self)
-        -> crate::Result<Vec<M::Entity>> where M: crate::Model
+    pub fn find_all<'a, M>(&self)
+        -> crate::Result<Vec<M::Entity>> where M: crate::Model<'a>
     {
         let query = format!(
             "SELECT {} FROM {};",
@@ -52,8 +56,8 @@ impl Connection
         )
     }
 
-    pub fn find_where<M>(&self, clause: &str, params: &[&dyn crate::pq::ToSql])
-        -> crate::Result<Vec<M::Entity>> where M: crate::Model
+    pub fn find_where<'a, M>(&self, clause: &str, params: &[&dyn crate::pq::ToSql])
+        -> crate::Result<Vec<M::Entity>> where M: crate::Model<'a>
     {
         let query = format!(
             "SELECT {} FROM {} WHERE {};",
@@ -69,8 +73,8 @@ impl Connection
         )
     }
 
-    pub fn count_where<M>(&self, clause: &str, params: &[&dyn crate::pq::ToSql])
-        -> crate::Result<i64> where M: crate::Model
+    pub fn count_where<'a, M>(&self, clause: &str, params: &[&dyn crate::pq::ToSql])
+        -> crate::Result<i64> where M: crate::Model<'a>
     {
         let query = format!(
             "SELECT COUNT(*) FROM {} WHERE {};",
@@ -83,8 +87,8 @@ impl Connection
         Ok(results.get(0).unwrap().try_get("count")?)
     }
 
-    pub fn exist_where<M>(&self, clause: &str, params: &[&dyn crate::pq::ToSql])
-        -> crate::Result<bool> where M: crate::Model
+    pub fn exist_where<'a, M>(&self, clause: &str, params: &[&dyn crate::pq::ToSql])
+        -> crate::Result<bool> where M: crate::Model<'a>
     {
         let query = format!(
             "SELECT EXISTS (SELECT true FROM {} WHERE {}) AS result;",
@@ -97,8 +101,8 @@ impl Connection
         Ok(results.get(0).unwrap().try_get("result")?)
     }
 
-    pub fn insert_one<M>(&self, entity: &M::Entity)
-        -> crate::Result<M::Entity> where M: crate::Model
+    pub fn insert_one<'a, M>(&self, entity: &M::Entity)
+        -> crate::Result<M::Entity> where M: crate::Model<'a>
     {
         use crate::Entity;
 
@@ -130,16 +134,16 @@ impl Connection
         Ok(M::create_entity(&results.get(0).unwrap()))
     }
 
-    pub fn update_one<M>(&self, entity: &M::Entity, data: &HashMap<&str, &dyn crate::pq::ToSql>)
-        -> crate::Result<M::Entity> where M: crate::Model
+    pub fn update_one<'a, M>(&self, entity: &M::Entity, data: &HashMap<&str, &dyn crate::pq::ToSql>)
+        -> crate::Result<M::Entity> where M: crate::Model<'a>
     {
         let pk = M::primary_key(&entity);
 
         self.update_by_pk::<M>(&pk, data)
     }
 
-    pub fn update_by_pk<M>(&self, pk: &HashMap<&str, &dyn crate::pq::ToSql>, data: &HashMap<&str, &dyn crate::pq::ToSql>)
-        -> crate::Result<M::Entity> where M: crate::Model
+    pub fn update_by_pk<'a, M>(&self, pk: &HashMap<&str, &dyn crate::pq::ToSql>, data: &HashMap<&str, &dyn crate::pq::ToSql>)
+        -> crate::Result<M::Entity> where M: crate::Model<'a>
     {
         let (clause, mut params) = self.pk_clause::<M>(&pk);
         let mut x = params.len() + 1;
@@ -163,16 +167,16 @@ impl Connection
         Ok(M::create_entity(&results.get(0).unwrap()))
     }
 
-    pub fn delete_one<M>(&self, entity: &M::Entity)
-        -> crate::Result<M::Entity> where M: crate::Model
+    pub fn delete_one<'a, M>(&self, entity: &M::Entity)
+        -> crate::Result<M::Entity> where M: crate::Model<'a>
     {
         let pk = M::primary_key(&entity);
 
         self.delete_by_pk::<M>(&pk)
     }
 
-    pub fn delete_by_pk<M>(&self, pk: &HashMap<&str, &dyn crate::pq::ToSql>)
-        -> crate::Result<M::Entity> where M: crate::Model
+    pub fn delete_by_pk<'a, M>(&self, pk: &HashMap<&str, &dyn crate::pq::ToSql>)
+        -> crate::Result<M::Entity> where M: crate::Model<'a>
     {
         let (clause, params) = self.pk_clause::<M>(&pk);
 
@@ -181,8 +185,8 @@ impl Connection
         Ok(results.get(0).unwrap().clone())
     }
 
-    pub fn delete_where<M>(&self, clause: &str, params: &[&dyn crate::pq::ToSql])
-        -> crate::Result<Vec<M::Entity>> where M: crate::Model
+    pub fn delete_where<'a, M>(&self, clause: &str, params: &[&dyn crate::pq::ToSql])
+        -> crate::Result<Vec<M::Entity>> where M: crate::Model<'a>
     {
         let query = format!(
             "DELETE FROM {} WHERE {} RETURNING *;",
@@ -198,8 +202,8 @@ impl Connection
         )
     }
 
-    fn pk_clause<'a, M>(&self, pk: &HashMap<&str, &'a dyn crate::pq::ToSql>)
-        -> (String, Vec<&'a dyn crate::pq::ToSql>) where M: crate::Model
+    fn pk_clause<'a, 'b, M>(&self, pk: &HashMap<&str, &'b dyn crate::pq::ToSql>)
+        -> (String, Vec<&'b dyn crate::pq::ToSql>) where M: crate::Model<'a>
     {
         let keys: Vec<_> = pk.keys()
             .copied()

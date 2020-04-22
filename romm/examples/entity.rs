@@ -36,12 +36,27 @@ impl romm::Entity for Event
     }
 }
 
-struct EventModel;
+struct EventModel<'a> {
+    connection: &'a romm::Connection,
+}
 
-impl romm::Model for EventModel
+impl<'a> romm::Model<'a> for EventModel<'a>
 {
     type Entity = Event;
     type RowStructure = EventStructure;
+
+    fn new(connection: &'a romm::Connection) -> Self {
+        Self {
+            connection,
+        }
+    }
+}
+
+impl<'a> EventModel<'a> {
+    fn count_uniq_visitor(&self) -> romm::Result<u32> {
+        self.connection.execute("select count(distinct visitor_id) as count from event", &[])
+            .map(|x| x.get(0).unwrap().get("count"))
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -92,10 +107,15 @@ impl romm::Entity for EventExtra
 
 struct EventExtraModel;
 
-impl romm::Model for EventExtraModel
+impl<'a> romm::Model<'a> for EventExtraModel
 {
     type Entity = EventExtra;
     type RowStructure = EventStructure;
+
+    fn new(_: &'a romm::Connection) -> Self {
+        Self {
+        }
+    }
 
     fn create_projection() -> romm::Projection
     {

@@ -52,9 +52,15 @@ fn main()
     let uuid = entity.uuid.unwrap();
     assert!(connection.find_by_pk::<EventModel>(&romm::pk!{uuid => uuid}).unwrap().is_none());
     assert_eq!(connection.exist_where::<EventModel>("uuid = $1", &[&entity.uuid.unwrap()]).unwrap(), false);
+
+    let count = connection.model::<EventModel>()
+        .count_uniq_visitor()
+        .unwrap();
+    assert_eq!(count, 4);
+    println!("Count uniq visitor: {}", count);
 }
 
-fn find_by_pk<M>(connection: &romm::Connection, uuid: &str) where M: romm::Model, M::Entity: std::fmt::Debug
+fn find_by_pk<'a, M>(connection: &romm::Connection, uuid: &str) where M: romm::Model<'a>, M::Entity: std::fmt::Debug
 {
     let uuid = uuid::Uuid::parse_str(uuid)
         .unwrap();
@@ -67,7 +73,7 @@ fn find_by_pk<M>(connection: &romm::Connection, uuid: &str) where M: romm::Model
     };
 }
 
-fn find_all<M>(connection: &romm::Connection) where M: romm::Model, M::Entity: std::fmt::Debug
+fn find_all<'a, M>(connection: &romm::Connection) where M: romm::Model<'a>, M::Entity: std::fmt::Debug
 {
     let events = connection.find_all::<M>()
         .unwrap();
@@ -82,7 +88,7 @@ fn find_all<M>(connection: &romm::Connection) where M: romm::Model, M::Entity: s
     }
 }
 
-fn insert_one<M>(connection: &romm::Connection, entity: &M::Entity) -> M::Entity where M: romm::Model, M::Entity: std::fmt::Debug
+fn insert_one<'a, M>(connection: &romm::Connection, entity: &M::Entity) -> M::Entity where M: romm::Model<'a>, M::Entity: std::fmt::Debug
 {
     let new_entity = connection.insert_one::<M>(&entity)
         .unwrap();
@@ -92,7 +98,7 @@ fn insert_one<M>(connection: &romm::Connection, entity: &M::Entity) -> M::Entity
     new_entity
 }
 
-fn update_one<M>(connection: &romm::Connection, entity: &M::Entity, data: &std::collections::HashMap<&str, &dyn romm::pq::ToSql>) -> M::Entity where M: romm::Model, M::Entity: std::fmt::Debug
+fn update_one<'a, M>(connection: &romm::Connection, entity: &M::Entity, data: &std::collections::HashMap<&str, &dyn romm::pq::ToSql>) -> M::Entity where M: romm::Model<'a>, M::Entity: std::fmt::Debug
 {
     let new_entity = connection.update_one::<M>(&entity, &data)
         .unwrap();
