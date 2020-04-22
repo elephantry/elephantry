@@ -26,12 +26,9 @@ mod serie {
             &["n"]
         }
 
-        fn definition() -> std::collections::HashMap<&'static str, loxo::Row> {
+        fn definition() -> std::collections::HashMap<&'static str, &'static str> {
             maplit::hashmap! {
-                "n" => loxo::Row {
-                    content: "%:generate_series:%",
-                    ty: loxo::pq::ty::INT4,
-                },
+                "n" => "%:generate_series:%",
             }
         }
     }

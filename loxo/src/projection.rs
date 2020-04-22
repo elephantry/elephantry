@@ -1,26 +1,18 @@
 use std::collections::HashMap;
 
 pub struct Projection {
-    pub fields: HashMap<&'static str, crate::Row>,
+    pub fields: HashMap<&'static str, &'static str>,
 }
 
 impl Projection {
-    pub fn new(fields: &HashMap<&'static str, crate::Row>) -> Self {
+    pub fn new(fields: &HashMap<&'static str, &'static str>) -> Self {
         Self {
             fields: fields.clone(),
         }
     }
 
-    pub fn set_field(mut self, name: &'static str, row: crate::Row) -> Projection {
+    pub fn set_field(mut self, name: &'static str, row: &'static str) -> Projection {
         self.fields.insert(name, row);
-
-        self
-    }
-
-    pub fn set_field_type(mut self, name: &str, ty: crate::pq::Type) -> Projection {
-        if let Some(row) = self.fields.get_mut(name) {
-            row.ty = ty;
-        }
 
         self
     }
@@ -31,7 +23,7 @@ impl Projection {
         self
     }
 
-    pub fn fields(&self) -> &HashMap<&'static str, crate::Row> {
+    pub fn fields(&self) -> &HashMap<&'static str, &'static str> {
         &self.fields
     }
 
@@ -47,7 +39,6 @@ impl std::fmt::Display for Projection {
             .iter()
             .map(|(alias, row)| {
                 let content = row
-                    .content
                     .replace("\"", "\\\"")
                     .replace("%:", "\"")
                     .replace(":%", "\"");

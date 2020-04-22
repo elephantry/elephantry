@@ -27,23 +27,13 @@ pub fn relation(connection: &loxo::Connection, schema: &str, relation: &str) -> 
     for column in &columns {
         let name = column.name.to_snake();
 
-        let ty = if column.ty.starts_with('_') {
-            format!("{}_ARRAY", column.ty.trim_start_matches('_'))
-        } else {
-            column.ty.clone()
-        };
-
         if column.is_primary {
             pk.push(format!("\"{}\"", name));
         }
 
         definition.push(format!(
-            "        definition.insert(\"{name}\", loxo::Row {{
-            content: \"%:{name}:%\",
-            ty: loxo::pq::ty::{ty},
-        }});",
+            "        definition.insert(\"{name}\", \"%:{name}:%\");",
             name = name,
-            ty = ty.to_uppercase(),
         ));
     }
 
@@ -83,7 +73,7 @@ impl loxo::row::Structure for Structure
         &[{pk}]
     }}
 
-    fn definition() -> std::collections::HashMap<&'static str, loxo::Row>
+    fn definition() -> std::collections::HashMap<&'static str, &'static str>
     {{
         let mut definition = std::collections::HashMap::new();
 

@@ -126,13 +126,7 @@ impl<'a> loxo::Model<'a> for EventExtraModel {
     }
 
     fn create_projection() -> loxo::Projection {
-        Self::default_projection().set_field(
-            "os",
-            loxo::Row {
-                content: "%:browser:% ->> 'os'",
-                ty: loxo::pq::ty::VARCHAR,
-            },
-        )
+        Self::default_projection().set_field("os", "%:browser:% ->> 'os'")
     }
 }
 
@@ -147,28 +141,13 @@ impl loxo::row::Structure for EventStructure {
         &["uuid"]
     }
 
-    fn definition() -> std::collections::HashMap<&'static str, loxo::Row> {
+    fn definition() -> std::collections::HashMap<&'static str, &'static str> {
         maplit::hashmap! {
-            "uuid" => loxo::Row {
-                content: "%:uuid:%",
-                ty: loxo::pq::ty::UUID,
-            },
-            "name" => loxo::Row {
-                content: "%:name:%",
-                ty: loxo::pq::ty::VARCHAR,
-            },
-            "visitor_id" => loxo::Row {
-                content: "%:visitor_id:%",
-                ty: loxo::pq::ty::INT4,
-            },
-            "properties" => loxo::Row {
-                content: "%:properties:%",
-                ty: loxo::pq::ty::JSON,
-            },
-            "browser" => loxo::Row {
-                content: "%:browser:%",
-                ty: loxo::pq::ty::JSON,
-            },
+            "uuid" => "%:uuid:%",
+            "name" => "%:name:%",
+            "visitor_id" => "%:visitor_id:%",
+            "properties" => "%:properties:%",
+            "browser" => "%:browser:%",
         }
     }
 }
