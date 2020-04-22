@@ -1,12 +1,12 @@
 pub mod inspect;
 pub mod pq;
-pub mod row;
 
 mod connection;
 mod entity;
 mod errors;
 mod model;
 mod projection;
+mod structure;
 
 pub use connection::*;
 pub use entity::*;
@@ -14,7 +14,7 @@ pub use errors::*;
 pub use model::*;
 pub use projection::*;
 pub use loxo_derive::*;
-pub use row::*;
+pub use structure::*;
 
 use std::collections::HashMap;
 

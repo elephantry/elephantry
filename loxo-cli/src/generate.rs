@@ -61,7 +61,7 @@ impl<'a> loxo::Model<'a> for Model<'a> {{
         file,
         r#"struct Structure;
 
-impl loxo::row::Structure for Structure
+impl loxo::Structure for Structure
 {{
     fn relation() -> &'static str
     {{

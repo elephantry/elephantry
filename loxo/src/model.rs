@@ -2,12 +2,12 @@ use std::collections::HashMap;
 
 pub trait Model<'a> {
     type Entity: crate::Entity;
-    type Structure: crate::row::Structure;
+    type Structure: crate::Structure;
 
     fn new(connection: &'a crate::Connection) -> Self;
 
     fn default_projection() -> crate::Projection {
-        use crate::row::Structure;
+        use crate::Structure;
 
         crate::Projection::new(&Self::Structure::definition())
     }
@@ -21,7 +21,7 @@ pub trait Model<'a> {
     }
 
     fn primary_key(entity: &Self::Entity) -> HashMap<&'static str, &dyn crate::pq::ToSql> {
-        use crate::row::Structure;
+        use crate::Structure;
         use crate::Entity;
 
         let mut pk = HashMap::new();

@@ -17,7 +17,7 @@ mod serie {
 
     pub struct Structure;
 
-    impl loxo::row::Structure for Structure {
+    impl loxo::Structure for Structure {
         fn relation() -> &'static str {
             "generate_series(1, 10)"
         }

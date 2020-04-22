@@ -73,7 +73,7 @@ impl<'a> loxo::Model<'a> for EventExtraModel {
 
 struct EventStructure;
 
-impl loxo::row::Structure for EventStructure {
+impl loxo::Structure for EventStructure {
     fn relation() -> &'static str {
         "public.event"
     }
