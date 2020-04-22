@@ -11,6 +11,81 @@ pub type Format = libpq::Format;
 pub type Oid = libpq::Oid;
 pub type Type = libpq::Type;
 
+pub trait ToRust {
+    fn to_rust(&self) -> String;
+}
+
+impl ToRust for Type {
+    fn to_rust(&self) -> String {
+        let rust = match self.name {
+            "bigint" | "int8" => "i64",
+            "bigserial" | "serial8" => "i64",
+            "bit" => "bytes::Bytes",
+            "bit varying" | "varbit" => "bytes::Bytes",
+            "boolean" | "bool" => "bool",
+            #[cfg(feature = "geo")]
+            "box" => "geo_types::Rect<f64>",
+            "bytea" => "Vec<u8>",
+            "character" | "char" => "i8",
+            "character varying" | "varchar" => "String",
+            #[cfg(feature = "network")]
+            "cidr" => todo!(),
+            #[cfg(feature = "geo")]
+            "circle" => todo!(),
+            #[cfg(feature = "chrono")]
+            "date" => "chrono::NaiveDate",
+            "double precision" | "float8" => "f64",
+            "inet" => "std::net::IpAddr",
+            "integer" | "int" | "int4" => "i32",
+            #[cfg(feature = "serde_json")]
+            "json" | "jsonb" => "serde::value::Value",
+            #[cfg(feature = "geo")]
+            "line" => todo!(),
+            #[cfg(feature = "geo")]
+            "lseg" => todo!(),
+            #[cfg(feature = "network")]
+            "macaddr" => "eui48::MacAddress",
+            #[cfg(feature = "network")]
+            "macaddr8" => "eui48::MacAddress",
+            "money" => "f32",
+            "numeric" | "decimal" => "f32",
+            #[cfg(feature = "geo")]
+            "path" => "geo_types::LineString<f64>",
+            "pg_lsn" => "String",
+            #[cfg(feature = "geo")]
+            "point" => "geo_types::Point<f64>",
+            #[cfg(feature = "geo")]
+            "polygon" => todo!(),
+            "real" | "float4" => "f32",
+            "smallint" | "int2" => "i16",
+            "smallserial" | "serial2" => "i16",
+            "serial" | "serial4" => "i32",
+            "text" => "String",
+            #[cfg(feature = "chrono")]
+            "time" | "time without time zone" => "chrono::NaiveTime",
+            #[cfg(feature = "chrono")]
+            "time with time zone" | "timetz" => todo!(),
+            #[cfg(not(feature = "chrono"))]
+            "timestamp" | "timestamp without time zone" => "std::time::SystemTime",
+            #[cfg(feature = "chrono")]
+            "timestamp" | "timestamp without time zone" => "chrono::NaiveDateTime",
+            #[cfg(not(feature = "chrono"))]
+            "timestamp with time zone" | "timestamptz" => "std::time::SystemTime",
+            #[cfg(feature = "chrono")]
+            "timestamp with time zone" | "timestamptz" => "chrono::DateTime<chrono::FixedOffset>",
+            #[cfg(feature = "uuid")]
+            "uuid" => "uuid::Uuid",
+            "xml" => "String",
+
+            "hstore" => "std::collection::HashMap<String, Option<String>>",
+
+            _ => "String",
+        };
+
+        rust.to_string()
+    }
+}
+
 pub struct Connection {
     inner: libpq::Connection,
 }

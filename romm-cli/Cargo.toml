@@ -1,0 +1,15 @@
+[package]
+name = "romm-cli"
+version = "0.1.0"
+authors = ["Sanpi <sanpi@homecomputing.fr>"]
+edition = "2018"
+
+[dependencies]
+case = "1.0"
+dotenv = "0.15"
+structopt = "0.3"
+term-table = "1.1"
+
+[dependencies.romm]
+version = "0.1"
+path = "../romm/"

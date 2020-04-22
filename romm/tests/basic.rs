@@ -67,7 +67,7 @@ fn main() {
         .is_none());
     assert_eq!(
         connection
-            .exist_where::<EventModel>("uuid = $1", &[&entity.uuid.unwrap()])
+            .exist_where::<EventModel>("uuid = $1", &[&uuid])
             .unwrap(),
         false
     );

@@ -78,6 +78,7 @@ order by name asc;
 pub struct Column {
     pub is_primary: bool,
     pub name: String,
+    pub oid: crate::pq::Oid,
     pub ty: String,
     pub default: Option<String>,
     pub is_notnull: bool,
@@ -101,6 +102,7 @@ with relation as(
 select
     att.attnum = any(ind.indkey) as "is_primary",
     att.attname      as "name",
+    typ.oid as "oid",
     case
         when name.nspname = 'pg_catalog' then typ.typname
         else format('%s.%s', name.nspname, typ.typname)
