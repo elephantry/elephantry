@@ -16,8 +16,8 @@ struct Event {
     browser: String,
 }
 
-impl romm::Entity for Event {
-    fn from(tuple: &romm::pq::Tuple) -> Self {
+impl loxo::Entity for Event {
+    fn from(tuple: &loxo::pq::Tuple) -> Self {
         Self {
             uuid: tuple.get("uuid"),
             name: tuple.get("name"),
@@ -27,7 +27,7 @@ impl romm::Entity for Event {
         }
     }
 
-    fn get(&self, field: &str) -> Option<&dyn romm::pq::ToSql> {
+    fn get(&self, field: &str) -> Option<&dyn loxo::pq::ToSql> {
         match field {
             "uuid" => match self.uuid {
                 Some(ref uuid) => Some(uuid),
@@ -43,20 +43,20 @@ impl romm::Entity for Event {
 }
 
 struct EventModel<'a> {
-    connection: &'a romm::Connection,
+    connection: &'a loxo::Connection,
 }
 
-impl<'a> romm::Model<'a> for EventModel<'a> {
+impl<'a> loxo::Model<'a> for EventModel<'a> {
     type Entity = Event;
     type Structure = EventStructure;
 
-    fn new(connection: &'a romm::Connection) -> Self {
+    fn new(connection: &'a loxo::Connection) -> Self {
         Self { connection }
     }
 }
 
 impl<'a> EventModel<'a> {
-    fn count_uniq_visitor(&self) -> romm::Result<u32> {
+    fn count_uniq_visitor(&self) -> loxo::Result<u32> {
         self.connection
             .execute("select count(distinct visitor_id) as count from event", &[])
             .map(|x| x.get(0).unwrap().get("count"))
@@ -82,9 +82,9 @@ struct EventExtra {
     os: Option<String>,
 }
 
-impl romm::Entity for EventExtra {
-    fn from(tuple: &romm::pq::Tuple) -> Self {
-        let event = <Event as romm::Entity>::from(tuple);
+impl loxo::Entity for EventExtra {
+    fn from(tuple: &loxo::pq::Tuple) -> Self {
+        let event = <Event as loxo::Entity>::from(tuple);
 
         Self {
             uuid: event.uuid,
@@ -96,7 +96,7 @@ impl romm::Entity for EventExtra {
         }
     }
 
-    fn get(&self, field: &str) -> Option<&dyn romm::pq::ToSql> {
+    fn get(&self, field: &str) -> Option<&dyn loxo::pq::ToSql> {
         match field {
             "uuid" => match self.uuid {
                 Some(ref uuid) => Some(uuid),
@@ -117,20 +117,20 @@ impl romm::Entity for EventExtra {
 
 struct EventExtraModel;
 
-impl<'a> romm::Model<'a> for EventExtraModel {
+impl<'a> loxo::Model<'a> for EventExtraModel {
     type Entity = EventExtra;
     type Structure = EventStructure;
 
-    fn new(_: &'a romm::Connection) -> Self {
+    fn new(_: &'a loxo::Connection) -> Self {
         Self {}
     }
 
-    fn create_projection() -> romm::Projection {
+    fn create_projection() -> loxo::Projection {
         Self::default_projection().set_field(
             "os",
-            romm::Row {
+            loxo::Row {
                 content: "%:browser:% ->> 'os'",
-                ty: romm::pq::ty::VARCHAR,
+                ty: loxo::pq::ty::VARCHAR,
             },
         )
     }
@@ -138,7 +138,7 @@ impl<'a> romm::Model<'a> for EventExtraModel {
 
 struct EventStructure;
 
-impl romm::row::Structure for EventStructure {
+impl loxo::row::Structure for EventStructure {
     fn relation() -> &'static str {
         "public.event"
     }
@@ -147,27 +147,27 @@ impl romm::row::Structure for EventStructure {
         &["uuid"]
     }
 
-    fn definition() -> std::collections::HashMap<&'static str, romm::Row> {
+    fn definition() -> std::collections::HashMap<&'static str, loxo::Row> {
         maplit::hashmap! {
-            "uuid" => romm::Row {
+            "uuid" => loxo::Row {
                 content: "%:uuid:%",
-                ty: romm::pq::ty::UUID,
+                ty: loxo::pq::ty::UUID,
             },
-            "name" => romm::Row {
+            "name" => loxo::Row {
                 content: "%:name:%",
-                ty: romm::pq::ty::VARCHAR,
+                ty: loxo::pq::ty::VARCHAR,
             },
-            "visitor_id" => romm::Row {
+            "visitor_id" => loxo::Row {
                 content: "%:visitor_id:%",
-                ty: romm::pq::ty::INT4,
+                ty: loxo::pq::ty::INT4,
             },
-            "properties" => romm::Row {
+            "properties" => loxo::Row {
                 content: "%:properties:%",
-                ty: romm::pq::ty::JSON,
+                ty: loxo::pq::ty::JSON,
             },
-            "browser" => romm::Row {
+            "browser" => loxo::Row {
                 content: "%:browser:%",
-                ty: romm::pq::ty::JSON,
+                ty: loxo::pq::ty::JSON,
             },
         }
     }

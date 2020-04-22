@@ -1,23 +1,23 @@
 mod serie {
-    #[derive(Clone, Debug, romm::Entity)]
+    #[derive(Clone, Debug, loxo::Entity)]
     pub struct Entity {
         n: i32,
     }
 
     pub struct Model;
 
-    impl<'a> romm::Model<'a> for Model {
+    impl<'a> loxo::Model<'a> for Model {
         type Entity = Entity;
         type Structure = Structure;
 
-        fn new(_: &'a romm::Connection) -> Self {
+        fn new(_: &'a loxo::Connection) -> Self {
             Self {}
         }
     }
 
     pub struct Structure;
 
-    impl romm::row::Structure for Structure {
+    impl loxo::row::Structure for Structure {
         fn relation() -> &'static str {
             "generate_series(1, 10)"
         }
@@ -26,20 +26,20 @@ mod serie {
             &["n"]
         }
 
-        fn definition() -> std::collections::HashMap<&'static str, romm::Row> {
+        fn definition() -> std::collections::HashMap<&'static str, loxo::Row> {
             maplit::hashmap! {
-                "n" => romm::Row {
+                "n" => loxo::Row {
                     content: "%:generate_series:%",
-                    ty: romm::pq::ty::INT4,
+                    ty: loxo::pq::ty::INT4,
                 },
             }
         }
     }
 }
 
-fn main() -> romm::Result<()> {
-    let romm = romm::Romm::new().add_default("romm", "postgres://sanpi@localhost/romm")?;
-    let connection = romm.default().unwrap();
+fn main() -> loxo::Result<()> {
+    let loxo = loxo::Loxo::new().add_default("loxo", "postgres://sanpi@localhost/loxo")?;
+    let connection = loxo.default().unwrap();
 
     let series = connection.find_all::<serie::Model>()?;
 

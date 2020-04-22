@@ -1,6 +1,6 @@
-fn main() -> romm::Result<()> {
-    let romm = romm::Romm::new().add_default("romm", "postgres://sanpi@localhost/romm")?;
-    let connection = romm.default().unwrap();
+fn main() -> loxo::Result<()> {
+    let loxo = loxo::Loxo::new().add_default("loxo", "postgres://sanpi@localhost/loxo")?;
+    let connection = loxo.default().unwrap();
 
     let results = connection.execute(
         "select generate_series as n from generate_series(1, 10)",

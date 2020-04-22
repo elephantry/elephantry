@@ -13,7 +13,7 @@ pub use entity::*;
 pub use errors::*;
 pub use model::*;
 pub use projection::*;
-pub use romm_derive::*;
+pub use loxo_derive::*;
 pub use row::*;
 
 use std::collections::HashMap;
@@ -44,12 +44,12 @@ macro_rules! pk {
     }}
 }
 
-pub struct Romm {
+pub struct Loxo {
     default: String,
     connections: HashMap<String, Connection>,
 }
 
-impl Romm {
+impl Loxo {
     pub fn new() -> Self {
         Self {
             default: String::new(),
@@ -89,7 +89,7 @@ impl Romm {
     }
 }
 
-impl Default for Romm {
+impl Default for Loxo {
     fn default() -> Self {
         Self::new()
     }

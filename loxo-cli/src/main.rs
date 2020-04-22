@@ -46,10 +46,10 @@ fn main() -> std::io::Result<()> {
 
     let opt = Opt::from_args();
     let dsn = std::env::var("DATABASE_URL").expect("Missing DATABASE_URL env variable");
-    let romm = romm::Romm::new()
+    let loxo = loxo::Loxo::new()
         .add_default("db", &dsn)
         .expect("Unable to connect to postgresql");
-    let connection = romm.default().unwrap();
+    let connection = loxo.default().unwrap();
 
     match opt {
         Opt::InspectDatabase {} => inspect::database(&connection),

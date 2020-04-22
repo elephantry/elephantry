@@ -1,5 +1,5 @@
 [package]
-name = "romm"
+name = "loxo"
 version = "0.1.0"
 authors = ["Sanpi <sanpi@homecomputing.fr>"]
 edition = "2018"
@@ -22,8 +22,8 @@ maplit = "1.0"
 serde_json = "1.0"
 uuid = "0.8"
 
-[dependencies.romm-derive]
-path = "../romm-derive"
+[dependencies.loxo-derive]
+path = "../loxo-derive"
 version = "0.1"
 
 [features]

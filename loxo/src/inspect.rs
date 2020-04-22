@@ -1,4 +1,4 @@
-#[derive(Clone, Debug, romm_derive::Entity)]
+#[derive(Clone, Debug, loxo_derive::Entity)]
 #[entity(internal)]
 pub struct Schema {
     pub name: String,
@@ -29,7 +29,7 @@ order by 1;
         .unwrap()
 }
 
-#[derive(Clone, Debug, romm_derive::Entity)]
+#[derive(Clone, Debug, loxo_derive::Entity)]
 #[entity(internal)]
 pub struct Relation {
     pub name: String,
@@ -73,7 +73,7 @@ order by name asc;
         .unwrap()
 }
 
-#[derive(Clone, Debug, romm_derive::Entity)]
+#[derive(Clone, Debug, loxo_derive::Entity)]
 #[entity(internal)]
 pub struct Column {
     pub is_primary: bool,

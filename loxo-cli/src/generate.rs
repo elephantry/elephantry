@@ -1,8 +1,8 @@
 use case::CaseExt;
 use std::io::Write;
 
-pub fn schema(connection: &romm::Connection, schema: &str) -> std::io::Result<()> {
-    let relations = romm::inspect::schema(connection, schema);
+pub fn schema(connection: &loxo::Connection, schema: &str) -> std::io::Result<()> {
+    let relations = loxo::inspect::schema(connection, schema);
 
     for r in relations {
         relation(connection, schema, &r.name)?;
@@ -11,7 +11,7 @@ pub fn schema(connection: &romm::Connection, schema: &str) -> std::io::Result<()
     Ok(())
 }
 
-pub fn relation(connection: &romm::Connection, schema: &str, relation: &str) -> std::io::Result<()> {
+pub fn relation(connection: &loxo::Connection, schema: &str, relation: &str) -> std::io::Result<()> {
     let dir = format!("model/{}", schema);
     std::fs::create_dir_all(&dir)?;
 
@@ -20,7 +20,7 @@ pub fn relation(connection: &romm::Connection, schema: &str, relation: &str) -> 
 
     write_entity(&mut file, connection, schema, relation)?;
 
-    let columns = romm::inspect::relation(connection, schema, relation);
+    let columns = loxo::inspect::relation(connection, schema, relation);
     let mut pk = Vec::new();
     let mut definition = Vec::new();
 
@@ -38,9 +38,9 @@ pub fn relation(connection: &romm::Connection, schema: &str, relation: &str) -> 
         }
 
         definition.push(format!(
-            "        definition.insert(\"{name}\", romm::Row {{
+            "        definition.insert(\"{name}\", loxo::Row {{
             content: \"%:{name}:%\",
-            ty: romm::pq::ty::{ty},
+            ty: loxo::pq::ty::{ty},
         }});",
             name = name,
             ty = ty.to_uppercase(),
@@ -51,15 +51,15 @@ pub fn relation(connection: &romm::Connection, schema: &str, relation: &str) -> 
         file,
         r"
 struct Model<'a> {{
-    connection: &'a romm::Connection,
+    connection: &'a loxo::Connection,
 }}
 
 
-impl<'a> romm::Model<'a> for Model<'a> {{
+impl<'a> loxo::Model<'a> for Model<'a> {{
     type Entity = Entity;
     type Structure = Structure;
 
-    fn new(connection: &'a romm::Connection) -> Self {{
+    fn new(connection: &'a loxo::Connection) -> Self {{
         Self {{ connection }}
     }}
 }}
@@ -71,7 +71,7 @@ impl<'a> romm::Model<'a> for Model<'a> {{
         file,
         r#"struct Structure;
 
-impl romm::row::Structure for Structure
+impl loxo::row::Structure for Structure
 {{
     fn relation() -> &'static str
     {{
@@ -83,7 +83,7 @@ impl romm::row::Structure for Structure
         &[{pk}]
     }}
 
-    fn definition() -> std::collections::HashMap<&'static str, romm::Row>
+    fn definition() -> std::collections::HashMap<&'static str, loxo::Row>
     {{
         let mut definition = std::collections::HashMap::new();
 
@@ -100,7 +100,7 @@ impl romm::row::Structure for Structure
     )
 }
 
-pub fn entity(connection: &romm::Connection, schema: &str, relation: &str) -> std::io::Result<()> {
+pub fn entity(connection: &loxo::Connection, schema: &str, relation: &str) -> std::io::Result<()> {
     let dir = format!("model/{}", schema);
     std::fs::create_dir_all(&dir)?;
 
@@ -110,8 +110,8 @@ pub fn entity(connection: &romm::Connection, schema: &str, relation: &str) -> st
     write_entity(&mut file, connection, schema, relation)
 }
 
-fn write_entity<W>(file: &mut std::io::BufWriter<W>, connection: &romm::Connection, schema: &str, relation: &str) -> std::io::Result<()> where W: std::io::Write {
-    let columns = romm::inspect::relation(connection, schema, relation);
+fn write_entity<W>(file: &mut std::io::BufWriter<W>, connection: &loxo::Connection, schema: &str, relation: &str) -> std::io::Result<()> where W: std::io::Write {
+    let columns = loxo::inspect::relation(connection, schema, relation);
     let mut fields = Vec::new();
 
     for column in &columns {
@@ -123,7 +123,7 @@ fn write_entity<W>(file: &mut std::io::BufWriter<W>, connection: &romm::Connecti
 
     write!(
         file,
-        r"#[derive(Clone, Debug, romm::Entity)]
+        r"#[derive(Clone, Debug, loxo::Entity)]
 struct Entity {{
 {fields}
 }}
@@ -132,11 +132,11 @@ struct Entity {{
     )
 }
 
-fn ty_to_rust(column: &romm::inspect::Column) -> String {
-    use romm::pq::ToRust;
+fn ty_to_rust(column: &loxo::inspect::Column) -> String {
+    use loxo::pq::ToRust;
     use std::convert::TryFrom;
 
-    let ty = romm::pq::Type::try_from(column.oid).unwrap();
+    let ty = loxo::pq::Type::try_from(column.oid).unwrap();
 
     if column.is_notnull {
         ty.to_rust()

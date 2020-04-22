@@ -85,27 +85,27 @@ fn impl_entity_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream
         });
 
     let name = &ast.ident;
-    let romm = if parameters.internal {
+    let loxo = if parameters.internal {
         quote::quote! {
             crate
         }
     } else {
         quote::quote! {
-            romm
+            loxo
         }
     };
 
     let gen = quote::quote! {
-        impl #romm::Entity for #name
+        impl #loxo::Entity for #name
         {
-            fn from(tuple: &#romm::pq::Tuple) -> Self
+            fn from(tuple: &#loxo::pq::Tuple) -> Self
             {
                 Self {
                     #(#from_body, )*
                 }
             }
 
-            fn get(&self, field: &str) -> Option<&dyn #romm::pq::ToSql> {
+            fn get(&self, field: &str) -> Option<&dyn #loxo::pq::ToSql> {
                 match field {
                     #(#get_body, )*
                     _ => None,

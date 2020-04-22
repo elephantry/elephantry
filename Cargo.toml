@@ -1,6 +1,6 @@
 [workspace]
 members = [
-    "romm",
-    "romm-cli",
-    "romm-derive",
+    "loxo",
+    "loxo-cli",
+    "loxo-derive",
 ]

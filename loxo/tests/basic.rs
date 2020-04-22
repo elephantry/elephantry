@@ -5,10 +5,10 @@ include!("entity_derive.rs");
 include!("entity.rs");
 
 fn main() {
-    let romm = romm::Romm::new()
-        .add_default("romm", "postgres://sanpi@localhost/romm")
+    let loxo = loxo::Loxo::new()
+        .add_default("loxo", "postgres://sanpi@localhost/loxo")
         .unwrap();
-    let connection = romm.default().unwrap();
+    let connection = loxo.default().unwrap();
 
     let count = connection
         .count_where::<EventModel>("name = $1", &[&"pageview"])
@@ -52,7 +52,7 @@ fn main() {
         connection,
         &entity,
         &maplit::hashmap! {
-            "name" => &"pageview" as &dyn romm::pq::ToSql,
+            "name" => &"pageview" as &dyn loxo::pq::ToSql,
         },
     );
     assert_eq!(&entity.name, "pageview");
@@ -62,7 +62,7 @@ fn main() {
     connection.delete_one::<EventModel>(&entity).unwrap();
     let uuid = entity.uuid.unwrap();
     assert!(connection
-        .find_by_pk::<EventModel>(&romm::pk! {uuid => uuid})
+        .find_by_pk::<EventModel>(&loxo::pk! {uuid => uuid})
         .unwrap()
         .is_none());
     assert_eq!(
@@ -80,15 +80,15 @@ fn main() {
     println!("Count uniq visitor: {}", count);
 }
 
-fn find_by_pk<'a, M>(connection: &romm::Connection, uuid: &str)
+fn find_by_pk<'a, M>(connection: &loxo::Connection, uuid: &str)
 where
-    M: romm::Model<'a>,
+    M: loxo::Model<'a>,
     M::Entity: std::fmt::Debug,
 {
     #[cfg(feature = "json")]
     let uuid = uuid::Uuid::parse_str(uuid).unwrap();
     let event = connection
-        .find_by_pk::<EventModel>(&romm::pk!(uuid))
+        .find_by_pk::<EventModel>(&loxo::pk!(uuid))
         .unwrap();
 
     match event {
@@ -97,9 +97,9 @@ where
     };
 }
 
-fn find_all<'a, M>(connection: &romm::Connection)
+fn find_all<'a, M>(connection: &loxo::Connection)
 where
-    M: romm::Model<'a>,
+    M: loxo::Model<'a>,
     M::Entity: std::fmt::Debug,
 {
     let events = connection.find_all::<M>().unwrap();
@@ -113,9 +113,9 @@ where
     }
 }
 
-fn insert_one<'a, M>(connection: &romm::Connection, entity: &M::Entity) -> M::Entity
+fn insert_one<'a, M>(connection: &loxo::Connection, entity: &M::Entity) -> M::Entity
 where
-    M: romm::Model<'a>,
+    M: loxo::Model<'a>,
     M::Entity: std::fmt::Debug,
 {
     let new_entity = connection.insert_one::<M>(&entity).unwrap();
@@ -126,12 +126,12 @@ where
 }
 
 fn update_one<'a, M>(
-    connection: &romm::Connection,
+    connection: &loxo::Connection,
     entity: &M::Entity,
-    data: &std::collections::HashMap<&str, &dyn romm::pq::ToSql>,
+    data: &std::collections::HashMap<&str, &dyn loxo::pq::ToSql>,
 ) -> M::Entity
 where
-    M: romm::Model<'a>,
+    M: loxo::Model<'a>,
     M::Entity: std::fmt::Debug,
 {
     let new_entity = connection.update_one::<M>(&entity, &data).unwrap();

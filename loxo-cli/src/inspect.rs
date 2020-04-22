@@ -1,4 +1,4 @@
-pub fn database(connection: &romm::Connection) {
+pub fn database(connection: &loxo::Connection) {
     let mut table = term_table::Table::new();
     table.style = term_table::TableStyle::rounded();
 
@@ -9,7 +9,7 @@ pub fn database(connection: &romm::Connection) {
         term_table::table_cell::TableCell::new("comment"),
     ]));
 
-    for schema in romm::inspect::database(connection).iter() {
+    for schema in loxo::inspect::database(connection).iter() {
         table.add_row(term_table::row::Row::new(vec![
             term_table::table_cell::TableCell::new(&schema.name),
             term_table::table_cell::TableCell::new(&schema.oid),
@@ -21,8 +21,8 @@ pub fn database(connection: &romm::Connection) {
     println!("{}", table.render());
 }
 
-pub fn schema(connection: &romm::Connection, schema: &str) {
-    let relations = romm::inspect::schema(connection, schema);
+pub fn schema(connection: &loxo::Connection, schema: &str) {
+    let relations = loxo::inspect::schema(connection, schema);
     let mut table = term_table::Table::new();
     table.style = term_table::TableStyle::rounded();
 
@@ -50,7 +50,7 @@ pub fn schema(connection: &romm::Connection, schema: &str) {
     println!("{}", table.render());
 }
 
-pub fn relation(connection: &romm::Connection, schema: &str, relation: &str) {
+pub fn relation(connection: &loxo::Connection, schema: &str, relation: &str) {
     let mut table = term_table::Table::new();
     table.style = term_table::TableStyle::rounded();
 
@@ -63,7 +63,7 @@ pub fn relation(connection: &romm::Connection, schema: &str, relation: &str) {
         term_table::table_cell::TableCell::new("comment"),
     ]));
 
-    for column in romm::inspect::relation(connection, schema, relation) {
+    for column in loxo::inspect::relation(connection, schema, relation) {
         let primary = if column.is_primary {
             "*".to_string()
         } else {
