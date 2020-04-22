@@ -12,6 +12,15 @@ impl FromSql for bool {
     }
 }
 
+impl FromSql for f32 {
+    fn from_sql(_: &crate::pq::Type, raw: Option<&String>) -> crate::Result<Self> {
+        match raw.unwrap().parse() {
+            Ok(s) => Ok(s),
+            Err(_) => Err(format!("Invalid f32 value: '{:?}'", raw)),
+        }
+    }
+}
+
 impl FromSql for i32 {
     fn from_sql(_: &crate::pq::Type, raw: Option<&String>) -> crate::Result<Self> {
         match raw.unwrap().parse() {
@@ -50,6 +59,21 @@ impl FromSql for u32 {
         match raw.unwrap().parse() {
             Ok(s) => Ok(s),
             Err(_) => Err(format!("Invalid i32 value: {:?}", raw.unwrap())),
+        }
+    }
+}
+
+#[cfg(feature = "date")]
+impl FromSql for chrono::DateTime<chrono::offset::FixedOffset> {
+    fn from_sql(_: &crate::pq::Type, raw: Option<&String>) -> crate::Result<Self> {
+        match chrono::DateTime::parse_from_str(raw.unwrap(), "%F %T%#z") {
+            Ok(date) => return Ok(date),
+            Err(_) => (),
+        };
+
+        match chrono::DateTime::parse_from_str(raw.unwrap(), "%F %T.%f%#z") {
+            Ok(date) => Ok(date),
+            Err(_) => Err(format!("Invalid timestampz value: {:?}", raw.unwrap())),
         }
     }
 }

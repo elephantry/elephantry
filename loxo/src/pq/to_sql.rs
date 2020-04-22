@@ -19,6 +19,16 @@ impl ToSql for bool {
     }
 }
 
+impl ToSql for f32 {
+    fn ty(&self) -> crate::pq::Type {
+        crate::pq::ty::FLOAT4
+    }
+
+    fn to_sql(&self) -> crate::Result<Vec<u8>> {
+        self.to_string().to_sql()
+    }
+}
+
 impl ToSql for &str {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::ty::VARCHAR
@@ -62,7 +72,18 @@ impl ToSql for u32 {
     }
 }
 
-#[cfg(feature = "serde_json")]
+#[cfg(feature = "date")]
+impl ToSql for chrono::DateTime<chrono::offset::FixedOffset> {
+    fn ty(&self) -> crate::pq::Type {
+        crate::pq::ty::TIMESTAMPTZ
+    }
+
+    fn to_sql(&self) -> crate::Result<Vec<u8>> {
+        self.to_rfc2822().to_sql()
+    }
+}
+
+#[cfg(feature = "json")]
 impl ToSql for serde_json::value::Value {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::ty::JSON
