@@ -78,6 +78,10 @@ impl Result {
     pub fn len(&self) -> usize {
         self.inner.ntuples()
     }
+
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
 }
 
 impl std::iter::Iterator for Result {
