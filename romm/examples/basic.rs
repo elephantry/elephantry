@@ -1,7 +1,7 @@
-#[cfg(feature = "romm-derive")]
+#[cfg(feature = "derive")]
 include!("entity_derive.rs");
 
-#[cfg(not(feature = "romm-derive"))]
+#[cfg(not(feature = "derive"))]
 include!("entity.rs");
 
 fn main()

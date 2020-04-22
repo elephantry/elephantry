@@ -8,9 +8,7 @@ mod errors;
 mod model;
 mod projection;
 
-#[cfg(feature = "romm-derive")]
 pub use romm_derive::*;
-
 pub use connection::*;
 pub use errors::*;
 pub use entity::*;

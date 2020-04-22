@@ -25,7 +25,10 @@ uuid = "0.8"
 [dependencies.romm-derive]
 path = "../romm-derive"
 version = "0.1"
-optional = true
+
+[features]
+default = ["derive"]
+derive = []
 
 [[example]]
 name = "basic"
