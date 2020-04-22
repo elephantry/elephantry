@@ -60,7 +60,7 @@ impl Connection {
         let query = format!(
             "SELECT {} FROM {};",
             M::create_projection(),
-            M::RowStructure::relation(),
+            M::Structure::relation(),
         );
 
         let results = self.execute(&query, &[])?;
@@ -79,7 +79,7 @@ impl Connection {
         let query = format!(
             "SELECT {} FROM {} WHERE {};",
             M::create_projection(),
-            M::RowStructure::relation(),
+            M::Structure::relation(),
             clause,
         );
 
@@ -98,7 +98,7 @@ impl Connection {
     {
         let query = format!(
             "SELECT COUNT(*) FROM {} WHERE {};",
-            M::RowStructure::relation(),
+            M::Structure::relation(),
             clause,
         );
 
@@ -117,7 +117,7 @@ impl Connection {
     {
         let query = format!(
             "SELECT EXISTS (SELECT true FROM {} WHERE {}) AS result;",
-            M::RowStructure::relation(),
+            M::Structure::relation(),
             clause,
         );
 
@@ -150,7 +150,7 @@ impl Connection {
 
         let query = format!(
             "INSERT INTO {} ({}) VALUES({}) RETURNING *;",
-            M::RowStructure::relation(),
+            M::Structure::relation(),
             fields.join(", "),
             params.join(", "),
         );
@@ -193,7 +193,7 @@ impl Connection {
 
         let query = format!(
             "UPDATE {} SET {} WHERE {} RETURNING *;",
-            M::RowStructure::relation(),
+            M::Structure::relation(),
             set.join(", "),
             clause,
         );
@@ -236,7 +236,7 @@ impl Connection {
     {
         let query = format!(
             "DELETE FROM {} WHERE {} RETURNING *;",
-            M::RowStructure::relation(),
+            M::Structure::relation(),
             clause,
         );
 
@@ -254,7 +254,7 @@ impl Connection {
     {
         let keys: Vec<_> = pk.keys().copied().collect();
 
-        if keys != M::RowStructure::primary_key() {
+        if keys != M::Structure::primary_key() {
             panic!("Invalid pk");
         }
 

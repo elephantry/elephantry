@@ -48,7 +48,7 @@ struct EventModel<'a> {
 
 impl<'a> romm::Model<'a> for EventModel<'a> {
     type Entity = Event;
-    type RowStructure = EventStructure;
+    type Structure = EventStructure;
 
     fn new(connection: &'a romm::Connection) -> Self {
         Self { connection }
@@ -119,7 +119,7 @@ struct EventExtraModel;
 
 impl<'a> romm::Model<'a> for EventExtraModel {
     type Entity = EventExtra;
-    type RowStructure = EventStructure;
+    type Structure = EventStructure;
 
     fn new(_: &'a romm::Connection) -> Self {
         Self {}

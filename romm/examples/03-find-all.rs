@@ -8,7 +8,7 @@ mod serie {
 
     impl<'a> romm::Model<'a> for Model {
         type Entity = Entity;
-        type RowStructure = Structure;
+        type Structure = Structure;
 
         fn new(_: &'a romm::Connection) -> Self {
             Self {}

@@ -2,14 +2,14 @@ use std::collections::HashMap;
 
 pub trait Model<'a> {
     type Entity: crate::Entity;
-    type RowStructure: crate::row::Structure;
+    type Structure: crate::row::Structure;
 
     fn new(connection: &'a crate::Connection) -> Self;
 
     fn default_projection() -> crate::Projection {
         use crate::row::Structure;
 
-        crate::Projection::new(&Self::RowStructure::definition())
+        crate::Projection::new(&Self::Structure::definition())
     }
 
     fn create_projection() -> crate::Projection {
@@ -26,7 +26,7 @@ pub trait Model<'a> {
 
         let mut pk = HashMap::new();
 
-        for field in Self::RowStructure::primary_key() {
+        for field in Self::Structure::primary_key() {
             pk.insert(*field, entity.get(field).unwrap());
         }
 
