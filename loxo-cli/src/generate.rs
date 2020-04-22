@@ -11,7 +11,11 @@ pub fn schema(connection: &loxo::Connection, schema: &str) -> std::io::Result<()
     Ok(())
 }
 
-pub fn relation(connection: &loxo::Connection, schema: &str, relation: &str) -> std::io::Result<()> {
+pub fn relation(
+    connection: &loxo::Connection,
+    schema: &str,
+    relation: &str,
+) -> std::io::Result<()> {
     let dir = format!("model/{}", schema);
     std::fs::create_dir_all(&dir)?;
 
@@ -100,7 +104,15 @@ pub fn entity(connection: &loxo::Connection, schema: &str, relation: &str) -> st
     write_entity(&mut file, connection, schema, relation)
 }
 
-fn write_entity<W>(file: &mut std::io::BufWriter<W>, connection: &loxo::Connection, schema: &str, relation: &str) -> std::io::Result<()> where W: std::io::Write {
+fn write_entity<W>(
+    file: &mut std::io::BufWriter<W>,
+    connection: &loxo::Connection,
+    schema: &str,
+    relation: &str,
+) -> std::io::Result<()>
+where
+    W: std::io::Write,
+{
     let columns = loxo::inspect::relation(connection, schema, relation);
     let mut fields = Vec::new();
 

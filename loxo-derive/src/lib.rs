@@ -7,9 +7,7 @@ struct Params {
 
 impl Default for Params {
     fn default() -> Self {
-        Self {
-            internal: false,
-        }
+        Self { internal: false }
     }
 }
 
@@ -23,26 +21,22 @@ impl syn::parse::Parse for Params {
             Err(_) => false,
         };
 
-        Ok(Params {
-            internal,
-        })
+        Ok(Params { internal })
     }
 }
 
 #[proc_macro_derive(Entity, attributes(entity))]
-pub fn entity_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream
-{
-    let ast = syn::parse(input)
-        .unwrap();
+pub fn entity_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
+    let ast = syn::parse(input).unwrap();
 
     impl_entity_macro(&ast)
 }
 
-fn impl_entity_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream
-{
-    let attribute = ast.attrs.iter().find(
-        |a| a.path.segments.len() == 1 && a.path.segments[0].ident == "entity"
-    );
+fn impl_entity_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
+    let attribute = ast
+        .attrs
+        .iter()
+        .find(|a| a.path.segments.len() == 1 && a.path.segments[0].ident == "entity");
 
     let parameters = match attribute {
         Some(attribute) => {
@@ -56,33 +50,31 @@ fn impl_entity_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream
         _ => unimplemented!(),
     };
 
-    let from_body = fields.iter()
-        .map(|field| {
-            let name = &field.ident;
+    let from_body = fields.iter().map(|field| {
+        let name = &field.ident;
 
+        quote::quote! {
+            #name: tuple.get(stringify!(#name))
+        }
+    });
+
+    let get_body = fields.iter().map(|field| {
+        let name = &field.ident;
+        let ty = &field.ty;
+
+        if is_option(ty) {
             quote::quote! {
-                #name: tuple.get(stringify!(#name))
-            }
-        });
-
-    let get_body = fields.iter()
-        .map(|field| {
-            let name = &field.ident;
-            let ty = &field.ty;
-
-            if is_option(ty) {
-                quote::quote! {
-                    stringify!(#name) => match self.#name {
-                        Some(ref value) => Some(value),
-                        None => None,
-                    }
-                }
-            } else {
-                quote::quote! {
-                    stringify!(#name) => Some(&self.#name)
+                stringify!(#name) => match self.#name {
+                    Some(ref value) => Some(value),
+                    None => None,
                 }
             }
-        });
+        } else {
+            quote::quote! {
+                stringify!(#name) => Some(&self.#name)
+            }
+        }
+    });
 
     let name = &ast.ident;
     let loxo = if parameters.internal {
@@ -117,8 +109,7 @@ fn impl_entity_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream
     gen.into()
 }
 
-fn is_option(ty: &syn::Type) -> bool
-{
+fn is_option(ty: &syn::Type) -> bool {
     let typepath = match ty {
         syn::Type::Path(typepath) => typepath,
         _ => unimplemented!(),

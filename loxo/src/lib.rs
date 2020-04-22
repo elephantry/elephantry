@@ -11,9 +11,9 @@ mod structure;
 pub use connection::*;
 pub use entity::*;
 pub use errors::*;
+pub use loxo_derive::*;
 pub use model::*;
 pub use projection::*;
-pub use loxo_derive::*;
 pub use structure::*;
 
 use std::collections::HashMap;

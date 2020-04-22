@@ -21,12 +21,18 @@ enum Opt {
         #[structopt(default_value = "public")]
         schema: String,
     },
-    #[structopt(name = "generate:schema-all", about = "Generate structure, model and entity file for all relations in a schema.")]
+    #[structopt(
+        name = "generate:schema-all",
+        about = "Generate structure, model and entity file for all relations in a schema."
+    )]
     GenerateSchema {
         #[structopt(default_value = "public")]
         schema: String,
     },
-    #[structopt(name = "generate:relation-all", about = "Generate structure, model and entity file for a given relation")]
+    #[structopt(
+        name = "generate:relation-all",
+        about = "Generate structure, model and entity file for a given relation"
+    )]
     GenerateRelation {
         relation: String,
         #[structopt(default_value = "public")]
@@ -57,9 +63,7 @@ fn main() -> std::io::Result<()> {
         Opt::InspectRelation { schema, relation } => {
             inspect::relation(&connection, &schema, &relation)
         }
-        Opt::GenerateSchema { schema } => {
-            generate::schema(&connection, &schema)?
-        }
+        Opt::GenerateSchema { schema } => generate::schema(&connection, &schema)?,
         Opt::GenerateRelation { schema, relation } => {
             generate::relation(&connection, &schema, &relation)?
         }

@@ -21,8 +21,8 @@ pub trait Model<'a> {
     }
 
     fn primary_key(entity: &Self::Entity) -> HashMap<&'static str, &dyn crate::pq::ToSql> {
-        use crate::Structure;
         use crate::Entity;
+        use crate::Structure;
 
         let mut pk = HashMap::new();
 
