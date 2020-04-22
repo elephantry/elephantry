@@ -5,7 +5,6 @@ pub trait ToSql {
     fn format(&self) -> crate::pq::Format {
         crate::pq::Format::Text
     }
-
 }
 
 impl ToSql for bool {
@@ -14,11 +13,7 @@ impl ToSql for bool {
     }
 
     fn to_sql(&self) -> crate::Result<Vec<u8>> {
-        let v = if *self {
-            b"t\0"
-        } else {
-            b"f\0"
-        };
+        let v = if *self { b"t\0" } else { b"f\0" };
 
         Ok(v.to_vec())
     }

@@ -7,9 +7,10 @@ pub struct Schema {
     pub comment: String,
 }
 
-pub fn database(connection: &crate::Connection) -> Vec<Schema>
-{
-    connection.query(r#"
+pub fn database(connection: &crate::Connection) -> Vec<Schema> {
+    connection
+        .query(
+            r#"
 select
     n.nspname     as "name",
     n.oid         as "oid",
@@ -22,7 +23,10 @@ from pg_catalog.pg_namespace n
 where n.nspname !~ '^pg' and n.nspname <> 'information_schema'
 group by 1, 2, 4
 order by 1;
-"#, &[]).unwrap()
+"#,
+            &[],
+        )
+        .unwrap()
 }
 
 #[derive(Clone, Debug, romm_derive::Entity)]
@@ -34,9 +38,10 @@ pub struct Relation {
     pub comment: Option<String>,
 }
 
-pub fn schema(connection: &crate::Connection, schema: &str) -> Vec<Relation>
-{
-    connection.query(r#"
+pub fn schema(connection: &crate::Connection, schema: &str) -> Vec<Relation> {
+    connection
+        .query(
+            r#"
 with schema as(
     select
         s.oid as oid
@@ -62,7 +67,10 @@ from
 join schema on schema.oid = cl.relnamespace
 where relkind in ('r', 'v', 'm', 'f')
 order by name asc;
-"#, &[&schema]).unwrap()
+"#,
+            &[&schema],
+        )
+        .unwrap()
 }
 
 #[derive(Clone, Debug, romm_derive::Entity)]
@@ -76,9 +84,10 @@ pub struct Column {
     pub comment: Option<String>,
 }
 
-pub fn relation(connection: &crate::Connection, schema: &str, relation: &str) -> Vec<Column>
-{
-    connection.query(r#"
+pub fn relation(connection: &crate::Connection, schema: &str, relation: &str) -> Vec<Column> {
+    connection
+        .query(
+            r#"
 with relation as(
     select
     c.oid as oid
@@ -114,5 +123,8 @@ where
     and not att.attisdropped
 order by
     att.attnum
-"#, &[&schema, &relation]).unwrap()
+"#,
+            &[&schema, &relation],
+        )
+        .unwrap()
 }

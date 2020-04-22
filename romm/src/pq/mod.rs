@@ -1,10 +1,10 @@
 use std::convert::TryInto;
 
-mod to_sql;
 mod from_sql;
+mod to_sql;
 
-pub use to_sql::ToSql;
 pub use from_sql::FromSql;
+pub use to_sql::ToSql;
 
 pub use libpq::ty;
 pub type Format = libpq::Format;
@@ -26,19 +26,21 @@ impl Connection {
         if params.is_empty() {
             self.inner.exec(query).try_into()
         } else {
-            let param_types = params.iter()
-                .map(|x| x.ty())
-                .collect::<Vec<_>>();
+            let param_types = params.iter().map(|x| x.ty()).collect::<Vec<_>>();
 
-            let param_values = params.iter()
-                .map(|x| x.to_sql().ok())
-                .collect::<Vec<_>>();
+            let param_values = params.iter().map(|x| x.to_sql().ok()).collect::<Vec<_>>();
 
-            let param_formats = params.iter()
-                .map(|x| x.format())
-                .collect::<Vec<_>>();
+            let param_formats = params.iter().map(|x| x.format()).collect::<Vec<_>>();
 
-            self.inner.exec_params(query, &param_types, &param_values, &param_formats, Format::Text).try_into()
+            self.inner
+                .exec_params(
+                    query,
+                    &param_types,
+                    &param_values,
+                    &param_formats,
+                    Format::Text,
+                )
+                .try_into()
         }
     }
 }
@@ -59,15 +61,18 @@ impl Result {
         for x in 0..self.inner.nfields() {
             let name = self.inner.field_name(x).unwrap();
 
-            values.insert(name, Field {
-                format: self.inner.field_format(x),
-                is_null: self.inner.is_null(n, x),
-                length: self.inner.length(n, x),
-                modifier: self.inner.field_mod(x),
-                size: self.inner.field_size(x),
-                ty: self.inner.field_type(x).unwrap(),
-                value: self.inner.value(n, x),
-            });
+            values.insert(
+                name,
+                Field {
+                    format: self.inner.field_format(x),
+                    is_null: self.inner.is_null(n, x),
+                    length: self.inner.length(n, x),
+                    modifier: self.inner.field_mod(x),
+                    size: self.inner.field_size(x),
+                    ty: self.inner.field_type(x).unwrap(),
+                    value: self.inner.value(n, x),
+                },
+            );
         }
 
         let tuple = Tuple::from(&values);
@@ -102,8 +107,13 @@ impl std::convert::TryFrom<libpq::Result> for Result {
         use libpq::Status::*;
 
         match inner.status() {
-            BadResponse | FatalError | NonFatalError => Err(inner.error_message().unwrap_or_else(|| "Unknow error".to_string())),
-            _ => Ok(Self { inner, current_tuple: 0 }),
+            BadResponse | FatalError | NonFatalError => Err(inner
+                .error_message()
+                .unwrap_or_else(|| "Unknow error".to_string())),
+            _ => Ok(Self {
+                inner,
+                current_tuple: 0,
+            }),
         }
     }
 }
@@ -120,12 +130,17 @@ impl Tuple {
         }
     }
 
-    pub fn get<T>(&self, name: &str) -> T where T: FromSql
+    pub fn get<T>(&self, name: &str) -> T
+    where
+        T: FromSql,
     {
-        self.try_get(name).unwrap_or_else(|_| panic!("Unable to find '{}' field", name))
+        self.try_get(name)
+            .unwrap_or_else(|_| panic!("Unable to find '{}' field", name))
     }
 
-    pub fn try_get<T>(&self, name: &str) -> crate::Result<T> where T: FromSql
+    pub fn try_get<T>(&self, name: &str) -> crate::Result<T>
+    where
+        T: FromSql,
     {
         if let Some(field) = self.values.get(&name.to_string()) {
             FromSql::from_sql(&field.ty, field.value.as_ref())
@@ -134,9 +149,9 @@ impl Tuple {
         }
     }
 
-    pub fn get_bytes(&self, name: &str) -> Option<Vec<u8>>
-    {
-        self.values.get(&name.to_string())
+    pub fn get_bytes(&self, name: &str) -> Option<Vec<u8>> {
+        self.values
+            .get(&name.to_string())
             .map(|x| x.value.clone().unwrap_or_default().as_bytes().to_vec())
     }
 }
