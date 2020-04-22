@@ -8,6 +8,22 @@ pub trait ToSql {
 
 }
 
+impl ToSql for bool {
+    fn ty(&self) -> crate::pq::Type {
+        crate::pq::ty::BOOL
+    }
+
+    fn to_sql(&self) -> crate::Result<Vec<u8>> {
+        let v = if *self {
+            b"t\0"
+        } else {
+            b"f\0"
+        };
+
+        Ok(v.to_vec())
+    }
+}
+
 impl ToSql for &str {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::ty::VARCHAR
@@ -34,6 +50,16 @@ impl ToSql for String {
 impl ToSql for i32 {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::ty::INT4
+    }
+
+    fn to_sql(&self) -> crate::Result<Vec<u8>> {
+        self.to_string().to_sql()
+    }
+}
+
+impl ToSql for u32 {
+    fn ty(&self) -> crate::pq::Type {
+        crate::pq::ty::INT8
     }
 
     fn to_sql(&self) -> crate::Result<Vec<u8>> {

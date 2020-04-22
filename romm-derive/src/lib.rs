@@ -1,6 +1,35 @@
 extern crate proc_macro;
 
-#[proc_macro_derive(Entity)]
+#[derive(Clone, Debug)]
+struct Params {
+    internal: bool,
+}
+
+impl Default for Params {
+    fn default() -> Self {
+        Self {
+            internal: false,
+        }
+    }
+}
+
+impl syn::parse::Parse for Params {
+    fn parse(input: syn::parse::ParseStream) -> syn::parse::Result<Self> {
+        let content;
+        syn::parenthesized!(content in input);
+
+        let internal = match content.parse::<syn::Ident>() {
+            Ok(internal) => internal == "internal",
+            Err(_) => false,
+        };
+
+        Ok(Params {
+            internal,
+        })
+    }
+}
+
+#[proc_macro_derive(Entity, attributes(entity))]
 pub fn entity_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream
 {
     let ast = syn::parse(input)
@@ -11,6 +40,17 @@ pub fn entity_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream
 
 fn impl_entity_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream
 {
+    let attribute = ast.attrs.iter().find(
+        |a| a.path.segments.len() == 1 && a.path.segments[0].ident == "entity"
+    );
+
+    let parameters = match attribute {
+        Some(attribute) => {
+            syn::parse2(attribute.tokens.clone()).expect("Invalid entity attribute!")
+        }
+        None => Params::default(),
+    };
+
     let fields = match ast.data {
         syn::Data::Struct(ref s) => &s.fields,
         _ => unimplemented!(),
@@ -45,18 +85,27 @@ fn impl_entity_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream
         });
 
     let name = &ast.ident;
+    let romm = if parameters.internal {
+        quote::quote! {
+            crate
+        }
+    } else {
+        quote::quote! {
+            romm
+        }
+    };
 
     let gen = quote::quote! {
-        impl romm::Entity for #name
+        impl #romm::Entity for #name
         {
-            fn from(tuple: &romm::pq::Tuple) -> Self
+            fn from(tuple: &#romm::pq::Tuple) -> Self
             {
                 Self {
                     #(#from_body, )*
                 }
             }
 
-            fn get(&self, field: &str) -> Option<&dyn romm::pq::ToSql> {
+            fn get(&self, field: &str) -> Option<&dyn #romm::pq::ToSql> {
                 match field {
                     #(#get_body, )*
                     _ => None,

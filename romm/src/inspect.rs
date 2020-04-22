@@ -1,4 +1,5 @@
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, romm_derive::Entity)]
+#[entity(internal)]
 pub struct Schema {
     pub name: String,
     pub oid: crate::pq::Oid,
@@ -8,7 +9,7 @@ pub struct Schema {
 
 pub fn database(connection: &crate::Connection) -> Vec<Schema>
 {
-    let tuples = connection.execute(r#"
+    connection.query(r#"
 select
     n.nspname     as "name",
     n.oid         as "oid",
@@ -21,17 +22,11 @@ from pg_catalog.pg_namespace n
 where n.nspname !~ '^pg' and n.nspname <> 'information_schema'
 group by 1, 2, 4
 order by 1;
-"#, &[]).unwrap();
-
-    tuples.map(|x| Schema {
-        name: x.get("name"),
-        oid: x.get("oid"),
-        relations: x.get("relations"),
-        comment: x.get("comment"),
-    }).collect()
+"#, &[]).unwrap()
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, romm_derive::Entity)]
+#[entity(internal)]
 pub struct Relation {
     pub name: String,
     pub ty: String,
@@ -41,7 +36,7 @@ pub struct Relation {
 
 pub fn schema(connection: &crate::Connection, schema: &str) -> Vec<Relation>
 {
-    let tuples = connection.execute(r#"
+    connection.query(r#"
 with schema as(
     select
         s.oid as oid
@@ -57,7 +52,7 @@ select
         when cl.relkind = 'm' then 'materialized view'
         when cl.relkind = 'f' then 'foreign table'
         else 'other'
-    end             as "type",
+    end             as "ty",
     cl.oid          as "oid",
     des.description as "comment"
 from
@@ -67,18 +62,11 @@ from
 join schema on schema.oid = cl.relnamespace
 where relkind in ('r', 'v', 'm', 'f')
 order by name asc;
-"#, &[&schema]).unwrap();
-
-
-    tuples.map(|x| Relation {
-        name: x.get("name"),
-        ty: x.get("type"),
-        oid: x.get("oid"),
-        comment: x.get("comment"),
-    }).collect()
+"#, &[&schema]).unwrap()
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, romm_derive::Entity)]
+#[entity(internal)]
 pub struct Column {
     pub is_primary: bool,
     pub name: String,
@@ -90,7 +78,7 @@ pub struct Column {
 
 pub fn relation(connection: &crate::Connection, schema: &str, relation: &str) -> Vec<Column>
 {
-    let tuples = connection.execute(r#"
+    connection.query(r#"
 with relation as(
     select
     c.oid as oid
@@ -107,7 +95,7 @@ select
     case
         when name.nspname = 'pg_catalog' then typ.typname
         else format('%s.%s', name.nspname, typ.typname)
-    end as "type",
+    end as "ty",
     pg_catalog.pg_get_expr(def.adbin, def.adrelid) as "default",
     att.attnotnull as "is_notnull",
     dsc.description as "comment"
@@ -126,15 +114,5 @@ where
     and not att.attisdropped
 order by
     att.attnum
-"#, &[&schema, &relation]).unwrap();
-
-
-    tuples.map(|x| Column {
-        is_primary: x.get("is_primary"),
-        name: x.get("name"),
-        ty: x.get("type"),
-        default: x.get("default"),
-        is_notnull: x.get("is_notnull"),
-        comment: x.get("comment"),
-    }).collect()
+"#, &[&schema, &relation]).unwrap()
 }

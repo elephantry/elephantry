@@ -2,18 +2,13 @@ pub trait FromSql: Sized {
     fn from_sql(ty: &crate::pq::Type, raw: Option<&String>) -> crate::Result<Self>;
 }
 
-impl<T: FromSql> FromSql for Option<T> {
-    fn from_sql(ty: &crate::pq::Type, raw: Option<&String>) -> crate::Result<Self> {
-        match raw {
-            Some(_) => Ok(Some(T::from_sql(ty, raw)?)),
-            None => Ok(None),
-        }
-    }
-}
-
-impl FromSql for String {
+impl FromSql for bool {
     fn from_sql(_: &crate::pq::Type, raw: Option<&String>) -> crate::Result<Self> {
-        Ok(raw.unwrap().to_string())
+        match raw.unwrap().as_str() {
+            "t" => Ok(true),
+            "f" => Ok(false),
+            _ => Err(format!("Invalid bool value: '{:?}'", raw)),
+        }
     }
 }
 
@@ -35,12 +30,26 @@ impl FromSql for i64 {
     }
 }
 
-impl FromSql for bool {
+impl<T: FromSql> FromSql for Option<T> {
+    fn from_sql(ty: &crate::pq::Type, raw: Option<&String>) -> crate::Result<Self> {
+        match raw {
+            Some(_) => Ok(Some(T::from_sql(ty, raw)?)),
+            None => Ok(None),
+        }
+    }
+}
+
+impl FromSql for String {
     fn from_sql(_: &crate::pq::Type, raw: Option<&String>) -> crate::Result<Self> {
-        match raw.unwrap().as_str() {
-            "t" => Ok(true),
-            "f" => Ok(false),
-            _ => Err(format!("Invalid bool value: '{:?}'", raw)),
+        Ok(raw.unwrap().to_string())
+    }
+}
+
+impl FromSql for u32 {
+    fn from_sql(_: &crate::pq::Type, raw: Option<&String>) -> crate::Result<Self> {
+        match raw.unwrap().parse() {
+            Ok(s) => Ok(s),
+            Err(_) => Err(format!("Invalid i32 value: {:?}", raw.unwrap())),
         }
     }
 }

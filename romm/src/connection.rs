@@ -19,6 +19,11 @@ impl Connection
         self.connection.query(&query, params)
     }
 
+    pub fn query<E: crate::Entity>(&self, query: &str, params: &[&dyn crate::pq::ToSql]) -> crate::Result<Vec<E>> {
+        self.connection.query(&query, params)
+            .map(|result| result.map(|tuple| E::from(&tuple)).collect())
+    }
+
     pub fn find_by_pk<M>(&self, pk: &HashMap<&str, &dyn crate::pq::ToSql>)
         -> crate::Result<Option<M::Entity>> where M: crate::Model
     {
