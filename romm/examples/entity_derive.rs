@@ -39,7 +39,7 @@ impl romm::Model for EventExtraModel
         Self::default_projection()
             .set_field("os", romm::Row {
                 content: "%:browser:% ->> 'os'",
-                ty: romm::pq::Type::VARCHAR,
+                ty: romm::pq::ty::VARCHAR,
             })
     }
 }
@@ -63,23 +63,23 @@ impl romm::row::Structure for EventStructure
         maplit::hashmap! {
             "uuid" => romm::Row {
                 content: "%:uuid:%",
-                ty: romm::pq::Type::UUID,
+                ty: romm::pq::ty::UUID,
             },
             "name" => romm::Row {
                 content: "%:name:%",
-                ty: romm::pq::Type::VARCHAR,
+                ty: romm::pq::ty::VARCHAR,
             },
             "visitor_id" => romm::Row {
                 content: "%:visitor_id:%",
-                ty: romm::pq::Type::INT4,
+                ty: romm::pq::ty::INT4,
             },
             "properties" => romm::Row {
                 content: "%:properties:%",
-                ty: romm::pq::Type::JSON,
+                ty: romm::pq::ty::JSON,
             },
             "browser" => romm::Row {
                 content: "%:browser:%",
-                ty: romm::pq::Type::JSON,
+                ty: romm::pq::ty::JSON,
             },
         }
     }

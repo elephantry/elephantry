@@ -10,7 +10,7 @@ pub trait ToSql {
 
 impl ToSql for &str {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::Type::VARCHAR
+        crate::pq::ty::VARCHAR
     }
 
     fn to_sql(&self) -> crate::Result<Vec<u8>> {
@@ -23,7 +23,7 @@ impl ToSql for &str {
 
 impl ToSql for String {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::Type::VARCHAR
+        crate::pq::ty::VARCHAR
     }
 
     fn to_sql(&self) -> crate::Result<Vec<u8>> {
@@ -33,7 +33,7 @@ impl ToSql for String {
 
 impl ToSql for i32 {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::Type::INT4
+        crate::pq::ty::INT4
     }
 
     fn to_sql(&self) -> crate::Result<Vec<u8>> {
@@ -44,7 +44,7 @@ impl ToSql for i32 {
 #[cfg(feature = "serde_json")]
 impl ToSql for serde_json::value::Value {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::Type::JSON
+        crate::pq::ty::JSON
     }
 
     fn to_sql(&self) -> crate::Result<Vec<u8>> {
@@ -58,7 +58,7 @@ impl ToSql for serde_json::value::Value {
 #[cfg(feature = "uuid")]
 impl ToSql for uuid::Uuid {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::Type::UUID
+        crate::pq::ty::UUID
     }
 
     fn to_sql(&self) -> crate::Result<Vec<u8>> {

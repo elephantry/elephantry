@@ -6,6 +6,7 @@ mod from_sql;
 pub use to_sql::ToSql;
 pub use from_sql::FromSql;
 
+pub use libpq::ty;
 pub type Format = libpq::Format;
 pub type Oid = libpq::Oid;
 pub type Type = libpq::Type;
@@ -125,7 +126,7 @@ impl Tuple {
         if let Some(field) = self.values.get(&name.to_string()) {
             FromSql::from_sql(&field.ty, field.value.as_ref())
         } else {
-            FromSql::from_sql(&Type::TEXT, None)
+            FromSql::from_sql(&ty::TEXT, None)
         }
     }
 
