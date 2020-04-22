@@ -29,17 +29,3 @@ version = "0.1"
 [features]
 default = ["derive"]
 derive = []
-
-[[example]]
-name = "basic"
-required-features = ["serde_json", "uuid"]
-
-[[example]]
-name = "entity"
-crate-type = ["lib"]
-required-features = ["serde_json", "uuid"]
-
-[[example]]
-name = "entity_derive"
-crate-type = ["lib"]
-required-features = ["serde_json", "uuid"]

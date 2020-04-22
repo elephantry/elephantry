@@ -1,85 +1,94 @@
 #[derive(Clone, Debug, romm::Entity)]
-struct Event
-{
+struct Event {
+    #[cfg(feature = "uuid")]
     uuid: Option<uuid::Uuid>,
+    #[cfg(not(feature = "uuid"))]
+    uuid: Option<String>,
     name: String,
     visitor_id: i32,
+    #[cfg(feature = "json")]
     properties: serde_json::Value,
+    #[cfg(not(feature = "json"))]
+    properties: String,
+    #[cfg(feature = "json")]
     browser: serde_json::Value,
+    #[cfg(not(feature = "json"))]
+    browser: String,
 }
 
 struct EventModel<'a> {
     connection: &'a romm::Connection,
 }
 
-impl<'a> romm::Model<'a> for EventModel<'a>
-{
+impl<'a> romm::Model<'a> for EventModel<'a> {
     type Entity = Event;
     type RowStructure = EventStructure;
 
     fn new(connection: &'a romm::Connection) -> Self {
-        Self {
-            connection,
-        }
+        Self { connection }
     }
 }
 
 impl<'a> EventModel<'a> {
     fn count_uniq_visitor(&self) -> romm::Result<u32> {
-        self.connection.execute("select count(distinct visitor_id) as count from event", &[])
+        self.connection
+            .execute("select count(distinct visitor_id) as count from event", &[])
             .map(|x| x.get(0).unwrap().get("count"))
     }
 }
 
 #[derive(Clone, Debug, romm::Entity)]
-struct EventExtra
-{
+struct EventExtra {
+    #[cfg(feature = "uuid")]
     uuid: Option<uuid::Uuid>,
+    #[cfg(not(feature = "uuid"))]
+    uuid: Option<String>,
     name: String,
     visitor_id: i32,
+    #[cfg(feature = "json")]
     properties: serde_json::Value,
+    #[cfg(not(feature = "json"))]
+    properties: String,
+    #[cfg(feature = "json")]
     browser: serde_json::Value,
+    #[cfg(not(feature = "json"))]
+    browser: String,
     os: Option<String>,
 }
 
 struct EventExtraModel;
 
-impl<'a> romm::Model<'a> for EventExtraModel
-{
+impl<'a> romm::Model<'a> for EventExtraModel {
     type Entity = EventExtra;
     type RowStructure = EventStructure;
 
     fn new(_: &'a romm::Connection) -> Self {
-        Self {
-        }
+        Self {}
     }
 
-    fn create_projection() -> romm::Projection
-    {
-        Self::default_projection()
-            .set_field("os", romm::Row {
+    fn create_projection() -> romm::Projection {
+        Self::default_projection().set_field(
+            "os",
+            romm::Row {
                 content: "%:browser:% ->> 'os'",
                 ty: romm::pq::ty::VARCHAR,
-            })
+            },
+        )
     }
 }
 
 struct EventStructure;
 
-impl romm::row::Structure for EventStructure
-{
-    fn relation() -> &'static str
-    {
+impl romm::row::Structure for EventStructure {
+    fn relation() -> &'static str {
         "public.event"
     }
 
-    fn primary_key() -> &'static [&'static str]
-    {
+    fn primary_key() -> &'static [&'static str] {
         &["uuid"]
     }
 
-    fn definition() -> std::collections::HashMap<&'static str, romm::Row>
-    {
+    fn definition() -> std::collections::HashMap<&'static str, romm::Row> {
         maplit::hashmap! {
             "uuid" => romm::Row {
                 content: "%:uuid:%",
