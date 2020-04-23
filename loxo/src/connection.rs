@@ -45,7 +45,7 @@ impl Connection {
         M: crate::Model<'a>,
     {
         let (clause, params) = self.pk_clause::<M>(pk);
-        let tuples = self.find_where::<M>(&clause, &params)?;
+        let tuples = self.find_where::<M>(&clause, &params, None)?;
 
         Ok(match tuples.get(0) {
             Some(e) => Some(e.clone()),
@@ -72,15 +72,17 @@ impl Connection {
         &self,
         clause: &str,
         params: &[&dyn crate::pq::ToSql],
+        suffix: Option<&str>,
     ) -> crate::Result<Vec<M::Entity>>
     where
         M: crate::Model<'a>,
     {
         let query = format!(
-            "SELECT {} FROM {} WHERE {};",
+            "SELECT {} FROM {} WHERE {} {};",
             M::create_projection(),
             M::Structure::relation(),
             clause,
+            suffix.unwrap_or_default(),
         );
 
         let results = self.execute(&query, params)?;
