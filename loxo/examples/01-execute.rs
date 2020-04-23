@@ -1,8 +1,7 @@
 fn main() -> loxo::Result<()> {
-    let loxo = loxo::Loxo::new().add_default("loxo", "postgres://sanpi@localhost/loxo")?;
-    let connection = loxo.default().unwrap();
+    let loxo = loxo::Loxo::new("postgres://sanpi@localhost/loxo")?;
 
-    let results = connection.execute(
+    let results = loxo.execute(
         "select generate_series as n from generate_series(1, 10)",
         &[],
     )?;

@@ -50,11 +50,8 @@ pub struct Loxo {
 }
 
 impl Loxo {
-    pub fn new() -> Self {
-        Self {
-            default: String::new(),
-            connections: HashMap::new(),
-        }
+    pub fn new(url: &str) -> Result<Self> {
+        Self::default().add_default("default", url)
     }
 
     pub fn add_default(self, name: &str, url: &str) -> Result<Self> {
@@ -76,7 +73,7 @@ impl Loxo {
         Ok(self)
     }
 
-    pub fn default(&self) -> Option<&Connection> {
+    pub fn get_default(&self) -> Option<&Connection> {
         self.connections.get(&self.default)
     }
 
@@ -91,7 +88,26 @@ impl Loxo {
 
 impl Default for Loxo {
     fn default() -> Self {
-        Self::new()
+        Self {
+            default: String::new(),
+            connections: HashMap::new(),
+        }
+    }
+}
+
+impl std::ops::Index<&str> for Loxo {
+    type Output = crate::Connection;
+
+    fn index(&self, index: &str) -> &Self::Output {
+        self.get(index).unwrap()
+    }
+}
+
+impl std::ops::Deref for Loxo {
+    type Target = crate::Connection;
+
+    fn deref(&self) -> &Self::Target {
+        self.get_default().unwrap()
     }
 }
 

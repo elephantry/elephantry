@@ -35,10 +35,9 @@ mod serie {
 }
 
 fn main() -> loxo::Result<()> {
-    let loxo = loxo::Loxo::new().add_default("loxo", "postgres://sanpi@localhost/loxo")?;
-    let connection = loxo.default().unwrap();
+    let loxo = loxo::Loxo::new("postgres://sanpi@localhost/loxo")?;
 
-    let series = connection.find_all::<serie::Model>()?;
+    let series = loxo.find_all::<serie::Model>()?;
 
     for serie in series {
         dbg!(serie);
