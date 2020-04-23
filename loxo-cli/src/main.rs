@@ -47,7 +47,6 @@ enum Opt {
 }
 
 fn main() -> std::io::Result<()> {
-    #[cfg(debug_assertions)]
     dotenv::dotenv().ok();
 
     let opt = Opt::from_args();
