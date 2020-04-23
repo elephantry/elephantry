@@ -1,4 +1,4 @@
-extern crate proc_macro;
+#![warn(rust_2018_idioms)]
 
 #[derive(Clone, Debug)]
 struct Params {
@@ -12,7 +12,7 @@ impl Default for Params {
 }
 
 impl syn::parse::Parse for Params {
-    fn parse(input: syn::parse::ParseStream) -> syn::parse::Result<Self> {
+    fn parse(input: syn::parse::ParseStream<'_>) -> syn::parse::Result<Self> {
         let content;
         syn::parenthesized!(content in input);
 
