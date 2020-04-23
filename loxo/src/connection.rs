@@ -186,11 +186,14 @@ impl Connection {
         let (clause, mut params) = self.pk_clause::<M>(&pk);
         let mut x = params.len() + 1;
         let mut set = Vec::new();
+        let projection = M::create_projection();
 
         for (key, value) in data.iter() {
-            set.push(format!("{} = ${}", key, x));
-            params.push(*value);
-            x += 1;
+            if projection.has_field(key) {
+                set.push(format!("{} = ${}", key, x));
+                params.push(*value);
+                x += 1;
+            }
         }
 
         let query = format!(

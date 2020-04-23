@@ -30,6 +30,10 @@ impl Projection {
     pub fn fields_name(&self) -> Vec<&str> {
         self.fields.keys().copied().collect()
     }
+
+    pub fn has_field(&self, name: &str) -> bool {
+        self.fields.contains_key(name)
+    }
 }
 
 impl std::fmt::Display for Projection {
