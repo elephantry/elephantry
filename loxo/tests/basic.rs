@@ -52,7 +52,7 @@ fn main() {
         connection,
         &entity,
         &maplit::hashmap! {
-            "name" => &"pageview" as &dyn loxo::pq::ToSql,
+            "name".to_string() => &"pageview" as &dyn loxo::pq::ToSql,
         },
     );
     assert_eq!(&entity.name, "pageview");
@@ -128,7 +128,7 @@ where
 fn update_one<'a, M>(
     connection: &loxo::Connection,
     entity: &M::Entity,
-    data: &std::collections::HashMap<&str, &dyn loxo::pq::ToSql>,
+    data: &std::collections::HashMap<String, &dyn loxo::pq::ToSql>,
 ) -> M::Entity
 where
     M: loxo::Model<'a>,

@@ -165,7 +165,7 @@ impl Connection {
     pub fn update_one<'a, M>(
         &self,
         entity: &M::Entity,
-        data: &HashMap<&str, &dyn crate::pq::ToSql>,
+        data: &HashMap<String, &dyn crate::pq::ToSql>,
     ) -> crate::Result<M::Entity>
     where
         M: crate::Model<'a>,
@@ -178,7 +178,7 @@ impl Connection {
     pub fn update_by_pk<'a, M>(
         &self,
         pk: &HashMap<&str, &dyn crate::pq::ToSql>,
-        data: &HashMap<&str, &dyn crate::pq::ToSql>,
+        data: &HashMap<String, &dyn crate::pq::ToSql>,
     ) -> crate::Result<M::Entity>
     where
         M: crate::Model<'a>,
