@@ -44,7 +44,7 @@ pub fn relation(
     write!(
         file,
         r"
-struct Model<'a> {{
+pub struct Model<'a> {{
     connection: &'a loxo::Connection,
 }}
 
@@ -63,7 +63,7 @@ impl<'a> loxo::Model<'a> for Model<'a> {{
 
     write!(
         file,
-        r#"struct Structure;
+        r#"pub struct Structure;
 
 impl loxo::Structure for Structure
 {{
@@ -126,7 +126,7 @@ where
     write!(
         file,
         r"#[derive(Clone, Debug, loxo::Entity)]
-struct Entity {{
+pub struct Entity {{
 {fields}
 }}
 ",
