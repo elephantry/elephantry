@@ -213,7 +213,7 @@ impl Tuple {
         T: FromSql,
     {
         self.try_get(name)
-            .unwrap_or_else(|_| panic!("Unable to find '{}' field", name))
+            .unwrap_or_else(|err| panic!("Unable to retreive '{}' field: {}", name, err))
     }
 
     pub fn try_get<T>(&self, name: &str) -> crate::Result<T>
