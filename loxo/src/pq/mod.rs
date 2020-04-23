@@ -92,8 +92,11 @@ pub struct Connection {
 
 impl Connection {
     pub fn new(dsn: &str) -> crate::Result<Self> {
+        let inner = libpq::Connection::new(dsn)?;
+        inner.set_error_verbosity(libpq::Verbosity::Terse);
+
         Ok(Self {
-            inner: libpq::Connection::new(dsn)?,
+            inner,
         })
     }
 
