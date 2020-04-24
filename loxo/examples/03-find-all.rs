@@ -35,7 +35,7 @@ mod serie {
 }
 
 fn main() -> loxo::Result<()> {
-    let loxo = loxo::Loxo::new("postgres://sanpi@localhost/loxo")?;
+    let loxo = loxo::Loxo::new("postgres://localhost")?;
 
     let series = loxo.find_all::<serie::Model>()?;
 
