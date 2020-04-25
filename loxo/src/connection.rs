@@ -32,9 +32,14 @@ impl Connection {
         query: &str,
         params: &[&dyn crate::pq::ToSql],
     ) -> crate::Result<Vec<E>> {
-        self.connection
-            .query(&query, params)
-            .map(|result| result.map(|tuple| E::from(&tuple)).collect())
+        let tuples = self.connection.query(&query, params)?;
+        let mut results = Vec::with_capacity(tuples.len());
+
+        for tuple in tuples {
+            results.push(E::from(&tuple))
+        }
+
+        Ok(results)
     }
 
     pub fn find_by_pk<'a, M>(
@@ -64,9 +69,7 @@ impl Connection {
             suffix.unwrap_or_default(),
         );
 
-        let results = self.execute(&query, &[])?;
-
-        Ok(results.map(|tuple| M::create_entity(&tuple)).collect())
+        self.query(&query, &[])
     }
 
     pub fn find_where<'a, M>(
@@ -86,9 +89,7 @@ impl Connection {
             suffix.unwrap_or_default(),
         );
 
-        let results = self.execute(&query, params)?;
-
-        Ok(results.map(|tuple| M::create_entity(&tuple)).collect())
+        self.query(&query, params)
     }
 
     pub fn count_where<'a, M>(
