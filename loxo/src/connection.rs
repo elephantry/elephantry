@@ -53,14 +53,15 @@ impl Connection {
         })
     }
 
-    pub fn find_all<'a, M>(&self) -> crate::Result<Vec<M::Entity>>
+    pub fn find_all<'a, M>(&self, suffix: Option<&str>) -> crate::Result<Vec<M::Entity>>
     where
         M: crate::Model<'a>,
     {
         let query = format!(
-            "SELECT {} FROM {};",
+            "SELECT {} FROM {} {};",
             M::create_projection(),
             M::Structure::relation(),
+            suffix.unwrap_or_default(),
         );
 
         let results = self.execute(&query, &[])?;

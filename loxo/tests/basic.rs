@@ -102,7 +102,7 @@ where
     M: loxo::Model<'a>,
     M::Entity: std::fmt::Debug,
 {
-    let events = connection.find_all::<M>().unwrap();
+    let events = connection.find_all::<M>(None).unwrap();
 
     if events.is_empty() {
         println!("No events in database.");
