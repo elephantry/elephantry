@@ -101,7 +101,7 @@ impl FromSql for chrono::NaiveDateTime {
     }
 }
 
-#[cfg(feature = "serde_json")]
+#[cfg(feature = "json")]
 impl FromSql for serde_json::value::Value {
     fn from_sql(ty: &crate::pq::Type, raw: Option<&String>) -> crate::Result<Self> {
         match serde_json::from_str(&raw.unwrap()) {

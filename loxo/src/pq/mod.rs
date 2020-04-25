@@ -39,7 +39,7 @@ impl ToRust for Type {
             "double precision" | "float8" => "f64",
             "inet" => "std::net::IpAddr",
             "integer" | "int" | "int4" => "i32",
-            #[cfg(feature = "serde_json")]
+            #[cfg(feature = "json")]
             "json" | "jsonb" => "serde::value::Value",
             #[cfg(feature = "geo")]
             "line" => todo!(),
