@@ -44,16 +44,15 @@ fn main() {
         browser: "{ \"name\": \"Firefox\", \"resolution\": { \"x\": 1280, \"y\": 800 } }"
             .to_string(),
     };
-    let entity = insert_one::<EventModel>(connection, &new_event);
+    let mut entity = insert_one::<EventModel>(connection, &new_event);
     println!();
 
     println!("Update one row:\n");
+    entity.name = "pageview".to_string();
     let entity = update_one::<EventModel>(
         connection,
+        &loxo::pk!(uuid => entity.uuid),
         &entity,
-        &maplit::hashmap! {
-            "name".to_string() => &"pageview" as &dyn loxo::pq::ToSql,
-        },
     );
     assert_eq!(&entity.name, "pageview");
     println!();
@@ -127,14 +126,14 @@ where
 
 fn update_one<'a, M>(
     connection: &loxo::Connection,
+    pk: &std::collections::HashMap<&str, &dyn loxo::pq::ToSql>,
     entity: &M::Entity,
-    data: &std::collections::HashMap<String, &dyn loxo::pq::ToSql>,
 ) -> M::Entity
 where
     M: loxo::Model<'a>,
     M::Entity: std::fmt::Debug,
 {
-    let new_entity = connection.update_one::<M>(&entity, &data).unwrap();
+    let new_entity = connection.update_one::<M>(pk, entity).unwrap();
 
     println!("{:?}", new_entity);
 

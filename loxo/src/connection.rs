@@ -166,15 +166,24 @@ impl Connection {
 
     pub fn update_one<'a, M>(
         &self,
-        entity: &M::Entity,
-        data: &HashMap<String, &dyn crate::pq::ToSql>,
+        pk: &HashMap<&str, &dyn crate::pq::ToSql>,
+        entity: &M::Entity
     ) -> crate::Result<M::Entity>
     where
         M: crate::Model<'a>,
     {
-        let pk = M::primary_key(&entity);
+        use crate::Entity;
 
-        self.update_by_pk::<M>(&pk, data)
+        let projection = M::create_projection();
+        let mut data = HashMap::new();
+
+        for field in projection.fields_name() {
+            if let Some(value) = entity.get(field) {
+                data.insert(field.to_string(), value);
+            }
+        }
+
+        self.update_by_pk::<M>(&pk, &data)
     }
 
     pub fn update_by_pk<'a, M>(
