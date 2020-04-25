@@ -1,40 +1,48 @@
 pub trait FromSql: Sized {
     fn from_sql(ty: &crate::pq::Type, raw: Option<&String>) -> crate::Result<Self>;
+
+    fn error(pg_type: &crate::pq::Type, rust_type: &str, raw: Option<&String>) -> crate::Error {
+        crate::Error::FromSql {
+            pg_type: pg_type.clone(),
+            rust_type: rust_type.to_string(),
+            value: raw.cloned()
+        }
+    }
 }
 
 impl FromSql for bool {
-    fn from_sql(_: &crate::pq::Type, raw: Option<&String>) -> crate::Result<Self> {
+    fn from_sql(ty: &crate::pq::Type, raw: Option<&String>) -> crate::Result<Self> {
         match raw.unwrap().as_str() {
             "t" => Ok(true),
             "f" => Ok(false),
-            _ => Err(format!("Invalid bool value: '{:?}'", raw)),
+            _ => Err(Self::error(ty, "bool", raw)),
         }
     }
 }
 
 impl FromSql for f32 {
-    fn from_sql(_: &crate::pq::Type, raw: Option<&String>) -> crate::Result<Self> {
+    fn from_sql(ty: &crate::pq::Type, raw: Option<&String>) -> crate::Result<Self> {
         match raw.unwrap().parse() {
             Ok(s) => Ok(s),
-            Err(_) => Err(format!("Invalid f32 value: '{:?}'", raw)),
+            _ => Err(Self::error(ty, "f32", raw)),
         }
     }
 }
 
 impl FromSql for i32 {
-    fn from_sql(_: &crate::pq::Type, raw: Option<&String>) -> crate::Result<Self> {
+    fn from_sql(ty: &crate::pq::Type, raw: Option<&String>) -> crate::Result<Self> {
         match raw.unwrap().parse() {
             Ok(s) => Ok(s),
-            Err(_) => Err(format!("Invalid i32 value: '{:?}'", raw)),
+            _ => Err(Self::error(ty, "i32", raw)),
         }
     }
 }
 
 impl FromSql for i64 {
-    fn from_sql(_: &crate::pq::Type, raw: Option<&String>) -> crate::Result<Self> {
+    fn from_sql(ty: &crate::pq::Type, raw: Option<&String>) -> crate::Result<Self> {
         match raw.unwrap().parse() {
             Ok(s) => Ok(s),
-            Err(_) => Err(format!("Invalid i64 value: '{:?}'", raw)),
+            _ => Err(Self::error(ty, "i64", raw)),
         }
     }
 }
@@ -55,17 +63,17 @@ impl FromSql for String {
 }
 
 impl FromSql for u32 {
-    fn from_sql(_: &crate::pq::Type, raw: Option<&String>) -> crate::Result<Self> {
+    fn from_sql(ty: &crate::pq::Type, raw: Option<&String>) -> crate::Result<Self> {
         match raw.unwrap().parse() {
             Ok(s) => Ok(s),
-            Err(_) => Err(format!("Invalid i32 value: {:?}", raw.unwrap())),
+            _ => Err(Self::error(ty, "u32", raw)),
         }
     }
 }
 
 #[cfg(feature = "date")]
 impl FromSql for chrono::DateTime<chrono::offset::FixedOffset> {
-    fn from_sql(_: &crate::pq::Type, raw: Option<&String>) -> crate::Result<Self> {
+    fn from_sql(ty: &crate::pq::Type, raw: Option<&String>) -> crate::Result<Self> {
         match chrono::DateTime::parse_from_str(raw.unwrap(), "%F %T%#z") {
             Ok(date) => return Ok(date),
             Err(_) => (),
@@ -73,27 +81,27 @@ impl FromSql for chrono::DateTime<chrono::offset::FixedOffset> {
 
         match chrono::DateTime::parse_from_str(raw.unwrap(), "%F %T.%f%#z") {
             Ok(date) => Ok(date),
-            Err(_) => Err(format!("Invalid timestampz value: {:?}", raw.unwrap())),
+            _ => Err(Self::error(ty, "timestamptz", raw)),
         }
     }
 }
 
 #[cfg(feature = "serde_json")]
 impl FromSql for serde_json::value::Value {
-    fn from_sql(_: &crate::pq::Type, raw: Option<&String>) -> crate::Result<Self> {
+    fn from_sql(ty: &crate::pq::Type, raw: Option<&String>) -> crate::Result<Self> {
         match serde_json::from_str(&raw.unwrap()) {
             Ok(json) => Ok(json),
-            Err(_) => Err(format!("Invalid json value: '{:?}'", raw)),
+            _ => Err(Self::error(ty, "json", raw)),
         }
     }
 }
 
 #[cfg(feature = "uuid")]
 impl FromSql for uuid::Uuid {
-    fn from_sql(_: &crate::pq::Type, raw: Option<&String>) -> crate::Result<Self> {
+    fn from_sql(ty: &crate::pq::Type, raw: Option<&String>) -> crate::Result<Self> {
         match uuid::Uuid::parse_str(&raw.unwrap()) {
             Ok(uuid) => Ok(uuid),
-            Err(_) => Err(format!("Invalid uuid value: '{:?}'", raw)),
+            _ => Err(Self::error(ty, "uuid", raw)),
         }
     }
 }

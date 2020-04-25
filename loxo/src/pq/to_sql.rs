@@ -5,6 +5,14 @@ pub trait ToSql {
     fn format(&self) -> crate::pq::Format {
         crate::pq::Format::Text
     }
+
+    fn error(&self, rust_type: &str, message: Option<&String>) -> crate::Error {
+        crate::Error::ToSql {
+            pg_type: self.ty(),
+            rust_type: rust_type.to_string(),
+            message: message.cloned(),
+        }
+    }
 }
 
 impl ToSql for bool {
@@ -92,7 +100,7 @@ impl ToSql for serde_json::value::Value {
     fn to_sql(&self) -> crate::Result<Vec<u8>> {
         match serde_json::to_string(self) {
             Ok(s) => s.to_sql(),
-            Err(err) => Err(format!("{}", err)),
+            Err(err) => Err(self.error("json", Some(&err.to_string()))),
         }
     }
 }

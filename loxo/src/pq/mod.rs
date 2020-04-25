@@ -5,11 +5,13 @@ mod to_sql;
 
 pub use from_sql::FromSql;
 pub use to_sql::ToSql;
+pub use libpq::state;
 
 pub use libpq::ty;
 pub type Format = libpq::Format;
 pub type Oid = libpq::Oid;
 pub type Type = libpq::Type;
+pub type State = libpq::State;
 
 pub trait ToRust {
     fn to_rust(&self) -> String;
@@ -92,7 +94,14 @@ pub struct Connection {
 
 impl Connection {
     pub fn new(dsn: &str) -> crate::Result<Self> {
-        let inner = libpq::Connection::new(dsn)?;
+        let inner = match libpq::Connection::new(dsn) {
+            Ok(inner) => inner,
+            Err(message) => return Err(crate::Error::Connect {
+                dsn: dsn.to_string(),
+                message,
+            }),
+        };
+
         inner.set_error_verbosity(libpq::Verbosity::Terse);
 
         Ok(Self {
@@ -123,6 +132,7 @@ impl Connection {
     }
 }
 
+#[derive(Debug)]
 pub struct Result {
     inner: libpq::Result,
     current_tuple: usize,
@@ -165,6 +175,10 @@ impl Result {
     pub fn is_empty(&self) -> bool {
         self.len() == 0
     }
+
+    pub fn state(&self) -> State {
+        State::from_code(&self.inner.error_field(libpq::result::ErrorField::Sqlstate).unwrap())
+    }
 }
 
 impl std::iter::Iterator for Result {
@@ -178,16 +192,25 @@ impl std::iter::Iterator for Result {
     }
 }
 
+impl std::ops::Deref for Result {
+    type Target = libpq::Result;
+
+    fn deref(&self) -> &Self::Target {
+        &self.inner
+    }
+}
+
 impl std::convert::TryFrom<libpq::Result> for Result {
-    type Error = String;
+    type Error = crate::Error;
 
     fn try_from(inner: libpq::Result) -> crate::Result<Self> {
         use libpq::Status::*;
 
         match inner.status() {
-            BadResponse | FatalError | NonFatalError => Err(inner
-                .error_message()
-                .unwrap_or_else(|| "Unknow error".to_string())),
+            BadResponse | FatalError | NonFatalError => Err(crate::Error::Sql(Self {
+                inner,
+                current_tuple: std::cell::RefCell::new(0),
+            })),
             _ => Ok(Self {
                 inner,
                 current_tuple: 0,
