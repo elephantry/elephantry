@@ -86,6 +86,21 @@ impl FromSql for chrono::DateTime<chrono::offset::FixedOffset> {
     }
 }
 
+#[cfg(feature = "date")]
+impl FromSql for chrono::NaiveDateTime {
+    fn from_sql(ty: &crate::pq::Type, raw: Option<&String>) -> crate::Result<Self> {
+        match chrono::NaiveDateTime::parse_from_str(raw.unwrap(), "%F %T") {
+            Ok(date) => return Ok(date),
+            _ => (),
+        };
+
+        match chrono::NaiveDateTime::parse_from_str(raw.unwrap(), "%F %T.%f") {
+            Ok(date) => Ok(date),
+            _ => Err(Self::error(ty, "timestamp", raw)),
+        }
+    }
+}
+
 #[cfg(feature = "serde_json")]
 impl FromSql for serde_json::value::Value {
     fn from_sql(ty: &crate::pq::Type, raw: Option<&String>) -> crate::Result<Self> {

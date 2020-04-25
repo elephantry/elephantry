@@ -91,6 +91,17 @@ impl ToSql for chrono::DateTime<chrono::offset::FixedOffset> {
     }
 }
 
+#[cfg(feature = "date")]
+impl ToSql for chrono::NaiveDateTime {
+    fn ty(&self) -> crate::pq::Type {
+        crate::pq::ty::TIMESTAMP
+    }
+
+    fn to_sql(&self) -> crate::Result<Vec<u8>> {
+        self.format("%F %T").to_string().to_sql()
+    }
+}
+
 #[cfg(feature = "json")]
 impl ToSql for serde_json::value::Value {
     fn ty(&self) -> crate::pq::Type {
