@@ -103,6 +103,7 @@ impl Connection {
         };
 
         inner.set_error_verbosity(libpq::Verbosity::Terse);
+        inner.set_client_encoding(libpq::Encoding::UTF8);
 
         Ok(Self {
             inner,
