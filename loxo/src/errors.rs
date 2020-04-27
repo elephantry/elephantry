@@ -11,6 +11,7 @@ pub enum Error {
         rust_type: String,
         value: Option<Vec<u8>>,
     },
+    Io(std::io::Error),
     Sql(crate::pq::Result),
     ToSql {
         pg_type: crate::pq::Type,

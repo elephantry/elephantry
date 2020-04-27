@@ -110,25 +110,25 @@ impl Connection {
     }
 
     pub fn query(&self, query: &str, params: &[&dyn ToSql]) -> crate::Result<Result> {
-        if params.is_empty() {
-            self.inner.exec(query).try_into()
-        } else {
-            let param_types = params.iter().map(|x| x.ty()).collect::<Vec<_>>();
+        let mut param_types = Vec::new();
+        let mut param_values = Vec::new();
+        let mut param_formats = Vec::new();
 
-            let param_values = params.iter().map(|x| x.to_sql().ok()).collect::<Vec<_>>();
-
-            let param_formats = params.iter().map(|x| x.format()).collect::<Vec<_>>();
-
-            self.inner
-                .exec_params(
-                    query,
-                    &param_types,
-                    &param_values,
-                    &param_formats,
-                    Format::Text,
-                )
-                .try_into()
+        for param in params.iter() {
+            param_types.push(param.ty());
+            param_values.push(param.to_sql().ok());
+            param_formats.push(param.format());
         }
+
+        self.inner
+            .exec_params(
+                query,
+                &param_types,
+                &param_values,
+                &param_formats,
+                Format::Binary,
+            )
+            .try_into()
     }
 }
 
@@ -144,13 +144,12 @@ impl Result {
             return None;
         }
 
-        let mut values = std::collections::HashMap::new();
+        let nfields = self.inner.nfields();
+        let mut values = std::collections::HashMap::with_capacity(nfields);
 
-        for x in 0..self.inner.nfields() {
-            let name = self.inner.field_name(x).unwrap();
-
+        for x in 0..nfields {
             values.insert(
-                name,
+                self.inner.field_name(x).unwrap(),
                 Field {
                     format: self.inner.field_format(x),
                     is_null: self.inner.is_null(n, x),
@@ -158,12 +157,12 @@ impl Result {
                     modifier: self.inner.field_mod(x),
                     size: self.inner.field_size(x),
                     ty: self.inner.field_type(x).unwrap(),
-                    value: self.inner.value(n, x),
+                    value: self.inner.value(n, x).map(|x| x.to_vec()),
                 },
             );
         }
 
-        let tuple = Tuple::from(&values);
+        let tuple = Tuple::from(values);
 
         Some(tuple)
     }
@@ -225,9 +224,9 @@ pub struct Tuple {
 }
 
 impl Tuple {
-    pub fn from(values: &std::collections::HashMap<String, Field>) -> Self {
+    pub fn from(values: std::collections::HashMap<String, Field>) -> Self {
         Self {
-            values: values.clone(),
+            values,
         }
     }
 
@@ -244,16 +243,10 @@ impl Tuple {
         T: FromSql,
     {
         if let Some(field) = self.values.get(&name.to_string()) {
-            FromSql::from_sql(&field.ty, field.value.as_ref())
+            FromSql::from_sql(&field.ty, field.value)
         } else {
             FromSql::from_sql(&ty::TEXT, None)
         }
-    }
-
-    pub fn get_bytes(&self, name: &str) -> Option<Vec<u8>> {
-        self.values
-            .get(&name.to_string())
-            .map(|x| x.value.clone().unwrap_or_default().as_bytes().to_vec())
     }
 }
 
@@ -265,5 +258,5 @@ pub struct Field {
     pub modifier: Option<i32>,
     pub size: Option<usize>,
     pub ty: Type,
-    pub value: Option<String>,
+    pub value: Option<Vec<u8>>,
 }
