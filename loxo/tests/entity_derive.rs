@@ -33,7 +33,7 @@ impl<'a> EventModel<'a> {
     fn count_uniq_visitor(&self) -> loxo::Result<u32> {
         self.connection
             .execute("select count(distinct visitor_id) as count from event", &[])
-            .map(|x| x.get(0).unwrap().get("count"))
+            .map(|x| x.get(0).get("count"))
     }
 }
 

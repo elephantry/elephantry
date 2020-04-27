@@ -135,34 +135,20 @@ impl Connection {
 #[derive(Debug)]
 pub struct Result {
     inner: libpq::Result,
-    current_tuple: usize,
+    current_tuple: std::cell::RefCell<usize>,
 }
 
 impl Result {
-    pub fn get(&self, n: usize) -> Option<Tuple> {
+    pub fn get<'a>(&'a self, n: usize) -> Tuple<'a> {
+        self.try_get(n).unwrap()
+    }
+
+    pub fn try_get<'a>(&'a self, n: usize) -> Option<Tuple<'a>> {
         if n + 1 > self.len() {
             return None;
         }
 
-        let nfields = self.inner.nfields();
-        let mut values = std::collections::HashMap::with_capacity(nfields);
-
-        for x in 0..nfields {
-            values.insert(
-                self.inner.field_name(x).unwrap(),
-                Field {
-                    format: self.inner.field_format(x),
-                    is_null: self.inner.is_null(n, x),
-                    length: self.inner.length(n, x),
-                    modifier: self.inner.field_mod(x),
-                    size: self.inner.field_size(x),
-                    ty: self.inner.field_type(x).unwrap(),
-                    value: self.inner.value(n, x).map(|x| x.to_vec()),
-                },
-            );
-        }
-
-        let tuple = Tuple::from(values);
+        let tuple = Tuple::from(&self.inner, n);
 
         Some(tuple)
     }
@@ -180,12 +166,12 @@ impl Result {
     }
 }
 
-impl std::iter::Iterator for Result {
-    type Item = Tuple;
+impl<'a> std::iter::Iterator for &'a Result {
+    type Item = Tuple<'a>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let tuple = self.get(self.current_tuple);
-        self.current_tuple += 1;
+        let tuple = self.try_get(*self.current_tuple.borrow());
+        *self.current_tuple.borrow_mut() += 1;
 
         tuple
     }
@@ -212,21 +198,23 @@ impl std::convert::TryFrom<libpq::Result> for Result {
             })),
             _ => Ok(Self {
                 inner,
-                current_tuple: 0,
+                current_tuple: std::cell::RefCell::new(0),
             }),
         }
     }
 }
 
 #[derive(Clone, Debug)]
-pub struct Tuple {
-    values: std::collections::HashMap<String, Field>,
+pub struct Tuple<'a> {
+    result: &'a libpq::Result,
+    index: usize,
 }
 
-impl Tuple {
-    pub fn from(values: std::collections::HashMap<String, Field>) -> Self {
+impl<'a> Tuple<'a> {
+    pub fn from(result: &'a libpq::Result, index: usize) -> Self {
         Self {
-            values,
+            result,
+            index,
         }
     }
 
@@ -242,21 +230,16 @@ impl Tuple {
     where
         T: FromSql,
     {
-        if let Some(field) = self.values.get(&name.to_string()) {
-            FromSql::from_sql(&field.ty, field.value)
-        } else {
-            FromSql::from_sql(&ty::TEXT, None)
-        }
+        let n = self.result.field_number(name).unwrap();
+        let ty = self.result.field_type(n).unwrap_or(ty::TEXT);
+        let value = self.result.value(self.index, n);
+
+        FromSql::from_sql(&ty, value)
     }
 }
 
 #[derive(Clone, Debug)]
 pub struct Field {
-    pub format: Format,
-    pub is_null: bool,
-    pub length: usize,
-    pub modifier: Option<i32>,
-    pub size: Option<usize>,
     pub ty: Type,
     pub value: Option<Vec<u8>>,
 }

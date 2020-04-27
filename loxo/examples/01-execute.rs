@@ -6,7 +6,7 @@ fn main() -> loxo::Result<()> {
         &[],
     )?;
 
-    for result in results {
+    for result in &results {
         let n: i32 = result.get("n");
         dbg!(n);
 

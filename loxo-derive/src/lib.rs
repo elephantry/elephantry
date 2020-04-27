@@ -90,7 +90,7 @@ fn impl_entity_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
     let gen = quote::quote! {
         impl #loxo::Entity for #name
         {
-            fn from(tuple: &#loxo::pq::Tuple) -> Self
+            fn from(tuple: &#loxo::pq::Tuple<'_>) -> Self
             {
                 Self {
                     #(#from_body, )*

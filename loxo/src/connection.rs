@@ -35,7 +35,7 @@ impl Connection {
         let tuples = self.connection.query(&query, params)?;
         let mut results = Vec::with_capacity(tuples.len());
 
-        for tuple in tuples {
+        for tuple in &tuples {
             results.push(E::from(&tuple))
         }
 
@@ -108,7 +108,7 @@ impl Connection {
 
         let results = self.execute(&query, params)?;
 
-        Ok(results.get(0).unwrap().try_get("count")?)
+        Ok(results.get(0).try_get("count")?)
     }
 
     pub fn exist_where<'a, M>(
@@ -127,7 +127,7 @@ impl Connection {
 
         let results = self.execute(&query, params)?;
 
-        Ok(results.get(0).unwrap().try_get("result")?)
+        Ok(results.get(0).try_get("result")?)
     }
 
     pub fn insert_one<'a, M>(&self, entity: &M::Entity) -> crate::Result<M::Entity>
@@ -161,7 +161,7 @@ impl Connection {
 
         let results = self.execute(&query, tuple.as_slice())?;
 
-        Ok(M::create_entity(&results.get(0).unwrap()))
+        Ok(M::create_entity(&results.get(0)))
     }
 
     pub fn update_one<'a, M>(
@@ -216,7 +216,7 @@ impl Connection {
 
         let results = self.execute(&query, &params)?;
 
-        Ok(M::create_entity(&results.get(0).unwrap()))
+        Ok(M::create_entity(&results.get(0)))
     }
 
     pub fn delete_one<'a, M>(&self, entity: &M::Entity) -> crate::Result<M::Entity>
@@ -256,9 +256,7 @@ impl Connection {
             clause,
         );
 
-        let results = self.execute(&query, &params)?;
-
-        Ok(results.map(|tuple| M::create_entity(&tuple)).collect())
+        self.query(&query, &params)
     }
 
     fn pk_clause<'a, 'b, M>(
