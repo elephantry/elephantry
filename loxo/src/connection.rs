@@ -272,11 +272,21 @@ impl Connection {
             panic!("Invalid pk");
         }
 
+        let definition = M::Structure::definition();
+
         let clause = keys.iter().enumerate().fold(String::new(), |acc, (i, x)| {
+            let field = match definition.get(x) {
+                Some(field) => field
+                    .replace("\"", "\\\"")
+                    .replace("%:", "\"")
+                    .replace(":%", "\""),
+                None => x.to_string(),
+            };
+
             if acc.is_empty() {
-                format!("{} = ${}", x, i + 1)
+                format!("{} = ${}", field, i + 1)
             } else {
-                format!("{} AND {} = ${}", acc, x, i + 1)
+                format!("{} AND {} = ${}", acc, field, i + 1)
             }
         });
 
