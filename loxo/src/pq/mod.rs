@@ -241,10 +241,5 @@ impl<'a> Tuple<'a> {
 
         FromSql::from_sql(&ty, value)
     }
-}
 
-#[derive(Clone, Debug)]
-pub struct Field {
-    pub ty: Type,
-    pub value: Option<Vec<u8>>,
 }
