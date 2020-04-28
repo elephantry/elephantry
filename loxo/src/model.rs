@@ -9,7 +9,7 @@ pub trait Model<'a> {
     fn default_projection() -> crate::Projection {
         use crate::Structure;
 
-        crate::Projection::new(&Self::Structure::definition())
+        crate::Projection::new(&Self::Structure::relation(), &Self::Structure::definition())
     }
 
     fn create_projection() -> crate::Projection {

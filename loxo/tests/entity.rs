@@ -126,7 +126,7 @@ impl<'a> loxo::Model<'a> for EventExtraModel {
     }
 
     fn create_projection() -> loxo::Projection {
-        Self::default_projection().set_field("os", "%:browser:% ->> 'os'")
+        Self::default_projection().add_field("os", "%:browser:% ->> 'os'")
     }
 }
 
