@@ -21,10 +21,9 @@ impl Connection {
 
     pub fn execute(
         &self,
-        query: &str,
-        params: &[&dyn crate::pq::ToSql],
+        query: &str
     ) -> crate::Result<crate::pq::Result> {
-        self.connection.query(&query, params)
+        self.connection.execute(&query)
     }
 
     pub fn query<E: crate::Entity>(
@@ -106,7 +105,7 @@ impl Connection {
             clause,
         );
 
-        let results = self.execute(&query, params)?;
+        let results = self.connection.query(&query, params)?;
 
         Ok(results.get(0).try_get("count")?)
     }
@@ -125,7 +124,7 @@ impl Connection {
             clause,
         );
 
-        let results = self.execute(&query, params)?;
+        let results = self.connection.query(&query, params)?;
 
         Ok(results.get(0).try_get("result")?)
     }
@@ -159,7 +158,7 @@ impl Connection {
             params.join(", "),
         );
 
-        let results = self.execute(&query, tuple.as_slice())?;
+        let results = self.connection.query(&query, tuple.as_slice())?;
 
         Ok(M::create_entity(&results.get(0)))
     }
@@ -214,7 +213,7 @@ impl Connection {
             clause,
         );
 
-        let results = self.execute(&query, &params)?;
+        let results = self.connection.query(&query, &params)?;
 
         Ok(M::create_entity(&results.get(0)))
     }

@@ -3,7 +3,6 @@ fn main() -> loxo::Result<()> {
 
     let results = loxo.execute(
         "select generate_series as n from generate_series(1, 10)",
-        &[],
     )?;
 
     for result in &results {

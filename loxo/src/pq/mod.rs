@@ -110,6 +110,10 @@ impl Connection {
         })
     }
 
+    pub fn execute(&self, query: &str) -> crate::Result<Result> {
+        self.inner.exec(query).try_into()
+    }
+
     pub fn query(&self, query: &str, params: &[&dyn ToSql]) -> crate::Result<Result> {
         let mut param_types = Vec::new();
         let mut param_values = Vec::new();
