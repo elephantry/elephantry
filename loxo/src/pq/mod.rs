@@ -235,11 +235,38 @@ impl<'a> Tuple<'a> {
     where
         T: FromSql,
     {
-        let n = self.result.field_number(name).unwrap();
-        let ty = self.result.field_type(n).unwrap_or(ty::TEXT);
-        let value = self.result.value(self.index, n);
+        let n = match self.result.field_number(name) {
+            Some(n) => n,
+            None => return Err(crate::Error::MissingField(name.to_string())),
+        };
 
-        FromSql::from_sql(&ty, value)
+        self.try_nth(n)
     }
 
+    pub fn nth<T>(&self, n: usize) -> T
+    where
+        T: FromSql,
+    {
+        self.try_nth(n)
+            .unwrap_or_else(|err| panic!("Unable to retreive field {}: {}", n, err))
+    }
+
+    pub fn try_nth<T>(&self, n: usize) -> crate::Result<T>
+    where
+        T: FromSql,
+    {
+        let ty = self.result.field_type(n).unwrap_or(ty::TEXT);
+        let format = self.result.field_format(n);
+        let value = self.result.value(self.index, n);
+
+        FromSql::from_sql(&ty, format, value)
+    }
+
+    pub fn len(&self) -> usize {
+        self.result.nfields()
+    }
+
+    pub fn field_name(&self, n: usize) -> Option<String> {
+        self.result.field_name(n)
+    }
 }

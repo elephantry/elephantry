@@ -9,9 +9,10 @@ pub enum Error {
     FromSql {
         pg_type: crate::pq::Type,
         rust_type: String,
-        value: Option<Vec<u8>>,
+        value: String,
     },
     Io(std::io::Error),
+    MissingField(String),
     Sql(crate::pq::Result),
     ToSql {
         pg_type: crate::pq::Type,
@@ -31,8 +32,9 @@ impl std::fmt::Display for Error
         let s = match self {
             Error::Connect { message, .. } => message.clone(),
             Error::Sql(result) => result.error_message().unwrap_or_else(|| "Unknow SQL error".to_string()),
+            Error::MissingField(field) => format!("Missing field {}", field),
             Error::Io(err) => format!("I/O error: {}", err),
-            Error::FromSql { rust_type, value, .. } => format!("Invalid {} value: '{:?}'", rust_type, value),
+            Error::FromSql { rust_type, value, .. } => format!("Invalid {} value: {}", rust_type, value),
             Error::ToSql { rust_type, message, .. } => format!("Invalid {} value: '{}'", rust_type, message.clone().unwrap_or_else(|| "unknow".to_string())),
             Error::Utf8(err) => format!("Invalid utf8 value: {}", err),
         };
