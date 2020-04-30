@@ -90,6 +90,16 @@ impl FromSql for String {
         String::from_utf8(raw.unwrap().to_vec()).map_err(|e| e.into()) }
 }
 
+impl<T: FromSql + Clone> FromSql for Vec<T> {
+    fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
+        Ok(crate::Array::from_text(ty, raw)?.into())
+    }
+
+    fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
+        Ok(crate::Array::from_binary(ty, raw)?.into())
+    }
+}
+
 #[cfg(feature = "date")]
 impl FromSql for chrono::DateTime<chrono::offset::Utc> {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {

@@ -3,6 +3,7 @@
 pub mod inspect;
 pub mod pq;
 
+mod array;
 mod connection;
 mod entity;
 mod errors;
@@ -10,6 +11,7 @@ mod model;
 mod projection;
 mod structure;
 
+pub use array::*;
 pub use connection::*;
 pub use entity::*;
 pub use errors::*;
@@ -113,8 +115,23 @@ impl std::ops::Deref for Loxo {
     }
 }
 
+
 #[cfg(test)]
 mod test {
+    static INIT: std::sync::Once = std::sync::Once::new();
+
+    pub fn dsn() -> String {
+        std::env::var("PQ_DSN").unwrap_or_else(|_| "host=localhost".to_string())
+    }
+
+    pub fn new_conn() -> crate::Loxo {
+        INIT.call_once(|| {
+            pretty_env_logger::init();
+        });
+
+        crate::Loxo::new(&dsn()).unwrap()
+    }
+
     #[test]
     fn test_pk_one() {
         let uuid = "1234";

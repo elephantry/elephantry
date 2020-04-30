@@ -80,6 +80,30 @@ impl ToSql for u32 {
     }
 }
 
+impl<T: ToSql> ToSql for Vec<T> {
+    fn ty(&self) -> crate::pq::Type {
+        match self.get(0) {
+            Some(data) => data.ty(),
+            None => crate::pq::ty::TEXT,
+        }
+    }
+
+    fn to_sql(&self) -> crate::Result<Vec<u8>> {
+        let mut data = Vec::new();
+
+        data.push(b'{');
+        for x in self {
+            let element = x.to_sql()?;
+            data.extend_from_slice(&element[..element.len() - 1]);
+            data.push(b',');
+        }
+        *data.last_mut().unwrap() = b'}';
+        data.push(b'\0');
+
+        Ok(data)
+    }
+}
+
 #[cfg(feature = "date")]
 impl ToSql for chrono::DateTime<chrono::offset::FixedOffset> {
     fn ty(&self) -> crate::pq::Type {
@@ -124,5 +148,17 @@ impl ToSql for uuid::Uuid {
 
     fn to_sql(&self) -> crate::Result<Vec<u8>> {
         self.to_string().to_sql()
+    }
+}
+
+#[cfg(test)]
+mod test {
+    #[test]
+    fn vec_to_sql() {
+        use crate::pq::ToSql;
+
+        let vec = vec![1, 2, 3];
+
+        assert_eq!(vec.to_sql().unwrap(), b"{1,2,3}\0".to_vec());
     }
 }
