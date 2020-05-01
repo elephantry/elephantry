@@ -144,11 +144,11 @@ pub struct Result {
 }
 
 impl Result {
-    pub fn get<'a>(&'a self, n: usize) -> Tuple<'a> {
+    pub fn get(&self, n: usize) -> Tuple<'_> {
         self.try_get(n).unwrap()
     }
 
-    pub fn try_get<'a>(&'a self, n: usize) -> Option<Tuple<'a>> {
+    pub fn try_get(&self, n: usize) -> Option<Tuple<'_>> {
         if n + 1 > self.len() {
             return None;
         }
@@ -264,6 +264,10 @@ impl<'a> Tuple<'a> {
 
     pub fn len(&self) -> usize {
         self.result.nfields()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
     }
 
     pub fn field_name(&self, n: usize) -> Option<String> {

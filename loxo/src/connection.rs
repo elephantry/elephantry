@@ -279,7 +279,7 @@ impl Connection {
                     .replace("\"", "\\\"")
                     .replace("%:", "\"")
                     .replace(":%", "\""),
-                None => x.to_string(),
+                None => (*x).to_string(),
             };
 
             if acc.is_empty() {
