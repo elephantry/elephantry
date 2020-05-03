@@ -121,7 +121,7 @@ impl Connection {
 
         for param in params.iter() {
             param_types.push(param.ty());
-            param_values.push(param.to_sql().ok());
+            param_values.push(param.to_sql()?);
             param_formats.push(param.format());
         }
 

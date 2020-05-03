@@ -1,6 +1,6 @@
 pub trait ToSql {
     fn ty(&self) -> crate::pq::Type;
-    fn to_sql(&self) -> crate::Result<Vec<u8>>;
+    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>>;
 
     fn format(&self) -> crate::pq::Format {
         crate::pq::Format::Text
@@ -20,10 +20,10 @@ impl ToSql for bool {
         crate::pq::ty::BOOL
     }
 
-    fn to_sql(&self) -> crate::Result<Vec<u8>> {
+    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
         let v = if *self { b"t\0" } else { b"f\0" };
 
-        Ok(v.to_vec())
+        Ok(Some(v.to_vec()))
     }
 }
 
@@ -32,7 +32,7 @@ impl ToSql for f32 {
         crate::pq::ty::FLOAT4
     }
 
-    fn to_sql(&self) -> crate::Result<Vec<u8>> {
+    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
         self.to_string().to_sql()
     }
 }
@@ -42,11 +42,11 @@ impl ToSql for &str {
         crate::pq::ty::VARCHAR
     }
 
-    fn to_sql(&self) -> crate::Result<Vec<u8>> {
+    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
         let mut v = self.as_bytes().to_vec();
         v.push(0);
 
-        Ok(v)
+        Ok(Some(v))
     }
 }
 
@@ -55,7 +55,7 @@ impl ToSql for String {
         crate::pq::ty::VARCHAR
     }
 
-    fn to_sql(&self) -> crate::Result<Vec<u8>> {
+    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
         self.as_str().to_sql()
     }
 }
@@ -65,7 +65,7 @@ impl ToSql for i32 {
         crate::pq::ty::INT4
     }
 
-    fn to_sql(&self) -> crate::Result<Vec<u8>> {
+    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
         self.to_string().to_sql()
     }
 }
@@ -75,8 +75,24 @@ impl ToSql for u32 {
         crate::pq::ty::INT8
     }
 
-    fn to_sql(&self) -> crate::Result<Vec<u8>> {
+    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
         self.to_string().to_sql()
+    }
+}
+
+impl<T: ToSql> ToSql for Option<T> {
+    fn ty(&self) -> crate::pq::Type {
+        match self {
+            Some(data) => data.ty(),
+            None => crate::pq::ty::TEXT,
+        }
+    }
+
+    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
+        match self {
+            Some(data) => T::to_sql(data),
+            None => Ok(None),
+        }
     }
 }
 
@@ -88,19 +104,23 @@ impl<T: ToSql> ToSql for Vec<T> {
         }
     }
 
-    fn to_sql(&self) -> crate::Result<Vec<u8>> {
+    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
         let mut data = Vec::new();
 
         data.push(b'{');
         for x in self {
-            let element = x.to_sql()?;
+            let element = match x.to_sql()? {
+                Some(element) => element,
+                None => b"null\0".to_vec(),
+            };
+
             data.extend_from_slice(&element[..element.len() - 1]);
             data.push(b',');
         }
         *data.last_mut().unwrap() = b'}';
         data.push(b'\0');
 
-        Ok(data)
+        Ok(Some(data))
     }
 }
 
@@ -110,7 +130,7 @@ impl ToSql for chrono::DateTime<chrono::offset::FixedOffset> {
         crate::pq::ty::TIMESTAMPTZ
     }
 
-    fn to_sql(&self) -> crate::Result<Vec<u8>> {
+    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
         self.to_rfc2822().to_sql()
     }
 }
@@ -121,7 +141,7 @@ impl ToSql for chrono::NaiveDateTime {
         crate::pq::ty::TIMESTAMP
     }
 
-    fn to_sql(&self) -> crate::Result<Vec<u8>> {
+    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
         self.format("%F %T").to_string().to_sql()
     }
 }
@@ -132,7 +152,7 @@ impl ToSql for serde_json::value::Value {
         crate::pq::ty::JSON
     }
 
-    fn to_sql(&self) -> crate::Result<Vec<u8>> {
+    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
         match serde_json::to_string(self) {
             Ok(s) => s.to_sql(),
             Err(err) => Err(self.error("json", Some(&err.to_string()))),
@@ -146,7 +166,7 @@ impl ToSql for uuid::Uuid {
         crate::pq::ty::UUID
     }
 
-    fn to_sql(&self) -> crate::Result<Vec<u8>> {
+    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
         self.to_string().to_sql()
     }
 }
@@ -159,6 +179,6 @@ mod test {
 
         let vec = vec![1, 2, 3];
 
-        assert_eq!(vec.to_sql().unwrap(), b"{1,2,3}\0".to_vec());
+        assert_eq!(vec.to_sql().unwrap(), Some(b"{1,2,3}\0".to_vec()));
     }
 }

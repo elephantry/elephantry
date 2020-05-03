@@ -197,9 +197,11 @@ impl Connection {
         let mut data = HashMap::new();
 
         for field in projection.fields_name() {
-            if let Some(value) = entity.get(field) {
-                data.insert(field.to_string(), value);
-            }
+            let value = match entity.get(field) {
+                Some(value) => value,
+                None => &Option::<&str>::None,
+            };
+            data.insert(field.to_string(), value);
         }
 
         self.update_by_pk::<M>(&pk, &data)
