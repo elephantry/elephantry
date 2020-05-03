@@ -29,3 +29,20 @@ impl<E: crate::Entity> std::ops::Deref for Rows<E> {
         &self.result
     }
 }
+
+#[cfg(feature = "serde-support")]
+impl<E: crate::Entity + serde::Serialize> serde::Serialize for Rows<E> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: serde::Serializer {
+        use serde::ser::SerializeSeq;
+
+        let mut seq = serializer.serialize_seq(Some(self.len()))?;
+
+        for x in 0..self.result.len() {
+            let row = self.result.get(x);
+
+            seq.serialize_element(&E::from(&row))?;
+        }
+
+        seq.end()
+    }
+}

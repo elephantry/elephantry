@@ -15,6 +15,18 @@ regex = "1.3"
 version = "0.4"
 optional = true
 
+[dependencies.loxo-derive]
+path = "../loxo-derive"
+version = "0.1"
+
+[dependencies.serde]
+version = "1.0"
+optional = true
+
+[dependencies.serde_derive]
+version = "1.0"
+optional = true
+
 [dependencies.serde_json]
 version = "1.0"
 optional = true
@@ -37,3 +49,4 @@ default = ["derive"]
 date = ["chrono"]
 derive = []
 json = ["serde_json"]
+serde-support = ["serde"]

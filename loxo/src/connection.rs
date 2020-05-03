@@ -84,6 +84,32 @@ impl Connection {
         self.query(&query, params)
     }
 
+    pub fn paginate_find_where<'a, M>(
+        &self,
+        clause: &str,
+        params: &[&dyn crate::pq::ToSql],
+        max_per_page: usize,
+        page: usize,
+        suffix: Option<&str>,
+    ) -> crate::Result<crate::Pager<M::Entity>>
+    where
+        M: crate::Model<'a>,
+    {
+        let suffix = format!("{} offset {} limit {}", suffix.unwrap_or_default(), max_per_page * (page - 1), max_per_page);
+
+        let rows = self.find_where::<M>(clause, params, Some(&suffix))?;
+        let count = self.count_where::<M>(clause, params)?;
+
+        let pager = crate::Pager::new(
+            rows,
+            count,
+            page,
+            max_per_page,
+        );
+
+        Ok(pager)
+    }
+
     pub fn count_where<'a, M>(
         &self,
         clause: &str,
