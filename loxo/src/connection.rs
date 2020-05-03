@@ -88,7 +88,7 @@ impl Connection {
         &self,
         clause: &str,
         params: &[&dyn crate::pq::ToSql],
-    ) -> crate::Result<i64>
+    ) -> crate::Result<usize>
     where
         M: crate::Model<'a>,
     {

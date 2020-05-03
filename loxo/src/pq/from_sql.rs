@@ -50,6 +50,27 @@ number!(i32, read_i32);
 number!(i64, read_i64);
 number!(u32, read_u32);
 
+impl FromSql for usize {
+    fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
+        raw.unwrap().parse()
+            .map_err(|_| Self::error(ty, "usize", raw))
+    }
+
+    fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
+        let mut buf = raw.unwrap();
+        #[cfg(target_pointer_width = "64")]
+        let v = buf.read_u64::<byteorder::BigEndian>()?;
+        #[cfg(target_pointer_width = "32")]
+        let v = buf.read_u32::<byteorder::BigEndian>()?;
+
+        if !buf.is_empty() {
+            return Err(Self::error(ty, "usize", raw));
+        }
+
+        Ok(v as usize)
+    }
+}
+
 impl FromSql for bool {
     fn from_text(_: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         Ok(raw.unwrap() == "t")
