@@ -9,6 +9,7 @@ mod entity;
 mod errors;
 mod model;
 mod projection;
+mod rows;
 mod structure;
 
 pub use array::*;
@@ -18,6 +19,7 @@ pub use errors::*;
 pub use loxo_derive::*;
 pub use model::*;
 pub use projection::*;
+pub use rows::*;
 pub use structure::*;
 
 use std::collections::HashMap;

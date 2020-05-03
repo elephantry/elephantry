@@ -27,6 +27,7 @@ order by 1;
             &[],
         )
         .unwrap()
+        .collect()
 }
 
 #[derive(Clone, Debug, loxo_derive::Entity)]
@@ -71,6 +72,7 @@ order by name asc;
             &[&schema],
         )
         .unwrap()
+        .collect()
 }
 
 #[derive(Clone, Debug, loxo_derive::Entity)]
@@ -129,4 +131,5 @@ order by
             &[&schema, &relation],
         )
         .unwrap()
+        .collect()
 }

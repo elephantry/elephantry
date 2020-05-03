@@ -54,7 +54,8 @@ mod test {
     fn hashmap_str_from_sql() {
         let loxo = crate::test::new_conn();
         let results: Vec<HashMap<String, i32>> = loxo.query("SELECT 1 as n", &[])
-            .unwrap();
+            .unwrap()
+            .collect();
 
         assert_eq!(results[0].get("n"), Some(&1));
     }
@@ -63,7 +64,8 @@ mod test {
     fn hashmap_usize_from_sql() {
         let loxo = crate::test::new_conn();
         let results: Vec<HashMap<usize, i32>> = loxo.query("SELECT 1 as n", &[])
-            .unwrap();
+            .unwrap()
+            .collect();
 
         assert_eq!(results[0].get(&0), Some(&1));
     }

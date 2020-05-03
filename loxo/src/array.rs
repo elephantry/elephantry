@@ -114,7 +114,8 @@ mod test {
     fn bin_vec() {
         let loxo = crate::test::new_conn();
         let results: Vec<HashMap<String, Vec<i32>>> = loxo.query("SELECT '{1, 2}'::int4[] as n", &[])
-            .unwrap();
+            .unwrap()
+            .collect();
 
         assert_eq!(results[0].get("n"), Some(&vec![1, 2]));
     }
@@ -123,7 +124,8 @@ mod test {
     fn bin_array_str() {
         let loxo = crate::test::new_conn();
         let results: Vec<HashMap<String, Vec<Option<String>>>> = loxo.query("SELECT '{null, str}'::text[] as n", &[])
-            .unwrap();
+            .unwrap()
+            .collect();
 
         assert_eq!(results[0].get("n"), Some(&vec![None, Some("str".to_string())]));
     }

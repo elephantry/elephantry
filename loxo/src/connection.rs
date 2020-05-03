@@ -30,15 +30,8 @@ impl Connection {
         &self,
         query: &str,
         params: &[&dyn crate::pq::ToSql],
-    ) -> crate::Result<Vec<E>> {
-        let tuples = self.connection.query(&query, params)?;
-        let mut results = Vec::with_capacity(tuples.len());
-
-        for tuple in &tuples {
-            results.push(E::from(&tuple))
-        }
-
-        Ok(results)
+    ) -> crate::Result<crate::Rows<E>> {
+        Ok(self.connection.query(&query, params)?.into())
     }
 
     pub fn find_by_pk<'a, M>(
@@ -49,15 +42,15 @@ impl Connection {
         M: crate::Model<'a>,
     {
         let (clause, params) = self.pk_clause::<M>(pk);
-        let tuples = self.find_where::<M>(&clause, &params, None)?;
+        let mut tuples = self.find_where::<M>(&clause, &params, None)?;
 
-        Ok(match tuples.get(0) {
+        Ok(match tuples.next() {
             Some(e) => Some(e.clone()),
             None => None,
         })
     }
 
-    pub fn find_all<'a, M>(&self, suffix: Option<&str>) -> crate::Result<Vec<M::Entity>>
+    pub fn find_all<'a, M>(&self, suffix: Option<&str>) -> crate::Result<crate::Rows<M::Entity>>
     where
         M: crate::Model<'a>,
     {
@@ -76,7 +69,7 @@ impl Connection {
         clause: &str,
         params: &[&dyn crate::pq::ToSql],
         suffix: Option<&str>,
-    ) -> crate::Result<Vec<M::Entity>>
+    ) -> crate::Result<crate::Rows<M::Entity>>
     where
         M: crate::Model<'a>,
     {
@@ -235,17 +228,16 @@ impl Connection {
         M: crate::Model<'a>,
     {
         let (clause, params) = self.pk_clause::<M>(&pk);
+        let mut results = self.delete_where::<M>(&clause, &params)?;
 
-        let results = self.delete_where::<M>(&clause, &params)?;
-
-        Ok(results.get(0).unwrap().clone())
+        Ok(results.next().unwrap().clone())
     }
 
     pub fn delete_where<'a, M>(
         &self,
         clause: &str,
         params: &[&dyn crate::pq::ToSql],
-    ) -> crate::Result<Vec<M::Entity>>
+    ) -> crate::Result<crate::Rows<M::Entity>>
     where
         M: crate::Model<'a>,
     {
