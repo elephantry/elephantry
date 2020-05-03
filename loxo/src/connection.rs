@@ -145,10 +145,11 @@ impl Connection {
         }
 
         let query = format!(
-            "INSERT INTO {} ({}) VALUES({}) RETURNING *;",
+            "INSERT INTO {} ({}) VALUES({}) RETURNING {};",
             M::Structure::relation(),
             fields.join(", "),
             params.join(", "),
+            M::create_projection(),
         );
 
         let results = self.connection.query(&query, tuple.as_slice())?;
@@ -189,7 +190,7 @@ impl Connection {
         let (clause, mut params) = self.pk_clause::<M>(&pk);
         let mut x = params.len() + 1;
         let mut set = Vec::new();
-        let projection = M::create_projection();
+        let projection = M::default_projection();
 
         for (key, value) in data.iter() {
             if projection.has_field(key) {
@@ -200,10 +201,11 @@ impl Connection {
         }
 
         let query = format!(
-            "UPDATE {} SET {} WHERE {} RETURNING *;",
+            "UPDATE {} SET {} WHERE {} RETURNING {};",
             M::Structure::relation(),
             set.join(", "),
             clause,
+            M::create_projection(),
         );
 
         let results = self.connection.query(&query, &params)?;
@@ -242,9 +244,10 @@ impl Connection {
         M: crate::Model<'a>,
     {
         let query = format!(
-            "DELETE FROM {} WHERE {} RETURNING *;",
+            "DELETE FROM {} WHERE {} RETURNING {};",
             M::Structure::relation(),
             clause,
+            M::create_projection(),
         );
 
         self.query(&query, &params)
