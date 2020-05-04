@@ -55,7 +55,11 @@ select {projection}
                 .replace("{post}", <Self as elephantry::Model>::Structure::relation())
                 .replace("{comment}", super::comment::Structure::relation());
 
-            Ok(self.connection.query::<super::Post>(&sql, &[&id])?.nth(0).unwrap())
+            Ok(self
+                .connection
+                .query::<super::Post>(&sql, &[&id])?
+                .nth(0)
+                .unwrap())
         }
     }
 
@@ -71,12 +75,7 @@ select {projection}
         }
 
         fn definition() -> &'static [&'static str] {
-            &[
-                "id",
-                "title",
-                "content",
-                "created_at",
-            ]
+            &["id", "title", "content", "created_at"]
         }
     }
 }
@@ -96,7 +95,6 @@ mod comment {
         type Entity = Entity;
         type Structure = Structure;
 
-
         fn new(_: &'a elephantry::Connection) -> Self {
             Self {}
         }
@@ -114,12 +112,7 @@ mod comment {
         }
 
         fn definition() -> &'static [&'static str] {
-            &[
-                "id",
-                "content",
-                "post_id",
-                "created_at",
-            ]
+            &["id", "content", "post_id", "created_at"]
         }
     }
 }
@@ -138,7 +131,8 @@ fn main() -> elephantry::Result<()> {
 }
 
 fn setup(elephantry: &elephantry::Pool) -> elephantry::Result<()> {
-    elephantry.execute("
+    elephantry.execute(
+        "
 begin;
 
 create temporary table post (
@@ -158,7 +152,8 @@ create temporary table comment (
 insert into post (post_id, title, content) values(1, 'First post', 'lorem ipsum');
 insert into comment (content, post_id) values('First comment', 1), ('Second comment', 1);
 
-commit;")?;
+commit;",
+    )?;
 
     Ok(())
 }

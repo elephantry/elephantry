@@ -20,10 +20,7 @@ impl Connection {
         M::new(self)
     }
 
-    pub fn execute(
-        &self,
-        query: &str
-    ) -> crate::Result<crate::pq::Result> {
+    pub fn execute(&self, query: &str) -> crate::Result<crate::pq::Result> {
         self.connection.execute(&query)
     }
 
@@ -96,17 +93,17 @@ impl Connection {
     where
         M: crate::Model<'a>,
     {
-        let suffix = format!("{} offset {} limit {}", suffix.unwrap_or_default(), max_per_page * (page - 1), max_per_page);
+        let suffix = format!(
+            "{} offset {} limit {}",
+            suffix.unwrap_or_default(),
+            max_per_page * (page - 1),
+            max_per_page
+        );
 
         let rows = self.find_where::<M>(clause, params, Some(&suffix))?;
         let count = self.count_where::<M>(clause, params)?;
 
-        let pager = crate::Pager::new(
-            rows,
-            count,
-            page,
-            max_per_page,
-        );
+        let pager = crate::Pager::new(rows, count, page, max_per_page);
 
         Ok(pager)
     }
@@ -187,7 +184,7 @@ impl Connection {
     pub fn update_one<'a, M>(
         &self,
         pk: &HashMap<&str, &dyn crate::ToSql>,
-        entity: &M::Entity
+        entity: &M::Entity,
     ) -> crate::Result<M::Entity>
     where
         M: crate::Model<'a>,

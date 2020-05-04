@@ -52,10 +52,12 @@ impl std::fmt::Display for Projection {
             .fields
             .iter()
             .map(|(alias, row)| {
-                let field = regex.replace_all(
-                    &row.replace("\"", "\\\""),
-                    format!("{}.\"$1\"", self.relation).as_str()
-                ).to_string();
+                let field = regex
+                    .replace_all(
+                        &row.replace("\"", "\\\""),
+                        format!("{}.\"$1\"", self.relation).as_str(),
+                    )
+                    .to_string();
                 format!(r#"{} as "{}""#, field, alias)
             })
             .fold(String::new(), |acc, x| {

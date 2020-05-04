@@ -82,14 +82,7 @@ impl elephantry::Structure for EventStructure {
         &["uuid"]
     }
 
-
     fn definition() -> &'static [&'static str] {
-        &[
-            "uuid",
-            "name",
-            "visitor_id",
-            "properties",
-            "browser",
-        ]
+        &["uuid", "name", "visitor_id", "properties", "browser"]
     }
 }

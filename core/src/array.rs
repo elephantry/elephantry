@@ -56,9 +56,8 @@ impl<T: crate::FromSql> crate::FromSql for Array<T> {
 
         let has_nulls = data.read_i32::<byteorder::BigEndian>()? != 0;
 
-        let elemtype: crate::pq::Type = data.read_u32::<byteorder::BigEndian>()?
-            .try_into()
-            .unwrap();
+        let elemtype: crate::pq::Type =
+            data.read_u32::<byteorder::BigEndian>()?.try_into().unwrap();
 
         let mut dimensions = Vec::new();
         let mut lower_bounds = Vec::new();
@@ -88,7 +87,10 @@ impl<T: crate::FromSql> crate::FromSql for Array<T> {
 impl<T: crate::FromSql + Clone> Into<Vec<T>> for Array<T> {
     fn into(self) -> Vec<T> {
         if self.ndim > 1 {
-            panic!("Unable to transform {} dimension array as vector", self.ndim);
+            panic!(
+                "Unable to transform {} dimension array as vector",
+                self.ndim
+            );
         }
 
         self.collect()
@@ -102,7 +104,8 @@ mod test {
     #[test]
     fn text_vec() {
         let elephantry = crate::test::new_conn();
-        let array: Vec<Vec<i32>> = elephantry.execute("SELECT '{1, 2}'::int4[]")
+        let array: Vec<Vec<i32>> = elephantry
+            .execute("SELECT '{1, 2}'::int4[]")
             .unwrap()
             .map(|x| x.nth(0))
             .collect();
@@ -113,7 +116,8 @@ mod test {
     #[test]
     fn bin_vec() {
         let elephantry = crate::test::new_conn();
-        let results: Vec<HashMap<String, Vec<i32>>> = elephantry.query("SELECT '{1, 2}'::int4[] as n", &[])
+        let results: Vec<HashMap<String, Vec<i32>>> = elephantry
+            .query("SELECT '{1, 2}'::int4[] as n", &[])
             .unwrap()
             .collect();
 
@@ -123,10 +127,14 @@ mod test {
     #[test]
     fn bin_array_str() {
         let elephantry = crate::test::new_conn();
-        let results: Vec<HashMap<String, Vec<Option<String>>>> = elephantry.query("SELECT '{null, str}'::text[] as n", &[])
+        let results: Vec<HashMap<String, Vec<Option<String>>>> = elephantry
+            .query("SELECT '{null, str}'::text[] as n", &[])
             .unwrap()
             .collect();
 
-        assert_eq!(results[0].get("n"), Some(&vec![None, Some("str".to_string())]));
+        assert_eq!(
+            results[0].get("n"),
+            Some(&vec![None, Some("str".to_string())])
+        );
     }
 }

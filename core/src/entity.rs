@@ -53,9 +53,8 @@ mod test {
     #[test]
     fn hashmap_str_from_sql() {
         let elephantry = crate::test::new_conn();
-        let results: Vec<HashMap<String, i32>> = elephantry.query("SELECT 1 as n", &[])
-            .unwrap()
-            .collect();
+        let results: Vec<HashMap<String, i32>> =
+            elephantry.query("SELECT 1 as n", &[]).unwrap().collect();
 
         assert_eq!(results[0].get("n"), Some(&1));
     }
@@ -63,9 +62,8 @@ mod test {
     #[test]
     fn hashmap_usize_from_sql() {
         let elephantry = crate::test::new_conn();
-        let results: Vec<HashMap<usize, i32>> = elephantry.query("SELECT 1 as n", &[])
-            .unwrap()
-            .collect();
+        let results: Vec<HashMap<usize, i32>> =
+            elephantry.query("SELECT 1 as n", &[]).unwrap().collect();
 
         assert_eq!(results[0].get(&0), Some(&1));
     }

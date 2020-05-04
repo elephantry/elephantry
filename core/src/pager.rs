@@ -7,7 +7,12 @@ pub struct Pager<E: crate::Entity> {
 }
 
 impl<E: crate::Entity> Pager<E> {
-    pub(crate) fn new(rows: crate::Rows<E>, count: usize, page: usize, max_per_page: usize) -> Self {
+    pub(crate) fn new(
+        rows: crate::Rows<E>,
+        count: usize,
+        page: usize,
+        max_per_page: usize,
+    ) -> Self {
         Self {
             rows,
             count,
@@ -86,7 +91,10 @@ impl<E: crate::Entity> Pager<E> {
 
 #[cfg(feature = "serde-support")]
 impl<E: crate::Entity + serde::Serialize> serde::Serialize for Pager<E> {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: serde::Serializer {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
         use serde::ser::SerializeStruct;
 
         let mut state = serializer.serialize_struct("Pager", 3)?;

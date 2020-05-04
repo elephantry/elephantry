@@ -92,18 +92,18 @@ impl Connection {
     pub fn new(dsn: &str) -> crate::Result<Self> {
         let inner = match libpq::Connection::new(dsn) {
             Ok(inner) => inner,
-            Err(message) => return Err(crate::Error::Connect {
-                dsn: dsn.to_string(),
-                message,
-            }),
+            Err(message) => {
+                return Err(crate::Error::Connect {
+                    dsn: dsn.to_string(),
+                    message,
+                })
+            }
         };
 
         inner.set_error_verbosity(libpq::Verbosity::Terse);
         inner.set_client_encoding(libpq::Encoding::UTF8);
 
-        Ok(Self {
-            inner,
-        })
+        Ok(Self { inner })
     }
 
     pub fn execute(&self, query: &str) -> crate::Result<Result> {
@@ -163,7 +163,12 @@ impl Result {
     }
 
     pub fn state(&self) -> State {
-        State::from_code(&self.inner.error_field(libpq::result::ErrorField::Sqlstate).unwrap())
+        State::from_code(
+            &self
+                .inner
+                .error_field(libpq::result::ErrorField::Sqlstate)
+                .unwrap(),
+        )
     }
 }
 
@@ -213,10 +218,7 @@ pub struct Tuple<'a> {
 
 impl<'a> Tuple<'a> {
     pub fn from(result: &'a libpq::Result, index: usize) -> Self {
-        Self {
-            result,
-            index,
-        }
+        Self { result, index }
     }
 
     pub fn get<T>(&self, name: &str) -> T

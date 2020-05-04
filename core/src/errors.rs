@@ -23,21 +23,28 @@ pub enum Error {
     Utf8(std::string::FromUtf8Error),
 }
 
-impl std::error::Error for Error {
-}
+impl std::error::Error for Error {}
 
-impl std::fmt::Display for Error
-{
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result
-    {
+impl std::fmt::Display for Error {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let s = match self {
             Error::Connect { message, .. } => message.clone(),
-            Error::Sql(result) => result.error_message().unwrap_or_else(|| "Unknow SQL error".to_string()),
+            Error::Sql(result) => result
+                .error_message()
+                .unwrap_or_else(|| "Unknow SQL error".to_string()),
             Error::MissingField(field) => format!("Missing field {}", field),
             Error::NotNull => format!("Try to retreive null field as non-option type"),
             Error::Io(err) => format!("I/O error: {}", err),
-            Error::FromSql { rust_type, value, .. } => format!("Invalid {} value: {}", rust_type, value),
-            Error::ToSql { rust_type, message, .. } => format!("Invalid {} value: '{}'", rust_type, message.clone().unwrap_or_else(|| "unknow".to_string())),
+            Error::FromSql {
+                rust_type, value, ..
+            } => format!("Invalid {} value: {}", rust_type, value),
+            Error::ToSql {
+                rust_type, message, ..
+            } => format!(
+                "Invalid {} value: '{}'",
+                rust_type,
+                message.clone().unwrap_or_else(|| "unknow".to_string())
+            ),
             Error::Utf8(err) => format!("Invalid utf8 value: {}", err),
         };
 

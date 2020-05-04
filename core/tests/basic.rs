@@ -49,11 +49,8 @@ fn main() {
 
     println!("Update one row:\n");
     entity.name = "pageview".to_string();
-    let entity = update_one::<EventModel>(
-        connection,
-        &elephantry::pk!(uuid => entity.uuid),
-        &entity,
-    );
+    let entity =
+        update_one::<EventModel>(connection, &elephantry::pk!(uuid => entity.uuid), &entity);
     assert_eq!(&entity.name, "pageview");
     println!();
 

@@ -16,9 +16,7 @@ mod serie {
         pub fn even_sum(&self) -> elephantry::Result<i32> {
             let query = "select sum(n) from serie where n % 2 = 0";
 
-            let result = self.connection.execute(query)?
-                .get(0)
-                .get("sum");
+            let result = self.connection.execute(query)?.get(0).get("sum");
 
             Ok(result)
         }

@@ -35,10 +35,7 @@ pub fn relation(
             pk.push(format!("\"{}\"", name));
         }
 
-        definition.push(format!(
-            "            \"{name}\",",
-            name = name,
-        ));
+        definition.push(format!("            \"{name}\",", name = name,));
     }
 
     write!(
@@ -92,7 +89,11 @@ impl elephantry::Structure for Structure
     )
 }
 
-pub fn entity(connection: &elephantry::Connection, schema: &str, relation: &str) -> std::io::Result<()> {
+pub fn entity(
+    connection: &elephantry::Connection,
+    schema: &str,
+    relation: &str,
+) -> std::io::Result<()> {
     let dir = format!("model/{}", schema);
     std::fs::create_dir_all(&dir)?;
 

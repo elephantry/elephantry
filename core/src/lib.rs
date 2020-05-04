@@ -20,12 +20,12 @@ mod to_sql;
 
 pub use array::*;
 pub use connection::*;
+pub use elephantry_derive::*;
 pub use entity::*;
 pub use errors::*;
 pub use from_sql::*;
 #[cfg(feature = "date")]
 pub use interval::*;
-pub use elephantry_derive::*;
 pub use model::*;
 pub use pager::*;
 pub use pool::*;

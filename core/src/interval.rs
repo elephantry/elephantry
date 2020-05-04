@@ -21,7 +21,11 @@ impl Interval {
 
 impl std::fmt::Display for Interval {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{} years {} months {} days", self.years, self.months, self.days)
+        write!(
+            f,
+            "{} years {} months {} days",
+            self.years, self.months, self.days
+        )
     }
 }
 
@@ -34,8 +38,7 @@ macro_rules! caps {
             },
             None => 0,
         };
-
-    }
+    };
 }
 
 impl crate::FromSql for crate::Interval {
@@ -50,8 +53,10 @@ impl crate::FromSql for crate::Interval {
             return Ok(crate::Interval::new(0, 0, 0));
         }
 
-        let re = regex::Regex::new(r"((?P<years>\d+) years?)? ?((?P<months>\d+) months?)? ?((?P<days>\d+) days?)?")
-            .unwrap();
+        let re = regex::Regex::new(
+            r"((?P<years>\d+) years?)? ?((?P<months>\d+) months?)? ?((?P<days>\d+) days?)?",
+        )
+        .unwrap();
         let caps = match re.captures(&s) {
             Some(caps) => caps,
             None => return Err(Self::error(ty, "elephantry::Interval", raw)),
@@ -93,7 +98,8 @@ mod test {
 
         for (value, expected) in tests {
             assert_eq!(
-                crate::Interval::from_binary(&crate::pq::ty::INTERVAL, Some(&value.as_bytes())).unwrap(),
+                crate::Interval::from_binary(&crate::pq::ty::INTERVAL, Some(&value.as_bytes()))
+                    .unwrap(),
                 expected,
             );
         }

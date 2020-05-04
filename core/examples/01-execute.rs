@@ -3,9 +3,8 @@
 fn main() -> elephantry::Result<()> {
     let elephantry = elephantry::Pool::new("postgres://localhost")?;
 
-    let results = elephantry.execute(
-        "select generate_series as n, null as null_field from generate_series(1, 10)",
-    )?;
+    let results = elephantry
+        .execute("select generate_series as n, null as null_field from generate_series(1, 10)")?;
 
     for result in &results {
         let n: i32 = result.get("n");

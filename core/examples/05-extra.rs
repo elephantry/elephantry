@@ -16,8 +16,7 @@ mod serie {
         }
 
         fn create_projection() -> elephantry::Projection {
-            Self::default_projection()
-                .add_field("even", "%:n:% % 2 = 0")
+            Self::default_projection().add_field("even", "%:n:% % 2 = 0")
         }
     }
 

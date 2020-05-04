@@ -8,8 +8,7 @@ impl<E: crate::Entity> std::iter::Iterator for Rows<E> {
     type Item = E;
 
     fn next(&mut self) -> Option<Self::Item> {
-        (&self.result).next()
-            .map(|x| E::from(&x))
+        (&self.result).next().map(|x| E::from(&x))
     }
 }
 
@@ -32,7 +31,10 @@ impl<E: crate::Entity> std::ops::Deref for Rows<E> {
 
 #[cfg(feature = "serde-support")]
 impl<E: crate::Entity + serde::Serialize> serde::Serialize for Rows<E> {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: serde::Serializer {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
         use serde::ser::SerializeSeq;
 
         let mut seq = serializer.serialize_seq(Some(self.len()))?;

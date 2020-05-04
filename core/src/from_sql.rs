@@ -6,7 +6,7 @@ macro_rules! not_null {
             Some(raw) => raw,
             None => return Err(crate::Error::NotNull),
         }
-    }
+    };
 }
 
 macro_rules! number {
@@ -24,28 +24,38 @@ macro_rules! number {
             }
 
             fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-                not_null!(raw).parse()
+                not_null!(raw)
+                    .parse()
                     .map_err(|_| Self::error(ty, stringify!($type), raw))
             }
         }
-    }
+    };
 }
 
 pub trait FromSql: Sized {
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self>;
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self>;
 
-    fn from_sql(ty: &crate::pq::Type, format: crate::pq::Format, raw: Option<&[u8]>) -> crate::Result<Self> {
+    fn from_sql(
+        ty: &crate::pq::Type,
+        format: crate::pq::Format,
+        raw: Option<&[u8]>,
+    ) -> crate::Result<Self> {
         match format {
             crate::pq::Format::Binary => Self::from_binary(ty, raw),
             crate::pq::Format::Text => Self::from_text(
                 ty,
-                raw.map(|x| String::from_utf8(x.to_vec()).unwrap()).as_deref()
+                raw.map(|x| String::from_utf8(x.to_vec()).unwrap())
+                    .as_deref(),
             ),
         }
     }
 
-    fn error<T: std::fmt::Debug>(pg_type: &crate::pq::Type, rust_type: &str, raw: T) -> crate::Error {
+    fn error<T: std::fmt::Debug>(
+        pg_type: &crate::pq::Type,
+        rust_type: &str,
+        raw: T,
+    ) -> crate::Error {
         crate::Error::FromSql {
             pg_type: pg_type.clone(),
             rust_type: rust_type.to_string(),
@@ -61,7 +71,8 @@ number!(u32, read_u32);
 
 impl FromSql for usize {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        not_null!(raw).parse()
+        not_null!(raw)
+            .parse()
             .map_err(|_| Self::error(ty, "usize", raw))
     }
 
@@ -117,7 +128,8 @@ impl FromSql for String {
     }
 
     fn from_binary(_: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
-        String::from_utf8(not_null!(raw).to_vec()).map_err(|e| e.into()) }
+        String::from_utf8(not_null!(raw).to_vec()).map_err(|e| e.into())
+    }
 }
 
 impl<T: FromSql + Clone> FromSql for Vec<T> {

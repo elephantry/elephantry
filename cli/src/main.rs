@@ -53,8 +53,7 @@ fn main() -> std::io::Result<()> {
 
     let opt = Opt::from_args();
     let dsn = std::env::var("DATABASE_URL").expect("Missing DATABASE_URL env variable");
-    let elephantry = elephantry::Pool::new(&dsn)
-        .expect("Unable to connect to postgresql");
+    let elephantry = elephantry::Pool::new(&dsn).expect("Unable to connect to postgresql");
     let connection = elephantry.get_default().unwrap();
 
     match opt {
