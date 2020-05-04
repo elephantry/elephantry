@@ -1,6 +1,7 @@
 use crate::Structure;
 use std::collections::HashMap;
 
+#[derive(Debug)]
 pub struct Connection {
     connection: crate::pq::Connection,
 }

@@ -52,6 +52,7 @@ macro_rules! pk {
     }}
 }
 
+#[derive(Debug)]
 pub struct Loxo {
     default: String,
     connections: HashMap<String, Connection>,

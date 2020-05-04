@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+#[derive(Debug)]
 pub struct Projection {
     pub relation: String,
     pub fields: HashMap<String, String>,

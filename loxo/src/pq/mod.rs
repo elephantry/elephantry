@@ -88,6 +88,7 @@ impl ToRust for Type {
     }
 }
 
+#[derive(Debug)]
 pub struct Connection {
     inner: libpq::Connection,
 }
