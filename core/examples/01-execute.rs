@@ -1,7 +1,9 @@
 #![allow(unused_must_use)]
 
 fn main() -> elephantry::Result<()> {
-    let elephantry = elephantry::Pool::new("postgres://localhost")?;
+    let database_url =
+        std::env::var("DATABASE_URL").unwrap_or_else(|_| "postgres://localhost".to_string());
+    let elephantry = elephantry::Pool::new(&database_url)?;
 
     let results = elephantry
         .execute("select generate_series as n, null as null_field from generate_series(1, 10)")?;

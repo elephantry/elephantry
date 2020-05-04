@@ -120,7 +120,9 @@ mod comment {
 fn main() -> elephantry::Result<()> {
     pretty_env_logger::init();
 
-    let elephantry = elephantry::Pool::new("postgres://localhost")?;
+    let database_url =
+        std::env::var("DATABASE_URL").unwrap_or_else(|_| "postgres://localhost".to_string());
+    let elephantry = elephantry::Pool::new(&database_url)?;
 
     setup(&elephantry)?;
     let post_with_comment = elephantry.model::<post::Model>().find_with_comments(1)?;

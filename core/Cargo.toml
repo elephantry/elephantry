@@ -50,3 +50,6 @@ serde-support = ["serde", "serde_derive"]
 [[example]]
 name = "07-relations"
 required-features = ["date"]
+
+[badges]
+gitlab = { repository = "sanpi/libpq.rs", branch = "master" }

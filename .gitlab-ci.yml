@@ -1,0 +1,53 @@
+image: "rust:latest"
+
+stages:
+    - lint
+    - test
+
+variables:
+    CARGO_HOME: $CI_PROJECT_DIR/cargo
+
+lint:fmt:
+    stage: lint
+    before_script:
+        - rustup component add rustfmt
+    script:
+        - cargo fmt
+        - if test $(git ls-files --modified | wc -l) -ne 0;
+          then
+              echo 'You have introduced some unformated code:';
+              git ls-files --modified | sed 's/^/* /';
+              echo 'Please run `cargo fmt` and amend your PR.';
+              exit 1;
+          fi
+
+lint:clippy:
+    stage: lint
+    before_script:
+        - rustup component add clippy
+    script: cargo clippy -- --deny warnings
+
+.test: &test
+    stage: test
+    before_script:
+        - MODE=$(echo "$CI_JOB_NAME" | cut -d ':' -f 2)
+        - test "$MODE" == "release" && CARGO_FLAGS='--release' || CARGO_FLAGS=''
+        - apt update -yqq
+        - apt install -yqq sudo postgresql
+        - sudo -u postgres pg_ctlcluster 11 main start
+        - sudo -u postgres psql --command "create role root WITH LOGIN ENCRYPTED PASSWORD '1234';";
+        - sudo -u postgres psql --command "create database root with owner root;";
+    script:
+        - export DATABASE_URL='host=localhost password=1234'
+        - cargo test --all-features $CARGO_FLAGS
+
+test:debug:
+    <<: *test
+
+test:release:
+    <<: *test
+
+cache:
+    paths:
+        - $CARGO_HOME
+        - target/

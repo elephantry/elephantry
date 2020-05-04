@@ -5,8 +5,10 @@ include!("entity_derive.rs");
 include!("entity.rs");
 
 fn main() {
+    let database_url = std::env::var("DATABASE_URL")
+        .unwrap_or_else(|_| "postgres://localhost/elephantry".to_string());
     let elephantry = elephantry::Pool::default()
-        .add_default("elephantry", "postgres://localhost/elephantry")
+        .add_default("elephantry", &database_url)
         .unwrap();
     let connection = elephantry.get_default().unwrap();
 
