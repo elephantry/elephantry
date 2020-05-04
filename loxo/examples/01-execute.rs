@@ -1,7 +1,7 @@
 #![allow(unused_must_use)]
 
 fn main() -> loxo::Result<()> {
-    let loxo = loxo::Loxo::new("postgres://localhost")?;
+    let loxo = loxo::Pool::new("postgres://localhost")?;
 
     let results = loxo.execute(
         "select generate_series as n, null as null_field from generate_series(1, 10)",

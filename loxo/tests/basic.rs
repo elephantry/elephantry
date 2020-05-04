@@ -5,7 +5,7 @@ include!("entity_derive.rs");
 include!("entity.rs");
 
 fn main() {
-    let loxo = loxo::Loxo::default()
+    let loxo = loxo::Pool::default()
         .add_default("loxo", "postgres://localhost/loxo")
         .unwrap();
     let connection = loxo.get_default().unwrap();

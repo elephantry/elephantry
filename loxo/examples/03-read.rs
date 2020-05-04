@@ -35,7 +35,7 @@ mod serie {
 fn main() -> loxo::Result<()> {
     pretty_env_logger::init();
 
-    let loxo = loxo::Loxo::new("postgres://localhost")?;
+    let loxo = loxo::Pool::new("postgres://localhost")?;
 
     find_by_pk(&loxo)?;
     find_all(&loxo)?;
@@ -46,7 +46,7 @@ fn main() -> loxo::Result<()> {
     Ok(())
 }
 
-fn find_by_pk(loxo: &loxo::Loxo) -> loxo::Result<()> {
+fn find_by_pk(loxo: &loxo::Pool) -> loxo::Result<()> {
     println!("# Find by primary key\n");
 
     let serie = loxo.find_by_pk::<serie::Model>(&loxo::pk!(n => 1))?;
@@ -55,7 +55,7 @@ fn find_by_pk(loxo: &loxo::Loxo) -> loxo::Result<()> {
     Ok(())
 }
 
-fn find_all(loxo: &loxo::Loxo) -> loxo::Result<()> {
+fn find_all(loxo: &loxo::Pool) -> loxo::Result<()> {
     println!("# Find all\n");
     let series = loxo.find_all::<serie::Model>(Some("order by generate_series desc"))?;
 
@@ -67,7 +67,7 @@ fn find_all(loxo: &loxo::Loxo) -> loxo::Result<()> {
     Ok(())
 }
 
-fn find_where(loxo: &loxo::Loxo) -> loxo::Result<()> {
+fn find_where(loxo: &loxo::Pool) -> loxo::Result<()> {
     println!("# Find where\n");
 
     let series = loxo.find_where::<serie::Model>("generate_series > $1", &[&5], None)?;
@@ -80,7 +80,7 @@ fn find_where(loxo: &loxo::Loxo) -> loxo::Result<()> {
     Ok(())
 }
 
-fn count_where(loxo: &loxo::Loxo) -> loxo::Result<()> {
+fn count_where(loxo: &loxo::Pool) -> loxo::Result<()> {
     println!("# Count where\n");
 
     let n = loxo.count_where::<serie::Model>("generate_series % 2 = 0", &[])?;
@@ -89,7 +89,7 @@ fn count_where(loxo: &loxo::Loxo) -> loxo::Result<()> {
     Ok(())
 }
 
-fn exist_where(loxo: &loxo::Loxo) -> loxo::Result<()> {
+fn exist_where(loxo: &loxo::Pool) -> loxo::Result<()> {
     println!("# Exist where\n");
 
     let exist = loxo.exist_where::<serie::Model>("generate_series < 0", &[])?;

@@ -44,7 +44,7 @@ mod serie {
 fn main() -> loxo::Result<()> {
     pretty_env_logger::init();
 
-    let loxo = loxo::Loxo::new("postgres://localhost")?;
+    let loxo = loxo::Pool::new("postgres://localhost")?;
     loxo.execute(include_str!("database.sql"))?;
 
     let model = loxo.model::<serie::Model>();

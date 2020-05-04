@@ -12,6 +12,7 @@ mod from_sql;
 mod interval;
 mod model;
 mod pager;
+mod pool;
 mod projection;
 mod rows;
 mod structure;
@@ -27,12 +28,11 @@ pub use interval::*;
 pub use loxo_derive::*;
 pub use model::*;
 pub use pager::*;
+pub use pool::*;
 pub use projection::*;
 pub use rows::*;
 pub use structure::*;
 pub use to_sql::*;
-
-use std::collections::HashMap;
 
 /**
  * Easily create pk argument for where clause, including find_by_pk function
@@ -60,75 +60,6 @@ macro_rules! pk {
     }}
 }
 
-#[derive(Debug)]
-pub struct Loxo {
-    default: String,
-    connections: HashMap<String, Connection>,
-}
-
-impl Loxo {
-    pub fn new(url: &str) -> Result<Self> {
-        Self::default().add_default("default", url)
-    }
-
-    pub fn add_default(self, name: &str, url: &str) -> Result<Self> {
-        self.add(name, url, true)
-    }
-
-    pub fn add_connection(self, name: &str, url: &str) -> Result<Self> {
-        self.add(name, url, false)
-    }
-
-    fn add(mut self, name: &str, url: &str, default: bool) -> Result<Self> {
-        self.connections
-            .insert(name.to_string(), Connection::new(url)?);
-
-        if default {
-            self.set_default(name);
-        }
-
-        Ok(self)
-    }
-
-    pub fn get_default(&self) -> Option<&Connection> {
-        self.connections.get(&self.default)
-    }
-
-    pub fn set_default(&mut self, name: &str) {
-        self.default = name.to_string();
-    }
-
-    pub fn get(&self, name: &str) -> Option<&Connection> {
-        self.connections.get(&name.to_string())
-    }
-}
-
-impl Default for Loxo {
-    fn default() -> Self {
-        Self {
-            default: String::new(),
-            connections: HashMap::new(),
-        }
-    }
-}
-
-impl std::ops::Index<&str> for Loxo {
-    type Output = crate::Connection;
-
-    fn index(&self, index: &str) -> &Self::Output {
-        self.get(index).unwrap()
-    }
-}
-
-impl std::ops::Deref for Loxo {
-    type Target = crate::Connection;
-
-    fn deref(&self) -> &Self::Target {
-        self.get_default().unwrap()
-    }
-}
-
-
 #[cfg(test)]
 mod test {
     static INIT: std::sync::Once = std::sync::Once::new();
@@ -137,12 +68,12 @@ mod test {
         std::env::var("PQ_DSN").unwrap_or_else(|_| "host=localhost".to_string())
     }
 
-    pub fn new_conn() -> crate::Loxo {
+    pub fn new_conn() -> crate::Pool {
         INIT.call_once(|| {
             pretty_env_logger::init();
         });
 
-        crate::Loxo::new(&dsn()).unwrap()
+        crate::Pool::new(&dsn()).unwrap()
     }
 
     #[test]

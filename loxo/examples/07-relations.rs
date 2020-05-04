@@ -127,7 +127,7 @@ mod comment {
 fn main() -> loxo::Result<()> {
     pretty_env_logger::init();
 
-    let loxo = loxo::Loxo::new("postgres://localhost")?;
+    let loxo = loxo::Pool::new("postgres://localhost")?;
 
     setup(&loxo)?;
     let post_with_comment = loxo.model::<post::Model>().find_with_comments(1)?;
@@ -137,7 +137,7 @@ fn main() -> loxo::Result<()> {
     Ok(())
 }
 
-fn setup(loxo: &loxo::Loxo) -> loxo::Result<()> {
+fn setup(loxo: &loxo::Pool) -> loxo::Result<()> {
     loxo.execute("
 begin;
 
@@ -163,7 +163,7 @@ commit;")?;
     Ok(())
 }
 
-fn tear_down(loxo: &loxo::Loxo) -> loxo::Result<()> {
+fn tear_down(loxo: &loxo::Pool) -> loxo::Result<()> {
     loxo.execute("drop table comment;")?;
     loxo.execute("drop table post;")?;
 

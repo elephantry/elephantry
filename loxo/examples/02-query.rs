@@ -4,7 +4,7 @@ struct Serie {
 }
 
 fn main() -> loxo::Result<()> {
-    let loxo = loxo::Loxo::new("postgres://localhost")?;
+    let loxo = loxo::Pool::new("postgres://localhost")?;
 
     let series = loxo.query::<Serie>(
         "select generate_series as n from generate_series(1, 10)",
