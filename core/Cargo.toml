@@ -1,8 +1,11 @@
 [package]
 name = "elephantry"
+description = "Object model manager for PostgreSQL"
 version = "0.1.0"
 authors = ["Sanpi <sanpi@homecomputing.fr>"]
 edition = "2018"
+keywords = ["database", "postgresql"]
+categories = ["database"]
 
 [dependencies]
 bytes = "0.5"
