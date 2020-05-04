@@ -157,6 +157,19 @@ impl FromSql for chrono::DateTime<chrono::offset::FixedOffset> {
 }
 
 #[cfg(feature = "date")]
+impl FromSql for chrono::DateTime<chrono::offset::Local> {
+    fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
+        let utc = chrono::DateTime::<chrono::offset::Utc>::from_text(ty, raw)?;
+        Ok(utc.with_timezone(&chrono::offset::Local))
+    }
+
+    fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
+        let utc = chrono::DateTime::<chrono::offset::Utc>::from_binary(ty, raw)?;
+        Ok(utc.with_timezone(&chrono::offset::Local))
+    }
+}
+
+#[cfg(feature = "date")]
 impl FromSql for chrono::NaiveDateTime {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         if let Ok(date) = chrono::NaiveDateTime::parse_from_str(not_null!(raw), "%F %T") {

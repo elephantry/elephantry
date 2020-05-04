@@ -136,6 +136,28 @@ impl ToSql for chrono::DateTime<chrono::offset::FixedOffset> {
 }
 
 #[cfg(feature = "date")]
+impl ToSql for chrono::DateTime<chrono::offset::Utc> {
+    fn ty(&self) -> crate::pq::Type {
+        crate::pq::ty::TIMESTAMPTZ
+    }
+
+    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
+        self.to_rfc2822().to_sql()
+    }
+}
+
+#[cfg(feature = "date")]
+impl ToSql for chrono::DateTime<chrono::offset::Local> {
+    fn ty(&self) -> crate::pq::Type {
+        crate::pq::ty::TIMESTAMPTZ
+    }
+
+    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
+        self.format("%F %T").to_string().to_sql()
+    }
+}
+
+#[cfg(feature = "date")]
 impl ToSql for chrono::NaiveDateTime {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::ty::TIMESTAMP
