@@ -33,7 +33,7 @@ impl std::fmt::Display for Error {
                 .error_message()
                 .unwrap_or_else(|| "Unknow SQL error".to_string()),
             Error::MissingField(field) => format!("Missing field {}", field),
-            Error::NotNull => format!("Try to retreive null field as non-option type"),
+            Error::NotNull => "Try to retreive null field as non-option type".to_string(),
             Error::Io(err) => format!("I/O error: {}", err),
             Error::FromSql {
                 rust_type, value, ..

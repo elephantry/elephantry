@@ -10,7 +10,7 @@ impl Projection {
     pub fn new(relation: &str, fields: &[&str]) -> Self {
         let mut map = HashMap::new();
         for field in fields {
-            map.insert(field.to_string(), format!("%:{}:%", field));
+            map.insert((*field).to_string(), format!("%:{}:%", field));
         }
 
         Self {
