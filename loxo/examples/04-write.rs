@@ -1,7 +1,7 @@
 mod serie {
     #[derive(Clone, Debug, loxo::Entity)]
     pub struct Entity {
-        n: i32,
+        pub generate_series: i32,
     }
 
     pub struct Model;
@@ -23,25 +23,20 @@ mod serie {
         }
 
         fn primary_key() -> &'static [&'static str] {
-            &["n"]
+            &["generate_series"]
         }
 
-        fn definition() -> std::collections::HashMap<&'static str, &'static str> {
-            maplit::hashmap! {
-                "n" => "%:generate_series:%",
-            }
+        fn definition() -> &'static [&'static str] {
+            &["generate_series"]
         }
     }
 }
 
 fn main() -> loxo::Result<()> {
+    pretty_env_logger::init();
+
     let loxo = loxo::Loxo::new("postgres://localhost")?;
-
-    let series = loxo.find_all::<serie::Model>()?;
-
-    for serie in series {
-        dbg!(serie);
-    }
+    loxo.execute(include_str!("database.sql"))?;
 
     Ok(())
 }

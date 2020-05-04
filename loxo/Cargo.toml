@@ -38,10 +38,7 @@ optional = true
 [dev-dependencies]
 serde_json = "1.0"
 uuid = "0.8"
-
-[dependencies.loxo-derive]
-path = "../loxo-derive"
-version = "0.1"
+pretty_env_logger = "0.4"
 
 [features]
 default = ["derive"]
@@ -49,3 +46,7 @@ date = ["chrono"]
 derive = []
 json = ["serde_json"]
 serde-support = ["serde", "serde_derive"]
+
+[[example]]
+name = "07-relations"
+required-features = ["date"]
