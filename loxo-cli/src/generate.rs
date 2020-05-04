@@ -36,7 +36,7 @@ pub fn relation(
         }
 
         definition.push(format!(
-            "        definition.insert(\"{name}\", \"%:{name}:%\");",
+            "            \"{name}\",",
             name = name,
         ));
     }
@@ -77,13 +77,11 @@ impl loxo::Structure for Structure
         &[{pk}]
     }}
 
-    fn definition() -> std::collections::HashMap<&'static str, &'static str>
+    fn definition() -> &'static [&'static str]
     {{
-        let mut definition = std::collections::HashMap::new();
-
+        &[
 {definition}
-
-        definition
+        ]
     }}
 }}
 "#,

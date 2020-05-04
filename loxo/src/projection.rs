@@ -2,19 +2,24 @@ use std::collections::HashMap;
 
 pub struct Projection {
     pub relation: String,
-    pub fields: HashMap<&'static str, &'static str>,
+    pub fields: HashMap<String, String>,
 }
 
 impl Projection {
-    pub fn new(relation: &str, fields: &HashMap<&'static str, &'static str>) -> Self {
+    pub fn new(relation: &str, fields: &[&str]) -> Self {
+        let mut map = HashMap::new();
+        for field in fields {
+            map.insert(field.to_string(), format!("%:{}:%", field));
+        }
+
         Self {
             relation: relation.to_string(),
-            fields: fields.clone(),
+            fields: map,
         }
     }
 
-    pub fn add_field(mut self, name: &'static str, row: &'static str) -> Projection {
-        self.fields.insert(name, row);
+    pub fn add_field(mut self, name: &str, row: &str) -> Projection {
+        self.fields.insert(name.to_string(), row.to_string());
 
         self
     }
@@ -25,12 +30,12 @@ impl Projection {
         self
     }
 
-    pub fn fields(&self) -> &HashMap<&'static str, &'static str> {
+    pub fn fields(&self) -> &HashMap<String, String> {
         &self.fields
     }
 
-    pub fn fields_name(&self) -> Vec<&str> {
-        self.fields.keys().copied().collect()
+    pub fn fields_name(&self) -> Vec<String> {
+        self.fields.keys().cloned().collect()
     }
 
     pub fn has_field(&self, name: &str) -> bool {

@@ -162,7 +162,7 @@ impl Connection {
         let mut x = 1;
 
         for field in projection.fields_name() {
-            if let Some(value) = entity.get(field) {
+            if let Some(value) = entity.get(&field) {
                 tuple.push(value);
                 params.push(format!("${}", x));
                 fields.push(field);
@@ -197,7 +197,7 @@ impl Connection {
         let mut data = HashMap::new();
 
         for field in projection.fields_name() {
-            let value = match entity.get(field) {
+            let value = match entity.get(&field) {
                 Some(value) => value,
                 None => &Option::<&str>::None,
             };
@@ -294,16 +294,8 @@ impl Connection {
             panic!("Invalid pk");
         }
 
-        let definition = M::Structure::definition();
-
         let clause = keys.iter().enumerate().fold(String::new(), |acc, (i, x)| {
-            let field = match definition.get(x) {
-                Some(field) => field
-                    .replace("\"", "\\\"")
-                    .replace("%:", "\"")
-                    .replace(":%", "\""),
-                None => (*x).to_string(),
-            };
+            let field = format!("\"{}\"", x.replace("\"", "\\\""));
 
             if acc.is_empty() {
                 format!("{} = ${}", field, i + 1)

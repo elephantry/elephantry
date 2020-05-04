@@ -82,13 +82,14 @@ impl loxo::Structure for EventStructure {
         &["uuid"]
     }
 
-    fn definition() -> std::collections::HashMap<&'static str, &'static str> {
-        maplit::hashmap! {
-            "uuid" => "%:uuid:%",
-            "name" => "%:name:%",
-            "visitor_id" => "%:visitor_id:%",
-            "properties" => "%:properties:%",
-            "browser" => "%:browser:%",
-        }
+
+    fn definition() -> &'static [&'static str] {
+        &[
+            "uuid",
+            "name",
+            "visitor_id",
+            "properties",
+            "browser",
+        ]
     }
 }
