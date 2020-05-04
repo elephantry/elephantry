@@ -4,6 +4,7 @@ description = "Object model manager for PostgreSQL"
 version = "0.1.0"
 authors = ["Sanpi <sanpi@homecomputing.fr>"]
 edition = "2018"
+readme = "../README.md"
 keywords = ["database", "postgresql"]
 categories = ["database"]
 
