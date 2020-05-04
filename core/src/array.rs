@@ -101,8 +101,8 @@ mod test {
 
     #[test]
     fn text_vec() {
-        let loxo = crate::test::new_conn();
-        let array: Vec<Vec<i32>> = loxo.execute("SELECT '{1, 2}'::int4[]")
+        let elephantry = crate::test::new_conn();
+        let array: Vec<Vec<i32>> = elephantry.execute("SELECT '{1, 2}'::int4[]")
             .unwrap()
             .map(|x| x.nth(0))
             .collect();
@@ -112,8 +112,8 @@ mod test {
 
     #[test]
     fn bin_vec() {
-        let loxo = crate::test::new_conn();
-        let results: Vec<HashMap<String, Vec<i32>>> = loxo.query("SELECT '{1, 2}'::int4[] as n", &[])
+        let elephantry = crate::test::new_conn();
+        let results: Vec<HashMap<String, Vec<i32>>> = elephantry.query("SELECT '{1, 2}'::int4[] as n", &[])
             .unwrap()
             .collect();
 
@@ -122,8 +122,8 @@ mod test {
 
     #[test]
     fn bin_array_str() {
-        let loxo = crate::test::new_conn();
-        let results: Vec<HashMap<String, Vec<Option<String>>>> = loxo.query("SELECT '{null, str}'::text[] as n", &[])
+        let elephantry = crate::test::new_conn();
+        let results: Vec<HashMap<String, Vec<Option<String>>>> = elephantry.query("SELECT '{null, str}'::text[] as n", &[])
             .unwrap()
             .collect();
 

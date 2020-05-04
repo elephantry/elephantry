@@ -77,27 +77,27 @@ fn impl_entity_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
     });
 
     let name = &ast.ident;
-    let loxo = if parameters.internal {
+    let elephantry = if parameters.internal {
         quote::quote! {
             crate
         }
     } else {
         quote::quote! {
-            loxo
+            elephantry
         }
     };
 
     let gen = quote::quote! {
-        impl #loxo::Entity for #name
+        impl #elephantry::Entity for #name
         {
-            fn from(tuple: &#loxo::pq::Tuple<'_>) -> Self
+            fn from(tuple: &#elephantry::pq::Tuple<'_>) -> Self
             {
                 Self {
                     #(#from_body, )*
                 }
             }
 
-            fn get(&self, field: &str) -> Option<&dyn #loxo::ToSql> {
+            fn get(&self, field: &str) -> Option<&dyn #elephantry::ToSql> {
                 match field {
                     #(#get_body, )*
                     _ => None,

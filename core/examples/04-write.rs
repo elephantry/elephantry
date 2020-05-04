@@ -1,23 +1,23 @@
 mod serie {
-    #[derive(Clone, Debug, loxo::Entity)]
+    #[derive(Clone, Debug, elephantry::Entity)]
     pub struct Entity {
         pub generate_series: i32,
     }
 
     pub struct Model;
 
-    impl<'a> loxo::Model<'a> for Model {
+    impl<'a> elephantry::Model<'a> for Model {
         type Entity = Entity;
         type Structure = Structure;
 
-        fn new(_: &'a loxo::Connection) -> Self {
+        fn new(_: &'a elephantry::Connection) -> Self {
             Self {}
         }
     }
 
     pub struct Structure;
 
-    impl loxo::Structure for Structure {
+    impl elephantry::Structure for Structure {
         fn relation() -> &'static str {
             "generate_series(1, 10)"
         }
@@ -32,11 +32,11 @@ mod serie {
     }
 }
 
-fn main() -> loxo::Result<()> {
+fn main() -> elephantry::Result<()> {
     pretty_env_logger::init();
 
-    let loxo = loxo::Pool::new("postgres://localhost")?;
-    loxo.execute(include_str!("database.sql"))?;
+    let elephantry = elephantry::Pool::new("postgres://localhost")?;
+    elephantry.execute(include_str!("database.sql"))?;
 
     Ok(())
 }

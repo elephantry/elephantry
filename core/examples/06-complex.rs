@@ -1,19 +1,19 @@
 mod serie {
     pub struct Model<'a> {
-        connection: &'a loxo::Connection,
+        connection: &'a elephantry::Connection,
     }
 
-    impl<'a> loxo::Model<'a> for Model<'a> {
+    impl<'a> elephantry::Model<'a> for Model<'a> {
         type Entity = std::collections::HashMap<String, i32>;
         type Structure = Structure;
 
-        fn new(connection: &'a loxo::Connection) -> Self {
+        fn new(connection: &'a elephantry::Connection) -> Self {
             Self { connection }
         }
     }
 
     impl<'a> Model<'a> {
-        pub fn even_sum(&self) -> loxo::Result<i32> {
+        pub fn even_sum(&self) -> elephantry::Result<i32> {
             let query = "select sum(n) from serie where n % 2 = 0";
 
             let result = self.connection.execute(query)?
@@ -26,7 +26,7 @@ mod serie {
 
     pub struct Structure;
 
-    impl loxo::Structure for Structure {
+    impl elephantry::Structure for Structure {
         fn relation() -> &'static str {
             "serie"
         }
@@ -41,13 +41,13 @@ mod serie {
     }
 }
 
-fn main() -> loxo::Result<()> {
+fn main() -> elephantry::Result<()> {
     pretty_env_logger::init();
 
-    let loxo = loxo::Pool::new("postgres://localhost")?;
-    loxo.execute(include_str!("database.sql"))?;
+    let elephantry = elephantry::Pool::new("postgres://localhost")?;
+    elephantry.execute(include_str!("database.sql"))?;
 
-    let model = loxo.model::<serie::Model>();
+    let model = elephantry.model::<serie::Model>();
     let sum = model.even_sum()?;
 
     dbg!(sum);

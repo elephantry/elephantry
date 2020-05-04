@@ -16,8 +16,8 @@ struct Event {
     browser: String,
 }
 
-impl loxo::Entity for Event {
-    fn from(tuple: &loxo::pq::Tuple) -> Self {
+impl elephantry::Entity for Event {
+    fn from(tuple: &elephantry::pq::Tuple) -> Self {
         Self {
             uuid: tuple.get("uuid"),
             name: tuple.get("name"),
@@ -27,7 +27,7 @@ impl loxo::Entity for Event {
         }
     }
 
-    fn get(&self, field: &str) -> Option<&dyn loxo::ToSql> {
+    fn get(&self, field: &str) -> Option<&dyn elephantry::ToSql> {
         match field {
             "uuid" => match self.uuid {
                 Some(ref uuid) => Some(uuid),
@@ -43,20 +43,20 @@ impl loxo::Entity for Event {
 }
 
 struct EventModel<'a> {
-    connection: &'a loxo::Connection,
+    connection: &'a elephantry::Connection,
 }
 
-impl<'a> loxo::Model<'a> for EventModel<'a> {
+impl<'a> elephantry::Model<'a> for EventModel<'a> {
     type Entity = Event;
     type Structure = EventStructure;
 
-    fn new(connection: &'a loxo::Connection) -> Self {
+    fn new(connection: &'a elephantry::Connection) -> Self {
         Self { connection }
     }
 }
 
 impl<'a> EventModel<'a> {
-    fn count_uniq_visitor(&self) -> loxo::Result<u32> {
+    fn count_uniq_visitor(&self) -> elephantry::Result<u32> {
         self.connection
             .execute("select count(distinct visitor_id) as count from event")
             .map(|x| x.get(0).get("count"))
@@ -82,9 +82,9 @@ struct EventExtra {
     os: Option<String>,
 }
 
-impl loxo::Entity for EventExtra {
-    fn from(tuple: &loxo::pq::Tuple) -> Self {
-        let event = <Event as loxo::Entity>::from(tuple);
+impl elephantry::Entity for EventExtra {
+    fn from(tuple: &elephantry::pq::Tuple) -> Self {
+        let event = <Event as elephantry::Entity>::from(tuple);
 
         Self {
             uuid: event.uuid,
@@ -96,7 +96,7 @@ impl loxo::Entity for EventExtra {
         }
     }
 
-    fn get(&self, field: &str) -> Option<&dyn loxo::ToSql> {
+    fn get(&self, field: &str) -> Option<&dyn elephantry::ToSql> {
         match field {
             "uuid" => match self.uuid {
                 Some(ref uuid) => Some(uuid),
@@ -117,22 +117,22 @@ impl loxo::Entity for EventExtra {
 
 struct EventExtraModel;
 
-impl<'a> loxo::Model<'a> for EventExtraModel {
+impl<'a> elephantry::Model<'a> for EventExtraModel {
     type Entity = EventExtra;
     type Structure = EventStructure;
 
-    fn new(_: &'a loxo::Connection) -> Self {
+    fn new(_: &'a elephantry::Connection) -> Self {
         Self {}
     }
 
-    fn create_projection() -> loxo::Projection {
+    fn create_projection() -> elephantry::Projection {
         Self::default_projection().add_field("os", "%:browser:% ->> 'os'")
     }
 }
 
 struct EventStructure;
 
-impl loxo::Structure for EventStructure {
+impl elephantry::Structure for EventStructure {
     fn relation() -> &'static str {
         "public.event"
     }

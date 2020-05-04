@@ -5,10 +5,10 @@ include!("entity_derive.rs");
 include!("entity.rs");
 
 fn main() {
-    let loxo = loxo::Pool::default()
-        .add_default("loxo", "postgres://localhost/loxo")
+    let elephantry = elephantry::Pool::default()
+        .add_default("elephantry", "postgres://localhost/elephantry")
         .unwrap();
-    let connection = loxo.get_default().unwrap();
+    let connection = elephantry.get_default().unwrap();
 
     let count = connection
         .count_where::<EventModel>("name = $1", &[&"pageview"])
@@ -51,7 +51,7 @@ fn main() {
     entity.name = "pageview".to_string();
     let entity = update_one::<EventModel>(
         connection,
-        &loxo::pk!(uuid => entity.uuid),
+        &elephantry::pk!(uuid => entity.uuid),
         &entity,
     );
     assert_eq!(&entity.name, "pageview");
@@ -61,7 +61,7 @@ fn main() {
     connection.delete_one::<EventModel>(&entity).unwrap();
     let uuid = entity.uuid.unwrap();
     assert!(connection
-        .find_by_pk::<EventModel>(&loxo::pk! {uuid => uuid})
+        .find_by_pk::<EventModel>(&elephantry::pk! {uuid => uuid})
         .unwrap()
         .is_none());
     assert_eq!(
@@ -79,15 +79,15 @@ fn main() {
     println!("Count uniq visitor: {}", count);
 }
 
-fn find_by_pk<'a, M>(connection: &loxo::Connection, uuid: &str)
+fn find_by_pk<'a, M>(connection: &elephantry::Connection, uuid: &str)
 where
-    M: loxo::Model<'a>,
+    M: elephantry::Model<'a>,
     M::Entity: std::fmt::Debug,
 {
     #[cfg(feature = "json")]
     let uuid = uuid::Uuid::parse_str(uuid).unwrap();
     let event = connection
-        .find_by_pk::<EventModel>(&loxo::pk!(uuid))
+        .find_by_pk::<EventModel>(&elephantry::pk!(uuid))
         .unwrap();
 
     match event {
@@ -96,9 +96,9 @@ where
     };
 }
 
-fn find_all<'a, M>(connection: &loxo::Connection)
+fn find_all<'a, M>(connection: &elephantry::Connection)
 where
-    M: loxo::Model<'a>,
+    M: elephantry::Model<'a>,
     M::Entity: std::fmt::Debug,
 {
     let events = connection.find_all::<M>(None).unwrap();
@@ -112,9 +112,9 @@ where
     }
 }
 
-fn insert_one<'a, M>(connection: &loxo::Connection, entity: &M::Entity) -> M::Entity
+fn insert_one<'a, M>(connection: &elephantry::Connection, entity: &M::Entity) -> M::Entity
 where
-    M: loxo::Model<'a>,
+    M: elephantry::Model<'a>,
     M::Entity: std::fmt::Debug,
 {
     let new_entity = connection.insert_one::<M>(&entity).unwrap();
@@ -125,12 +125,12 @@ where
 }
 
 fn update_one<'a, M>(
-    connection: &loxo::Connection,
-    pk: &std::collections::HashMap<&str, &dyn loxo::ToSql>,
+    connection: &elephantry::Connection,
+    pk: &std::collections::HashMap<&str, &dyn elephantry::ToSql>,
     entity: &M::Entity,
 ) -> M::Entity
 where
-    M: loxo::Model<'a>,
+    M: elephantry::Model<'a>,
     M::Entity: std::fmt::Debug,
 {
     let new_entity = connection.update_one::<M>(pk, entity).unwrap();

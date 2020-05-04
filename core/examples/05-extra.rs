@@ -1,5 +1,5 @@
 mod serie {
-    #[derive(Clone, Debug, loxo::Entity)]
+    #[derive(Clone, Debug, elephantry::Entity)]
     pub struct Entity {
         pub n: i32,
         pub even: bool,
@@ -7,15 +7,15 @@ mod serie {
 
     pub struct Model;
 
-    impl<'a> loxo::Model<'a> for Model {
+    impl<'a> elephantry::Model<'a> for Model {
         type Entity = Entity;
         type Structure = Structure;
 
-        fn new(_: &'a loxo::Connection) -> Self {
+        fn new(_: &'a elephantry::Connection) -> Self {
             Self {}
         }
 
-        fn create_projection() -> loxo::Projection {
+        fn create_projection() -> elephantry::Projection {
             Self::default_projection()
                 .add_field("even", "%:n:% % 2 = 0")
         }
@@ -23,7 +23,7 @@ mod serie {
 
     pub struct Structure;
 
-    impl loxo::Structure for Structure {
+    impl elephantry::Structure for Structure {
         fn relation() -> &'static str {
             "serie"
         }
@@ -38,13 +38,13 @@ mod serie {
     }
 }
 
-fn main() -> loxo::Result<()> {
+fn main() -> elephantry::Result<()> {
     pretty_env_logger::init();
 
-    let loxo = loxo::Pool::new("postgres://localhost")?;
-    loxo.execute(include_str!("database.sql"))?;
+    let elephantry = elephantry::Pool::new("postgres://localhost")?;
+    elephantry.execute(include_str!("database.sql"))?;
 
-    let series = loxo.find_all::<serie::Model>(None)?;
+    let series = elephantry.find_all::<serie::Model>(None)?;
 
     for serie in series {
         dbg!(serie);

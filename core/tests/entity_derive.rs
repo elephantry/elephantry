@@ -1,4 +1,4 @@
-#[derive(Clone, Debug, loxo::Entity)]
+#[derive(Clone, Debug, elephantry::Entity)]
 struct Event {
     #[cfg(feature = "uuid")]
     uuid: Option<uuid::Uuid>,
@@ -17,27 +17,27 @@ struct Event {
 }
 
 struct EventModel<'a> {
-    connection: &'a loxo::Connection,
+    connection: &'a elephantry::Connection,
 }
 
-impl<'a> loxo::Model<'a> for EventModel<'a> {
+impl<'a> elephantry::Model<'a> for EventModel<'a> {
     type Entity = Event;
     type Structure = EventStructure;
 
-    fn new(connection: &'a loxo::Connection) -> Self {
+    fn new(connection: &'a elephantry::Connection) -> Self {
         Self { connection }
     }
 }
 
 impl<'a> EventModel<'a> {
-    fn count_uniq_visitor(&self) -> loxo::Result<u32> {
+    fn count_uniq_visitor(&self) -> elephantry::Result<u32> {
         self.connection
             .execute("select count(distinct visitor_id) as count from event")
             .map(|x| x.get(0).get("count"))
     }
 }
 
-#[derive(Clone, Debug, loxo::Entity)]
+#[derive(Clone, Debug, elephantry::Entity)]
 struct EventExtra {
     #[cfg(feature = "uuid")]
     uuid: Option<uuid::Uuid>,
@@ -58,22 +58,22 @@ struct EventExtra {
 
 struct EventExtraModel;
 
-impl<'a> loxo::Model<'a> for EventExtraModel {
+impl<'a> elephantry::Model<'a> for EventExtraModel {
     type Entity = EventExtra;
     type Structure = EventStructure;
 
-    fn new(_: &'a loxo::Connection) -> Self {
+    fn new(_: &'a elephantry::Connection) -> Self {
         Self {}
     }
 
-    fn create_projection() -> loxo::Projection {
+    fn create_projection() -> elephantry::Projection {
         Self::default_projection().add_field("os", "%:browser:% ->> 'os'")
     }
 }
 
 struct EventStructure;
 
-impl loxo::Structure for EventStructure {
+impl elephantry::Structure for EventStructure {
     fn relation() -> &'static str {
         "public.event"
     }

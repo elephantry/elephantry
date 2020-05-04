@@ -1,9 +1,9 @@
 #![allow(unused_must_use)]
 
-fn main() -> loxo::Result<()> {
-    let loxo = loxo::Pool::new("postgres://localhost")?;
+fn main() -> elephantry::Result<()> {
+    let elephantry = elephantry::Pool::new("postgres://localhost")?;
 
-    let results = loxo.execute(
+    let results = elephantry.execute(
         "select generate_series as n, null as null_field from generate_series(1, 10)",
     )?;
 

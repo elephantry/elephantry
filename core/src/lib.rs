@@ -25,7 +25,7 @@ pub use errors::*;
 pub use from_sql::*;
 #[cfg(feature = "date")]
 pub use interval::*;
-pub use loxo_derive::*;
+pub use elephantry_derive::*;
 pub use model::*;
 pub use pager::*;
 pub use pool::*;

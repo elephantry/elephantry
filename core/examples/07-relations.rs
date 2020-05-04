@@ -1,4 +1,4 @@
-#[derive(Clone, Debug, loxo::Entity)]
+#[derive(Clone, Debug, elephantry::Entity)]
 pub struct Post {
     title: String,
     content: String,
@@ -6,7 +6,7 @@ pub struct Post {
 }
 
 mod post {
-    #[derive(Clone, Debug, loxo::Entity)]
+    #[derive(Clone, Debug, elephantry::Entity)]
     pub struct Entity {
         pub id: u32,
         pub title: String,
@@ -15,18 +15,18 @@ mod post {
     }
 
     pub struct Model<'a> {
-        connection: &'a loxo::Connection,
+        connection: &'a elephantry::Connection,
     }
 
-    impl<'a> loxo::Model<'a> for Model<'a> {
+    impl<'a> elephantry::Model<'a> for Model<'a> {
         type Entity = Entity;
         type Structure = Structure;
 
-        fn new(connection: &'a loxo::Connection) -> Self {
+        fn new(connection: &'a elephantry::Connection) -> Self {
             Self { connection }
         }
 
-        fn create_projection() -> loxo::Projection {
+        fn create_projection() -> elephantry::Projection {
             Self::default_projection()
                 .unset_field("post_id")
                 .add_field("id", "%:post_id:%")
@@ -34,8 +34,8 @@ mod post {
     }
 
     impl<'a> Model<'a> {
-        pub fn find_with_comments(&self, id: i32) -> loxo::Result<super::Post> {
-            use loxo::{Model, Structure};
+        pub fn find_with_comments(&self, id: i32) -> elephantry::Result<super::Post> {
+            use elephantry::{Model, Structure};
 
             let query = r#"
 select {projection}
@@ -52,7 +52,7 @@ select {projection}
 
             let sql = query
                 .replace("{projection}", &projection.to_string())
-                .replace("{post}", <Self as loxo::Model>::Structure::relation())
+                .replace("{post}", <Self as elephantry::Model>::Structure::relation())
                 .replace("{comment}", super::comment::Structure::relation());
 
             Ok(self.connection.query::<super::Post>(&sql, &[&id])?.nth(0).unwrap())
@@ -61,7 +61,7 @@ select {projection}
 
     pub struct Structure;
 
-    impl loxo::Structure for Structure {
+    impl elephantry::Structure for Structure {
         fn relation() -> &'static str {
             "post"
         }
@@ -82,7 +82,7 @@ select {projection}
 }
 
 mod comment {
-    #[derive(Clone, Debug, loxo::Entity)]
+    #[derive(Clone, Debug, elephantry::Entity)]
     pub struct Entity {
         pub id: u32,
         pub content: String,
@@ -92,19 +92,19 @@ mod comment {
 
     pub struct Model;
 
-    impl<'a> loxo::Model<'a> for Model {
+    impl<'a> elephantry::Model<'a> for Model {
         type Entity = Entity;
         type Structure = Structure;
 
 
-        fn new(_: &'a loxo::Connection) -> Self {
+        fn new(_: &'a elephantry::Connection) -> Self {
             Self {}
         }
     }
 
     pub struct Structure;
 
-    impl loxo::Structure for Structure {
+    impl elephantry::Structure for Structure {
         fn relation() -> &'static str {
             "comment"
         }
@@ -124,21 +124,21 @@ mod comment {
     }
 }
 
-fn main() -> loxo::Result<()> {
+fn main() -> elephantry::Result<()> {
     pretty_env_logger::init();
 
-    let loxo = loxo::Pool::new("postgres://localhost")?;
+    let elephantry = elephantry::Pool::new("postgres://localhost")?;
 
-    setup(&loxo)?;
-    let post_with_comment = loxo.model::<post::Model>().find_with_comments(1)?;
+    setup(&elephantry)?;
+    let post_with_comment = elephantry.model::<post::Model>().find_with_comments(1)?;
     dbg!(post_with_comment);
-    tear_down(&loxo)?;
+    tear_down(&elephantry)?;
 
     Ok(())
 }
 
-fn setup(loxo: &loxo::Pool) -> loxo::Result<()> {
-    loxo.execute("
+fn setup(elephantry: &elephantry::Pool) -> elephantry::Result<()> {
+    elephantry.execute("
 begin;
 
 create temporary table post (
@@ -163,9 +163,9 @@ commit;")?;
     Ok(())
 }
 
-fn tear_down(loxo: &loxo::Pool) -> loxo::Result<()> {
-    loxo.execute("drop table comment;")?;
-    loxo.execute("drop table post;")?;
+fn tear_down(elephantry: &elephantry::Pool) -> elephantry::Result<()> {
+    elephantry.execute("drop table comment;")?;
+    elephantry.execute("drop table post;")?;
 
     Ok(())
 }

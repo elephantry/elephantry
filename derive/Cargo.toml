@@ -1,5 +1,5 @@
 [package]
-name = "loxo-derive"
+name = "elephantry-derive"
 version = "0.1.0"
 authors = ["Sanpi <sanpi@homecomputing.fr>"]
 edition = "2018"

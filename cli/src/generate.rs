@@ -1,8 +1,8 @@
 use case::CaseExt;
 use std::io::Write;
 
-pub fn schema(connection: &loxo::Connection, schema: &str) -> std::io::Result<()> {
-    let relations = loxo::inspect::schema(connection, schema);
+pub fn schema(connection: &elephantry::Connection, schema: &str) -> std::io::Result<()> {
+    let relations = elephantry::inspect::schema(connection, schema);
 
     for r in relations {
         relation(connection, schema, &r.name)?;
@@ -12,7 +12,7 @@ pub fn schema(connection: &loxo::Connection, schema: &str) -> std::io::Result<()
 }
 
 pub fn relation(
-    connection: &loxo::Connection,
+    connection: &elephantry::Connection,
     schema: &str,
     relation: &str,
 ) -> std::io::Result<()> {
@@ -24,7 +24,7 @@ pub fn relation(
 
     write_entity(&mut file, connection, schema, relation)?;
 
-    let columns = loxo::inspect::relation(connection, schema, relation);
+    let columns = elephantry::inspect::relation(connection, schema, relation);
     let mut pk = Vec::new();
     let mut definition = Vec::new();
 
@@ -45,15 +45,15 @@ pub fn relation(
         file,
         r"
 pub struct Model<'a> {{
-    connection: &'a loxo::Connection,
+    connection: &'a elephantry::Connection,
 }}
 
 
-impl<'a> loxo::Model<'a> for Model<'a> {{
+impl<'a> elephantry::Model<'a> for Model<'a> {{
     type Entity = Entity;
     type Structure = Structure;
 
-    fn new(connection: &'a loxo::Connection) -> Self {{
+    fn new(connection: &'a elephantry::Connection) -> Self {{
         Self {{ connection }}
     }}
 }}
@@ -65,7 +65,7 @@ impl<'a> loxo::Model<'a> for Model<'a> {{
         file,
         r#"pub struct Structure;
 
-impl loxo::Structure for Structure
+impl elephantry::Structure for Structure
 {{
     fn relation() -> &'static str
     {{
@@ -92,7 +92,7 @@ impl loxo::Structure for Structure
     )
 }
 
-pub fn entity(connection: &loxo::Connection, schema: &str, relation: &str) -> std::io::Result<()> {
+pub fn entity(connection: &elephantry::Connection, schema: &str, relation: &str) -> std::io::Result<()> {
     let dir = format!("model/{}", schema);
     std::fs::create_dir_all(&dir)?;
 
@@ -104,14 +104,14 @@ pub fn entity(connection: &loxo::Connection, schema: &str, relation: &str) -> st
 
 fn write_entity<W>(
     file: &mut std::io::BufWriter<W>,
-    connection: &loxo::Connection,
+    connection: &elephantry::Connection,
     schema: &str,
     relation: &str,
 ) -> std::io::Result<()>
 where
     W: std::io::Write,
 {
-    let columns = loxo::inspect::relation(connection, schema, relation);
+    let columns = elephantry::inspect::relation(connection, schema, relation);
     let mut fields = Vec::new();
 
     for column in &columns {
@@ -123,7 +123,7 @@ where
 
     write!(
         file,
-        r"#[derive(Clone, Debug, loxo::Entity)]
+        r"#[derive(Clone, Debug, elephantry::Entity)]
 pub struct Entity {{
 {fields}
 }}
@@ -132,11 +132,11 @@ pub struct Entity {{
     )
 }
 
-fn ty_to_rust(column: &loxo::inspect::Column) -> String {
-    use loxo::pq::ToRust;
+fn ty_to_rust(column: &elephantry::inspect::Column) -> String {
+    use elephantry::pq::ToRust;
     use std::convert::TryFrom;
 
-    let ty = loxo::pq::Type::try_from(column.oid).unwrap();
+    let ty = elephantry::pq::Type::try_from(column.oid).unwrap();
 
     if column.is_notnull {
         ty.to_rust()

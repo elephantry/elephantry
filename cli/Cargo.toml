@@ -1,5 +1,5 @@
 [package]
-name = "loxo-cli"
+name = "elephantry-cli"
 version = "0.1.0"
 authors = ["Sanpi <sanpi@homecomputing.fr>"]
 edition = "2018"
@@ -10,6 +10,6 @@ dotenv = "0.15"
 structopt = "0.3"
 term-table = "1.1"
 
-[dependencies.loxo]
+[dependencies.elephantry]
 version = "0.1"
-path = "../loxo/"
+path = "../core/"

@@ -52,8 +52,8 @@ mod test {
 
     #[test]
     fn hashmap_str_from_sql() {
-        let loxo = crate::test::new_conn();
-        let results: Vec<HashMap<String, i32>> = loxo.query("SELECT 1 as n", &[])
+        let elephantry = crate::test::new_conn();
+        let results: Vec<HashMap<String, i32>> = elephantry.query("SELECT 1 as n", &[])
             .unwrap()
             .collect();
 
@@ -62,8 +62,8 @@ mod test {
 
     #[test]
     fn hashmap_usize_from_sql() {
-        let loxo = crate::test::new_conn();
-        let results: Vec<HashMap<usize, i32>> = loxo.query("SELECT 1 as n", &[])
+        let elephantry = crate::test::new_conn();
+        let results: Vec<HashMap<usize, i32>> = elephantry.query("SELECT 1 as n", &[])
             .unwrap()
             .collect();
 
