@@ -13,6 +13,7 @@ pub enum Error {
     },
     Io(std::io::Error),
     MissingField(String),
+    NotNull,
     Sql(crate::pq::Result),
     ToSql {
         pg_type: crate::pq::Type,
@@ -33,6 +34,7 @@ impl std::fmt::Display for Error
             Error::Connect { message, .. } => message.clone(),
             Error::Sql(result) => result.error_message().unwrap_or_else(|| "Unknow SQL error".to_string()),
             Error::MissingField(field) => format!("Missing field {}", field),
+            Error::NotNull => format!("Try to retreive null field as non-option type"),
             Error::Io(err) => format!("I/O error: {}", err),
             Error::FromSql { rust_type, value, .. } => format!("Invalid {} value: {}", rust_type, value),
             Error::ToSql { rust_type, message, .. } => format!("Invalid {} value: '{}'", rust_type, message.clone().unwrap_or_else(|| "unknow".to_string())),

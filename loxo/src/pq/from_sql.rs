@@ -1,10 +1,19 @@
 use byteorder::ReadBytesExt;
 
+macro_rules! not_null {
+    ($raw:ident) => {
+        match $raw {
+            Some(raw) => raw,
+            None => return Err(crate::Error::NotNull),
+        }
+    }
+}
+
 macro_rules! number {
     ($type:ty, $read:ident) => {
         impl FromSql for $type {
             fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
-                let mut buf = raw.unwrap();
+                let mut buf = not_null!(raw);
                 let v = buf.$read::<byteorder::BigEndian>()?;
 
                 if !buf.is_empty() {
@@ -15,7 +24,7 @@ macro_rules! number {
             }
 
             fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-                raw.unwrap().parse()
+                not_null!(raw).parse()
                     .map_err(|_| Self::error(ty, stringify!($type), raw))
             }
         }
@@ -52,12 +61,12 @@ number!(u32, read_u32);
 
 impl FromSql for usize {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        raw.unwrap().parse()
+        not_null!(raw).parse()
             .map_err(|_| Self::error(ty, "usize", raw))
     }
 
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
-        let mut buf = raw.unwrap();
+        let mut buf = not_null!(raw);
         #[cfg(target_pointer_width = "64")]
         let v = buf.read_u64::<byteorder::BigEndian>()?;
         #[cfg(target_pointer_width = "32")]
@@ -73,16 +82,16 @@ impl FromSql for usize {
 
 impl FromSql for bool {
     fn from_text(_: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        Ok(raw.unwrap() == "t")
+        Ok(not_null!(raw) == "t")
     }
 
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
-        let buf = raw.unwrap();
+        let buf = not_null!(raw);
         if buf.len() != 1 {
             return Err(Self::error(ty, "bool", raw));
         }
 
-        Ok(raw.unwrap()[0] != 0)
+        Ok(not_null!(raw)[0] != 0)
     }
 }
 
@@ -104,11 +113,11 @@ impl<T: FromSql> FromSql for Option<T> {
 
 impl FromSql for String {
     fn from_text(_: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        Ok(raw.unwrap().to_string())
+        Ok(not_null!(raw).to_string())
     }
 
     fn from_binary(_: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
-        String::from_utf8(raw.unwrap().to_vec()).map_err(|e| e.into()) }
+        String::from_utf8(not_null!(raw).to_vec()).map_err(|e| e.into()) }
 }
 
 impl<T: FromSql + Clone> FromSql for Vec<T> {
@@ -150,11 +159,11 @@ impl FromSql for chrono::DateTime<chrono::offset::FixedOffset> {
 #[cfg(feature = "date")]
 impl FromSql for chrono::NaiveDateTime {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        if let Ok(date) = chrono::NaiveDateTime::parse_from_str(raw.unwrap(), "%F %T") {
+        if let Ok(date) = chrono::NaiveDateTime::parse_from_str(not_null!(raw), "%F %T") {
             return Ok(date);
         }
 
-        match chrono::NaiveDateTime::parse_from_str(raw.unwrap(), "%F %T.%f") {
+        match chrono::NaiveDateTime::parse_from_str(not_null!(raw), "%F %T.%f") {
             Ok(date) => Ok(date),
             _ => Err(Self::error(ty, "timestamp", raw)),
         }
@@ -171,7 +180,7 @@ impl FromSql for chrono::NaiveDateTime {
 #[cfg(feature = "json")]
 impl FromSql for serde_json::value::Value {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        match serde_json::from_str(raw.unwrap()) {
+        match serde_json::from_str(not_null!(raw)) {
             Ok(json) => Ok(json),
             _ => Err(Self::error(ty, "json", raw)),
         }
@@ -190,7 +199,7 @@ impl FromSql for serde_json::value::Value {
 #[cfg(feature = "uuid")]
 impl FromSql for uuid::Uuid {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        match uuid::Uuid::parse_str(&raw.unwrap()) {
+        match uuid::Uuid::parse_str(&not_null!(raw)) {
             Ok(uuid) => Ok(uuid),
             _ => Err(Self::error(ty, "uuid", raw)),
         }
