@@ -126,7 +126,7 @@ where
 
 fn update_one<'a, M>(
     connection: &loxo::Connection,
-    pk: &std::collections::HashMap<&str, &dyn loxo::pq::ToSql>,
+    pk: &std::collections::HashMap<&str, &dyn loxo::ToSql>,
     entity: &M::Entity,
 ) -> M::Entity
 where

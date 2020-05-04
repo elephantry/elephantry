@@ -197,7 +197,7 @@ impl ToSql for uuid::Uuid {
 mod test {
     #[test]
     fn vec_to_sql() {
-        use crate::pq::ToSql;
+        use crate::ToSql;
 
         let vec = vec![1, 2, 3];
 

@@ -30,14 +30,14 @@ impl Connection {
     pub fn query<E: crate::Entity>(
         &self,
         query: &str,
-        params: &[&dyn crate::pq::ToSql],
+        params: &[&dyn crate::ToSql],
     ) -> crate::Result<crate::Rows<E>> {
         Ok(self.connection.query(&query, params)?.into())
     }
 
     pub fn find_by_pk<'a, M>(
         &self,
-        pk: &HashMap<&str, &dyn crate::pq::ToSql>,
+        pk: &HashMap<&str, &dyn crate::ToSql>,
     ) -> crate::Result<Option<M::Entity>>
     where
         M: crate::Model<'a>,
@@ -68,7 +68,7 @@ impl Connection {
     pub fn find_where<'a, M>(
         &self,
         clause: &str,
-        params: &[&dyn crate::pq::ToSql],
+        params: &[&dyn crate::ToSql],
         suffix: Option<&str>,
     ) -> crate::Result<crate::Rows<M::Entity>>
     where
@@ -88,7 +88,7 @@ impl Connection {
     pub fn paginate_find_where<'a, M>(
         &self,
         clause: &str,
-        params: &[&dyn crate::pq::ToSql],
+        params: &[&dyn crate::ToSql],
         max_per_page: usize,
         page: usize,
         suffix: Option<&str>,
@@ -114,7 +114,7 @@ impl Connection {
     pub fn count_where<'a, M>(
         &self,
         clause: &str,
-        params: &[&dyn crate::pq::ToSql],
+        params: &[&dyn crate::ToSql],
     ) -> crate::Result<usize>
     where
         M: crate::Model<'a>,
@@ -133,7 +133,7 @@ impl Connection {
     pub fn exist_where<'a, M>(
         &self,
         clause: &str,
-        params: &[&dyn crate::pq::ToSql],
+        params: &[&dyn crate::ToSql],
     ) -> crate::Result<bool>
     where
         M: crate::Model<'a>,
@@ -186,7 +186,7 @@ impl Connection {
 
     pub fn update_one<'a, M>(
         &self,
-        pk: &HashMap<&str, &dyn crate::pq::ToSql>,
+        pk: &HashMap<&str, &dyn crate::ToSql>,
         entity: &M::Entity
     ) -> crate::Result<M::Entity>
     where
@@ -210,8 +210,8 @@ impl Connection {
 
     pub fn update_by_pk<'a, M>(
         &self,
-        pk: &HashMap<&str, &dyn crate::pq::ToSql>,
-        data: &HashMap<String, &dyn crate::pq::ToSql>,
+        pk: &HashMap<&str, &dyn crate::ToSql>,
+        data: &HashMap<String, &dyn crate::ToSql>,
     ) -> crate::Result<M::Entity>
     where
         M: crate::Model<'a>,
@@ -253,7 +253,7 @@ impl Connection {
 
     pub fn delete_by_pk<'a, M>(
         &self,
-        pk: &HashMap<&str, &dyn crate::pq::ToSql>,
+        pk: &HashMap<&str, &dyn crate::ToSql>,
     ) -> crate::Result<M::Entity>
     where
         M: crate::Model<'a>,
@@ -267,7 +267,7 @@ impl Connection {
     pub fn delete_where<'a, M>(
         &self,
         clause: &str,
-        params: &[&dyn crate::pq::ToSql],
+        params: &[&dyn crate::ToSql],
     ) -> crate::Result<crate::Rows<M::Entity>>
     where
         M: crate::Model<'a>,
@@ -284,8 +284,8 @@ impl Connection {
 
     fn pk_clause<'a, 'b, M>(
         &self,
-        pk: &HashMap<&str, &'b dyn crate::pq::ToSql>,
-    ) -> (String, Vec<&'b dyn crate::pq::ToSql>)
+        pk: &HashMap<&str, &'b dyn crate::ToSql>,
+    ) -> (String, Vec<&'b dyn crate::ToSql>)
     where
         M: crate::Model<'a>,
     {

@@ -2,10 +2,10 @@ use std::collections::HashMap;
 
 pub trait Entity: Clone {
     fn from(tuple: &crate::pq::Tuple<'_>) -> Self;
-    fn get(&self, field: &str) -> Option<&dyn crate::pq::ToSql>;
+    fn get(&self, field: &str) -> Option<&dyn crate::ToSql>;
 }
 
-impl<T: crate::pq::FromSql + crate::pq::ToSql + Clone> Entity for HashMap<String, T> {
+impl<T: crate::FromSql + crate::ToSql + Clone> Entity for HashMap<String, T> {
     fn from(tuple: &crate::pq::Tuple<'_>) -> Self {
         let mut hashmap = HashMap::new();
 
@@ -18,7 +18,7 @@ impl<T: crate::pq::FromSql + crate::pq::ToSql + Clone> Entity for HashMap<String
         hashmap
     }
 
-    fn get(&self, field: &str) -> Option<&dyn crate::pq::ToSql> {
+    fn get(&self, field: &str) -> Option<&dyn crate::ToSql> {
         match self.get(field) {
             Some(value) => Some(value),
             None => None,
@@ -26,7 +26,7 @@ impl<T: crate::pq::FromSql + crate::pq::ToSql + Clone> Entity for HashMap<String
     }
 }
 
-impl<T: crate::pq::FromSql + crate::pq::ToSql + Clone> Entity for HashMap<usize, T> {
+impl<T: crate::FromSql + crate::ToSql + Clone> Entity for HashMap<usize, T> {
     fn from(tuple: &crate::pq::Tuple<'_>) -> Self {
         let mut hashmap = HashMap::new();
 
@@ -38,7 +38,7 @@ impl<T: crate::pq::FromSql + crate::pq::ToSql + Clone> Entity for HashMap<usize,
         hashmap
     }
 
-    fn get(&self, field: &str) -> Option<&dyn crate::pq::ToSql> {
+    fn get(&self, field: &str) -> Option<&dyn crate::ToSql> {
         match self.get(&field.parse::<usize>().unwrap()) {
             Some(value) => Some(value),
             None => None,

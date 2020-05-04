@@ -38,7 +38,7 @@ macro_rules! caps {
     }
 }
 
-impl crate::pq::FromSql for crate::Interval {
+impl crate::FromSql for crate::Interval {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         todo!()
     }
@@ -67,7 +67,7 @@ impl crate::pq::FromSql for crate::Interval {
     }
 }
 
-impl crate::pq::ToSql for crate::Interval {
+impl crate::ToSql for crate::Interval {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::ty::INTERVAL
     }
@@ -79,7 +79,7 @@ impl crate::pq::ToSql for crate::Interval {
 
 #[cfg(test)]
 mod test {
-    use crate::pq::FromSql;
+    use crate::FromSql;
 
     #[test]
     fn from_binary() {

@@ -7,6 +7,7 @@ mod array;
 mod connection;
 mod entity;
 mod errors;
+mod from_sql;
 #[cfg(feature = "date")]
 mod interval;
 mod model;
@@ -14,11 +15,13 @@ mod pager;
 mod projection;
 mod rows;
 mod structure;
+mod to_sql;
 
 pub use array::*;
 pub use connection::*;
 pub use entity::*;
 pub use errors::*;
+pub use from_sql::*;
 #[cfg(feature = "date")]
 pub use interval::*;
 pub use loxo_derive::*;
@@ -27,6 +30,7 @@ pub use pager::*;
 pub use projection::*;
 pub use rows::*;
 pub use structure::*;
+pub use to_sql::*;
 
 use std::collections::HashMap;
 
@@ -49,7 +53,7 @@ macro_rules! pk {
         let mut hash = std::collections::HashMap::new();
 
         $(
-            hash.insert(stringify!($key), &$value as &dyn $crate::pq::ToSql);
+            hash.insert(stringify!($key), &$value as &dyn $crate::ToSql);
         )*
 
         hash

@@ -97,7 +97,7 @@ fn impl_entity_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
                 }
             }
 
-            fn get(&self, field: &str) -> Option<&dyn #loxo::pq::ToSql> {
+            fn get(&self, field: &str) -> Option<&dyn #loxo::ToSql> {
                 match field {
                     #(#get_body, )*
                     _ => None,

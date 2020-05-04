@@ -16,7 +16,7 @@ pub struct Array<T> {
     maker: std::marker::PhantomData<T>,
 }
 
-impl<T: crate::pq::FromSql> Iterator for Array<T> {
+impl<T: crate::FromSql> Iterator for Array<T> {
     type Item = T;
 
     fn next(&mut self) -> Option<T> {
@@ -41,7 +41,7 @@ impl<T: crate::pq::FromSql> Iterator for Array<T> {
     }
 }
 
-impl<T: crate::pq::FromSql> crate::pq::FromSql for Array<T> {
+impl<T: crate::FromSql> crate::FromSql for Array<T> {
     fn from_text(_ty: &crate::pq::Type, _raw: Option<&str>) -> crate::Result<Self> {
         todo!()
     }
@@ -85,7 +85,7 @@ impl<T: crate::pq::FromSql> crate::pq::FromSql for Array<T> {
     }
 }
 
-impl<T: crate::pq::FromSql + Clone> Into<Vec<T>> for Array<T> {
+impl<T: crate::FromSql + Clone> Into<Vec<T>> for Array<T> {
     fn into(self) -> Vec<T> {
         if self.ndim > 1 {
             panic!("Unable to transform {} dimension array as vector", self.ndim);

@@ -1,10 +1,5 @@
 use std::convert::TryInto;
 
-mod from_sql;
-mod to_sql;
-
-pub use from_sql::FromSql;
-pub use to_sql::ToSql;
 pub use libpq::state;
 
 pub use libpq::ty;
@@ -115,7 +110,7 @@ impl Connection {
         self.inner.exec(query).try_into()
     }
 
-    pub fn query(&self, query: &str, params: &[&dyn ToSql]) -> crate::Result<Result> {
+    pub fn query(&self, query: &str, params: &[&dyn crate::ToSql]) -> crate::Result<Result> {
         let mut param_types = Vec::new();
         let mut param_values = Vec::new();
         let mut param_formats = Vec::new();
@@ -226,7 +221,7 @@ impl<'a> Tuple<'a> {
 
     pub fn get<T>(&self, name: &str) -> T
     where
-        T: FromSql,
+        T: crate::FromSql,
     {
         self.try_get(name)
             .unwrap_or_else(|err| panic!("Unable to retreive '{}' field: {}", name, err))
@@ -234,7 +229,7 @@ impl<'a> Tuple<'a> {
 
     pub fn try_get<T>(&self, name: &str) -> crate::Result<T>
     where
-        T: FromSql,
+        T: crate::FromSql,
     {
         let n = match self.result.field_number(name) {
             Some(n) => n,
@@ -246,7 +241,7 @@ impl<'a> Tuple<'a> {
 
     pub fn nth<T>(&self, n: usize) -> T
     where
-        T: FromSql,
+        T: crate::FromSql,
     {
         self.try_nth(n)
             .unwrap_or_else(|err| panic!("Unable to retreive field {}: {}", n, err))
@@ -254,13 +249,13 @@ impl<'a> Tuple<'a> {
 
     pub fn try_nth<T>(&self, n: usize) -> crate::Result<T>
     where
-        T: FromSql,
+        T: crate::FromSql,
     {
         let ty = self.result.field_type(n).unwrap_or(ty::TEXT);
         let format = self.result.field_format(n);
         let value = self.result.value(self.index, n);
 
-        FromSql::from_sql(&ty, format, value)
+        crate::FromSql::from_sql(&ty, format, value)
     }
 
     pub fn len(&self) -> usize {

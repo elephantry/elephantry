@@ -27,7 +27,7 @@ impl loxo::Entity for Event {
         }
     }
 
-    fn get(&self, field: &str) -> Option<&dyn loxo::pq::ToSql> {
+    fn get(&self, field: &str) -> Option<&dyn loxo::ToSql> {
         match field {
             "uuid" => match self.uuid {
                 Some(ref uuid) => Some(uuid),
@@ -96,7 +96,7 @@ impl loxo::Entity for EventExtra {
         }
     }
 
-    fn get(&self, field: &str) -> Option<&dyn loxo::pq::ToSql> {
+    fn get(&self, field: &str) -> Option<&dyn loxo::ToSql> {
         match field {
             "uuid" => match self.uuid {
                 Some(ref uuid) => Some(uuid),
