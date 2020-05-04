@@ -7,6 +7,8 @@ mod array;
 mod connection;
 mod entity;
 mod errors;
+#[cfg(feature = "date")]
+mod interval;
 mod model;
 mod pager;
 mod projection;
@@ -17,6 +19,8 @@ pub use array::*;
 pub use connection::*;
 pub use entity::*;
 pub use errors::*;
+#[cfg(feature = "date")]
+pub use interval::*;
 pub use loxo_derive::*;
 pub use model::*;
 pub use pager::*;
