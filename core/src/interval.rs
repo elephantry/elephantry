@@ -32,9 +32,17 @@ impl std::fmt::Display for Interval {
 macro_rules! caps {
     ($caps:ident, $part:ident, $ty:ident, $raw:ident) => {
         match $caps.name(stringify!($part)) {
-            Some(part) => match part.as_str().parse() {
-                Ok(part) => part,
-                Err(_) => return Err(Self::error($ty, "elephantry::Interval", $raw)),
+            Some(part) => {
+                match part.as_str().parse() {
+                    Ok(part) => part,
+                    Err(_) => {
+                        return Err(Self::error(
+                            $ty,
+                            "elephantry::Interval",
+                            $raw,
+                        ))
+                    },
+                }
             },
             None => 0,
         };
@@ -42,11 +50,17 @@ macro_rules! caps {
 }
 
 impl crate::FromSql for crate::Interval {
-    fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
+    fn from_text(
+        ty: &crate::pq::Type,
+        raw: Option<&str>,
+    ) -> crate::Result<Self> {
         todo!()
     }
 
-    fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
+    fn from_binary(
+        ty: &crate::pq::Type,
+        raw: Option<&[u8]>,
+    ) -> crate::Result<Self> {
         let s = String::from_binary(ty, raw)?;
 
         if s.as_str() == "00:00:00" {
@@ -98,8 +112,11 @@ mod test {
 
         for (value, expected) in tests {
             assert_eq!(
-                crate::Interval::from_binary(&crate::pq::ty::INTERVAL, Some(&value.as_bytes()))
-                    .unwrap(),
+                crate::Interval::from_binary(
+                    &crate::pq::ty::INTERVAL,
+                    Some(&value.as_bytes())
+                )
+                .unwrap(),
                 expected,
             );
         }

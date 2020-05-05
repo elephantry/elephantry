@@ -23,7 +23,9 @@ mod post {
         type Structure = Structure;
 
         fn new(connection: &'a elephantry::Connection) -> Self {
-            Self { connection }
+            Self {
+                connection,
+            }
         }
 
         fn create_projection() -> elephantry::Projection {
@@ -34,7 +36,10 @@ mod post {
     }
 
     impl<'a> Model<'a> {
-        pub fn find_with_comments(&self, id: i32) -> elephantry::Result<super::Post> {
+        pub fn find_with_comments(
+            &self,
+            id: i32,
+        ) -> elephantry::Result<super::Post> {
             use elephantry::{Model, Structure};
 
             let query = r#"
@@ -52,13 +57,13 @@ select {projection}
 
             let sql = query
                 .replace("{projection}", &projection.to_string())
-                .replace("{post}", <Self as elephantry::Model>::Structure::relation())
+                .replace(
+                    "{post}",
+                    <Self as elephantry::Model>::Structure::relation(),
+                )
                 .replace("{comment}", super::comment::Structure::relation());
 
-            Ok(self
-                .connection
-                .query::<super::Post>(&sql, &[&id])?
-                .get(0))
+            Ok(self.connection.query::<super::Post>(&sql, &[&id])?.get(0))
         }
     }
 
@@ -119,12 +124,13 @@ mod comment {
 fn main() -> elephantry::Result<()> {
     pretty_env_logger::init();
 
-    let database_url =
-        std::env::var("DATABASE_URL").unwrap_or_else(|_| "postgres://localhost".to_string());
+    let database_url = std::env::var("DATABASE_URL")
+        .unwrap_or_else(|_| "postgres://localhost".to_string());
     let elephantry = elephantry::Pool::new(&database_url)?;
 
     setup(&elephantry)?;
-    let post_with_comment = elephantry.model::<post::Model>().find_with_comments(1)?;
+    let post_with_comment =
+        elephantry.model::<post::Model>().find_with_comments(1)?;
     dbg!(post_with_comment);
     tear_down(&elephantry)?;
 

@@ -63,13 +63,21 @@ impl ToRust for Type {
             #[cfg(feature = "chrono")]
             "time with time zone" | "timetz" => todo!(),
             #[cfg(not(feature = "chrono"))]
-            "timestamp" | "timestamp without time zone" => "std::time::SystemTime",
+            "timestamp" | "timestamp without time zone" => {
+                "std::time::SystemTime"
+            },
             #[cfg(feature = "chrono")]
-            "timestamp" | "timestamp without time zone" => "chrono::NaiveDateTime",
+            "timestamp" | "timestamp without time zone" => {
+                "chrono::NaiveDateTime"
+            },
             #[cfg(not(feature = "chrono"))]
-            "timestamp with time zone" | "timestamptz" => "std::time::SystemTime",
+            "timestamp with time zone" | "timestamptz" => {
+                "std::time::SystemTime"
+            },
             #[cfg(feature = "chrono")]
-            "timestamp with time zone" | "timestamptz" => "chrono::DateTime<chrono::FixedOffset>",
+            "timestamp with time zone" | "timestamptz" => {
+                "chrono::DateTime<chrono::FixedOffset>"
+            },
             #[cfg(feature = "uuid")]
             "uuid" => "uuid::Uuid",
             "xml" => "String",
@@ -97,20 +105,26 @@ impl Connection {
                     dsn: dsn.to_string(),
                     message,
                 })
-            }
+            },
         };
 
         inner.set_error_verbosity(libpq::Verbosity::Terse);
         inner.set_client_encoding(libpq::Encoding::UTF8);
 
-        Ok(Self { inner })
+        Ok(Self {
+            inner,
+        })
     }
 
     pub fn execute(&self, query: &str) -> crate::Result<Result> {
         self.inner.exec(query).try_into()
     }
 
-    pub fn query(&self, query: &str, params: &[&dyn crate::ToSql]) -> crate::Result<Result> {
+    pub fn query(
+        &self,
+        query: &str,
+        params: &[&dyn crate::ToSql],
+    ) -> crate::Result<Result> {
         let mut param_types = Vec::new();
         let mut param_values = Vec::new();
         let mut param_formats = Vec::new();
@@ -198,14 +212,18 @@ impl std::convert::TryFrom<libpq::Result> for Result {
         use libpq::Status::*;
 
         match inner.status() {
-            BadResponse | FatalError | NonFatalError => Err(crate::Error::Sql(Self {
-                inner,
-                current_tuple: std::cell::RefCell::new(0),
-            })),
-            _ => Ok(Self {
-                inner,
-                current_tuple: std::cell::RefCell::new(0),
-            }),
+            BadResponse | FatalError | NonFatalError => {
+                Err(crate::Error::Sql(Self {
+                    inner,
+                    current_tuple: std::cell::RefCell::new(0),
+                }))
+            },
+            _ => {
+                Ok(Self {
+                    inner,
+                    current_tuple: std::cell::RefCell::new(0),
+                })
+            },
         }
     }
 }
@@ -218,15 +236,19 @@ pub struct Tuple<'a> {
 
 impl<'a> Tuple<'a> {
     pub fn from(result: &'a libpq::Result, index: usize) -> Self {
-        Self { result, index }
+        Self {
+            result,
+            index,
+        }
     }
 
     pub fn get<T>(&self, name: &str) -> T
     where
         T: crate::FromSql,
     {
-        self.try_get(name)
-            .unwrap_or_else(|err| panic!("Unable to retreive '{}' field: {}", name, err))
+        self.try_get(name).unwrap_or_else(|err| {
+            panic!("Unable to retreive '{}' field: {}", name, err)
+        })
     }
 
     pub fn try_get<T>(&self, name: &str) -> crate::Result<T>
@@ -245,8 +267,9 @@ impl<'a> Tuple<'a> {
     where
         T: crate::FromSql,
     {
-        self.try_nth(n)
-            .unwrap_or_else(|err| panic!("Unable to retreive field {}: {}", n, err))
+        self.try_nth(n).unwrap_or_else(|err| {
+            panic!("Unable to retreive field {}: {}", n, err)
+        })
     }
 
     pub fn try_nth<T>(&self, n: usize) -> crate::Result<T>

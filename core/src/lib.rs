@@ -65,7 +65,8 @@ mod test {
     static INIT: std::sync::Once = std::sync::Once::new();
 
     pub fn dsn() -> String {
-        std::env::var("DATABASE_URL").unwrap_or_else(|_| "host=localhost".to_string())
+        std::env::var("DATABASE_URL")
+            .unwrap_or_else(|_| "host=localhost".to_string())
     }
 
     pub fn new_conn() -> crate::Pool {

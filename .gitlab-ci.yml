@@ -8,11 +8,12 @@ variables:
     CARGO_HOME: $CI_PROJECT_DIR/cargo
 
 lint:fmt:
+    image: "rustlang/rust:nightly"
     stage: lint
     before_script:
         - rustup component add rustfmt
     script:
-        - cargo fmt
+        - cargo +nightly fmt
         - if test $(git ls-files --modified | wc -l) -ne 0;
           then
               echo 'You have introduced some unformated code:';

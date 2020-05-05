@@ -1,7 +1,10 @@
 use case::CaseExt;
 use std::io::Write;
 
-pub fn schema(connection: &elephantry::Connection, schema: &str) -> std::io::Result<()> {
+pub fn schema(
+    connection: &elephantry::Connection,
+    schema: &str,
+) -> std::io::Result<()> {
     let relations = elephantry::inspect::schema(connection, schema);
 
     for r in relations {
@@ -141,7 +144,8 @@ fn ty_to_rust(column: &elephantry::inspect::Column) -> String {
 
     if column.is_notnull {
         ty.to_rust()
-    } else {
+    }
+    else {
         format!("Option<{}>", ty.to_rust())
     }
 }

@@ -48,7 +48,10 @@ impl Connection {
         })
     }
 
-    pub fn find_all<'a, M>(&self, suffix: Option<&str>) -> crate::Result<crate::Rows<M::Entity>>
+    pub fn find_all<'a, M>(
+        &self,
+        suffix: Option<&str>,
+    ) -> crate::Result<crate::Rows<M::Entity>>
     where
         M: crate::Model<'a>,
     {
@@ -146,7 +149,10 @@ impl Connection {
         Ok(results.get(0).try_get("result")?)
     }
 
-    pub fn insert_one<'a, M>(&self, entity: &M::Entity) -> crate::Result<M::Entity>
+    pub fn insert_one<'a, M>(
+        &self,
+        entity: &M::Entity,
+    ) -> crate::Result<M::Entity>
     where
         M: crate::Model<'a>,
     {
@@ -239,7 +245,10 @@ impl Connection {
         Ok(M::create_entity(&results.get(0)))
     }
 
-    pub fn delete_one<'a, M>(&self, entity: &M::Entity) -> crate::Result<M::Entity>
+    pub fn delete_one<'a, M>(
+        &self,
+        entity: &M::Entity,
+    ) -> crate::Result<M::Entity>
     where
         M: crate::Model<'a>,
     {
@@ -292,15 +301,17 @@ impl Connection {
             panic!("Invalid pk");
         }
 
-        let clause = keys.iter().enumerate().fold(String::new(), |acc, (i, x)| {
-            let field = format!("\"{}\"", x.replace("\"", "\\\""));
+        let clause =
+            keys.iter().enumerate().fold(String::new(), |acc, (i, x)| {
+                let field = format!("\"{}\"", x.replace("\"", "\\\""));
 
-            if acc.is_empty() {
-                format!("{} = ${}", field, i + 1)
-            } else {
-                format!("{} AND {} = ${}", acc, field, i + 1)
-            }
-        });
+                if acc.is_empty() {
+                    format!("{} = ${}", field, i + 1)
+                }
+                else {
+                    format!("{} AND {} = ${}", acc, field, i + 1)
+                }
+            });
 
         let params: Vec<_> = pk.values().copied().collect();
 

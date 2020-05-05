@@ -87,7 +87,11 @@ pub struct Column {
     pub comment: Option<String>,
 }
 
-pub fn relation(connection: &crate::Connection, schema: &str, relation: &str) -> Vec<Column> {
+pub fn relation(
+    connection: &crate::Connection,
+    schema: &str,
+    relation: &str,
+) -> Vec<Column> {
     connection
         .query(
             r#"

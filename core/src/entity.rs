@@ -5,8 +5,10 @@ pub trait Entity: Clone {
     fn get(&self, field: &str) -> Option<&dyn crate::ToSql>;
 }
 
-impl<T: crate::FromSql + crate::ToSql + Clone, S: std::hash::BuildHasher + Default + Clone> Entity
-    for HashMap<String, T, S>
+impl<
+        T: crate::FromSql + crate::ToSql + Clone,
+        S: std::hash::BuildHasher + Default + Clone,
+    > Entity for HashMap<String, T, S>
 {
     fn from(tuple: &crate::pq::Tuple<'_>) -> Self {
         let mut hashmap = HashMap::default();
@@ -28,8 +30,10 @@ impl<T: crate::FromSql + crate::ToSql + Clone, S: std::hash::BuildHasher + Defau
     }
 }
 
-impl<T: crate::FromSql + crate::ToSql + Clone, S: std::hash::BuildHasher + Default + Clone> Entity
-    for HashMap<usize, T, S>
+impl<
+        T: crate::FromSql + crate::ToSql + Clone,
+        S: std::hash::BuildHasher + Default + Clone,
+    > Entity for HashMap<usize, T, S>
 {
     fn from(tuple: &crate::pq::Tuple<'_>) -> Self {
         let mut hashmap = HashMap::default();

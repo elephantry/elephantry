@@ -35,8 +35,8 @@ mod serie {
 fn main() -> elephantry::Result<()> {
     pretty_env_logger::init();
 
-    let database_url =
-        std::env::var("DATABASE_URL").unwrap_or_else(|_| "postgres://localhost".to_string());
+    let database_url = std::env::var("DATABASE_URL")
+        .unwrap_or_else(|_| "postgres://localhost".to_string());
     let elephantry = elephantry::Pool::new(&database_url)?;
 
     find_by_pk(&elephantry)?;
@@ -51,7 +51,8 @@ fn main() -> elephantry::Result<()> {
 fn find_by_pk(elephantry: &elephantry::Pool) -> elephantry::Result<()> {
     println!("# Find by primary key\n");
 
-    let serie = elephantry.find_by_pk::<serie::Model>(&elephantry::pk!(n => 1))?;
+    let serie =
+        elephantry.find_by_pk::<serie::Model>(&elephantry::pk!(n => 1))?;
     println!("{:?}\n", serie);
 
     Ok(())
@@ -59,7 +60,8 @@ fn find_by_pk(elephantry: &elephantry::Pool) -> elephantry::Result<()> {
 
 fn find_all(elephantry: &elephantry::Pool) -> elephantry::Result<()> {
     println!("# Find all\n");
-    let series = elephantry.find_all::<serie::Model>(Some("order by generate_series desc"))?;
+    let series = elephantry
+        .find_all::<serie::Model>(Some("order by generate_series desc"))?;
 
     for serie in series {
         println!("{}", serie.n);
@@ -72,7 +74,11 @@ fn find_all(elephantry: &elephantry::Pool) -> elephantry::Result<()> {
 fn find_where(elephantry: &elephantry::Pool) -> elephantry::Result<()> {
     println!("# Find where\n");
 
-    let series = elephantry.find_where::<serie::Model>("generate_series > $1", &[&5], None)?;
+    let series = elephantry.find_where::<serie::Model>(
+        "generate_series > $1",
+        &[&5],
+        None,
+    )?;
 
     for serie in series {
         println!("{}", serie.n);
@@ -85,7 +91,8 @@ fn find_where(elephantry: &elephantry::Pool) -> elephantry::Result<()> {
 fn count_where(elephantry: &elephantry::Pool) -> elephantry::Result<()> {
     println!("# Count where\n");
 
-    let n = elephantry.count_where::<serie::Model>("generate_series % 2 = 0", &[])?;
+    let n = elephantry
+        .count_where::<serie::Model>("generate_series % 2 = 0", &[])?;
     println!("{}\n", n);
 
     Ok(())
@@ -94,7 +101,8 @@ fn count_where(elephantry: &elephantry::Pool) -> elephantry::Result<()> {
 fn exist_where(elephantry: &elephantry::Pool) -> elephantry::Result<()> {
     println!("# Exist where\n");
 
-    let exist = elephantry.exist_where::<serie::Model>("generate_series < 0", &[])?;
+    let exist =
+        elephantry.exist_where::<serie::Model>("generate_series < 0", &[])?;
     println!("{}\n", exist);
 
     Ok(())

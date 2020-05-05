@@ -32,21 +32,31 @@ impl<T: crate::FromSql> Iterator for Array<T> {
         let value = if len == 0xFFFF_FFFF {
             len = 0;
             None
-        } else {
+        }
+        else {
             Some(&buf[..len])
         };
         self.data = buf[len..].to_vec();
 
-        Some(T::from_sql(&self.elemtype, crate::pq::Format::Binary, value).unwrap())
+        Some(
+            T::from_sql(&self.elemtype, crate::pq::Format::Binary, value)
+                .unwrap(),
+        )
     }
 }
 
 impl<T: crate::FromSql> crate::FromSql for Array<T> {
-    fn from_text(_ty: &crate::pq::Type, _raw: Option<&str>) -> crate::Result<Self> {
+    fn from_text(
+        _ty: &crate::pq::Type,
+        _raw: Option<&str>,
+    ) -> crate::Result<Self> {
         todo!()
     }
 
-    fn from_binary(_: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
+    fn from_binary(
+        _: &crate::pq::Type,
+        raw: Option<&[u8]>,
+    ) -> crate::Result<Self> {
         let mut data = raw.unwrap();
 
         let ndim = data.read_i32::<byteorder::BigEndian>()?;

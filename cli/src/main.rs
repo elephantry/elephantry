@@ -12,12 +12,18 @@ enum Opt {
         about = "Show schemas in the current database"
     )]
     InspectDatabase {},
-    #[structopt(name = "inspect:schema", about = "Show relations in a given schema")]
+    #[structopt(
+        name = "inspect:schema",
+        about = "Show relations in a given schema"
+    )]
     InspectSchema {
         #[structopt(default_value = "public")]
         schema: String,
     },
-    #[structopt(name = "inspect:relation", about = "Display a relation information")]
+    #[structopt(
+        name = "inspect:relation",
+        about = "Display a relation information"
+    )]
     InspectRelation {
         relation: String,
         #[structopt(default_value = "public")]
@@ -52,23 +58,32 @@ fn main() -> std::io::Result<()> {
     dotenv::dotenv().ok();
 
     let opt = Opt::from_args();
-    let dsn = std::env::var("DATABASE_URL").expect("Missing DATABASE_URL env variable");
-    let elephantry = elephantry::Pool::new(&dsn).expect("Unable to connect to postgresql");
+    let dsn = std::env::var("DATABASE_URL")
+        .expect("Missing DATABASE_URL env variable");
+    let elephantry =
+        elephantry::Pool::new(&dsn).expect("Unable to connect to postgresql");
     let connection = elephantry.get_default().unwrap();
 
     match opt {
         Opt::InspectDatabase {} => inspect::database(&connection),
-        Opt::InspectSchema { schema } => inspect::schema(&connection, &schema),
-        Opt::InspectRelation { schema, relation } => {
-            inspect::relation(&connection, &schema, &relation)
-        }
-        Opt::GenerateSchema { schema } => generate::schema(&connection, &schema)?,
-        Opt::GenerateRelation { schema, relation } => {
-            generate::relation(&connection, &schema, &relation)?
-        }
-        Opt::GenerateEntity { schema, relation } => {
-            generate::entity(&connection, &schema, &relation)?
-        }
+        Opt::InspectSchema {
+            schema,
+        } => inspect::schema(&connection, &schema),
+        Opt::InspectRelation {
+            schema,
+            relation,
+        } => inspect::relation(&connection, &schema, &relation),
+        Opt::GenerateSchema {
+            schema,
+        } => generate::schema(&connection, &schema)?,
+        Opt::GenerateRelation {
+            schema,
+            relation,
+        } => generate::relation(&connection, &schema, &relation)?,
+        Opt::GenerateEntity {
+            schema,
+            relation,
+        } => generate::entity(&connection, &schema, &relation)?,
     }
 
     Ok(())

@@ -38,7 +38,9 @@ pub fn schema(connection: &elephantry::Connection, schema: &str) {
             term_table::table_cell::TableCell::new(&relation.name),
             term_table::table_cell::TableCell::new(&relation.ty),
             term_table::table_cell::TableCell::new(&relation.oid),
-            term_table::table_cell::TableCell::new(relation.comment.clone().unwrap_or_default()),
+            term_table::table_cell::TableCell::new(
+                relation.comment.clone().unwrap_or_default(),
+            ),
         ]));
     }
 
@@ -50,7 +52,11 @@ pub fn schema(connection: &elephantry::Connection, schema: &str) {
     println!("{}", table.render());
 }
 
-pub fn relation(connection: &elephantry::Connection, schema: &str, relation: &str) {
+pub fn relation(
+    connection: &elephantry::Connection,
+    schema: &str,
+    relation: &str,
+) {
     let mut table = term_table::Table::new();
     table.style = term_table::TableStyle::rounded();
 
@@ -66,13 +72,15 @@ pub fn relation(connection: &elephantry::Connection, schema: &str, relation: &st
     for column in elephantry::inspect::relation(connection, schema, relation) {
         let primary = if column.is_primary {
             "*".to_string()
-        } else {
+        }
+        else {
             String::new()
         };
 
         let not_null = if column.is_notnull {
             "yes".to_string()
-        } else {
+        }
+        else {
             "no".to_string()
         };
 
@@ -80,9 +88,13 @@ pub fn relation(connection: &elephantry::Connection, schema: &str, relation: &st
             term_table::table_cell::TableCell::new(primary),
             term_table::table_cell::TableCell::new(&column.name),
             term_table::table_cell::TableCell::new(&column.ty),
-            term_table::table_cell::TableCell::new(column.default.clone().unwrap_or_default()),
+            term_table::table_cell::TableCell::new(
+                column.default.clone().unwrap_or_default(),
+            ),
             term_table::table_cell::TableCell::new(not_null),
-            term_table::table_cell::TableCell::new(column.comment.clone().unwrap_or_default()),
+            term_table::table_cell::TableCell::new(
+                column.comment.clone().unwrap_or_default(),
+            ),
         ]));
     }
 

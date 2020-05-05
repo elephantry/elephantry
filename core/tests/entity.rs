@@ -29,9 +29,11 @@ impl elephantry::Entity for Event {
 
     fn get(&self, field: &str) -> Option<&dyn elephantry::ToSql> {
         match field {
-            "uuid" => match self.uuid {
-                Some(ref uuid) => Some(uuid),
-                None => None,
+            "uuid" => {
+                match self.uuid {
+                    Some(ref uuid) => Some(uuid),
+                    None => None,
+                }
             },
             "name" => Some(&self.name),
             "visitor_id" => Some(&self.visitor_id),
@@ -51,7 +53,9 @@ impl<'a> elephantry::Model<'a> for EventModel<'a> {
     type Structure = EventStructure;
 
     fn new(connection: &'a elephantry::Connection) -> Self {
-        Self { connection }
+        Self {
+            connection,
+        }
     }
 }
 
@@ -98,17 +102,21 @@ impl elephantry::Entity for EventExtra {
 
     fn get(&self, field: &str) -> Option<&dyn elephantry::ToSql> {
         match field {
-            "uuid" => match self.uuid {
-                Some(ref uuid) => Some(uuid),
-                None => None,
+            "uuid" => {
+                match self.uuid {
+                    Some(ref uuid) => Some(uuid),
+                    None => None,
+                }
             },
             "name" => Some(&self.name),
             "visitor_id" => Some(&self.visitor_id),
             "properties" => Some(&self.properties),
             "browser" => Some(&self.browser),
-            "os" => match self.os {
-                Some(ref os) => Some(os),
-                None => None,
+            "os" => {
+                match self.os {
+                    Some(ref os) => Some(os),
+                    None => None,
+                }
             },
             _ => None,
         }

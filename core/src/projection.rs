@@ -63,7 +63,8 @@ impl std::fmt::Display for Projection {
             .fold(String::new(), |acc, x| {
                 if acc.is_empty() {
                     x
-                } else {
+                }
+                else {
                     format!("{}, {}", acc, x)
                 }
             });

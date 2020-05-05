@@ -20,7 +20,10 @@ fn main() {
     println!();
 
     println!("Find one event:\n");
-    find_by_pk::<EventModel>(connection, "f186b680-237d-449d-ad66-ad91c4e53d3d");
+    find_by_pk::<EventModel>(
+        connection,
+        "f186b680-237d-449d-ad66-ad91c4e53d3d",
+    );
     println!();
 
     println!("Find all events:\n");
@@ -51,8 +54,11 @@ fn main() {
 
     println!("Update one row:\n");
     entity.name = "pageview".to_string();
-    let entity =
-        update_one::<EventModel>(connection, &elephantry::pk!(uuid => entity.uuid), &entity);
+    let entity = update_one::<EventModel>(
+        connection,
+        &elephantry::pk!(uuid => entity.uuid),
+        &entity,
+    );
     assert_eq!(&entity.name, "pageview");
     println!();
 
@@ -104,14 +110,18 @@ where
 
     if events.is_empty() {
         println!("No events in database.");
-    } else {
+    }
+    else {
         for event in events {
             println!("{:?}", event);
         }
     }
 }
 
-fn insert_one<'a, M>(connection: &elephantry::Connection, entity: &M::Entity) -> M::Entity
+fn insert_one<'a, M>(
+    connection: &elephantry::Connection,
+    entity: &M::Entity,
+) -> M::Entity
 where
     M: elephantry::Model<'a>,
     M::Entity: std::fmt::Debug,

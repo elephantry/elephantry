@@ -1,8 +1,8 @@
 #![allow(unused_must_use)]
 
 fn main() -> elephantry::Result<()> {
-    let database_url =
-        std::env::var("DATABASE_URL").unwrap_or_else(|_| "postgres://localhost".to_string());
+    let database_url = std::env::var("DATABASE_URL")
+        .unwrap_or_else(|_| "postgres://localhost".to_string());
     let elephantry = elephantry::Pool::new(&database_url)?;
 
     let results = elephantry

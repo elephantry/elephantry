@@ -7,7 +7,9 @@ struct Params {
 
 impl Default for Params {
     fn default() -> Self {
-        Self { internal: false }
+        Self {
+            internal: false,
+        }
     }
 }
 
@@ -21,27 +23,31 @@ impl syn::parse::Parse for Params {
             Err(_) => false,
         };
 
-        Ok(Params { internal })
+        Ok(Params {
+            internal,
+        })
     }
 }
 
 #[proc_macro_derive(Entity, attributes(entity))]
-pub fn entity_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
+pub fn entity_derive(
+    input: proc_macro::TokenStream,
+) -> proc_macro::TokenStream {
     let ast = syn::parse(input).unwrap();
 
     impl_entity_macro(&ast)
 }
 
 fn impl_entity_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
-    let attribute = ast
-        .attrs
-        .iter()
-        .find(|a| a.path.segments.len() == 1 && a.path.segments[0].ident == "entity");
+    let attribute = ast.attrs.iter().find(|a| {
+        a.path.segments.len() == 1 && a.path.segments[0].ident == "entity"
+    });
 
     let parameters = match attribute {
         Some(attribute) => {
-            syn::parse2(attribute.tokens.clone()).expect("Invalid entity attribute!")
-        }
+            syn::parse2(attribute.tokens.clone())
+                .expect("Invalid entity attribute!")
+        },
         None => Params::default(),
     };
 
@@ -69,7 +75,8 @@ fn impl_entity_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
                     None => None,
                 }
             }
-        } else {
+        }
+        else {
             quote::quote! {
                 stringify!(#name) => Some(&self.#name)
             }
@@ -81,7 +88,8 @@ fn impl_entity_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
         quote::quote! {
             crate
         }
-    } else {
+    }
+    else {
         quote::quote! {
             elephantry
         }
