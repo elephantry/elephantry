@@ -4,6 +4,16 @@ pub struct Rows<E: crate::Entity> {
     marker: std::marker::PhantomData<E>,
 }
 
+impl<E: crate::Entity> Rows<E> {
+    pub fn get(&self, n: usize) -> E {
+        self.try_get(n).unwrap()
+    }
+
+    pub fn try_get(&self, n: usize) -> Option<E> {
+        self.result.try_get(n).map(|x| E::from(&x))
+    }
+}
+
 impl<E: crate::Entity> std::iter::Iterator for Rows<E> {
     type Item = E;
 

@@ -58,8 +58,7 @@ select {projection}
             Ok(self
                 .connection
                 .query::<super::Post>(&sql, &[&id])?
-                .nth(0)
-                .unwrap())
+                .get(0))
         }
     }
 
