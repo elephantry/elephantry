@@ -1,17 +1,27 @@
-mod serie {
+mod employee {
     #[derive(Clone, Debug, elephantry::Entity)]
     pub struct Entity {
-        pub n: i32,
+        pub employee_id: i32,
+        pub first_name: String,
+        pub last_name: String,
+        pub birth_date: chrono::NaiveDate,
+        pub is_manager: bool,
+        pub day_salary: bigdecimal::BigDecimal,
+        pub department_id: i32,
     }
 
-    pub struct Model;
+    pub struct Model<'a> {
+        connection: &'a elephantry::Connection,
+    }
 
-    impl<'a> elephantry::Model<'a> for Model {
+    impl<'a> elephantry::Model<'a> for Model<'a> {
         type Entity = Entity;
         type Structure = Structure;
 
-        fn new(_: &'a elephantry::Connection) -> Self {
-            Self {}
+        fn new(connection: &'a elephantry::Connection) -> Self {
+            Self {
+                connection,
+            }
         }
     }
 
@@ -19,15 +29,23 @@ mod serie {
 
     impl elephantry::Structure for Structure {
         fn relation() -> &'static str {
-            "generate_series(1, 10)"
+            "employee"
         }
 
         fn primary_key() -> &'static [&'static str] {
-            &["n"]
+            &["employee_id"]
         }
 
         fn definition() -> &'static [&'static str] {
-            &["n"]
+            &[
+                "employee_id",
+                "first_name",
+                "last_name",
+                "birth_date",
+                "is_manager",
+                "day_salary",
+                "department_id",
+            ]
         }
     }
 }
@@ -38,6 +56,7 @@ fn main() -> elephantry::Result<()> {
     let database_url = std::env::var("DATABASE_URL")
         .unwrap_or_else(|_| "postgres://localhost".to_string());
     let elephantry = elephantry::Pool::new(&database_url)?;
+    elephantry.execute(include_str!("structure.sql"))?;
 
     find_by_pk(&elephantry)?;
     find_all(&elephantry)?;
@@ -51,20 +70,20 @@ fn main() -> elephantry::Result<()> {
 fn find_by_pk(elephantry: &elephantry::Pool) -> elephantry::Result<()> {
     println!("# Find by primary key\n");
 
-    let serie =
-        elephantry.find_by_pk::<serie::Model>(&elephantry::pk!(n => 1))?;
-    println!("{:?}\n", serie);
+    let employee = elephantry
+        .find_by_pk::<employee::Model>(&elephantry::pk!(employee_id => 1))?;
+    println!("{:?}\n", employee);
 
     Ok(())
 }
 
 fn find_all(elephantry: &elephantry::Pool) -> elephantry::Result<()> {
     println!("# Find all\n");
-    let series = elephantry
-        .find_all::<serie::Model>(Some("order by generate_series desc"))?;
+    let employees = elephantry
+        .find_all::<employee::Model>(Some("order by birth_date desc"))?;
 
-    for serie in series {
-        println!("{}", serie.n);
+    for employee in employees {
+        println!("{} {}", employee.first_name, employee.last_name);
     }
     println!();
 
@@ -74,14 +93,14 @@ fn find_all(elephantry: &elephantry::Pool) -> elephantry::Result<()> {
 fn find_where(elephantry: &elephantry::Pool) -> elephantry::Result<()> {
     println!("# Find where\n");
 
-    let series = elephantry.find_where::<serie::Model>(
-        "generate_series > $1",
-        &[&5],
+    let managers = elephantry.find_where::<employee::Model>(
+        "is_manager = $1",
+        &[&true],
         None,
     )?;
 
-    for serie in series {
-        println!("{}", serie.n);
+    for manager in managers {
+        println!("{} {}", manager.first_name, manager.last_name);
     }
     println!();
 
@@ -92,7 +111,7 @@ fn count_where(elephantry: &elephantry::Pool) -> elephantry::Result<()> {
     println!("# Count where\n");
 
     let n = elephantry
-        .count_where::<serie::Model>("generate_series % 2 = 0", &[])?;
+        .count_where::<employee::Model>("is_manager = $1", &[&true])?;
     println!("{}\n", n);
 
     Ok(())
@@ -101,8 +120,8 @@ fn count_where(elephantry: &elephantry::Pool) -> elephantry::Result<()> {
 fn exist_where(elephantry: &elephantry::Pool) -> elephantry::Result<()> {
     println!("# Exist where\n");
 
-    let exist =
-        elephantry.exist_where::<serie::Model>("generate_series < 0", &[])?;
+    let exist = elephantry
+        .exist_where::<employee::Model>("day_salary < $1", &[&10_000])?;
     println!("{}\n", exist);
 
     Ok(())

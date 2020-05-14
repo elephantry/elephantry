@@ -10,7 +10,7 @@ When Rust meets PostgreSQL.
 
 ## Getting Started
 
-See [examples](core/examples).
+See [quickstart](docs/quickstart.md) and [examples](core/examples).
 
 ## Quick overview
 

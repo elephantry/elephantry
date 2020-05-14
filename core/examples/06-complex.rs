@@ -1,10 +1,31 @@
-mod serie {
+mod employee {
+    #[derive(Clone, Debug, elephantry::Entity)]
+    pub struct Entity {
+        pub employee_id: i32,
+        pub first_name: String,
+        pub last_name: String,
+        pub birth_date: chrono::NaiveDate,
+        pub is_manager: bool,
+        pub day_salary: bigdecimal::BigDecimal,
+        pub department_id: i32,
+    }
+
     pub struct Model<'a> {
         connection: &'a elephantry::Connection,
     }
 
+    impl<'a> Model<'a> {
+        pub fn managers_salary(&self) -> elephantry::Result<f32> {
+            let query = "select sum(day_salary) from employee where is_manager";
+
+            let result = self.connection.execute(query)?.get(0).get("sum");
+
+            Ok(result)
+        }
+    }
+
     impl<'a> elephantry::Model<'a> for Model<'a> {
-        type Entity = std::collections::HashMap<String, i32>;
+        type Entity = Entity;
         type Structure = Structure;
 
         fn new(connection: &'a elephantry::Connection) -> Self {
@@ -14,29 +35,27 @@ mod serie {
         }
     }
 
-    impl<'a> Model<'a> {
-        pub fn even_sum(&self) -> elephantry::Result<i32> {
-            let query = "select sum(n) from serie where n % 2 = 0";
-
-            let result = self.connection.execute(query)?.get(0).get("sum");
-
-            Ok(result)
-        }
-    }
-
     pub struct Structure;
 
     impl elephantry::Structure for Structure {
         fn relation() -> &'static str {
-            "serie"
+            "employee"
         }
 
         fn primary_key() -> &'static [&'static str] {
-            &["n"]
+            &["employee_id"]
         }
 
         fn definition() -> &'static [&'static str] {
-            &["n"]
+            &[
+                "employee_id",
+                "first_name",
+                "last_name",
+                "birth_date",
+                "is_manager",
+                "day_salary",
+                "department_id",
+            ]
         }
     }
 }
@@ -47,12 +66,12 @@ fn main() -> elephantry::Result<()> {
     let database_url = std::env::var("DATABASE_URL")
         .unwrap_or_else(|_| "postgres://localhost".to_string());
     let elephantry = elephantry::Pool::new(&database_url)?;
-    elephantry.execute(include_str!("database.sql"))?;
+    elephantry.execute(include_str!("structure.sql"))?;
 
-    let model = elephantry.model::<serie::Model>();
-    let sum = model.even_sum()?;
+    let model = elephantry.model::<employee::Model>();
+    let managers_salary = model.managers_salary()?;
 
-    dbg!(sum);
+    dbg!(managers_salary);
 
     Ok(())
 }

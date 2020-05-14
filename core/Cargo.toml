@@ -60,8 +60,28 @@ serde-support = ["serde", "serde_derive"]
 numeric = ["bigdecimal"]
 
 [[example]]
+name = "02-query"
+required-features = ["date", "numeric"]
+
+[[example]]
+name = "03-read"
+required-features = ["date", "numeric"]
+
+[[example]]
+name = "04-write"
+required-features = ["date", "numeric"]
+
+[[example]]
+name = "05-extra"
+required-features = ["date", "numeric"]
+
+[[example]]
+name = "06-complex"
+required-features = ["date", "numeric"]
+
+[[example]]
 name = "07-relations"
-required-features = ["date"]
+required-features = ["date", "numeric"]
 
 [badges]
 gitlab = { repository = "sanpi/libpq.rs", branch = "master" }

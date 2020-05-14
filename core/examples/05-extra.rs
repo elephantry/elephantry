@@ -1,22 +1,28 @@
-mod serie {
+mod employee {
     #[derive(Clone, Debug, elephantry::Entity)]
     pub struct Entity {
-        pub n: i32,
-        pub even: bool,
+        pub employee_id: i32,
+        pub first_name: String,
+        pub last_name: String,
+        pub birth_date: chrono::NaiveDate,
+        pub is_manager: bool,
+        pub day_salary: bigdecimal::BigDecimal,
+        pub department_id: i32,
+        pub age: elephantry::Interval,
     }
 
-    pub struct Model;
+    pub struct Model {}
 
     impl<'a> elephantry::Model<'a> for Model {
         type Entity = Entity;
         type Structure = Structure;
 
-        fn new(_: &'a elephantry::Connection) -> Self {
+        fn new(connection: &'a elephantry::Connection) -> Self {
             Self {}
         }
 
         fn create_projection() -> elephantry::Projection {
-            Self::default_projection().add_field("even", "%:n:% % 2 = 0")
+            Self::default_projection().add_field("age", "age(%:birth_date:%)")
         }
     }
 
@@ -24,15 +30,23 @@ mod serie {
 
     impl elephantry::Structure for Structure {
         fn relation() -> &'static str {
-            "serie"
+            "employee"
         }
 
         fn primary_key() -> &'static [&'static str] {
-            &["n"]
+            &["employee_id"]
         }
 
         fn definition() -> &'static [&'static str] {
-            &["n"]
+            &[
+                "employee_id",
+                "first_name",
+                "last_name",
+                "birth_date",
+                "is_manager",
+                "day_salary",
+                "department_id",
+            ]
         }
     }
 }
@@ -43,12 +57,13 @@ fn main() -> elephantry::Result<()> {
     let database_url = std::env::var("DATABASE_URL")
         .unwrap_or_else(|_| "postgres://localhost".to_string());
     let elephantry = elephantry::Pool::new(&database_url)?;
-    elephantry.execute(include_str!("database.sql"))?;
+    elephantry.execute(include_str!("structure.sql"))?;
 
-    let series = elephantry.find_all::<serie::Model>(None)?;
+    let employees =
+        elephantry.find_all::<employee::Model>(Some("order by age desc"))?;
 
-    for serie in series {
-        dbg!(serie);
+    for employee in employees {
+        dbg!(employee);
     }
 
     Ok(())
