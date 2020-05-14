@@ -18,6 +18,10 @@ libpq = "0.4"
 log = "0.4"
 regex = "1.3"
 
+[dependencies.bigdecimal]
+version = "0.1"
+optional = true
+
 [dependencies.chrono]
 version = "0.4"
 optional = true
@@ -53,6 +57,7 @@ date = ["chrono"]
 derive = []
 json = ["serde_json"]
 serde-support = ["serde", "serde_derive"]
+numeric = ["bigdecimal"]
 
 [[example]]
 name = "07-relations"

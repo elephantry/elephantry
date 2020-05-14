@@ -45,7 +45,8 @@ impl ToRust for Type {
             #[cfg(feature = "network")]
             "macaddr8" => "eui48::MacAddress",
             "money" => "f32",
-            "numeric" | "decimal" => "f32",
+            #[cfg(feature = "numeric")]
+            "numeric" | "decimal" => "bigdecimal::BigDecimal",
             #[cfg(feature = "geo")]
             "path" => "geo_types::LineString<f64>",
             "pg_lsn" => "String",

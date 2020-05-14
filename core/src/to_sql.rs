@@ -237,6 +237,17 @@ impl ToSql for uuid::Uuid {
     }
 }
 
+#[cfg(feature = "numeric")]
+impl ToSql for bigdecimal::BigDecimal {
+    fn ty(&self) -> crate::pq::Type {
+        crate::pq::ty::NUMERIC
+    }
+
+    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
+        todo!()
+    }
+}
+
 #[cfg(test)]
 mod test {
     #[test]
