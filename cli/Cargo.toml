@@ -1,6 +1,10 @@
 [package]
 name = "elephantry-cli"
 version = "0.1.0"
+description = "elephantry cli tool"
+repository = "https://github.com/sanpii/elephantry/tree/master/cli"
+homepage = "https://github.com/sanpii/elephantry"
+license = "MIT"
 authors = ["Sanpi <sanpi@homecomputing.fr>"]
 edition = "2018"
 
