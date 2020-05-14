@@ -125,6 +125,50 @@ impl<T: ToSql> ToSql for Vec<T> {
 }
 
 #[cfg(feature = "date")]
+impl ToSql for chrono::Date<chrono::offset::FixedOffset> {
+    fn ty(&self) -> crate::pq::Type {
+        crate::pq::ty::TIMESTAMPTZ
+    }
+
+    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
+        self.format("%F").to_string().to_sql()
+    }
+}
+
+#[cfg(feature = "date")]
+impl ToSql for chrono::Date<chrono::offset::Utc> {
+    fn ty(&self) -> crate::pq::Type {
+        crate::pq::ty::TIMESTAMPTZ
+    }
+
+    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
+        self.format("%F").to_string().to_sql()
+    }
+}
+
+#[cfg(feature = "date")]
+impl ToSql for chrono::Date<chrono::offset::Local> {
+    fn ty(&self) -> crate::pq::Type {
+        crate::pq::ty::TIMESTAMPTZ
+    }
+
+    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
+        self.format("%F").to_string().to_sql()
+    }
+}
+
+#[cfg(feature = "date")]
+impl ToSql for chrono::NaiveDate {
+    fn ty(&self) -> crate::pq::Type {
+        crate::pq::ty::TIMESTAMP
+    }
+
+    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
+        self.format("%F").to_string().to_sql()
+    }
+}
+
+#[cfg(feature = "date")]
 impl ToSql for chrono::DateTime<chrono::offset::FixedOffset> {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::ty::TIMESTAMPTZ

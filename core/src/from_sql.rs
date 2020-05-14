@@ -187,6 +187,86 @@ impl<T: FromSql + Clone> FromSql for Vec<T> {
 }
 
 #[cfg(feature = "date")]
+impl FromSql for chrono::Date<chrono::offset::Utc> {
+    fn from_text(
+        ty: &crate::pq::Type,
+        raw: Option<&str>,
+    ) -> crate::Result<Self> {
+        let naive = chrono::NaiveDate::from_text(ty, raw)?;
+        Ok(chrono::Date::from_utc(naive, chrono::offset::Utc))
+    }
+
+    fn from_binary(
+        ty: &crate::pq::Type,
+        raw: Option<&[u8]>,
+    ) -> crate::Result<Self> {
+        let naive = chrono::NaiveDate::from_binary(ty, raw)?;
+        Ok(chrono::Date::from_utc(naive, chrono::offset::Utc))
+    }
+}
+
+#[cfg(feature = "date")]
+impl FromSql for chrono::Date<chrono::offset::FixedOffset> {
+    fn from_text(
+        ty: &crate::pq::Type,
+        raw: Option<&str>,
+    ) -> crate::Result<Self> {
+        let utc = chrono::Date::<chrono::offset::Utc>::from_text(ty, raw)?;
+        Ok(utc.with_timezone(&chrono::offset::FixedOffset::east(0)))
+    }
+
+    fn from_binary(
+        ty: &crate::pq::Type,
+        raw: Option<&[u8]>,
+    ) -> crate::Result<Self> {
+        let utc = chrono::Date::<chrono::offset::Utc>::from_binary(ty, raw)?;
+        Ok(utc.with_timezone(&chrono::offset::FixedOffset::east(0)))
+    }
+}
+
+#[cfg(feature = "date")]
+impl FromSql for chrono::Date<chrono::offset::Local> {
+    fn from_text(
+        ty: &crate::pq::Type,
+        raw: Option<&str>,
+    ) -> crate::Result<Self> {
+        let utc = chrono::Date::<chrono::offset::Utc>::from_text(ty, raw)?;
+        Ok(utc.with_timezone(&chrono::offset::Local))
+    }
+
+    fn from_binary(
+        ty: &crate::pq::Type,
+        raw: Option<&[u8]>,
+    ) -> crate::Result<Self> {
+        let utc = chrono::Date::<chrono::offset::Utc>::from_binary(ty, raw)?;
+        Ok(utc.with_timezone(&chrono::offset::Local))
+    }
+}
+
+#[cfg(feature = "date")]
+impl FromSql for chrono::NaiveDate {
+    fn from_text(
+        ty: &crate::pq::Type,
+        raw: Option<&str>,
+    ) -> crate::Result<Self> {
+        match chrono::NaiveDate::parse_from_str(not_null!(raw), "%F") {
+            Ok(date) => Ok(date),
+            _ => Err(Self::error(ty, "date", raw)),
+        }
+    }
+
+    fn from_binary(
+        ty: &crate::pq::Type,
+        raw: Option<&[u8]>,
+    ) -> crate::Result<Self> {
+        let t = i32::from_binary(ty, raw)?;
+        let base = chrono::NaiveDate::from_ymd(2000, 1, 1);
+
+        Ok(base + chrono::Duration::days(t.into()))
+    }
+}
+
+#[cfg(feature = "date")]
 impl FromSql for chrono::DateTime<chrono::offset::Utc> {
     fn from_text(
         ty: &crate::pq::Type,
