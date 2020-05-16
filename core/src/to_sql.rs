@@ -60,6 +60,16 @@ impl ToSql for String {
     }
 }
 
+impl ToSql for i16 {
+    fn ty(&self) -> crate::pq::Type {
+        crate::pq::ty::INT2
+    }
+
+    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
+        self.to_string().to_sql()
+    }
+}
+
 impl ToSql for i32 {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::ty::INT4
@@ -283,6 +293,7 @@ mod test {
 
     to_test!(float4, [1., -1., 2.1]);
     to_test!(float8, [1., -1., 2.1]);
+    to_test!(int2, [i16::MAX, 1, 0, -1]);
     to_test!(int4, [i32::MAX, 1, 0, -1]);
     to_test!(bool, [true, false]);
     to_test!(char, ['f', 'à']);
