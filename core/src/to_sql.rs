@@ -260,6 +260,64 @@ impl ToSql for bigdecimal::BigDecimal {
 
 #[cfg(test)]
 mod test {
+    use std::collections::HashMap;
+
+    macro_rules! to_test {
+        ($sql_type:ident, $tests:expr) => {
+            #[test]
+            fn $sql_type() -> crate::Result<()> {
+                let conn = crate::test::new_conn();
+                for value in &$tests {
+                    let result = conn.query::<HashMap<String, String>>(
+                        &format!("select $1::{}", stringify!($sql_type)),
+                        &[value],
+                    );
+                    assert!(result.is_ok());
+                }
+
+                Ok(())
+            }
+
+        }
+    }
+
+    to_test!(float4, [1., -1., 2.1]);
+    to_test!(float8, [1., -1., 2.1]);
+    to_test!(int4, [i32::MAX, 1, 0, -1]);
+    to_test!(bool, [true, false]);
+    to_test!(char, ['f', 'à']);
+    to_test!(varchar, [None::<String>]);
+    to_test!(text, ["foo", ""]);
+
+    #[cfg(feature = "date")]
+    to_test!(date, [
+        chrono::NaiveDate::from_ymd(1970, 01, 01),
+        chrono::NaiveDate::from_ymd(2010, 01, 01),
+        chrono::NaiveDate::from_ymd(2100, 12, 30),
+    ]);
+
+    #[cfg(feature = "date")]
+    to_test!(timestamp, [
+        chrono::NaiveDateTime::from_timestamp(0, 0),
+    ]);
+
+    #[cfg(feature = "json")]
+    to_test!(json, [
+        serde_json::json!({"foo": "bar"}),
+    ]);
+
+    #[cfg(feature = "uuid")]
+    to_test!(uuid, [
+        uuid::Uuid::parse_str("12edd47f-e2fc-44eb-9419-1995dfb6725d").unwrap(),
+    ]);
+
+    #[cfg(feature = "numeric")]
+    to_test!(numeric, [
+        bigdecimal::BigDecimal::from(20_000.),
+        bigdecimal::BigDecimal::from(3_900.),
+        bigdecimal::BigDecimal::from(3_900.98),
+    ]);
+
     #[test]
     fn vec_to_sql() {
         use crate::ToSql;

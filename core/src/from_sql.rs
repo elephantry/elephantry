@@ -483,10 +483,6 @@ mod test {
                     // from binary
                     let result = conn.query::<HashMap<String, $rust_type>>(&format!("select {}::{} as actual", value, stringify!($sql_type)), &[])?;
                     assert_eq!(result.get(0).get("actual").unwrap(), expected);
-
-                    // to sql
-                    let result = conn.query::<HashMap<String, $rust_type>>(&format!("select $1 as actual"), &[expected])?;
-                    assert_eq!(result.get(0).get("actual").unwrap(), expected);
                 }
 
                 Ok(())

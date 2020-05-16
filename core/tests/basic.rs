@@ -89,7 +89,7 @@ where
     M: elephantry::Model<'a>,
     M::Entity: std::fmt::Debug,
 {
-    #[cfg(feature = "json")]
+    #[cfg(feature = "uuid")]
     let uuid = uuid::Uuid::parse_str(uuid).unwrap();
     let event = connection
         .find_by_pk::<EventModel>(&elephantry::pk!(uuid))
