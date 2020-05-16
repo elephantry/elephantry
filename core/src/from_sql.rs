@@ -79,6 +79,7 @@ pub trait FromSql: Sized {
 }
 
 number!(f32, read_f32);
+number!(f64, read_f64);
 number!(i16, read_i16);
 number!(i32, read_i32);
 number!(i64, read_i64);
@@ -493,6 +494,12 @@ mod test {
     }
 
     from_test!(float4, f32, [
+        (1., 1.),
+        (-1., -1.),
+        (2.1, 2.1),
+    ]);
+
+    from_test!(float8, f64, [
         (1., 1.),
         (-1., -1.),
         (2.1, 2.1),
