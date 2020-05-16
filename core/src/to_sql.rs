@@ -70,6 +70,16 @@ impl ToSql for i32 {
     }
 }
 
+impl ToSql for i64 {
+    fn ty(&self) -> crate::pq::Type {
+        crate::pq::ty::INT8
+    }
+
+    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
+        self.to_string().to_sql()
+    }
+}
+
 impl ToSql for u32 {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::ty::INT8

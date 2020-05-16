@@ -396,12 +396,7 @@ impl FromSql for uuid::Uuid {
         ty: &crate::pq::Type,
         raw: Option<&[u8]>,
     ) -> crate::Result<Self> {
-        let s = String::from_binary(ty, raw)?;
-
-        match uuid::Uuid::parse_str(&s) {
-            Ok(uuid) => Ok(uuid),
-            _ => Err(Self::error(ty, "uuid", raw)),
-        }
+        todo!();
     }
 }
 
@@ -473,26 +468,95 @@ impl FromSql for bigdecimal::BigDecimal {
 
 #[cfg(test)]
 mod test {
-    #[test]
-    #[cfg(feature = "numeric")]
-    fn numeric_from_binary() {
-        use crate::FromSql;
+    use std::collections::HashMap;
 
-        let tests = [
-            ([0, 1, 0, 1, 0, 0, 0, 2, 0, 2].to_vec(), 20_000.),
-            ([0, 1, 0, 0, 0, 0, 0, 2, 15, 60].to_vec(), 3_900.),
-            ([0, 2, 0, 0, 0, 0, 0, 2, 15, 60, 38, 72].to_vec(), 3_900.98),
-        ];
+    macro_rules! from_test {
+        ($sql_type:ident, $rust_type:ty, $tests:expr) => {
+            #[test]
+            fn $sql_type() -> crate::Result<()> {
+                let conn = crate::test::new_conn();
+                for (value, expected) in &$tests {
+                    // from text
+                    let result = conn.execute(&format!("select {}::{} as actual", value, stringify!($sql_type)))?;
+                    assert_eq!(result.get(0).get::<$rust_type>("actual"), *expected);
 
-        for (raw, expected) in &tests {
-            assert_eq!(
-                bigdecimal::BigDecimal::from_binary(
-                    &crate::pq::ty::NUMERIC,
-                    Some(raw)
-                )
-                .unwrap(),
-                bigdecimal::BigDecimal::from(*expected),
-            );
+                    // from binary
+                    let result = conn.query::<HashMap<String, $rust_type>>(&format!("select {}::{} as actual", value, stringify!($sql_type)), &[])?;
+                    assert_eq!(result.get(0).get("actual").unwrap(), expected);
+
+                    // to sql
+                    let result = conn.query::<HashMap<String, $rust_type>>(&format!("select $1 as actual"), &[expected])?;
+                    assert_eq!(result.get(0).get("actual").unwrap(), expected);
+                }
+
+                Ok(())
+            }
+
         }
     }
+
+    from_test!(float4, f32, [
+        (1., 1.),
+        (-1., -1.),
+        (2.1, 2.1),
+    ]);
+
+    from_test!(int4, i32, [
+        (i32::MAX, i32::MAX),
+        (1, 1),
+        (0, 0),
+        (-1, -1),
+    ]);
+
+    from_test!(int8, i64, [
+        (i64::MAX, i64::MAX),
+        (1, 1),
+        (0, 0),
+        (-1, -1),
+    ]);
+
+    from_test!(bool, bool, [
+        ("'t'", true),
+        ("'f'", false),
+        ("true", true),
+        ("false", false),
+    ]);
+
+    from_test!(varchar, Option<String>, [
+        ("null", None),
+    ]);
+
+    from_test!(text, String, [
+        ("'foo'", "foo"),
+        ("''", ""),
+    ]);
+
+    #[cfg(feature = "date")]
+    from_test!(date, chrono::NaiveDate, [
+        ("'1970-01-01'", chrono::NaiveDate::from_ymd(1970, 01, 01)),
+        ("'2010-01-01'", chrono::NaiveDate::from_ymd(2010, 01, 01)),
+        ("'2100-12-30'", chrono::NaiveDate::from_ymd(2100, 12, 30)),
+    ]);
+
+    #[cfg(feature = "date")]
+    from_test!(timestamp, chrono::NaiveDateTime, [
+        ("'1970-01-01 00:00:00'", chrono::NaiveDateTime::from_timestamp(0, 0)),
+    ]);
+
+    #[cfg(feature = "json")]
+    from_test!(json, serde_json::value::Value, [
+        ("'{\"foo\": \"bar\"}'", serde_json::json!({"foo": "bar"})),
+    ]);
+
+    #[cfg(feature = "uuid")]
+    from_test!(uuid, uuid::Uuid, [
+        ("'12edd47f-e2fc-44eb-9419-1995dfb6725d'", uuid::Uuid::parse_str("12edd47f-e2fc-44eb-9419-1995dfb6725d").unwrap()),
+    ]);
+
+    #[cfg(feature = "numeric")]
+    from_test!(numeric, bigdecimal::BigDecimal, [
+        ("20000", bigdecimal::BigDecimal::from(20_000.)),
+        ("3900", bigdecimal::BigDecimal::from(3_900.)),
+        ("3900.98", bigdecimal::BigDecimal::from(3_900.98)),
+    ]);
 }
