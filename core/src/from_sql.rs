@@ -156,6 +156,25 @@ impl<T: FromSql> FromSql for Option<T> {
     }
 }
 
+impl FromSql for char {
+    fn from_text(
+        _: &crate::pq::Type,
+        raw: Option<&str>,
+    ) -> crate::Result<Self> {
+        Ok(not_null!(raw).chars().nth(0).unwrap())
+    }
+
+    fn from_binary(
+        ty: &crate::pq::Type,
+        raw: Option<&[u8]>,
+    ) -> crate::Result<Self> {
+        let c = String::from_binary(ty, raw)?;
+
+        c.chars().nth(0)
+            .ok_or(Self::error(ty, "char", raw))
+    }
+}
+
 impl FromSql for String {
     fn from_text(
         _: &crate::pq::Type,
@@ -531,6 +550,11 @@ mod test {
         ("'f'", false),
         ("true", true),
         ("false", false),
+    ]);
+
+    from_test!(char, char, [
+        ("'f'", 'f'),
+        ("'à'", 'à'),
     ]);
 
     from_test!(varchar, Option<String>, [

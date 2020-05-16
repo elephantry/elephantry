@@ -60,6 +60,16 @@ impl ToSql for &str {
     }
 }
 
+impl ToSql for char {
+    fn ty(&self) -> crate::pq::Type {
+        crate::pq::ty::BPCHAR
+    }
+
+    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
+        self.to_string().to_sql()
+    }
+}
+
 impl ToSql for String {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::ty::VARCHAR
