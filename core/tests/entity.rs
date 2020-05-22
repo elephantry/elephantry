@@ -17,7 +17,7 @@ struct Event {
 }
 
 impl elephantry::Entity for Event {
-    fn from(tuple: &elephantry::pq::Tuple) -> Self {
+    fn from(tuple: &elephantry::Tuple) -> Self {
         Self {
             uuid: tuple.get("uuid"),
             name: tuple.get("name"),
@@ -87,7 +87,7 @@ struct EventExtra {
 }
 
 impl elephantry::Entity for EventExtra {
-    fn from(tuple: &elephantry::pq::Tuple) -> Self {
+    fn from(tuple: &elephantry::Tuple) -> Self {
         let event = <Event as elephantry::Entity>::from(tuple);
 
         Self {

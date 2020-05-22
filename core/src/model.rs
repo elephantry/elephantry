@@ -19,7 +19,7 @@ pub trait Model<'a> {
         Self::default_projection()
     }
 
-    fn create_entity(tuple: &crate::pq::Tuple<'_>) -> Self::Entity {
+    fn create_entity(tuple: &crate::Tuple<'_>) -> Self::Entity {
         <Self::Entity as crate::Entity>::from(&tuple)
     }
 

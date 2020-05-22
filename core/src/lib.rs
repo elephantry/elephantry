@@ -17,6 +17,7 @@ mod projection;
 mod rows;
 mod structure;
 mod to_sql;
+mod tuple;
 
 pub use array::*;
 pub use connection::*;
@@ -33,6 +34,7 @@ pub use projection::*;
 pub use rows::*;
 pub use structure::*;
 pub use to_sql::*;
+pub use tuple::*;
 
 /**
  * Easily create pk argument for where clause, including find_by_pk function

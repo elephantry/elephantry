@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 pub trait Entity: Clone {
-    fn from(tuple: &crate::pq::Tuple<'_>) -> Self;
+    fn from(tuple: &crate::Tuple<'_>) -> Self;
     fn get(&self, field: &str) -> Option<&dyn crate::ToSql>;
 }
 
@@ -10,7 +10,7 @@ impl<
         S: std::hash::BuildHasher + Default + Clone,
     > Entity for HashMap<String, T, S>
 {
-    fn from(tuple: &crate::pq::Tuple<'_>) -> Self {
+    fn from(tuple: &crate::Tuple<'_>) -> Self {
         let mut hashmap = HashMap::default();
 
         for x in 0..tuple.len() {
@@ -35,7 +35,7 @@ impl<
         S: std::hash::BuildHasher + Default + Clone,
     > Entity for HashMap<usize, T, S>
 {
-    fn from(tuple: &crate::pq::Tuple<'_>) -> Self {
+    fn from(tuple: &crate::Tuple<'_>) -> Self {
         let mut hashmap = HashMap::default();
 
         for x in 0..tuple.len() {

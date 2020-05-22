@@ -98,7 +98,7 @@ fn impl_entity_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
     let gen = quote::quote! {
         impl #elephantry::Entity for #name
         {
-            fn from(tuple: &#elephantry::pq::Tuple<'_>) -> Self
+            fn from(tuple: &#elephantry::Tuple<'_>) -> Self
             {
                 Self {
                     #(#from_body, )*
