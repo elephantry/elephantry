@@ -1,5 +1,3 @@
-use std::convert::TryInto;
-
 pub use libpq::state;
 
 pub use libpq::ty;
@@ -89,62 +87,6 @@ impl ToRust for Type {
         };
 
         rust.to_string()
-    }
-}
-
-#[derive(Debug)]
-pub struct Connection {
-    inner: libpq::Connection,
-}
-
-impl Connection {
-    pub fn new(dsn: &str) -> crate::Result<Self> {
-        let inner = match libpq::Connection::new(dsn) {
-            Ok(inner) => inner,
-            Err(message) => {
-                return Err(crate::Error::Connect {
-                    dsn: dsn.to_string(),
-                    message,
-                })
-            },
-        };
-
-        inner.set_error_verbosity(libpq::Verbosity::Terse);
-        inner.set_client_encoding(libpq::Encoding::UTF8);
-
-        Ok(Self {
-            inner,
-        })
-    }
-
-    pub fn execute(&self, query: &str) -> crate::Result<Result> {
-        self.inner.exec(query).try_into()
-    }
-
-    pub fn query(
-        &self,
-        query: &str,
-        params: &[&dyn crate::ToSql],
-    ) -> crate::Result<Result> {
-        let mut param_types = Vec::new();
-        let mut param_values = Vec::new();
-        let mut param_formats = Vec::new();
-
-        for param in params.iter() {
-            param_types.push(param.ty());
-            param_values.push(param.to_sql()?);
-            param_formats.push(param.format());
-        }
-
-        self.inner
-            .exec_params(
-                query,
-                &param_types,
-                &param_values,
-                &param_formats,
-                Format::Binary,
-            )
-            .try_into()
     }
 }
 

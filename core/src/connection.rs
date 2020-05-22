@@ -1,15 +1,29 @@
 use crate::Structure;
 use std::collections::HashMap;
+use std::convert::TryInto;
 
 #[derive(Debug)]
 pub struct Connection {
-    connection: crate::pq::Connection,
+    connection: libpq::Connection,
 }
 
 impl Connection {
     pub fn new(dsn: &str) -> crate::Result<Self> {
+        let connection = match libpq::Connection::new(dsn) {
+            Ok(connection) => connection,
+            Err(message) => {
+                return Err(crate::Error::Connect {
+                    dsn: dsn.to_string(),
+                    message,
+                })
+            },
+        };
+
+        connection.set_error_verbosity(libpq::Verbosity::Terse);
+        connection.set_client_encoding(libpq::Encoding::UTF8);
+
         Ok(Self {
-            connection: crate::pq::Connection::new(dsn)?,
+            connection,
         })
     }
 
@@ -21,7 +35,7 @@ impl Connection {
     }
 
     pub fn execute(&self, query: &str) -> crate::Result<crate::pq::Result> {
-        self.connection.execute(&query)
+        self.connection.exec(&query).try_into()
     }
 
     pub fn query<E: crate::Entity>(
@@ -29,7 +43,33 @@ impl Connection {
         query: &str,
         params: &[&dyn crate::ToSql],
     ) -> crate::Result<crate::Rows<E>> {
-        Ok(self.connection.query(&query, params)?.into())
+        Ok(self.send_query(&query, params)?.into())
+    }
+
+    fn send_query(
+        &self,
+        query: &str,
+        params: &[&dyn crate::ToSql],
+    ) -> crate::Result<crate::pq::Result> {
+        let mut param_types = Vec::new();
+        let mut param_values = Vec::new();
+        let mut param_formats = Vec::new();
+
+        for param in params.iter() {
+            param_types.push(param.ty());
+            param_values.push(param.to_sql()?);
+            param_formats.push(param.format());
+        }
+
+        self.connection
+            .exec_params(
+                query,
+                &param_types,
+                &param_values,
+                &param_formats,
+                crate::pq::Format::Binary,
+            )
+            .try_into()
     }
 
     pub fn find_by_pk<'a, M>(
@@ -125,7 +165,7 @@ impl Connection {
             clause,
         );
 
-        let results = self.connection.query(&query, params)?;
+        let results = self.send_query(&query, params)?;
 
         Ok(results.get(0).try_get("count")?)
     }
@@ -144,7 +184,7 @@ impl Connection {
             clause,
         );
 
-        let results = self.connection.query(&query, params)?;
+        let results = self.send_query(&query, params)?;
 
         Ok(results.get(0).try_get("result")?)
     }
@@ -182,7 +222,7 @@ impl Connection {
             M::create_projection(),
         );
 
-        let results = self.connection.query(&query, tuple.as_slice())?;
+        let results = self.send_query(&query, tuple.as_slice())?;
 
         Ok(M::create_entity(&results.get(0)))
     }
@@ -240,7 +280,7 @@ impl Connection {
             M::create_projection(),
         );
 
-        let results = self.connection.query(&query, &params)?;
+        let results = self.send_query(&query, &params)?;
 
         Ok(M::create_entity(&results.get(0)))
     }
