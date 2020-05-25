@@ -1,5 +1,6 @@
 use byteorder::ReadBytesExt;
 
+#[macro_export]
 macro_rules! not_null {
     ($raw:ident) => {
         match $raw {
