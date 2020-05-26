@@ -74,6 +74,23 @@ let database_url = std::env::var("DATABASE_URL")
 let elephantry = elephantry::Pool::new(&database_url)?;
 ```
 
+If you prefer the legacy way (like `psql`), you can use
+`elephantry::Pool::from_config`:
+
+```rust
+let elephantry = elephantry::Pool::from_config(&elephantry::Config::default())?;
+```
+
+`elephantry::Config` discorvers missing parameters from environment variables
+(`PGUSER`, `PGHOST`, `PGDATABASE`, `PGPORT` and `PGPASSWORD`) and `PGPASSFILE`
+file.
+
+You can see the
+[explain code
+source](https://github.com/sanpii/explain/blob/1.2.0/src/main.rs#L106-108)² to
+see an example how to use this with `structopt` (it’s easy like impl the `Into`
+trait).
+
 # Querying
 
 ## Primitive types
@@ -98,7 +115,7 @@ let missing_field: i32 = results.get(0).try_get("missing_field")?;
 ```
 
 The `Rows::get` function allows you to retrieve a result line without going
-through all records².
+through all records³.
 
 Similarly if the field is `null` (because `null` can’t be transformed to `i32`):
 
@@ -285,9 +302,9 @@ That’s where the database is going to be our best ally. Rather than to get our
 base entities back and then operate on them in order to extend them to
 finally display them, we will directly ask to PostgreSQL to enrich our entities
 and retrieve them with these additional fields (where, why not, don’t get all
-fields³).
+fields⁴).
 
-This will be possible with the model. The default projection⁴ contains all
+This will be possible with the model. The default projection⁵ contains all
 the fields of our table, but it is possible to defin another one via the
 `elephantry::Model::create_projection` function:
 
@@ -498,7 +515,7 @@ select e.*, array_agg(depts.name) as departments
 
 And you can see [07-relations](../core/examples/07-relations.rs) for the
 complete example. How many queries do you think would be executed with an
-ORM?⁵
+ORM?⁶
 
 You know everything there is to know about elephantry, the rest depends on your
 imagination and your mastery of SQL.
@@ -512,13 +529,15 @@ To go further on this last point:
 
 ¹ We’re on the same diesel to elephantry ratio.
 
-² Constant time access O(1).
+² A tool that launches like `psql` but explain a query instead of execute its.
 
-³ This is particularly useful for not retrieving sensitive data like
+³ Constant time access O(1).
+
+⁴ This is particularly useful for not retrieving sensitive data like
   passwords.
 
-⁴ The projection is the list of fields in the SELECT part of the request.
+⁵ The projection is the list of fields in the SELECT part of the request.
 
-⁵ 1 for the employee plus 1 per department, 4 here. The time taken by a
+⁶ 1 for the employee plus 1 per department, 4 here. The time taken by a
   query isn’t just the time to execute it. Every time you should add the network
   latency plus the time the ORM transforms results in objet.

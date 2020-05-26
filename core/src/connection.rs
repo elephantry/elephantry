@@ -27,6 +27,10 @@ impl Connection {
         })
     }
 
+    pub fn from_config(config: &crate::Config) -> crate::Result<Self> {
+        Self::new(&config.to_string())
+    }
+
     pub fn model<'a, M>(&'a self) -> M
     where
         M: crate::Model<'a>,

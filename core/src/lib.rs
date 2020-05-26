@@ -4,6 +4,7 @@ pub mod inspect;
 pub mod pq;
 
 mod array;
+mod config;
 mod connection;
 mod entity;
 mod errors;
@@ -12,6 +13,7 @@ mod from_sql;
 mod interval;
 mod model;
 mod pager;
+mod pgpass;
 mod pool;
 mod projection;
 mod rows;
@@ -20,6 +22,7 @@ mod to_sql;
 mod tuple;
 
 pub use array::*;
+pub use config::*;
 pub use connection::*;
 pub use elephantry_derive::*;
 pub use entity::*;
@@ -35,6 +38,8 @@ pub use rows::*;
 pub use structure::*;
 pub use to_sql::*;
 pub use tuple::*;
+
+use pgpass::*;
 
 /**
  * Easily create pk argument for where clause, including find_by_pk function

@@ -11,6 +11,10 @@ impl Pool {
         Self::default().add_default("default", url)
     }
 
+    pub fn from_config(config: &crate::Config) -> crate::Result<Self> {
+        Self::default().add_default("default", &config.to_string())
+    }
+
     pub fn add_default(self, name: &str, url: &str) -> crate::Result<Self> {
         self.add(name, url, true)
     }
