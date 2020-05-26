@@ -4,7 +4,7 @@ description = "Object model manager for PostgreSQL"
 repository = "https://github.com/sanpii/elephantry/tree/master/core"
 homepage = "https://github.com/sanpii/elephantry"
 license = "MIT"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Sanpi <sanpi@homecomputing.fr>"]
 edition = "2018"
 readme = "../README.md"
@@ -28,7 +28,7 @@ optional = true
 
 [dependencies.elephantry-derive]
 path = "../derive"
-version = "0.1"
+version = "0.2"
 
 [dependencies.serde]
 version = "1.0"
