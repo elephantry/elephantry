@@ -84,4 +84,4 @@ name = "07-relations"
 required-features = ["date", "numeric"]
 
 [badges]
-gitlab = { repository = "sanpi/libpq.rs", branch = "master" }
+gitlab = { repository = "sanpi/elephantry.rs", branch = "master" }
