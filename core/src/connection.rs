@@ -46,6 +46,17 @@ impl Connection {
         Ok(self.send_query(&query, params)?.into())
     }
 
+    pub fn query_one<E: crate::Entity>(
+        &self,
+        query: &str,
+        params: &[&dyn crate::ToSql],
+    ) -> crate::Result<E> {
+        match self.query(&query, params)?.try_get(0) {
+            Some(e) => Ok(e),
+            None => Err(crate::Error::MissingField("0".to_string())),
+        }
+    }
+
     fn send_query(
         &self,
         query: &str,

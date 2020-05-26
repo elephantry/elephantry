@@ -163,6 +163,16 @@ let employees = elephantry.query::<employee::Entity>(
 This saves you from having to pay attention to special characters and protects
 you against SQL injections.
 
+Simple types already implement the `Entity` tray, that imply if your
+query returns one column, you can simply get its.
+
+In addition, if you are only interested by the first row, you can use
+`Connection::query_one`.
+
+```rust
+let total_salary = elephantry.query_one::<bigdecimal::BigDecimal>("select sum(day_salary) from employee", &[])?;
+```
+
 See [02-query.rs](../core/examples/02-query.rs).
 
 ## Model
