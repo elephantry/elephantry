@@ -5,6 +5,17 @@ pub trait Entity: Clone {
     fn get(&self, field: &str) -> Option<&dyn crate::ToSql>;
 }
 
+impl<T: crate::ToSql + crate::FromSql + Clone> Entity for T
+{
+    fn from(tuple: &crate::Tuple<'_>) -> T {
+        tuple.nth(0)
+    }
+
+    fn get(&self, _: &str) -> Option<&dyn crate::ToSql> {
+        Some(self)
+    }
+}
+
 impl<
         T: crate::FromSql + crate::ToSql + Clone,
         S: std::hash::BuildHasher + Default + Clone,
