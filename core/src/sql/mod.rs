@@ -10,6 +10,8 @@ mod money;
 mod numeric;
 #[cfg(feature = "date")]
 mod timestamp;
+#[cfg(feature = "time")]
+mod time;
 #[cfg(feature = "uuid")]
 mod uuid;
 
@@ -19,3 +21,5 @@ pub use interval::*;
 pub use money::*;
 #[cfg(feature = "numeric")]
 pub use numeric::*;
+#[cfg(feature = "time")]
+pub use self::time::*;
