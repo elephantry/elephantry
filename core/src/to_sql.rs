@@ -290,13 +290,16 @@ impl ToSql for bigdecimal::BigDecimal {
 
 #[cfg(test)]
 mod test {
-    use std::collections::HashMap;
-
+    #[macro_export]
     macro_rules! to_test {
         ($sql_type:ident, $tests:expr) => {
             #[test]
             fn $sql_type() -> crate::Result<()> {
+                use std::collections::HashMap;
+
                 let conn = crate::test::new_conn();
+                conn.execute("set lc_monetary to 'en_US.UTF-8';")?;
+
                 for value in &$tests {
                     let result = conn.query::<HashMap<String, String>>(
                         &format!("select $1::{}", stringify!($sql_type)),
@@ -307,7 +310,6 @@ mod test {
 
                 Ok(())
             }
-
         }
     }
 

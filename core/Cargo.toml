@@ -30,6 +30,10 @@ optional = true
 path = "../derive"
 version = "0.2"
 
+[dependencies.postgres_money]
+version = "0.2"
+optional = true
+
 [dependencies.serde]
 version = "1.0"
 optional = true
@@ -56,8 +60,9 @@ default = ["derive"]
 date = ["chrono"]
 derive = []
 json = ["serde_json"]
-serde-support = ["serde", "serde_derive"]
+money = ["postgres_money"]
 numeric = ["bigdecimal"]
+serde-support = ["serde", "serde_derive"]
 
 [[example]]
 name = "02-query"

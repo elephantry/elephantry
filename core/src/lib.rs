@@ -12,6 +12,8 @@ mod from_sql;
 #[cfg(feature = "date")]
 mod interval;
 mod model;
+#[cfg(feature = "money")]
+mod money;
 mod pager;
 mod pgpass;
 mod pool;
@@ -31,6 +33,8 @@ pub use from_sql::*;
 #[cfg(feature = "date")]
 pub use interval::*;
 pub use model::*;
+#[cfg(feature = "money")]
+pub use money::*;
 pub use pager::*;
 pub use pool::*;
 pub use projection::*;

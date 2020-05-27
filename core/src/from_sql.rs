@@ -490,13 +490,16 @@ impl FromSql for bigdecimal::BigDecimal {
 
 #[cfg(test)]
 mod test {
-    use std::collections::HashMap;
-
+    #[macro_export]
     macro_rules! from_test {
         ($sql_type:ident, $rust_type:ty, $tests:expr) => {
             #[test]
             fn $sql_type() -> crate::Result<()> {
+                use std::collections::HashMap;
+
                 let conn = crate::test::new_conn();
+                conn.execute("set lc_monetary to 'en_US.UTF-8';")?;
+
                 for (value, expected) in &$tests {
                     // from text
                     let result = conn.execute(&format!("select {}::{} as actual", value, stringify!($sql_type)))?;
@@ -509,7 +512,6 @@ mod test {
 
                 Ok(())
             }
-
         }
     }
 
