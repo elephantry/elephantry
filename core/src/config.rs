@@ -7,6 +7,15 @@ pub struct Config {
     pub password: Option<String>,
 }
 
+macro_rules! get {
+    ($config:ident . $field:ident, $env:expr, $default:expr) => {
+        $config.$field
+            .clone()
+            .or(std::env::var($env).ok())
+            .unwrap_or_else(|| $default)
+    }
+}
+
 impl Config {
     pub fn new() -> Self {
         Config {
@@ -16,6 +25,48 @@ impl Config {
             port: None,
             password: None,
         }
+    }
+
+    pub fn user(&self) -> String {
+        get!(
+            self.user,
+            "PGUSER",
+            std::env::var("USER").unwrap()
+        )
+    }
+
+    pub fn host(&self) -> String {
+        get!(
+            self.host,
+            "PGHOST",
+            "/run/postgresql".to_string()
+        )
+    }
+
+    pub fn dbname(&self) -> String {
+        get!(
+            self.dbname,
+            "PGDATABASE",
+            self.user()
+        )
+    }
+
+    pub fn port(&self) -> String {
+        get!(
+            self.port,
+            "PGPORT",
+            "5432".to_string()
+        )
+    }
+
+    pub fn password(&self) -> Option<String> {
+        self.password
+            .clone()
+            .or(std::env::var("PGPASSWORD").ok())
+            .or_else(|| {
+                let pgpass = crate::PgPass::from_file();
+                pgpass.find(&self.host(), &self.port(), &self.dbname(), &self.user())
+            })
     }
 }
 
@@ -27,41 +78,13 @@ impl Default for Config {
 
 impl std::fmt::Display for Config {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let user = self.user
-            .clone()
-            .or(std::env::var("PGUSER").ok())
-            .unwrap_or_else(|| std::env::var("USER").unwrap());
-
-        let host = self.host
-            .clone()
-            .or(std::env::var("PGHOST").ok())
-            .unwrap_or_else(|| "/run/postgresql".to_string());
-
-        let dbname = self.dbname
-            .clone()
-            .or(std::env::var("PGDATABASE").ok())
-            .unwrap_or_else(|| user.clone());
-
-        let port = self.port
-            .clone()
-            .or(std::env::var("PGPORT").ok())
-            .unwrap_or_else(|| "5432".to_string());
-
-        let password = self.password
-            .clone()
-            .or(std::env::var("PGPASSWORD").ok())
-            .or_else(|| {
-                let pgpass = crate::PgPass::from_file();
-                pgpass.find(&host, &port, &dbname, &user)
-            });
-
-        if let Some(password) = password {
+        if let Some(password) = self.password() {
             write!(f, "password={} ", password)?;
         }
 
-        write!(f, "host={} ", host)?;
-        write!(f, "user={} ", user)?;
-        write!(f, "dbname={} ", dbname)?;
-        write!(f, "port={} ", port)
+        write!(f, "host={} ", self.host())?;
+        write!(f, "user={} ", self.user())?;
+        write!(f, "dbname={} ", self.dbname())?;
+        write!(f, "port={} ", self.port())
     }
 }
