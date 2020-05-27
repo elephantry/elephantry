@@ -9,11 +9,7 @@ mod connection;
 mod entity;
 mod errors;
 mod from_sql;
-#[cfg(feature = "date")]
-mod interval;
 mod model;
-#[cfg(feature = "money")]
-mod money;
 mod pager;
 mod pgpass;
 mod pool;
@@ -21,6 +17,7 @@ mod projection;
 mod rows;
 mod structure;
 mod to_sql;
+mod sql;
 mod tuple;
 
 pub use array::*;
@@ -30,11 +27,7 @@ pub use elephantry_derive::*;
 pub use entity::*;
 pub use errors::*;
 pub use from_sql::*;
-#[cfg(feature = "date")]
-pub use interval::*;
 pub use model::*;
-#[cfg(feature = "money")]
-pub use money::*;
 pub use pager::*;
 pub use pool::*;
 pub use projection::*;
@@ -42,6 +35,7 @@ pub use rows::*;
 pub use structure::*;
 pub use to_sql::*;
 pub use tuple::*;
+pub use sql::*;
 
 use pgpass::*;
 
