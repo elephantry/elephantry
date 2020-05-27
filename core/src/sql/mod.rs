@@ -1,3 +1,4 @@
+mod bytes;
 #[cfg(feature = "date")]
 mod date;
 #[cfg(feature = "date")]

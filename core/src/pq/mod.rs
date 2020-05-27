@@ -15,7 +15,7 @@ impl ToRust for Type {
         let rust = match self.name {
             "bigint" | "int8" => "i64",
             "bigserial" | "serial8" => "i64",
-            "bit" => "bytes::Bytes",
+            "bit" => "u8",
             "bit varying" | "varbit" => "bytes::Bytes",
             "boolean" | "bool" => "bool",
             #[cfg(feature = "geo")]
