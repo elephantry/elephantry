@@ -166,39 +166,6 @@ impl<T: ToSql> ToSql for Vec<T> {
 
 #[cfg(test)]
 mod test {
-    #[macro_export]
-    macro_rules! to_test {
-        ($sql_type:ident, $tests:expr) => {
-            #[test]
-            fn $sql_type() -> crate::Result<()> {
-                use std::collections::HashMap;
-
-                let conn = crate::test::new_conn();
-                conn.execute("set lc_monetary to 'en_US.UTF-8';")?;
-
-                for value in &$tests {
-                    let result = conn.query::<HashMap<String, String>>(
-                        &format!("select $1::{}", stringify!($sql_type)),
-                        &[value],
-                    );
-                    assert!(result.is_ok());
-                }
-
-                Ok(())
-            }
-        }
-    }
-
-    to_test!(float4, [1., -1., 2.1]);
-    to_test!(float8, [1., -1., 2.1]);
-    to_test!(int2, [i16::MAX, 1, 0, -1]);
-    to_test!(int4, [i32::MAX, 1, 0, -1]);
-    to_test!(int8, [i64::MAX, 1, 0, -1]);
-    to_test!(bool, [true, false]);
-    to_test!(char, ['f', 'à']);
-    to_test!(varchar, [None::<String>]);
-    to_test!(text, ["foo", ""]);
-
     #[test]
     fn vec_to_sql() {
         use crate::ToSql;

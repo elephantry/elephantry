@@ -79,19 +79,9 @@ impl crate::FromSql for Numeric {
 
 #[cfg(test)]
 mod test {
-    mod to {
-        crate::to_test!(numeric, [
-            crate::Numeric::from(20_000.),
-            crate::Numeric::from(3_900.),
-            crate::Numeric::from(3_900.98),
-        ]);
-    }
-
-    mod from {
-        crate::from_test!(numeric, crate::Numeric, [
-            ("20000", crate::Numeric::from(20_000.)),
-            ("3900", crate::Numeric::from(3_900.)),
-            ("3900.98", crate::Numeric::from(3_900.98)),
-        ]);
-    }
+    crate::sql_test!(numeric, crate::Numeric, [
+        ("20000", crate::Numeric::from(20_000.)),
+        ("3900", crate::Numeric::from(3_900.)),
+        ("3900.98", crate::Numeric::from(3_900.98)),
+    ]);
 }

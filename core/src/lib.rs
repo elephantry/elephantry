@@ -69,6 +69,58 @@ macro_rules! pk {
 mod test {
     static INIT: std::sync::Once = std::sync::Once::new();
 
+    #[macro_export]
+    macro_rules! sql_test {
+        ($sql_type:ident, $rust_type:ty, $tests:expr) => {
+            mod $sql_type {
+                use std::collections::HashMap;
+
+                #[test]
+                fn from_text() -> crate::Result<()> {
+                    let conn = crate::test::new_conn();
+                    conn.execute("set lc_monetary to 'en_US.UTF-8';")?;
+
+                    for (value, expected) in &$tests {
+                        let result = conn.execute(&format!("select {}::{} as actual", value, stringify!($sql_type)))?;
+                        assert_eq!(result.get(0).get::<$rust_type>("actual"), *expected);
+                    }
+
+                    Ok(())
+                }
+
+                #[test]
+                fn from_binary() -> crate::Result<()> {
+                    let conn = crate::test::new_conn();
+                    conn.execute("set lc_monetary to 'en_US.UTF-8';")?;
+
+                    for (value, expected) in &$tests {
+                        let result = conn.query::<HashMap<String, $rust_type>>(&format!("select {}::{} as actual", value, stringify!($sql_type)), &[])?;
+                        assert_eq!(result.get(0).get("actual").unwrap(), expected);
+                    }
+
+                    Ok(())
+                }
+
+                #[test]
+                fn to() -> crate::Result<()> {
+
+                    let conn = crate::test::new_conn();
+                    conn.execute("set lc_monetary to 'en_US.UTF-8';")?;
+
+                    for (_, value) in &$tests {
+                        let result = conn.query::<HashMap<String, String>>(
+                            &format!("select $1::{}", stringify!($sql_type)),
+                            &[value],
+                        );
+                        assert!(result.is_ok());
+                    }
+
+                    Ok(())
+                }
+            }
+        }
+    }
+
     pub fn dsn() -> String {
         std::env::var("DATABASE_URL")
             .unwrap_or_else(|_| "host=localhost".to_string())

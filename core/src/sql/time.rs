@@ -34,17 +34,8 @@ impl crate::FromSql for Time {
 
 #[cfg(test)]
 mod test {
-    mod from {
-        crate::from_test!(time, crate::Time, [
-            ("'00:00:00'", crate::Time::midnight()),
-            ("'01:02:03'", time::time!(01:02:03)),
-        ]);
-    }
-
-    mod to {
-        crate::to_test!(time, [
-            crate::Time::midnight(),
-            time::time!(01:02:03),
-        ]);
-    }
+    crate::sql_test!(time, crate::Time, [
+        ("'00:00:00'", crate::Time::midnight()),
+        ("'01:02:03'", time::time!(01:02:03)),
+    ]);
 }

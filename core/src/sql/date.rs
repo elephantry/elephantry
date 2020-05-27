@@ -116,19 +116,9 @@ impl crate::FromSql for chrono::NaiveDate {
 
 #[cfg(test)]
 mod test {
-    mod from {
-        crate::from_test!(date, chrono::NaiveDate, [
-            ("'1970-01-01'", chrono::NaiveDate::from_ymd(1970, 01, 01)),
-            ("'2010-01-01'", chrono::NaiveDate::from_ymd(2010, 01, 01)),
-            ("'2100-12-30'", chrono::NaiveDate::from_ymd(2100, 12, 30)),
-        ]);
-    }
-
-    mod to {
-        crate::to_test!(date, [
-            chrono::NaiveDate::from_ymd(1970, 01, 01),
-            chrono::NaiveDate::from_ymd(2010, 01, 01),
-            chrono::NaiveDate::from_ymd(2100, 12, 30),
-        ]);
-    }
+    crate::sql_test!(date, chrono::NaiveDate, [
+        ("'1970-01-01'", chrono::NaiveDate::from_ymd(1970, 01, 01)),
+        ("'2010-01-01'", chrono::NaiveDate::from_ymd(2010, 01, 01)),
+        ("'2100-12-30'", chrono::NaiveDate::from_ymd(2100, 12, 30)),
+    ]);
 }

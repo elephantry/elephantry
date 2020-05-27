@@ -210,81 +210,56 @@ impl<T: FromSql + Clone> FromSql for Vec<T> {
 
 #[cfg(test)]
 mod test {
-    #[macro_export]
-    macro_rules! from_test {
-        ($sql_type:ident, $rust_type:ty, $tests:expr) => {
-            #[test]
-            fn $sql_type() -> crate::Result<()> {
-                use std::collections::HashMap;
-
-                let conn = crate::test::new_conn();
-                conn.execute("set lc_monetary to 'en_US.UTF-8';")?;
-
-                for (value, expected) in &$tests {
-                    // from text
-                    let result = conn.execute(&format!("select {}::{} as actual", value, stringify!($sql_type)))?;
-                    assert_eq!(result.get(0).get::<$rust_type>("actual"), *expected);
-
-                    // from binary
-                    let result = conn.query::<HashMap<String, $rust_type>>(&format!("select {}::{} as actual", value, stringify!($sql_type)), &[])?;
-                    assert_eq!(result.get(0).get("actual").unwrap(), expected);
-                }
-
-                Ok(())
-            }
-        }
-    }
-
-    from_test!(float4, f32, [
+    crate::sql_test!(float4, f32, [
         (1., 1.),
         (-1., -1.),
         (2.1, 2.1),
     ]);
 
-    from_test!(float8, f64, [
+    crate::sql_test!(float8, f64, [
         (1., 1.),
         (-1., -1.),
         (2.1, 2.1),
     ]);
 
-    from_test!(int2, i16, [
+    crate::sql_test!(int2, i16, [
         (i16::MAX, i16::MAX),
         (1, 1),
         (0, 0),
         (-1, -1),
     ]);
 
-    from_test!(int4, i32, [
+    crate::sql_test!(int4, i32, [
         (i32::MAX, i32::MAX),
         (1, 1),
         (0, 0),
         (-1, -1),
     ]);
 
-    from_test!(int8, i64, [
+    crate::sql_test!(int8, i64, [
         (i64::MAX, i64::MAX),
         (1, 1),
         (0, 0),
         (-1, -1),
     ]);
 
-    from_test!(bool, bool, [
+    crate::sql_test!(bool, bool, [
         ("'t'", true),
         ("'f'", false),
         ("true", true),
         ("false", false),
     ]);
 
-    from_test!(char, char, [
+    crate::sql_test!(char, char, [
         ("'f'", 'f'),
         ("'à'", 'à'),
     ]);
 
-    from_test!(varchar, Option<String>, [
-        ("null", None),
+    crate::sql_test!(varchar, Option<String>, [
+        ("null", None::<String>),
     ]);
 
-    from_test!(text, String, [
+    crate::sql_test!(text, String, [
         ("'foo'", "foo"),
         ("''", ""),
     ]);

@@ -125,15 +125,7 @@ impl crate::FromSql for chrono::NaiveDateTime {
 
 #[cfg(test)]
 mod test {
-    mod from {
-        crate::from_test!(timestamp, chrono::NaiveDateTime, [
-            ("'1970-01-01 00:00:00'", chrono::NaiveDateTime::from_timestamp(0, 0)),
-        ]);
-    }
-
-    mod to {
-        crate::to_test!(timestamp, [
-            chrono::NaiveDateTime::from_timestamp(0, 0),
-        ]);
-    }
+    crate::sql_test!(timestamp, chrono::NaiveDateTime, [
+        ("'1970-01-01 00:00:00'", chrono::NaiveDateTime::from_timestamp(0, 0)),
+    ]);
 }

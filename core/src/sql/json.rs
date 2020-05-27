@@ -37,15 +37,7 @@ impl crate::FromSql for serde_json::value::Value {
 
 #[cfg(test)]
 mod test {
-    mod from {
-        crate::from_test!(json, serde_json::value::Value, [
-            ("'{\"foo\": \"bar\"}'", serde_json::json!({"foo": "bar"})),
-        ]);
-    }
-
-    mod to {
-        crate::to_test!(json, [
-            serde_json::json!({"foo": "bar"}),
-        ]);
-    }
+    crate::sql_test!(json, serde_json::value::Value, [
+        ("'{\"foo\": \"bar\"}'", serde_json::json!({"foo": "bar"})),
+    ]);
 }
