@@ -135,7 +135,7 @@ mod test {
 
         assert_eq!(
             Some("1234".to_string()),
-            pgpass.find("localhost", 5432, "postgres", "postgres")
+            pgpass.find("localhost", "5432", "postgres", "postgres")
         );
     }
 
@@ -143,7 +143,7 @@ mod test {
     fn not_find() {
         let pgpass = PgPass::from_str("localhost:5431:postgres:postgres:1234");
 
-        assert_eq!(None, pgpass.find("localhost", 5432, "postgres", "postgres"));
+        assert_eq!(None, pgpass.find("localhost", "5432", "postgres", "postgres"));
     }
 
     #[test]
@@ -152,7 +152,7 @@ mod test {
 
         assert_eq!(
             Some("1234".to_string()),
-            pgpass.find("localhost", 5432, "postgres", "postgres")
+            pgpass.find("localhost", "5432", "postgres", "postgres")
         );
     }
 
@@ -162,7 +162,7 @@ mod test {
 
         assert_eq!(
             Some("1234".to_string()),
-            pgpass.find("local:host", 5432, "post\\gres", "postgres")
+            pgpass.find("local:host", "5432", "post\\gres", "postgres")
         );
     }
 }
