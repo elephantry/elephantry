@@ -17,3 +17,5 @@ mod uuid;
 pub use interval::*;
 #[cfg(feature = "money")]
 pub use money::*;
+#[cfg(feature = "numeric")]
+pub use numeric::*;

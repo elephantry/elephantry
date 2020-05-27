@@ -1,4 +1,6 @@
-impl crate::ToSql for bigdecimal::BigDecimal {
+pub use bigdecimal::BigDecimal as Numeric;
+
+impl crate::ToSql for Numeric {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::ty::NUMERIC
     }
@@ -8,7 +10,7 @@ impl crate::ToSql for bigdecimal::BigDecimal {
     }
 }
 
-impl crate::FromSql for bigdecimal::BigDecimal {
+impl crate::FromSql for Numeric {
     fn from_text(
         ty: &crate::pq::Type,
         raw: Option<&str>,
@@ -37,7 +39,7 @@ impl crate::FromSql for bigdecimal::BigDecimal {
         let sign = buf.read_u16::<byteorder::BigEndian>()?;
         let dscale = buf.read_u16::<byteorder::BigEndian>()?;
 
-        let mut result = bigdecimal::BigDecimal::default();
+        let mut result = Numeric::default();
 
         if ndigits == 0 {
             return Ok(result);
@@ -51,21 +53,21 @@ impl crate::FromSql for bigdecimal::BigDecimal {
         };
 
         let first_digit = buf.read_i16::<byteorder::BigEndian>()?;
-        result += bigdecimal::BigDecimal::from(
+        result += Numeric::from(
             first_digit as i64 * NBASE.pow(weight),
         );
 
         for _ in 1..weight {
             let digit = buf.read_i16::<byteorder::BigEndian>()?;
 
-            result *= bigdecimal::BigDecimal::from(NBASE);
-            result += bigdecimal::BigDecimal::from(digit);
+            result *= Numeric::from(NBASE);
+            result += Numeric::from(digit);
         }
 
         if dscale > 0 {
             for x in weight + 1..ndigits {
                 let digit = buf.read_i16::<byteorder::BigEndian>()?;
-                result += bigdecimal::BigDecimal::from(
+                result += Numeric::from(
                     digit as f32 / (10_u32.pow(DEC_DIGITS) * x) as f32,
                 );
             }
@@ -79,17 +81,17 @@ impl crate::FromSql for bigdecimal::BigDecimal {
 mod test {
     mod to {
         crate::to_test!(numeric, [
-            bigdecimal::BigDecimal::from(20_000.),
-            bigdecimal::BigDecimal::from(3_900.),
-            bigdecimal::BigDecimal::from(3_900.98),
+            crate::Numeric::from(20_000.),
+            crate::Numeric::from(3_900.),
+            crate::Numeric::from(3_900.98),
         ]);
     }
 
     mod from {
-        crate::from_test!(numeric, bigdecimal::BigDecimal, [
-            ("20000", bigdecimal::BigDecimal::from(20_000.)),
-            ("3900", bigdecimal::BigDecimal::from(3_900.)),
-            ("3900.98", bigdecimal::BigDecimal::from(3_900.98)),
+        crate::from_test!(numeric, crate::Numeric, [
+            ("20000", crate::Numeric::from(20_000.)),
+            ("3900", crate::Numeric::from(3_900.)),
+            ("3900.98", crate::Numeric::from(3_900.98)),
         ]);
     }
 }
