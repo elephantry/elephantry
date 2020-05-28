@@ -26,6 +26,9 @@ impl crate::FromSql for u8 {
         Ok(bytes.get(0).unwrap() as u8)
     }
 
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L375
+     */
     fn from_binary(
         ty: &crate::pq::Type,
         raw: Option<&[u8]>,
@@ -45,6 +48,9 @@ impl crate::ToSql for BitVec {
         crate::pq::Format::Binary
     }
 
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L680
+     */
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
         use bytes::BufMut;
 
