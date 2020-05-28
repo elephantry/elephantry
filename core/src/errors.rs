@@ -21,6 +21,7 @@ pub enum Error {
         message: Option<String>,
     },
     Utf8(std::string::FromUtf8Error),
+    Unknow,
 }
 
 impl std::error::Error for Error {
@@ -59,6 +60,7 @@ impl std::fmt::Display for Error {
                 )
             },
             Error::Utf8(err) => format!("Invalid utf8 value: {}", err),
+            Error::Unknow => "Unknow error".to_string(),
         };
 
         write!(f, "{}", s)
@@ -74,5 +76,12 @@ impl From<std::string::FromUtf8Error> for Error {
 impl From<std::io::Error> for Error {
     fn from(err: std::io::Error) -> Self {
         Error::Io(err)
+    }
+}
+
+
+impl From<()> for Error {
+    fn from(_: ()) -> Self {
+        Error::Unknow
     }
 }

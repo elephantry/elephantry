@@ -51,7 +51,7 @@ impl ToRust for Type {
             "path" => "geo_types::LineString<f64>",
             "pg_lsn" => "String",
             #[cfg(feature = "geo")]
-            "point" => "geo_types::Point<f64>",
+            "point" => "elephantry::Point",
             #[cfg(feature = "geo")]
             "polygon" => todo!(),
             "real" | "float4" => "f32",
