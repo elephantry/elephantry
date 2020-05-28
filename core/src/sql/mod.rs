@@ -1,4 +1,5 @@
-mod bytes;
+#[cfg(feature = "bit")]
+mod bit;
 #[cfg(feature = "date")]
 mod date;
 #[cfg(feature = "date")]
@@ -16,6 +17,8 @@ mod time;
 #[cfg(feature = "uuid")]
 mod uuid;
 
+#[cfg(feature = "bit")]
+pub use bit::*;
 #[cfg(feature = "date")]
 pub use interval::*;
 #[cfg(feature = "money")]
