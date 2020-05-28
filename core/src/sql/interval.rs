@@ -203,7 +203,7 @@ impl crate::FromSql for crate::Interval {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/timestamp.c#L994
      */
     fn from_binary(
-        ty: &crate::pq::Type,
+        _: &crate::pq::Type,
         raw: Option<&[u8]>,
     ) -> crate::Result<Self> {
         use byteorder::ReadBytesExt;
