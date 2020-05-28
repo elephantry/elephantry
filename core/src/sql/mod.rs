@@ -27,3 +27,5 @@ pub use money::*;
 pub use numeric::*;
 #[cfg(feature = "time")]
 pub use self::time::*;
+#[cfg(feature = "uuid")]
+pub use self::uuid::*;

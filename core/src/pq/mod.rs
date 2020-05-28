@@ -80,7 +80,7 @@ impl ToRust for Type {
                 "chrono::DateTime<chrono::FixedOffset>"
             },
             #[cfg(feature = "uuid")]
-            "uuid" => "uuid::Uuid",
+            "uuid" => "elephantry::Uuid",
             "xml" => "String",
 
             "hstore" => "std::collection::HashMap<String, Option<String>>",
