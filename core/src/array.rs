@@ -109,42 +109,26 @@ impl<T: crate::FromSql + Clone> Into<Vec<T>> for Array<T> {
 
 #[cfg(test)]
 mod test {
-    use std::collections::HashMap;
-
-    #[test]
-    fn text_vec() {
-        let elephantry = crate::test::new_conn();
-        let array: Vec<Vec<i32>> = elephantry
-            .execute("SELECT '{1, 2}'::int4[]")
-            .unwrap()
-            .map(|x| x.nth(0))
-            .collect();
-
-        assert_eq!(array, vec![vec![1, 2]]);
-    }
-
     #[test]
     fn bin_vec() {
         let elephantry = crate::test::new_conn();
-        let results: Vec<HashMap<String, Vec<i32>>> = elephantry
-            .query("SELECT '{1, 2}'::int4[] as n", &[])
-            .unwrap()
-            .collect();
+        let results: Vec<i32> = elephantry
+            .query_one("SELECT '{1, 2}'::int4[]", &[])
+            .unwrap();
 
-        assert_eq!(results[0].get("n"), Some(&vec![1, 2]));
+        assert_eq!(results, vec![1, 2]);
     }
 
     #[test]
     fn bin_array_str() {
         let elephantry = crate::test::new_conn();
-        let results: Vec<HashMap<String, Vec<Option<String>>>> = elephantry
-            .query("SELECT '{null, str}'::text[] as n", &[])
-            .unwrap()
-            .collect();
+        let results: Vec<Option<String>> = elephantry
+            .query_one("SELECT '{null, str}'::text[]", &[])
+            .unwrap();
 
         assert_eq!(
-            results[0].get("n"),
-            Some(&vec![None, Some("str".to_string())])
+            results,
+            vec![None, Some("str".to_string())]
         );
     }
 }
