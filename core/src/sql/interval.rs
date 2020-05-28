@@ -105,23 +105,24 @@ impl Default for Interval {
     }
 }
 
-impl Into<i64> for &Interval {
-    fn into(self) -> i64 {
-        self.years as i64 * 12 * 30 * 24 * 60 * 60 * 1_000_000
-        + self.months as i64 * 30 * 24 * 60 * 60 * 1_000_000
-        + self.days as i64 * 24 * 60 * 60 * 1_000_000
-        + self.hours as i64 * 60 * 60 * 1_000_000
-        + self.mins as i64 * 60 * 1_000_000
-        + self.secs as i64 * 1_000_000
-        + self.usecs as i64
+impl From<&Interval> for i64 {
+    fn from(interval: &Interval) -> Self {
+        interval.years as i64 * 12 * 30 * 24 * 60 * 60 * 1_000_000
+        + interval.months as i64 * 30 * 24 * 60 * 60 * 1_000_000
+        + interval.days as i64 * 24 * 60 * 60 * 1_000_000
+        + interval.hours as i64 * 60 * 60 * 1_000_000
+        + interval.mins as i64 * 60 * 1_000_000
+        + interval.secs as i64 * 1_000_000
+        + interval.usecs as i64
     }
 }
 
 impl PartialEq for Interval {
     fn eq(&self, other: &Self) -> bool {
-        let a: i64 = self.into();
+        let a: i64 = i64::from(self);
+        let b: i64 = i64::from(other);
 
-        a.eq(&other.into())
+        a.eq(&b)
     }
 }
 
