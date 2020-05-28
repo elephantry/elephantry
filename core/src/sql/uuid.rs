@@ -21,11 +21,23 @@ impl crate::FromSql for Uuid {
         }
     }
 
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/uuid.c#L152
+     */
     fn from_binary(
         ty: &crate::pq::Type,
         raw: Option<&[u8]>,
     ) -> crate::Result<Self> {
-        todo!();
+        let buf = crate::not_null!(raw);
+
+        if buf.len() != 16 {
+            return Err(Self::error(ty, "uuid", raw));
+        }
+
+        let mut bytes = [0; 16];
+        bytes.copy_from_slice(buf);
+
+        Ok(Uuid::from_bytes(bytes))
     }
 }
 
