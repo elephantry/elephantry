@@ -6,7 +6,7 @@ impl crate::ToSql for Numeric {
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
-        todo!()
+        self.to_string().to_sql()
     }
 }
 
