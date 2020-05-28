@@ -62,7 +62,7 @@ impl Config {
     pub fn password(&self) -> Option<String> {
         self.password
             .clone()
-            .or(std::env::var("PGPASSWORD").ok())
+            .or_else(|| std::env::var("PGPASSWORD").ok())
             .or_else(|| {
                 let pgpass = crate::PgPass::from_file();
                 pgpass.find(&self.host(), &self.port(), &self.dbname(), &self.user())

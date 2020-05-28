@@ -162,7 +162,7 @@ impl FromSql for char {
         _: &crate::pq::Type,
         raw: Option<&str>,
     ) -> crate::Result<Self> {
-        Ok(not_null!(raw).chars().nth(0).unwrap())
+        Ok(not_null!(raw).chars().next().unwrap())
     }
 
     fn from_binary(
@@ -171,8 +171,8 @@ impl FromSql for char {
     ) -> crate::Result<Self> {
         let c = String::from_binary(ty, raw)?;
 
-        c.chars().nth(0)
-            .ok_or(Self::error(ty, "char", raw))
+        c.chars().next()
+            .ok_or_else(|| Self::error(ty, "char", raw))
     }
 }
 
