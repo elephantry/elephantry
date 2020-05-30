@@ -21,7 +21,7 @@ impl ToRust for Type {
             "bit varying" | "varbit" => "elephantry::BitVec",
             "boolean" | "bool" => "bool",
             #[cfg(feature = "geo")]
-            "box" => "geo_types::Rect<f64>",
+            "box" => "elephantry::Box",
             "bytea" => "Vec<u8>",
             "character" | "char" => "i8",
             "character varying" | "varchar" => "String",
