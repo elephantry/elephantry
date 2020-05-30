@@ -42,13 +42,12 @@ impl crate::FromSql for Point {
         ty: &crate::pq::Type,
         raw: Option<&str>,
     ) -> crate::Result<Self> {
-        use std::str::FromStr;
-
-        let coordinates =
-            crate::Coordinates::from_str(&crate::from_sql::not_null(raw)?)?;
+        let coordinates = crate::from_sql::not_null(raw)?
+            .parse::<crate::Coordinates>()
+            .map_err(|_| Self::error(ty, "elephantry::Point", raw))?;
 
         if coordinates.len() != 1 {
-            return Err(Self::error(ty, "elephantry::Line", raw));
+            return Err(Self::error(ty, "elephantry::Point", raw));
         }
 
         Ok(Self::new(coordinates[0].x, coordinates[0].y))

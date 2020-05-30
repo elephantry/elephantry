@@ -15,9 +15,8 @@ impl crate::FromSql for Numeric {
         ty: &crate::pq::Type,
         raw: Option<&str>,
     ) -> crate::Result<Self> {
-        use std::str::FromStr;
-
-        Self::from_str(&crate::not_null(raw)?)
+        crate::not_null(raw)?
+            .parse()
             .map_err(|_| Self::error(ty, "numeric", raw))
     }
 

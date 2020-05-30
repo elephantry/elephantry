@@ -41,13 +41,12 @@ impl crate::ToSql for Path {
 
 impl crate::FromSql for Path {
     fn from_text(
-        _: &crate::pq::Type,
+        ty: &crate::pq::Type,
         raw: Option<&str>,
     ) -> crate::Result<Self> {
-        use std::str::FromStr;
-
-        let coordinates =
-            crate::Coordinates::from_str(&crate::from_sql::not_null(raw)?)?;
+        let coordinates = crate::not_null(raw)?
+            .parse()
+            .map_err(|_| Self::error(ty, "elephantry::Path", raw))?;
 
         Ok(Self::new(&coordinates))
     }
@@ -61,7 +60,7 @@ impl crate::FromSql for Path {
     ) -> crate::Result<Self> {
         use byteorder::ReadBytesExt;
 
-        let mut buf = crate::from_sql::not_null(raw)?;
+        let mut buf = crate::not_null(raw)?;
         let _closed = buf.read_u8()?;
         let npts = buf.read_i32::<byteorder::BigEndian>()?;
         let mut coordinates = Vec::new();

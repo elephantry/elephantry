@@ -40,10 +40,10 @@ impl crate::FromSql for Segment {
         ty: &crate::pq::Type,
         raw: Option<&str>,
     ) -> crate::Result<Self> {
-        use std::str::FromStr;
-
         let coordinates =
-            crate::Coordinates::from_str(&crate::from_sql::not_null(raw)?)?;
+            crate::not_null(raw)?
+                .parse::<crate::Coordinates>()
+                .map_err(|_| Self::error(ty, "elephantry::Segment", raw))?;
 
         if coordinates.len() != 2 {
             return Err(Self::error(ty, "elephantry::Segment", raw));
