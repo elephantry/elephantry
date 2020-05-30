@@ -1,4 +1,4 @@
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Debug)]
 #[cfg_attr(
     feature = "serde-support",
     derive(serde_derive::Serialize, serde_derive::Deserialize)
