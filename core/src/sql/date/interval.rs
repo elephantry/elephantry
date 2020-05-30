@@ -170,7 +170,7 @@ macro_rules! caps {
     };
 }
 
-impl crate::FromSql for crate::Interval {
+impl crate::FromSql for Interval {
     fn from_text(
         ty: &crate::pq::Type,
         raw: Option<&str>,
@@ -178,7 +178,7 @@ impl crate::FromSql for crate::Interval {
         let s = String::from_text(ty, raw)?;
 
         if s.as_str() == "00:00:00" {
-            return Ok(crate::Interval::default());
+            return Ok(Self::default());
         }
 
         let re = regex::Regex::new(
@@ -198,8 +198,7 @@ impl crate::FromSql for crate::Interval {
         let secs = caps!(caps, secs, ty, raw);
         let usecs = caps!(caps, usecs, ty, raw);
 
-        let interval =
-            crate::Interval::new(years, months, days, hours, mins, secs, usecs);
+        let interval = Self::new(years, months, days, hours, mins, secs, usecs);
 
         Ok(interval)
     }
@@ -230,7 +229,7 @@ impl crate::FromSql for crate::Interval {
         let secs = usecs / 1_000_000;
         usecs %= 1_000_000;
 
-        let interval = crate::Interval::new(
+        let interval = Self::new(
             years,
             months,
             days,
@@ -244,7 +243,7 @@ impl crate::FromSql for crate::Interval {
     }
 }
 
-impl crate::ToSql for crate::Interval {
+impl crate::ToSql for Interval {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::ty::INTERVAL
     }

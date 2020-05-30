@@ -4,8 +4,6 @@ mod bit;
 mod date;
 #[cfg(feature = "geo")]
 mod geo;
-#[cfg(feature = "date")]
-mod interval;
 #[cfg(feature = "json")]
 mod json;
 #[cfg(feature = "money")]
@@ -25,10 +23,10 @@ pub use self::time::*;
 pub use self::uuid::*;
 #[cfg(feature = "bit")]
 pub use bit::*;
+#[cfg(feature = "date")]
+pub use date::*;
 #[cfg(feature = "geo")]
 pub use geo::*;
-#[cfg(feature = "date")]
-pub use interval::*;
 #[cfg(feature = "money")]
 pub use money::*;
 #[cfg(feature = "numeric")]
