@@ -75,6 +75,7 @@ geo = ["geo-types"]
 json = ["serde_json"]
 money = ["postgres_money"]
 numeric = ["bigdecimal"]
+net = []
 serde-support = ["serde", "serde_derive"]
 
 [[example]]

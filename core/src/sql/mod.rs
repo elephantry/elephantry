@@ -8,6 +8,8 @@ mod geo;
 mod json;
 #[cfg(feature = "money")]
 mod money;
+#[cfg(feature = "net")]
+mod net;
 #[cfg(feature = "numeric")]
 mod numeric;
 #[cfg(feature = "time")]
@@ -29,5 +31,7 @@ pub use date::*;
 pub use geo::*;
 #[cfg(feature = "money")]
 pub use money::*;
+#[cfg(feature = "net")]
+pub use net::*;
 #[cfg(feature = "numeric")]
 pub use numeric::*;

@@ -32,6 +32,7 @@ impl ToRust for Type {
             #[cfg(feature = "chrono")]
             "date" => "chrono::NaiveDate",
             "double precision" | "float8" => "f64",
+            #[cfg(feature = "net")]
             "inet" => "std::net::IpAddr",
             "integer" | "int" | "int4" => "i32",
             #[cfg(feature = "json")]
