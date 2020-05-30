@@ -28,7 +28,7 @@ impl ToRust for Type {
             #[cfg(feature = "network")]
             "cidr" => todo!(),
             #[cfg(feature = "geo")]
-            "circle" => todo!(),
+            "circle" => "elephantry::Circle",
             #[cfg(feature = "chrono")]
             "date" => "chrono::NaiveDate",
             "double precision" | "float8" => "f64",

@@ -21,7 +21,9 @@ impl std::ops::Deref for Coordinate {
 pub struct Coordinates(Vec<Coordinate>);
 
 impl Coordinates {
-    fn coordinate(r#match: &Option<regex::Match<'_>>) -> Option<f64> {
+    pub(crate) fn coordinate(
+        r#match: &Option<regex::Match<'_>>,
+    ) -> Option<f64> {
         if let Some(r#match) = r#match {
             r#match.as_str().parse().ok()
         }
