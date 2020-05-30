@@ -2,13 +2,10 @@
 pub struct Polygon(geo_types::Polygon<f64>);
 
 impl Polygon {
-    pub fn new(coordinates: crate::Coordinates) -> Self {
-        Self(geo_types::Polygon::new(
-            geo_types::LineString(
-                coordinates.iter().map(|x| *x.clone()).collect(),
-            ),
-            Vec::new(),
-        ))
+    pub fn new(path: &crate::Path) -> Self {
+        use std::ops::Deref;
+
+        Self(geo_types::Polygon::new(path.deref().clone(), Vec::new()))
     }
 }
 
@@ -44,15 +41,12 @@ impl crate::ToSql for Polygon {
 
 impl crate::FromSql for Polygon {
     fn from_text(
-        _: &crate::pq::Type,
+        ty: &crate::pq::Type,
         raw: Option<&str>,
     ) -> crate::Result<Self> {
-        use std::str::FromStr;
+        let path = crate::Path::from_text(ty, raw)?;
 
-        let coordinates =
-            crate::Coordinates::from_str(&crate::from_sql::not_null(raw)?)?;
-
-        Ok(Self::new(coordinates))
+        Ok(Self::new(&path))
     }
 
     /*
@@ -76,24 +70,22 @@ impl crate::FromSql for Polygon {
             coordinates.push(coordinate);
         }
 
-        Ok(Self::new(coordinates.into()))
+        Ok(Self::new(&crate::Path::new(&coordinates.into())))
     }
 }
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(polygon, crate::Polygon, [
-        (
-            "'((0, 0), (10, 10), (10, 0), (0, 0))'",
-            crate::Polygon::new(
-                vec![
-                    crate::Coordinate::new(0., 0.),
-                    crate::Coordinate::new(10., 10.),
-                    crate::Coordinate::new(10., 0.),
-                    crate::Coordinate::new(0., 0.),
-                ]
-                .into()
-            )
-        ),
-    ]);
+    crate::sql_test!(polygon, crate::Polygon, [(
+        "'((0, 0), (10, 10), (10, 0), (0, 0))'",
+        crate::Polygon::new(&crate::Path::new(
+            &vec![
+                crate::Coordinate::new(0., 0.),
+                crate::Coordinate::new(10., 10.),
+                crate::Coordinate::new(10., 0.),
+                crate::Coordinate::new(0., 0.),
+            ]
+            .into()
+        ))
+    ),]);
 }

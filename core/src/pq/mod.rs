@@ -48,7 +48,7 @@ impl ToRust for Type {
             #[cfg(feature = "numeric")]
             "numeric" | "decimal" => "bigdecimal::BigDecimal",
             #[cfg(feature = "geo")]
-            "path" => "geo_types::LineString<f64>",
+            "path" => "elephantry::Path",
             "pg_lsn" => "String",
             #[cfg(feature = "geo")]
             "point" => "elephantry::Point",
