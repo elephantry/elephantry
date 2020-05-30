@@ -70,7 +70,7 @@ impl crate::FromSql for BitVec {
         _: &crate::pq::Type,
         raw: Option<&str>,
     ) -> crate::Result<Self> {
-        let s = crate::not_null!(raw);
+        let s = crate::not_null(raw)?;
         let mut bits = BitVec::from_elem(s.len(), false);
 
         for (x, bit) in s.chars().enumerate() {
@@ -88,7 +88,7 @@ impl crate::FromSql for BitVec {
     ) -> crate::Result<Self> {
         use byteorder::ReadBytesExt;
 
-        let mut buf = crate::not_null!(raw);
+        let mut buf = crate::not_null(raw)?;
         let _size = buf.read_i32::<byteorder::BigEndian>()?;
 
         Ok(BitVec::from_bytes(buf))

@@ -17,7 +17,7 @@ impl crate::FromSql for Numeric {
     ) -> crate::Result<Self> {
         use std::str::FromStr;
 
-        Self::from_str(&crate::not_null!(raw))
+        Self::from_str(&crate::not_null(raw)?)
             .map_err(|_| Self::error(ty, "numeric", raw))
     }
 
@@ -33,7 +33,7 @@ impl crate::FromSql for Numeric {
         const NBASE: i64 = 10_000;
         const DEC_DIGITS: u32 = 4;
 
-        let mut buf = crate::not_null!(raw);
+        let mut buf = crate::not_null(raw)?;
         let ndigits = buf.read_u16::<byteorder::BigEndian>()? as u32;
         let weight = buf.read_u16::<byteorder::BigEndian>()? as u32;
         let sign = buf.read_u16::<byteorder::BigEndian>()?;

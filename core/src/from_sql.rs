@@ -1,13 +1,8 @@
 use byteorder::ReadBytesExt;
 
-#[macro_export]
-macro_rules! not_null {
-    ($raw:ident) => {
-        match $raw {
-            Some(raw) => raw,
-            None => return Err(crate::Error::NotNull),
-        }
-    };
+#[inline]
+pub(crate) fn not_null<T>(raw: Option<T>) -> crate::Result<T> {
+    raw.ok_or(crate::Error::NotNull)
 }
 
 macro_rules! number {
@@ -17,7 +12,7 @@ macro_rules! number {
                 ty: &crate::pq::Type,
                 raw: Option<&[u8]>,
             ) -> crate::Result<Self> {
-                let mut buf = not_null!(raw);
+                let mut buf = crate::not_null(raw)?;
                 let v = buf.$read::<byteorder::BigEndian>()?;
 
                 if !buf.is_empty() {
@@ -31,7 +26,7 @@ macro_rules! number {
                 ty: &crate::pq::Type,
                 raw: Option<&str>,
             ) -> crate::Result<Self> {
-                not_null!(raw)
+                crate::not_null(raw)?
                     .parse()
                     .map_err(|_| Self::error(ty, stringify!($type), raw))
             }
@@ -91,7 +86,7 @@ impl FromSql for usize {
         ty: &crate::pq::Type,
         raw: Option<&str>,
     ) -> crate::Result<Self> {
-        not_null!(raw)
+        not_null(raw)?
             .parse()
             .map_err(|_| Self::error(ty, "usize", raw))
     }
@@ -100,7 +95,7 @@ impl FromSql for usize {
         ty: &crate::pq::Type,
         raw: Option<&[u8]>,
     ) -> crate::Result<Self> {
-        let mut buf = not_null!(raw);
+        let mut buf = not_null(raw)?;
         #[cfg(target_pointer_width = "64")]
         let v = buf.read_u64::<byteorder::BigEndian>()?;
         #[cfg(target_pointer_width = "32")]
@@ -119,19 +114,19 @@ impl FromSql for bool {
         _: &crate::pq::Type,
         raw: Option<&str>,
     ) -> crate::Result<Self> {
-        Ok(not_null!(raw) == "t")
+        Ok(not_null(raw)? == "t")
     }
 
     fn from_binary(
         ty: &crate::pq::Type,
         raw: Option<&[u8]>,
     ) -> crate::Result<Self> {
-        let buf = not_null!(raw);
+        let buf = not_null(raw)?;
         if buf.len() != 1 {
             return Err(Self::error(ty, "bool", raw));
         }
 
-        Ok(not_null!(raw)[0] != 0)
+        Ok(not_null(raw)?[0] != 0)
     }
 }
 
@@ -162,7 +157,7 @@ impl FromSql for char {
         _: &crate::pq::Type,
         raw: Option<&str>,
     ) -> crate::Result<Self> {
-        Ok(not_null!(raw).chars().next().unwrap())
+        Ok(not_null(raw)?.chars().next().unwrap())
     }
 
     fn from_binary(
@@ -181,14 +176,14 @@ impl FromSql for String {
         _: &crate::pq::Type,
         raw: Option<&str>,
     ) -> crate::Result<Self> {
-        Ok(not_null!(raw).to_string())
+        Ok(not_null(raw)?.to_string())
     }
 
     fn from_binary(
         _: &crate::pq::Type,
         raw: Option<&[u8]>,
     ) -> crate::Result<Self> {
-        String::from_utf8(not_null!(raw).to_vec()).map_err(|e| e.into())
+        String::from_utf8(not_null(raw)?.to_vec()).map_err(|e| e.into())
     }
 }
 

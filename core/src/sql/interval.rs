@@ -208,7 +208,7 @@ impl crate::FromSql for crate::Interval {
     ) -> crate::Result<Self> {
         use byteorder::ReadBytesExt;
 
-        let mut buf = crate::not_null!(raw);
+        let mut buf = crate::not_null(raw)?;
         let mut usecs = buf.read_i64::<byteorder::BigEndian>()?;
         let days = buf.read_i32::<byteorder::BigEndian>()?;
         let mut months = buf.read_i32::<byteorder::BigEndian>()?;

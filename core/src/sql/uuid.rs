@@ -15,7 +15,7 @@ impl crate::FromSql for Uuid {
         ty: &crate::pq::Type,
         raw: Option<&str>,
     ) -> crate::Result<Self> {
-        match Uuid::parse_str(&crate::not_null!(raw)) {
+        match Uuid::parse_str(&crate::not_null(raw)?) {
             Ok(uuid) => Ok(uuid),
             _ => Err(Self::error(ty, "uuid", raw)),
         }
@@ -28,7 +28,7 @@ impl crate::FromSql for Uuid {
         ty: &crate::pq::Type,
         raw: Option<&[u8]>,
     ) -> crate::Result<Self> {
-        let buf = crate::not_null!(raw);
+        let buf = crate::not_null(raw)?;
 
         if buf.len() != 16 {
             return Err(Self::error(ty, "uuid", raw));

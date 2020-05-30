@@ -15,7 +15,7 @@ impl crate::FromSql for Time {
         ty: &crate::pq::Type,
         raw: Option<&str>,
     ) -> crate::Result<Self> {
-        Time::parse(crate::not_null!(raw), "%T")
+        Time::parse(crate::not_null(raw)?, "%T")
             .map_err(|_| Self::error(ty, "time", raw))
     }
 

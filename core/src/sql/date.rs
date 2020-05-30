@@ -97,7 +97,7 @@ impl crate::FromSql for chrono::NaiveDate {
         ty: &crate::pq::Type,
         raw: Option<&str>,
     ) -> crate::Result<Self> {
-        match chrono::NaiveDate::parse_from_str(crate::not_null!(raw), "%F") {
+        match chrono::NaiveDate::parse_from_str(crate::not_null(raw)?, "%F") {
             Ok(date) => Ok(date),
             _ => Err(Self::error(ty, "date", raw)),
         }

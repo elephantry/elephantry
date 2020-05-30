@@ -100,12 +100,12 @@ impl crate::FromSql for chrono::NaiveDateTime {
         raw: Option<&str>,
     ) -> crate::Result<Self> {
         if let Ok(date) =
-            chrono::NaiveDateTime::parse_from_str(crate::not_null!(raw), "%F %T")
+            chrono::NaiveDateTime::parse_from_str(crate::not_null(raw)?, "%F %T")
         {
             return Ok(date);
         }
 
-        match chrono::NaiveDateTime::parse_from_str(crate::not_null!(raw), "%F %T.%f")
+        match chrono::NaiveDateTime::parse_from_str(crate::not_null(raw)?, "%F %T.%f")
         {
             Ok(date) => Ok(date),
             _ => Err(Self::error(ty, "timestamp", raw)),

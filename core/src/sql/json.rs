@@ -16,7 +16,7 @@ impl crate::FromSql for serde_json::value::Value {
         ty: &crate::pq::Type,
         raw: Option<&str>,
     ) -> crate::Result<Self> {
-        match serde_json::from_str(crate::not_null!(raw)) {
+        match serde_json::from_str(crate::not_null(raw)?) {
             Ok(json) => Ok(json),
             _ => Err(Self::error(ty, "json", raw)),
         }
