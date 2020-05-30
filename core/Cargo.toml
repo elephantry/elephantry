@@ -30,6 +30,10 @@ optional = true
 version = "0.4"
 optional = true
 
+[dependencies.macaddr]
+version = "1.0.0"
+optional = true
+
 [dependencies.elephantry-derive]
 path = "../derive"
 version = "0.2"
@@ -75,7 +79,7 @@ geo = ["geo-types"]
 json = ["serde_json"]
 money = ["postgres_money"]
 numeric = ["bigdecimal"]
-net = []
+net = ["macaddr"]
 serde-support = ["serde", "serde_derive"]
 
 [[example]]

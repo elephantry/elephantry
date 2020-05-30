@@ -41,8 +41,9 @@ impl ToRust for Type {
             "line" => "elephantry::Line",
             #[cfg(feature = "geo")]
             "lseg" => "elephantry::Segment",
+            #[cfg(feature = "net")]
+            "macaddr" => "macaddr::MacAddr6",
             #[cfg(feature = "network")]
-            "macaddr" => "eui48::MacAddress",
             #[cfg(feature = "network")]
             "macaddr8" => "eui48::MacAddress",
             "money" => "f32",
