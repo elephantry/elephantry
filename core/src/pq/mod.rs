@@ -53,7 +53,7 @@ impl ToRust for Type {
             #[cfg(feature = "geo")]
             "point" => "elephantry::Point",
             #[cfg(feature = "geo")]
-            "polygon" => todo!(),
+            "polygon" => "elephantry::Polygon",
             "real" | "float4" => "f32",
             "smallint" | "int2" => "i16",
             "smallserial" | "serial2" => "i16",
