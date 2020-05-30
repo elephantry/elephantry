@@ -97,12 +97,7 @@ impl crate::FromSql for BitVec {
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(bit, u8, [
-        ("'0'", 0),
-        ("'1'", 1),
-        ("0", 0),
-        ("1", 1),
-    ]);
+    crate::sql_test!(bit, u8, [("'0'", 0), ("'1'", 1), ("0", 0), ("1", 1),]);
 
     crate::sql_test!(varbit, crate::BitVec, [
         ("'00000000'", crate::BitVec::from_bytes(&[0b00000000])),

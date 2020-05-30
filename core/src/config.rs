@@ -9,11 +9,12 @@ pub struct Config {
 
 macro_rules! get {
     ($config:ident . $field:ident, $env:expr, $default:expr) => {
-        $config.$field
+        $config
+            .$field
             .clone()
             .or(std::env::var($env).ok())
             .unwrap_or_else(|| $default)
-    }
+    };
 }
 
 impl Config {
@@ -28,35 +29,19 @@ impl Config {
     }
 
     pub fn user(&self) -> String {
-        get!(
-            self.user,
-            "PGUSER",
-            std::env::var("USER").unwrap()
-        )
+        get!(self.user, "PGUSER", std::env::var("USER").unwrap())
     }
 
     pub fn host(&self) -> String {
-        get!(
-            self.host,
-            "PGHOST",
-            "/run/postgresql".to_string()
-        )
+        get!(self.host, "PGHOST", "/run/postgresql".to_string())
     }
 
     pub fn dbname(&self) -> String {
-        get!(
-            self.dbname,
-            "PGDATABASE",
-            self.user()
-        )
+        get!(self.dbname, "PGDATABASE", self.user())
     }
 
     pub fn port(&self) -> String {
-        get!(
-            self.port,
-            "PGPORT",
-            "5432".to_string()
-        )
+        get!(self.port, "PGPORT", "5432".to_string())
     }
 
     pub fn password(&self) -> Option<String> {
@@ -65,7 +50,12 @@ impl Config {
             .or_else(|| std::env::var("PGPASSWORD").ok())
             .or_else(|| {
                 let pgpass = crate::PgPass::from_file();
-                pgpass.find(&self.host(), &self.port(), &self.dbname(), &self.user())
+                pgpass.find(
+                    &self.host(),
+                    &self.port(),
+                    &self.dbname(),
+                    &self.user(),
+                )
             })
     }
 }

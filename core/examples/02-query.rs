@@ -24,8 +24,10 @@ fn main() -> elephantry::Result<()> {
         dbg!(employee);
     }
 
-    let total_salary =
-        elephantry.query_one::<bigdecimal::BigDecimal>("select sum(day_salary) from employee", &[])?;
+    let total_salary = elephantry.query_one::<bigdecimal::BigDecimal>(
+        "select sum(day_salary) from employee",
+        &[],
+    )?;
 
     dbg!(total_salary);
 

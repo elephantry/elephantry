@@ -3,7 +3,10 @@ pub struct Coordinate(geo_types::Coordinate<f64>);
 
 impl Coordinate {
     pub fn new(x: f64, y: f64) -> Self {
-        Self(geo_types::Coordinate { x, y })
+        Self(geo_types::Coordinate {
+            x,
+            y,
+        })
     }
 }
 
@@ -21,7 +24,8 @@ impl Coordinates {
     fn coordinate(r#match: &Option<regex::Match<'_>>) -> Option<f64> {
         if let Some(r#match) = r#match {
             r#match.as_str().parse().ok()
-        } else {
+        }
+        else {
             None
         }
     }

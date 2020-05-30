@@ -17,7 +17,11 @@ impl std::ops::Deref for Segment {
 
 impl std::fmt::Display for Segment {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "(({}, {}), ({}, {}))", self.0.start.x, self.0.start.y, self.0.end.x, self.0.end.y)
+        write!(
+            f,
+            "(({}, {}), ({}, {}))",
+            self.0.start.x, self.0.start.y, self.0.end.x, self.0.end.y
+        )
     }
 }
 
@@ -38,7 +42,8 @@ impl crate::FromSql for Segment {
     ) -> crate::Result<Self> {
         use std::str::FromStr;
 
-        let coordinates = crate::Coordinates::from_str(&crate::from_sql::not_null(raw)?)?;
+        let coordinates =
+            crate::Coordinates::from_str(&crate::from_sql::not_null(raw)?)?;
 
         if coordinates.len() != 2 {
             return Err(Self::error(ty, "elephantry::Segment", raw));
@@ -73,7 +78,19 @@ impl crate::FromSql for Segment {
 #[cfg(test)]
 mod test {
     crate::sql_test!(lseg, crate::Segment, [
-        ("'[(1, 2), (3, 4)]'", crate::Segment::new(crate::Coordinate::new(1., 2.), crate::Coordinate::new(3., 4.))),
-        ("'((10.3, 20.0), (0.5, 0.003))'", crate::Segment::new(crate::Coordinate::new(10.3, 20.), crate::Coordinate::new(0.5, 0.003))),
+        (
+            "'[(1, 2), (3, 4)]'",
+            crate::Segment::new(
+                crate::Coordinate::new(1., 2.),
+                crate::Coordinate::new(3., 4.)
+            )
+        ),
+        (
+            "'((10.3, 20.0), (0.5, 0.003))'",
+            crate::Segment::new(
+                crate::Coordinate::new(10.3, 20.),
+                crate::Coordinate::new(0.5, 0.003)
+            )
+        ),
     ]);
 }

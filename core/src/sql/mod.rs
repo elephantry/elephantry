@@ -12,13 +12,17 @@ mod json;
 mod money;
 #[cfg(feature = "numeric")]
 mod numeric;
-#[cfg(feature = "date")]
-mod timestamp;
 #[cfg(feature = "time")]
 mod time;
+#[cfg(feature = "date")]
+mod timestamp;
 #[cfg(feature = "uuid")]
 mod uuid;
 
+#[cfg(feature = "time")]
+pub use self::time::*;
+#[cfg(feature = "uuid")]
+pub use self::uuid::*;
 #[cfg(feature = "bit")]
 pub use bit::*;
 #[cfg(feature = "geo")]
@@ -29,7 +33,3 @@ pub use interval::*;
 pub use money::*;
 #[cfg(feature = "numeric")]
 pub use numeric::*;
-#[cfg(feature = "time")]
-pub use self::time::*;
-#[cfg(feature = "uuid")]
-pub use self::uuid::*;

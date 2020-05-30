@@ -15,9 +15,9 @@ mod pgpass;
 mod pool;
 mod projection;
 mod rows;
+mod sql;
 mod structure;
 mod to_sql;
-mod sql;
 mod tuple;
 
 pub use array::*;
@@ -32,10 +32,10 @@ pub use pager::*;
 pub use pool::*;
 pub use projection::*;
 pub use rows::*;
+pub use sql::*;
 pub use structure::*;
 pub use to_sql::*;
 pub use tuple::*;
-pub use sql::*;
 
 use pgpass::*;
 
@@ -81,8 +81,15 @@ mod test {
                     conn.execute("set lc_monetary to 'en_US.UTF-8';")?;
 
                     for (value, expected) in &$tests {
-                        let result = conn.execute(&format!("select {}::{} as actual", value, stringify!($sql_type)))?;
-                        assert_eq!(result.get(0).get::<$rust_type>("actual"), *expected);
+                        let result = conn.execute(&format!(
+                            "select {}::{} as actual",
+                            value,
+                            stringify!($sql_type)
+                        ))?;
+                        assert_eq!(
+                            result.get(0).get::<$rust_type>("actual"),
+                            *expected
+                        );
                     }
 
                     Ok(())
@@ -94,8 +101,19 @@ mod test {
                     conn.execute("set lc_monetary to 'en_US.UTF-8';")?;
 
                     for (value, expected) in &$tests {
-                        let result = conn.query::<HashMap<String, $rust_type>>(&format!("select {}::{} as actual", value, stringify!($sql_type)), &[])?;
-                        assert_eq!(result.get(0).get("actual").unwrap(), expected);
+                        let result = conn
+                            .query::<HashMap<String, $rust_type>>(
+                                &format!(
+                                    "select {}::{} as actual",
+                                    value,
+                                    stringify!($sql_type)
+                                ),
+                                &[],
+                            )?;
+                        assert_eq!(
+                            result.get(0).get("actual").unwrap(),
+                            expected
+                        );
                     }
 
                     Ok(())
@@ -103,7 +121,6 @@ mod test {
 
                 #[test]
                 fn to() -> crate::Result<()> {
-
                     let conn = crate::test::new_conn();
                     conn.execute("set lc_monetary to 'en_US.UTF-8';")?;
 
@@ -118,7 +135,7 @@ mod test {
                     Ok(())
                 }
             }
-        }
+        };
     }
 
     pub fn dsn() -> String {

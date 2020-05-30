@@ -53,9 +53,7 @@ impl crate::FromSql for Numeric {
         };
 
         let first_digit = buf.read_i16::<byteorder::BigEndian>()?;
-        result += Numeric::from(
-            first_digit as i64 * NBASE.pow(weight),
-        );
+        result += Numeric::from(first_digit as i64 * NBASE.pow(weight));
 
         for _ in 1..weight {
             let digit = buf.read_i16::<byteorder::BigEndian>()?;

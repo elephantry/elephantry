@@ -108,12 +108,12 @@ impl Default for Interval {
 impl From<&Interval> for i64 {
     fn from(interval: &Interval) -> Self {
         interval.years as i64 * 12 * 30 * 24 * 60 * 60 * 1_000_000
-        + interval.months as i64 * 30 * 24 * 60 * 60 * 1_000_000
-        + interval.days as i64 * 24 * 60 * 60 * 1_000_000
-        + interval.hours as i64 * 60 * 60 * 1_000_000
-        + interval.mins as i64 * 60 * 1_000_000
-        + interval.secs as i64 * 1_000_000
-        + interval.usecs as i64
+            + interval.months as i64 * 30 * 24 * 60 * 60 * 1_000_000
+            + interval.days as i64 * 24 * 60 * 60 * 1_000_000
+            + interval.hours as i64 * 60 * 60 * 1_000_000
+            + interval.mins as i64 * 60 * 1_000_000
+            + interval.secs as i64 * 1_000_000
+            + interval.usecs as i64
     }
 }
 
@@ -139,8 +139,13 @@ impl std::fmt::Display for Interval {
         write!(
             f,
             "{} years {} months {} days {}:{}:{}.{}",
-            self.years, self.months, self.days,
-            self.hours, self.mins, self.secs, self.usecs,
+            self.years,
+            self.months,
+            self.days,
+            self.hours,
+            self.mins,
+            self.secs,
+            self.usecs,
         )
     }
 }
@@ -261,7 +266,10 @@ mod test {
             ("1 years", crate::Interval::new(1, 0, 0, 0, 0, 0, 0)),
             ("1 month", crate::Interval::new(0, 1, 0, 0, 0, 0, 0)),
             ("1 year 10 days", crate::Interval::new(1, 0, 10, 0, 0, 0, 0)),
-            ("1 year 2 months 3 days 04:05:06.000007", crate::Interval::new(1, 2, 3, 4, 5, 6, 7)),
+            (
+                "1 year 2 months 3 days 04:05:06.000007",
+                crate::Interval::new(1, 2, 3, 4, 5, 6, 7),
+            ),
         ];
 
         for (value, expected) in tests {

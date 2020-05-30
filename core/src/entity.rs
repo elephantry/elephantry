@@ -5,8 +5,7 @@ pub trait Entity: Clone {
     fn get(&self, field: &str) -> Option<&dyn crate::ToSql>;
 }
 
-impl<T: crate::ToSql + crate::FromSql + Clone> Entity for T
-{
+impl<T: crate::ToSql + crate::FromSql + Clone> Entity for T {
     fn from(tuple: &crate::Tuple<'_>) -> T {
         tuple.nth(0)
     }

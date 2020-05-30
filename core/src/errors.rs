@@ -79,7 +79,6 @@ impl From<std::io::Error> for Error {
     }
 }
 
-
 impl From<()> for Error {
     fn from(_: ()) -> Self {
         Error::Unknow

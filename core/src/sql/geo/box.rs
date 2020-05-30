@@ -19,7 +19,14 @@ impl std::ops::Deref for Box {
 
 impl std::fmt::Display for Box {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "(({}, {}), ({}, {}))", self.0.min().x, self.0.min().y, self.0.max().x, self.0.max().y)
+        write!(
+            f,
+            "(({}, {}), ({}, {}))",
+            self.0.min().x,
+            self.0.min().y,
+            self.0.max().x,
+            self.0.max().y
+        )
     }
 }
 
@@ -60,7 +67,19 @@ impl crate::FromSql for Box {
 mod test {
     #![allow(non_snake_case)]
     crate::sql_test!(Box, crate::Box, [
-        ("'((1, 2), (3, 4))'", crate::Box::new(crate::Point::new(1., 2.), crate::Point::new(3., 4.))),
-        ("'((0.5, 0.003), (10.3, 20.0))'", crate::Box::new(crate::Point::new(0.5, 0.003), crate::Point::new(10.3, 20.))),
+        (
+            "'((1, 2), (3, 4))'",
+            crate::Box::new(
+                crate::Point::new(1., 2.),
+                crate::Point::new(3., 4.)
+            )
+        ),
+        (
+            "'((0.5, 0.003), (10.3, 20.0))'",
+            crate::Box::new(
+                crate::Point::new(0.5, 0.003),
+                crate::Point::new(10.3, 20.)
+            )
+        ),
     ]);
 }

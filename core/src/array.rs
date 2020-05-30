@@ -126,9 +126,6 @@ mod test {
             .query_one("SELECT '{null, str}'::text[]", &[])
             .unwrap();
 
-        assert_eq!(
-            results,
-            vec![None, Some("str".to_string())]
-        );
+        assert_eq!(results, vec![None, Some("str".to_string())]);
     }
 }

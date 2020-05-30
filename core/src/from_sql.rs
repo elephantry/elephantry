@@ -166,8 +166,7 @@ impl FromSql for char {
     ) -> crate::Result<Self> {
         let c = String::from_binary(ty, raw)?;
 
-        c.chars().next()
-            .ok_or_else(|| Self::error(ty, "char", raw))
+        c.chars().next().ok_or_else(|| Self::error(ty, "char", raw))
     }
 }
 
@@ -205,17 +204,9 @@ impl<T: FromSql + Clone> FromSql for Vec<T> {
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(float4, f32, [
-        (1., 1.),
-        (-1., -1.),
-        (2.1, 2.1),
-    ]);
+    crate::sql_test!(float4, f32, [(1., 1.), (-1., -1.), (2.1, 2.1),]);
 
-    crate::sql_test!(float8, f64, [
-        (1., 1.),
-        (-1., -1.),
-        (2.1, 2.1),
-    ]);
+    crate::sql_test!(float8, f64, [(1., 1.), (-1., -1.), (2.1, 2.1),]);
 
     crate::sql_test!(int2, i16, [
         (i16::MAX, i16::MAX),
@@ -245,17 +236,9 @@ mod test {
         ("false", false),
     ]);
 
-    crate::sql_test!(char, char, [
-        ("'f'", 'f'),
-        ("'à'", 'à'),
-    ]);
+    crate::sql_test!(char, char, [("'f'", 'f'), ("'à'", 'à'),]);
 
-    crate::sql_test!(varchar, Option<String>, [
-        ("null", None::<String>),
-    ]);
+    crate::sql_test!(varchar, Option<String>, [("null", None::<String>),]);
 
-    crate::sql_test!(text, String, [
-        ("'foo'", "foo"),
-        ("''", ""),
-    ]);
+    crate::sql_test!(text, String, [("'foo'", "foo"), ("''", ""),]);
 }

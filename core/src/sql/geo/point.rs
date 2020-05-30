@@ -44,7 +44,8 @@ impl crate::FromSql for Point {
     ) -> crate::Result<Self> {
         use std::str::FromStr;
 
-        let coordinates = crate::Coordinates::from_str(&crate::from_sql::not_null(raw)?)?;
+        let coordinates =
+            crate::Coordinates::from_str(&crate::from_sql::not_null(raw)?)?;
 
         if coordinates.len() != 1 {
             return Err(Self::error(ty, "elephantry::Line", raw));

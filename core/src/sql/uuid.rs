@@ -43,7 +43,8 @@ impl crate::FromSql for Uuid {
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(uuid, crate::Uuid, [
-        ("'12edd47f-e2fc-44eb-9419-1995dfb6725d'", crate::Uuid::parse_str("12edd47f-e2fc-44eb-9419-1995dfb6725d").unwrap()),
-    ]);
+    crate::sql_test!(uuid, crate::Uuid, [(
+        "'12edd47f-e2fc-44eb-9419-1995dfb6725d'",
+        crate::Uuid::parse_str("12edd47f-e2fc-44eb-9419-1995dfb6725d").unwrap()
+    ),]);
 }

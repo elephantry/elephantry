@@ -68,13 +68,17 @@ impl PgPass {
             .filter_map(|e| e.try_into().ok())
             .collect();
 
-        Self { entries }
+        Self {
+            entries,
+        }
     }
 
     pub fn from_file() -> Self {
-        let filename = std::env::var("PGPASSFILE").unwrap_or_else(|_| "~/.pgpass".to_string());
+        let filename = std::env::var("PGPASSFILE")
+            .unwrap_or_else(|_| "~/.pgpass".to_string());
 
-        let contents = std::fs::read_to_string(filename).unwrap_or_else(|_| String::new());
+        let contents =
+            std::fs::read_to_string(filename).unwrap_or_else(|_| String::new());
 
         Self::from_str(&contents)
     }
@@ -143,7 +147,10 @@ mod test {
     fn not_find() {
         let pgpass = PgPass::from_str("localhost:5431:postgres:postgres:1234");
 
-        assert_eq!(None, pgpass.find("localhost", "5432", "postgres", "postgres"));
+        assert_eq!(
+            None,
+            pgpass.find("localhost", "5432", "postgres", "postgres")
+        );
     }
 
     #[test]

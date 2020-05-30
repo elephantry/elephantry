@@ -17,8 +17,7 @@ impl crate::FromSql for Money {
     ) -> crate::Result<Self> {
         let s = String::from_text(ty, raw)?;
 
-        Self::parse_str(&s)
-            .map_err(|_| Self::error(ty, "money", raw))
+        Self::parse_str(&s).map_err(|_| Self::error(ty, "money", raw))
     }
 
     /*
@@ -36,7 +35,5 @@ impl crate::FromSql for Money {
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(money, crate::Money, [
-        ("1.00", crate::Money::from(100)),
-    ]);
+    crate::sql_test!(money, crate::Money, [("1.00", crate::Money::from(100)),]);
 }
