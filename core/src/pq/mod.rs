@@ -43,9 +43,8 @@ impl ToRust for Type {
             "lseg" => "elephantry::Segment",
             #[cfg(feature = "net")]
             "macaddr" => "macaddr::MacAddr6",
-            #[cfg(feature = "network")]
-            #[cfg(feature = "network")]
-            "macaddr8" => "eui48::MacAddress",
+            #[cfg(feature = "net")]
+            "macaddr8" => "macaddr::MacAddr8",
             "money" => "f32",
             #[cfg(feature = "numeric")]
             "numeric" | "decimal" => "bigdecimal::BigDecimal",
