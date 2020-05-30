@@ -37,7 +37,7 @@ impl ToRust for Type {
             #[cfg(feature = "json")]
             "json" | "jsonb" => "serde::value::Value",
             #[cfg(feature = "geo")]
-            "line" => todo!(),
+            "line" => "elephantry::Line",
             #[cfg(feature = "geo")]
             "lseg" => "elephantry::Segment",
             #[cfg(feature = "network")]
