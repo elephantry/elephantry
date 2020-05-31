@@ -1,5 +1,6 @@
 #[cfg(feature = "bit")]
 mod bit;
+mod bytea;
 #[cfg(feature = "date")]
 mod date;
 #[cfg(feature = "geo")]
@@ -25,6 +26,7 @@ pub use self::time::*;
 pub use self::uuid::*;
 #[cfg(feature = "bit")]
 pub use bit::*;
+pub use bytea::*;
 #[cfg(feature = "date")]
 pub use date::*;
 #[cfg(feature = "geo")]

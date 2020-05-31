@@ -22,7 +22,7 @@ impl ToRust for Type {
             "boolean" | "bool" => "bool",
             #[cfg(feature = "geo")]
             "box" => "elephantry::Box",
-            "bytea" => "Vec<u8>",
+            "bytea" => "elephantry::Bytea",
             "character" | "char" => "i8",
             "character varying" | "varchar" => "String",
             #[cfg(feature = "network")]
