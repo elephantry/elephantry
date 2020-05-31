@@ -50,6 +50,10 @@ impl Pool {
     pub fn get(&self, name: &str) -> Option<&crate::Connection> {
         self.connections.get(&name.to_string())
     }
+
+    pub fn remove(&mut self, name: &str) {
+        self.connections.remove(&name.to_string());
+    }
 }
 
 impl Default for Pool {
