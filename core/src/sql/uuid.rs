@@ -1,6 +1,4 @@
-pub use uuid::Uuid;
-
-impl crate::ToSql for Uuid {
+impl crate::ToSql for uuid::Uuid {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::ty::UUID
     }
@@ -10,12 +8,12 @@ impl crate::ToSql for Uuid {
     }
 }
 
-impl crate::FromSql for Uuid {
+impl crate::FromSql for uuid::Uuid {
     fn from_text(
         ty: &crate::pq::Type,
         raw: Option<&str>,
     ) -> crate::Result<Self> {
-        match Uuid::parse_str(&crate::not_null(raw)?) {
+        match uuid::Uuid::parse_str(&crate::not_null(raw)?) {
             Ok(uuid) => Ok(uuid),
             _ => Err(Self::error(ty, "uuid", raw)),
         }
@@ -37,14 +35,14 @@ impl crate::FromSql for Uuid {
         let mut bytes = [0; 16];
         bytes.copy_from_slice(buf);
 
-        Ok(Uuid::from_bytes(bytes))
+        Ok(uuid::Uuid::from_bytes(bytes))
     }
 }
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(uuid, crate::Uuid, [(
+    crate::sql_test!(uuid, uuid::Uuid, [(
         "'12edd47f-e2fc-44eb-9419-1995dfb6725d'",
-        crate::Uuid::parse_str("12edd47f-e2fc-44eb-9419-1995dfb6725d").unwrap()
+        uuid::Uuid::parse_str("12edd47f-e2fc-44eb-9419-1995dfb6725d").unwrap()
     ),]);
 }

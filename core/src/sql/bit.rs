@@ -1,5 +1,3 @@
-pub use bit_vec::BitVec;
-
 impl crate::ToSql for u8 {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::ty::BIT
@@ -10,7 +8,7 @@ impl crate::ToSql for u8 {
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
-        let bytes = BitVec::from_bytes(&[*self]);
+        let bytes = bit_vec::BitVec::from_bytes(&[*self]);
 
         bytes.to_sql()
     }
@@ -21,7 +19,7 @@ impl crate::FromSql for u8 {
         ty: &crate::pq::Type,
         raw: Option<&str>,
     ) -> crate::Result<Self> {
-        let bytes = BitVec::from_text(ty, raw)?;
+        let bytes = bit_vec::BitVec::from_text(ty, raw)?;
 
         Ok(bytes.get(0).unwrap() as u8)
     }
@@ -33,13 +31,13 @@ impl crate::FromSql for u8 {
         ty: &crate::pq::Type,
         raw: Option<&[u8]>,
     ) -> crate::Result<Self> {
-        let bytes = BitVec::from_binary(ty, raw)?;
+        let bytes = bit_vec::BitVec::from_binary(ty, raw)?;
 
         Ok(bytes.get(0).unwrap() as u8)
     }
 }
 
-impl crate::ToSql for BitVec {
+impl crate::ToSql for bit_vec::BitVec {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::ty::VARBIT
     }
@@ -65,13 +63,13 @@ impl crate::ToSql for BitVec {
     }
 }
 
-impl crate::FromSql for BitVec {
+impl crate::FromSql for bit_vec::BitVec {
     fn from_text(
         _: &crate::pq::Type,
         raw: Option<&str>,
     ) -> crate::Result<Self> {
         let s = crate::not_null(raw)?;
-        let mut bits = BitVec::from_elem(s.len(), false);
+        let mut bits = bit_vec::BitVec::from_elem(s.len(), false);
 
         for (x, bit) in s.chars().enumerate() {
             if bit == '1' {
@@ -91,7 +89,7 @@ impl crate::FromSql for BitVec {
         let mut buf = crate::not_null(raw)?;
         let _size = buf.read_i32::<byteorder::BigEndian>()?;
 
-        Ok(BitVec::from_bytes(buf))
+        Ok(bit_vec::BitVec::from_bytes(buf))
     }
 }
 
@@ -99,9 +97,9 @@ impl crate::FromSql for BitVec {
 mod test {
     crate::sql_test!(bit, u8, [("'0'", 0), ("'1'", 1), ("0", 0), ("1", 1),]);
 
-    crate::sql_test!(varbit, crate::BitVec, [
-        ("'00000000'", crate::BitVec::from_bytes(&[0b00000000])),
-        ("'10101010'", crate::BitVec::from_bytes(&[0b10101010])),
-        ("'11111111'", crate::BitVec::from_bytes(&[0b11111111])),
+    crate::sql_test!(varbit, bit_vec::BitVec, [
+        ("'00000000'", bit_vec::BitVec::from_bytes(&[0b00000000])),
+        ("'10101010'", bit_vec::BitVec::from_bytes(&[0b10101010])),
+        ("'11111111'", bit_vec::BitVec::from_bytes(&[0b11111111])),
     ]);
 }

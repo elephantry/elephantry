@@ -1,6 +1,4 @@
-pub use bigdecimal::BigDecimal as Numeric;
-
-impl crate::ToSql for Numeric {
+impl crate::ToSql for bigdecimal::BigDecimal {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::ty::NUMERIC
     }
@@ -10,7 +8,7 @@ impl crate::ToSql for Numeric {
     }
 }
 
-impl crate::FromSql for Numeric {
+impl crate::FromSql for bigdecimal::BigDecimal {
     fn from_text(
         ty: &crate::pq::Type,
         raw: Option<&str>,
@@ -38,7 +36,7 @@ impl crate::FromSql for Numeric {
         let sign = buf.read_u16::<byteorder::BigEndian>()?;
         let dscale = buf.read_u16::<byteorder::BigEndian>()?;
 
-        let mut result = Numeric::default();
+        let mut result = bigdecimal::BigDecimal::default();
 
         if ndigits == 0 {
             return Ok(result);
@@ -52,19 +50,21 @@ impl crate::FromSql for Numeric {
         };
 
         let first_digit = buf.read_i16::<byteorder::BigEndian>()?;
-        result += Numeric::from(first_digit as i64 * NBASE.pow(weight));
+        result += bigdecimal::BigDecimal::from(
+            first_digit as i64 * NBASE.pow(weight),
+        );
 
         for _ in 1..weight {
             let digit = buf.read_i16::<byteorder::BigEndian>()?;
 
-            result *= Numeric::from(NBASE);
-            result += Numeric::from(digit);
+            result *= bigdecimal::BigDecimal::from(NBASE);
+            result += bigdecimal::BigDecimal::from(digit);
         }
 
         if dscale > 0 {
             for x in weight + 1..ndigits {
                 let digit = buf.read_i16::<byteorder::BigEndian>()?;
-                result += Numeric::from(
+                result += bigdecimal::BigDecimal::from(
                     digit as f32 / (10_u32.pow(DEC_DIGITS) * x) as f32,
                 );
             }
@@ -76,9 +76,9 @@ impl crate::FromSql for Numeric {
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(numeric, crate::Numeric, [
-        ("20000", crate::Numeric::from(20_000.)),
-        ("3900", crate::Numeric::from(3_900.)),
-        ("3900.98", crate::Numeric::from(3_900.98)),
+    crate::sql_test!(numeric, bigdecimal::BigDecimal, [
+        ("20000", bigdecimal::BigDecimal::from(20_000.)),
+        ("3900", bigdecimal::BigDecimal::from(3_900.)),
+        ("3900.98", bigdecimal::BigDecimal::from(3_900.98)),
     ]);
 }

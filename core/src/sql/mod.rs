@@ -35,5 +35,3 @@ pub use geo::*;
 pub use money::*;
 #[cfg(feature = "net")]
 pub use net::*;
-#[cfg(feature = "numeric")]
-pub use numeric::*;

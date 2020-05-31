@@ -18,7 +18,7 @@ impl ToRust for Type {
             #[cfg(feature = "bit")]
             "bit" => "u8",
             #[cfg(feature = "bit")]
-            "bit varying" | "varbit" => "elephantry::BitVec",
+            "bit varying" | "varbit" => "bit_vec::BitVec",
             "boolean" | "bool" => "bool",
             #[cfg(feature = "geo")]
             "box" => "elephantry::Box",
@@ -81,7 +81,7 @@ impl ToRust for Type {
                 "chrono::DateTime<chrono::FixedOffset>"
             },
             #[cfg(feature = "uuid")]
-            "uuid" => "elephantry::Uuid",
+            "uuid" => "uuid::Uuid",
             "xml" => "String",
 
             "hstore" => "std::collection::HashMap<String, Option<String>>",
