@@ -32,6 +32,7 @@ impl ToRust for Type {
             #[cfg(feature = "chrono")]
             "date" => "chrono::NaiveDate",
             "double precision" | "float8" => "f64",
+            "hstore" => "elephantry::Hstore",
             #[cfg(feature = "net")]
             "inet" => "std::net::IpAddr",
             "integer" | "int" | "int4" => "i32",
@@ -84,7 +85,6 @@ impl ToRust for Type {
             "uuid" => "uuid::Uuid",
             "xml" => "String",
 
-            "hstore" => "std::collection::HashMap<String, Option<String>>",
 
             _ => "String",
         };

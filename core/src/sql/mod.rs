@@ -5,6 +5,7 @@ mod bytea;
 mod date;
 #[cfg(feature = "geo")]
 mod geo;
+mod hstore;
 #[cfg(feature = "json")]
 mod json;
 #[cfg(feature = "money")]
@@ -31,6 +32,7 @@ pub use bytea::*;
 pub use date::*;
 #[cfg(feature = "geo")]
 pub use geo::*;
+pub use hstore::*;
 #[cfg(feature = "money")]
 pub use money::*;
 #[cfg(feature = "net")]

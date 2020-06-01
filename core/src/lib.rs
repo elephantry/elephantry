@@ -78,6 +78,7 @@ mod test {
                 #[test]
                 fn from_text() -> crate::Result<()> {
                     let conn = crate::test::new_conn();
+                    conn.execute("create extension if not exists hstore")?;
                     conn.execute("set lc_monetary to 'en_US.UTF-8';")?;
 
                     for (value, expected) in &$tests {
