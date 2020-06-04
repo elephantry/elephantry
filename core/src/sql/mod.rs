@@ -17,8 +17,6 @@ mod numeric;
 mod range;
 #[cfg(feature = "time")]
 mod time;
-#[cfg(feature = "date")]
-mod timestamp;
 #[cfg(feature = "uuid")]
 mod uuid;
 

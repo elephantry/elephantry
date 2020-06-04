@@ -1,75 +1,79 @@
-impl crate::ToSql for chrono::Date<chrono::offset::Utc> {
+impl crate::ToSql for chrono::DateTime<chrono::offset::Utc> {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::ty::TIMESTAMPTZ
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
-        self.format("%F").to_string().to_sql()
+        self.format("%F %T%z").to_string().to_sql()
     }
 }
 
-impl crate::FromSql for chrono::Date<chrono::offset::Utc> {
+impl crate::FromSql for chrono::DateTime<chrono::offset::Utc> {
     fn from_text(
         ty: &crate::pq::Type,
         raw: Option<&str>,
     ) -> crate::Result<Self> {
-        let naive = chrono::NaiveDate::from_text(ty, raw)?;
-        Ok(chrono::Date::from_utc(naive, chrono::offset::Utc))
+        let ts = chrono::DateTime::<chrono::offset::FixedOffset>::from_text(
+            ty, raw,
+        )?;
+
+        Ok(ts.with_timezone(&chrono::offset::Utc))
     }
 
     fn from_binary(
         ty: &crate::pq::Type,
         raw: Option<&[u8]>,
     ) -> crate::Result<Self> {
-        let naive = chrono::NaiveDate::from_binary(ty, raw)?;
-        Ok(chrono::Date::from_utc(naive, chrono::offset::Utc))
+        let naive = chrono::NaiveDateTime::from_binary(ty, raw)?;
+        Ok(chrono::DateTime::from_utc(naive, chrono::offset::Utc))
     }
 }
 
-impl crate::ToSql for chrono::Date<chrono::offset::FixedOffset> {
+impl crate::ToSql for chrono::DateTime<chrono::offset::FixedOffset> {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::ty::TIMESTAMPTZ
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
-        self.format("%F").to_string().to_sql()
+        self.format("%F %T%z").to_string().to_sql()
     }
 }
 
-impl crate::FromSql for chrono::Date<chrono::offset::FixedOffset> {
+impl crate::FromSql for chrono::DateTime<chrono::offset::FixedOffset> {
     fn from_text(
         ty: &crate::pq::Type,
         raw: Option<&str>,
     ) -> crate::Result<Self> {
-        let utc = chrono::Date::<chrono::offset::Utc>::from_text(ty, raw)?;
-        Ok(utc.with_timezone(&chrono::offset::FixedOffset::east(0)))
+        chrono::DateTime::parse_from_str(crate::not_null(raw)?, "%F %T%#z")
+            .map_err(|_| Self::error(ty, "timestamptz", raw))
     }
 
     fn from_binary(
         ty: &crate::pq::Type,
         raw: Option<&[u8]>,
     ) -> crate::Result<Self> {
-        let utc = chrono::Date::<chrono::offset::Utc>::from_binary(ty, raw)?;
+        let utc =
+            chrono::DateTime::<chrono::offset::Utc>::from_binary(ty, raw)?;
         Ok(utc.with_timezone(&chrono::offset::FixedOffset::east(0)))
     }
 }
 
-impl crate::ToSql for chrono::Date<chrono::offset::Local> {
+impl crate::ToSql for chrono::DateTime<chrono::offset::Local> {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::ty::TIMESTAMPTZ
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
-        self.format("%F").to_string().to_sql()
+        self.format("%F %T").to_string().to_sql()
     }
 }
 
-impl crate::FromSql for chrono::Date<chrono::offset::Local> {
+impl crate::FromSql for chrono::DateTime<chrono::offset::Local> {
     fn from_text(
         ty: &crate::pq::Type,
         raw: Option<&str>,
     ) -> crate::Result<Self> {
-        let utc = chrono::Date::<chrono::offset::Utc>::from_text(ty, raw)?;
+        let utc = chrono::DateTime::<chrono::offset::Utc>::from_text(ty, raw)?;
         Ok(utc.with_timezone(&chrono::offset::Local))
     }
 
@@ -77,7 +81,19 @@ impl crate::FromSql for chrono::Date<chrono::offset::Local> {
         ty: &crate::pq::Type,
         raw: Option<&[u8]>,
     ) -> crate::Result<Self> {
-        let utc = chrono::Date::<chrono::offset::Utc>::from_binary(ty, raw)?;
+        let utc =
+            chrono::DateTime::<chrono::offset::Utc>::from_binary(ty, raw)?;
         Ok(utc.with_timezone(&chrono::offset::Local))
     }
+}
+
+#[cfg(test)]
+mod test {
+    crate::sql_test!(timestamptz, chrono::DateTime<chrono::offset::Utc>, [(
+        "'1970-01-01 00:00:00+00'",
+        chrono::DateTime::<chrono::offset::Utc>::from_utc(
+            chrono::NaiveDateTime::from_timestamp(0, 0),
+            chrono::offset::Utc
+        ),
+    )]);
 }
