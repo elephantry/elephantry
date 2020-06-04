@@ -14,6 +14,7 @@ mod money;
 mod net;
 #[cfg(feature = "numeric")]
 mod numeric;
+mod range;
 #[cfg(feature = "time")]
 mod time;
 #[cfg(feature = "date")]
