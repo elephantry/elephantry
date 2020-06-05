@@ -137,7 +137,7 @@ pub struct Entity {{
 }
 
 fn ty_to_rust(column: &elephantry::inspect::Column) -> String {
-    use elephantry::pq::ToRust;
+    use crate::pq::ToRust;
     use std::convert::TryFrom;
 
     let ty = elephantry::pq::Type::try_from(column.oid).unwrap();

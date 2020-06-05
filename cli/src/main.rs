@@ -4,6 +4,7 @@ use structopt::StructOpt;
 
 mod generate;
 mod inspect;
+mod pq;
 
 #[derive(Debug, StructOpt)]
 enum Opt {
