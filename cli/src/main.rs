@@ -1,10 +1,14 @@
 #![warn(rust_2018_idioms)]
 
-use structopt::StructOpt;
-
+mod error;
 mod generate;
 mod inspect;
 mod pq;
+
+use structopt::StructOpt;
+use error::Error;
+
+type Result<T> = std::result::Result<T, crate::Error>;
 
 #[derive(Debug, StructOpt)]
 enum Opt {
@@ -55,7 +59,7 @@ enum Opt {
     },
 }
 
-fn main() -> std::io::Result<()> {
+fn main() -> Result<()> {
     dotenv::dotenv().ok();
 
     let opt = Opt::from_args();

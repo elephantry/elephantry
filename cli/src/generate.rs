@@ -4,7 +4,7 @@ use std::io::Write;
 pub fn schema(
     connection: &elephantry::Connection,
     schema: &str,
-) -> std::io::Result<()> {
+) -> crate::Result<()> {
     let relations = elephantry::inspect::schema(connection, schema);
 
     for r in relations {
@@ -18,7 +18,7 @@ pub fn relation(
     connection: &elephantry::Connection,
     schema: &str,
     relation: &str,
-) -> std::io::Result<()> {
+) -> crate::Result<()> {
     let dir = format!("model/{}", schema);
     std::fs::create_dir_all(&dir)?;
 
@@ -84,21 +84,25 @@ impl elephantry::Structure for Structure {{
         schema = schema,
         relation = relation,
         definition = definition.join("\n")
-    )
+    )?;
+
+    Ok(())
 }
 
 pub fn entity(
     connection: &elephantry::Connection,
     schema: &str,
     relation: &str,
-) -> std::io::Result<()> {
+) -> crate::Result<()> {
     let dir = format!("model/{}", schema);
     std::fs::create_dir_all(&dir)?;
 
     let filename = format!("{}/{}.rs", dir, relation);
     let mut file = std::io::BufWriter::new(std::fs::File::create(filename)?);
 
-    write_entity(&mut file, connection, schema, relation)
+    write_entity(&mut file, connection, schema, relation)?;
+
+    Ok(())
 }
 
 fn write_entity<W>(
@@ -106,11 +110,16 @@ fn write_entity<W>(
     connection: &elephantry::Connection,
     schema: &str,
     relation: &str,
-) -> std::io::Result<()>
+) -> crate::Result<()>
 where
     W: std::io::Write,
 {
     let columns = elephantry::inspect::relation(connection, schema, relation);
+
+    if columns.is_empty() {
+        return Err(crate::Error::MissingRelation(format!("{}.{}", schema, relation)));
+    }
+
     let mut fields = Vec::new();
 
     for column in &columns {
@@ -128,7 +137,9 @@ pub struct Entity {{
 }}
 ",
         fields = fields.join("\n")
-    )
+    )?;
+
+    Ok(())
 }
 
 fn ty_to_rust(column: &elephantry::inspect::Column) -> String {
