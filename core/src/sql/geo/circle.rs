@@ -23,7 +23,7 @@ impl std::fmt::Display for Circle {
 
 impl crate::ToSql for Circle {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::ty::CIRCLE
+        crate::pq::types::CIRCLE
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {

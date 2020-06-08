@@ -17,7 +17,7 @@ pub trait ToSql {
 
 impl ToSql for bool {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::ty::BOOL
+        crate::pq::types::BOOL
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
@@ -29,7 +29,7 @@ impl ToSql for bool {
 
 impl ToSql for f32 {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::ty::FLOAT4
+        crate::pq::types::FLOAT4
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
@@ -39,7 +39,7 @@ impl ToSql for f32 {
 
 impl ToSql for f64 {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::ty::FLOAT8
+        crate::pq::types::FLOAT8
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
@@ -49,7 +49,7 @@ impl ToSql for f64 {
 
 impl ToSql for &str {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::ty::VARCHAR
+        crate::pq::types::VARCHAR
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
@@ -62,7 +62,7 @@ impl ToSql for &str {
 
 impl ToSql for char {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::ty::BPCHAR
+        crate::pq::types::BPCHAR
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
@@ -72,7 +72,7 @@ impl ToSql for char {
 
 impl ToSql for String {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::ty::VARCHAR
+        crate::pq::types::VARCHAR
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
@@ -82,7 +82,7 @@ impl ToSql for String {
 
 impl ToSql for i16 {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::ty::INT2
+        crate::pq::types::INT2
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
@@ -92,7 +92,7 @@ impl ToSql for i16 {
 
 impl ToSql for i32 {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::ty::INT4
+        crate::pq::types::INT4
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
@@ -102,7 +102,7 @@ impl ToSql for i32 {
 
 impl ToSql for i64 {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::ty::INT8
+        crate::pq::types::INT8
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
@@ -112,7 +112,7 @@ impl ToSql for i64 {
 
 impl ToSql for u32 {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::ty::INT8
+        crate::pq::types::INT8
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
@@ -124,7 +124,7 @@ impl<T: ToSql> ToSql for Option<T> {
     fn ty(&self) -> crate::pq::Type {
         match self {
             Some(data) => data.ty(),
-            None => crate::pq::ty::TEXT,
+            None => crate::pq::types::TEXT,
         }
     }
 
@@ -140,7 +140,7 @@ impl<T: ToSql> ToSql for Vec<T> {
     fn ty(&self) -> crate::pq::Type {
         match self.get(0) {
             Some(data) => data.ty(),
-            None => crate::pq::ty::TEXT,
+            None => crate::pq::types::TEXT,
         }
     }
 

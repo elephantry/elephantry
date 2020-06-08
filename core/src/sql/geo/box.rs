@@ -32,7 +32,7 @@ impl std::fmt::Display for Box {
 
 impl crate::ToSql for Box {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::ty::BOX
+        crate::pq::types::BOX
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {

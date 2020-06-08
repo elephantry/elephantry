@@ -245,7 +245,7 @@ impl crate::FromSql for Interval {
 
 impl crate::ToSql for Interval {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::ty::INTERVAL
+        crate::pq::types::INTERVAL
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
@@ -274,7 +274,7 @@ mod test {
         for (value, expected) in tests {
             assert_eq!(
                 crate::Interval::from_text(
-                    &crate::pq::ty::INTERVAL,
+                    &crate::pq::types::INTERVAL,
                     Some(&value)
                 )
                 .unwrap(),
@@ -303,7 +303,7 @@ mod test {
         for (value, expected) in tests {
             assert_eq!(
                 crate::Interval::from_binary(
-                    &crate::pq::ty::INTERVAL,
+                    &crate::pq::types::INTERVAL,
                     Some(&value),
                 )
                 .unwrap(),

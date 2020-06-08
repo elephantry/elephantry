@@ -2,7 +2,7 @@ pub use postgres_money::Money;
 
 impl crate::ToSql for Money {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::ty::MONEY
+        crate::pq::types::MONEY
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {

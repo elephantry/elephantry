@@ -27,7 +27,7 @@ impl std::fmt::Display for Segment {
 
 impl crate::ToSql for Segment {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::ty::LSEG
+        crate::pq::types::LSEG
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {

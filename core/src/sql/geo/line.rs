@@ -23,7 +23,7 @@ impl std::fmt::Display for Line {
 
 impl crate::ToSql for Line {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::ty::LINE
+        crate::pq::types::LINE
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {

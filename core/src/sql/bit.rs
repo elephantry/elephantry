@@ -1,6 +1,6 @@
 impl crate::ToSql for u8 {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::ty::BIT
+        crate::pq::types::BIT
     }
 
     fn format(&self) -> crate::pq::Format {
@@ -39,7 +39,7 @@ impl crate::FromSql for u8 {
 
 impl crate::ToSql for bit_vec::BitVec {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::ty::VARBIT
+        crate::pq::types::VARBIT
     }
 
     fn format(&self) -> crate::pq::Format {

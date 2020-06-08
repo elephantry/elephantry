@@ -1,6 +1,6 @@
 impl crate::ToSql for serde_json::value::Value {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::ty::JSON
+        crate::pq::types::JSON
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {

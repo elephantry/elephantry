@@ -1,6 +1,6 @@
 impl crate::ToSql for std::net::IpAddr {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::ty::INET
+        crate::pq::types::INET
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {

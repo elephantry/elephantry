@@ -29,7 +29,7 @@ impl From<geo_types::Coordinate<f64>> for Point {
 
 impl crate::ToSql for Point {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::ty::POINT
+        crate::pq::types::POINT
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {

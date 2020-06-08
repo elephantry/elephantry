@@ -1,6 +1,6 @@
 impl crate::ToSql for uuid::Uuid {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::ty::UUID
+        crate::pq::types::UUID
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {

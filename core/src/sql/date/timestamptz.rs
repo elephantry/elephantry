@@ -1,6 +1,6 @@
 impl crate::ToSql for chrono::DateTime<chrono::offset::Utc> {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::ty::TIMESTAMPTZ
+        crate::pq::types::TIMESTAMPTZ
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
@@ -31,7 +31,7 @@ impl crate::FromSql for chrono::DateTime<chrono::offset::Utc> {
 
 impl crate::ToSql for chrono::DateTime<chrono::offset::FixedOffset> {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::ty::TIMESTAMPTZ
+        crate::pq::types::TIMESTAMPTZ
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
@@ -60,7 +60,7 @@ impl crate::FromSql for chrono::DateTime<chrono::offset::FixedOffset> {
 
 impl crate::ToSql for chrono::DateTime<chrono::offset::Local> {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::ty::TIMESTAMPTZ
+        crate::pq::types::TIMESTAMPTZ
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {

@@ -46,7 +46,7 @@ impl<'a> Tuple<'a> {
     where
         T: crate::FromSql,
     {
-        let ty = self.result.field_type(n).unwrap_or(crate::pq::ty::TEXT);
+        let ty = self.result.field_type(n).unwrap_or(crate::pq::types::TEXT);
         let format = self.result.field_format(n);
         let value = self.result.value(self.index, n);
 

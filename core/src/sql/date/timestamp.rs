@@ -1,6 +1,6 @@
 impl crate::ToSql for chrono::NaiveDateTime {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::ty::TIMESTAMP
+        crate::pq::types::TIMESTAMP
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {

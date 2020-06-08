@@ -1,6 +1,6 @@
 impl crate::ToSql for macaddr::MacAddr6 {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::ty::MACADDR
+        crate::pq::types::MACADDR
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {

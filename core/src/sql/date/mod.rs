@@ -6,7 +6,7 @@ pub use interval::*;
 
 impl crate::ToSql for chrono::NaiveDate {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::ty::DATE
+        crate::pq::types::DATE
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {

@@ -31,7 +31,7 @@ impl std::fmt::Display for Path {
 
 impl crate::ToSql for Path {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::ty::PATH
+        crate::pq::types::PATH
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {

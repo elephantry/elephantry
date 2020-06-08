@@ -31,7 +31,7 @@ impl std::fmt::Display for Polygon {
 
 impl crate::ToSql for Polygon {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::ty::POLYGON
+        crate::pq::types::POLYGON
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {

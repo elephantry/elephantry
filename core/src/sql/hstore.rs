@@ -51,7 +51,7 @@ impl std::ops::Deref for Hstore {
 
 impl crate::ToSql for crate::Hstore {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::ty::TEXT
+        crate::pq::types::TEXT
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {

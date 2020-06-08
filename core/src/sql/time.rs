@@ -2,7 +2,7 @@ pub use time::Time;
 
 impl crate::ToSql for Time {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::ty::TIME
+        crate::pq::types::TIME
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {

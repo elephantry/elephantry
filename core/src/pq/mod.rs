@@ -1,6 +1,6 @@
 pub use libpq::state;
 
-pub use libpq::ty;
+pub use libpq::types;
 pub type Format = libpq::Format;
 pub type Oid = libpq::Oid;
 pub type Type = libpq::Type;

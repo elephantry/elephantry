@@ -3,7 +3,7 @@ where
     R: std::ops::RangeBounds<T>,
     T: crate::ToSql,
 {
-    use crate::pq::ty::*;
+    use crate::pq::types::*;
     use std::ops::Bound::*;
 
     let start = match range.start_bound() {

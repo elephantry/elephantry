@@ -17,7 +17,7 @@ impl std::ops::Deref for Bytea {
 
 impl crate::ToSql for Bytea {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::ty::BYTEA
+        crate::pq::types::BYTEA
     }
 
     fn format(&self) -> crate::pq::Format {
