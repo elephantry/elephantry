@@ -66,6 +66,10 @@ optional = true
 version = "0.8"
 optional = true
 
+[dependencies.xmltree]
+version = "0.10"
+optional = true
+
 [dev-dependencies]
 serde_json = "1.0"
 uuid = "0.8"
@@ -85,6 +89,7 @@ money = ["postgres_money"]
 numeric = ["bigdecimal"]
 net = ["macaddr"]
 serde-support = ["serde", "serde_derive"]
+xml = ["xmltree"]
 
 [[example]]
 name = "02-query"

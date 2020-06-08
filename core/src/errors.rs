@@ -23,6 +23,8 @@ pub enum Error {
     },
     Utf8(std::string::FromUtf8Error),
     Unknow,
+    #[cfg(feature = "xml")]
+    Xml(xmltree::Error),
 }
 
 impl std::error::Error for Error {
@@ -63,6 +65,8 @@ impl std::fmt::Display for Error {
             },
             Error::Utf8(err) => format!("Invalid utf8 value: {}", err),
             Error::Unknow => "Unknow error".to_string(),
+            #[cfg(feature = "xml")]
+            Error::Xml(err) => format!("Xml error: {}", err),
         };
 
         write!(f, "{}", s)
@@ -84,5 +88,12 @@ impl From<std::io::Error> for Error {
 impl From<()> for Error {
     fn from(_: ()) -> Self {
         Error::Unknow
+    }
+}
+
+#[cfg(feature = "xml")]
+impl From<xmltree::Error> for Error {
+    fn from(err: xmltree::Error) -> Self {
+        Error::Xml(err)
     }
 }

@@ -19,6 +19,8 @@ mod range;
 mod time;
 #[cfg(feature = "uuid")]
 mod uuid;
+#[cfg(feature = "xml")]
+mod xml;
 
 #[cfg(feature = "time")]
 pub use self::time::*;
