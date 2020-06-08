@@ -27,19 +27,39 @@ impl crate::FromSql for bigdecimal::BigDecimal {
     ) -> crate::Result<Self> {
         use byteorder::ReadBytesExt;
 
-        const NBASE: i64 = 10_000;
-        const DEC_DIGITS: u32 = 4;
+        const NBASE: f64 = 10_000.;
+        const DEC_DIGITS: i32 = 4;
 
         let mut buf = crate::not_null(raw)?;
-        let ndigits = buf.read_u16::<byteorder::BigEndian>()? as u32;
-        let weight = buf.read_u16::<byteorder::BigEndian>()? as u32;
-        let sign = buf.read_u16::<byteorder::BigEndian>()?;
-        let dscale = buf.read_u16::<byteorder::BigEndian>()?;
+        let ndigits = buf.read_i16::<byteorder::BigEndian>()? as i32;
+        let weight = buf.read_i16::<byteorder::BigEndian>()? as i32;
+        let sign = buf.read_i16::<byteorder::BigEndian>()? as i32;
+        let dscale = buf.read_i16::<byteorder::BigEndian>()?;
 
         let mut result = bigdecimal::BigDecimal::default();
 
         if ndigits == 0 {
             return Ok(result);
+        }
+
+        let first_digit = buf.read_i16::<byteorder::BigEndian>()?;
+        result += bigdecimal::BigDecimal::from(
+            first_digit as f64 * NBASE.powi(weight),
+        );
+
+        for x in 1..ndigits {
+            let digit = buf.read_i16::<byteorder::BigEndian>()?;
+
+            if x < weight {
+                result *= bigdecimal::BigDecimal::from(NBASE);
+                result += bigdecimal::BigDecimal::from(digit);
+            } else {
+                assert_ne!(dscale, 0);
+
+                result += bigdecimal::BigDecimal::from(
+                    digit as f32 * 10_f32.powi(-DEC_DIGITS * (x - weight)),
+                );
+            }
         }
 
         result = match sign {
@@ -49,27 +69,6 @@ impl crate::FromSql for bigdecimal::BigDecimal {
             _ => return Err(Self::error(ty, "numeric", raw)),
         };
 
-        let first_digit = buf.read_i16::<byteorder::BigEndian>()?;
-        result += bigdecimal::BigDecimal::from(
-            first_digit as i64 * NBASE.pow(weight),
-        );
-
-        for _ in 1..weight {
-            let digit = buf.read_i16::<byteorder::BigEndian>()?;
-
-            result *= bigdecimal::BigDecimal::from(NBASE);
-            result += bigdecimal::BigDecimal::from(digit);
-        }
-
-        if dscale > 0 {
-            for x in weight + 1..ndigits {
-                let digit = buf.read_i16::<byteorder::BigEndian>()?;
-                result += bigdecimal::BigDecimal::from(
-                    digit as f32 / (10_u32.pow(DEC_DIGITS) * x) as f32,
-                );
-            }
-        }
-
         Ok(result)
     }
 }
@@ -78,7 +77,9 @@ impl crate::FromSql for bigdecimal::BigDecimal {
 mod test {
     crate::sql_test!(numeric, bigdecimal::BigDecimal, [
         ("20000", bigdecimal::BigDecimal::from(20_000.)),
+        ("20000.000001", bigdecimal::BigDecimal::from(20_000.000001)),
         ("3900", bigdecimal::BigDecimal::from(3_900.)),
         ("3900.98", bigdecimal::BigDecimal::from(3_900.98)),
+        ("-0.12345", bigdecimal::BigDecimal::from(-0.12345)),
     ]);
 }
