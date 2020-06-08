@@ -122,7 +122,7 @@ where
         let name = column.name.to_snake();
         let ty = ty_to_rust(&column);
 
-        fields.push(format!("    {}: {},", name, ty));
+        fields.push(format!("    pub {}: {},", name, ty));
     }
 
     write!(
