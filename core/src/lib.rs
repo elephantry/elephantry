@@ -4,6 +4,7 @@ pub mod inspect;
 pub mod pq;
 
 mod array;
+mod r#async;
 mod config;
 mod connection;
 mod entity;
@@ -31,6 +32,7 @@ pub use model::*;
 pub use pager::*;
 pub use pool::*;
 pub use projection::*;
+pub use r#async::*;
 pub use rows::*;
 pub use sql::*;
 pub use structure::*;

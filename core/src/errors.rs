@@ -2,6 +2,7 @@ pub type Result<T> = std::result::Result<T, crate::Error>;
 
 #[derive(Debug)]
 pub enum Error {
+    Async(String),
     Connect {
         dsn: String,
         message: String,
@@ -30,6 +31,7 @@ impl std::error::Error for Error {
 impl std::fmt::Display for Error {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let s = match self {
+            Error::Async(message) => format!("Async error: {}", message),
             Error::Connect {
                 message, ..
             } => message.clone(),

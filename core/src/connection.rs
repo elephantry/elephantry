@@ -27,6 +27,10 @@ impl Connection {
         })
     }
 
+    pub fn r#async(&self) -> crate::Async<'_> {
+        crate::Async::new(&self.connection)
+    }
+
     pub fn from_config(config: &crate::Config) -> crate::Result<Self> {
         Self::new(&config.to_string())
     }

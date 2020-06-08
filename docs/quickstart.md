@@ -525,6 +525,19 @@ To go further on this last point:
 - [Modern SQL](https://modern-sql.com);
 - [The Art of PostgreSQL](https://theartofpostgresql.com).
 
+# Async
+
+`Connection::execute`, `Connection::query` and `Connection::query_one` are
+available in async context. To benefit from it, simply use the
+`Connection::r#async` function:
+
+```rust
+let results = elephantry.r#async().query::<employee::Entity>("select * from employee").await?;
+```
+
+You can see the [08-async.rs](../core/examples/08-async.rs) example⁷, it’s a
+rewrite of second example in async context.
+
 ---
 
 ¹ We’re on the same diesel to elephantry ratio.
@@ -541,3 +554,6 @@ To go further on this last point:
 ⁶ 1 for the employee plus 1 per department, 4 here. The time taken by a
   query isn’t just the time to execute it. Every time you should add the network
   latency plus the time the ORM transforms results in objet.
+
+⁷ The relevance of this example is limited because the underlayed driver, libpq,
+supports only one async query at a time.
