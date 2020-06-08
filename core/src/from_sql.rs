@@ -186,7 +186,7 @@ impl FromSql for String {
     }
 }
 
-impl<T: FromSql + Clone> FromSql for Vec<T> {
+impl<T: FromSql> FromSql for Vec<T> {
     fn from_text(
         ty: &crate::pq::Type,
         raw: Option<&str>,

@@ -102,7 +102,7 @@ impl Connection {
         let mut tuples = self.find_where::<M>(&clause, &params, None)?;
 
         Ok(match tuples.next() {
-            Some(e) => Some(e.clone()),
+            Some(e) => Some(e),
             None => None,
         })
     }
@@ -326,7 +326,7 @@ impl Connection {
         let (clause, params) = self.pk_clause::<M>(&pk);
         let mut results = self.delete_where::<M>(&clause, &params)?;
 
-        Ok(results.next().unwrap().clone())
+        Ok(results.next().unwrap())
     }
 
     pub fn delete_where<'a, M>(

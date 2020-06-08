@@ -1,4 +1,4 @@
-#[derive(Clone, Debug, elephantry::Entity)]
+#[derive(Debug, elephantry::Entity)]
 struct Event {
     #[cfg(feature = "uuid")]
     uuid: Option<uuid::Uuid>,
@@ -39,7 +39,7 @@ impl<'a> EventModel<'a> {
     }
 }
 
-#[derive(Clone, Debug, elephantry::Entity)]
+#[derive(Debug, elephantry::Entity)]
 struct EventExtra {
     #[cfg(feature = "uuid")]
     uuid: Option<uuid::Uuid>,

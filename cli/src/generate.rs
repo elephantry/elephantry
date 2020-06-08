@@ -127,7 +127,7 @@ where
 
     write!(
         file,
-        r"#[derive(Clone, Debug, elephantry::Entity)]
+        r"#[derive(elephantry::Entity)]
 pub struct Entity {{
 {fields}
 }}

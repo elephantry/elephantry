@@ -1,11 +1,11 @@
 use std::collections::HashMap;
 
-pub trait Entity: Clone {
+pub trait Entity {
     fn from(tuple: &crate::Tuple<'_>) -> Self;
     fn get(&self, field: &str) -> Option<&dyn crate::ToSql>;
 }
 
-impl<T: crate::ToSql + crate::FromSql + Clone> Entity for T {
+impl<T: crate::ToSql + crate::FromSql> Entity for T {
     fn from(tuple: &crate::Tuple<'_>) -> T {
         tuple.nth(0)
     }
@@ -15,10 +15,8 @@ impl<T: crate::ToSql + crate::FromSql + Clone> Entity for T {
     }
 }
 
-impl<
-        T: crate::FromSql + crate::ToSql + Clone,
-        S: std::hash::BuildHasher + Default + Clone,
-    > Entity for HashMap<String, T, S>
+impl<T: crate::FromSql + crate::ToSql, S: std::hash::BuildHasher + Default>
+    Entity for HashMap<String, T, S>
 {
     fn from(tuple: &crate::Tuple<'_>) -> Self {
         let mut hashmap = HashMap::default();
@@ -40,10 +38,8 @@ impl<
     }
 }
 
-impl<
-        T: crate::FromSql + crate::ToSql + Clone,
-        S: std::hash::BuildHasher + Default + Clone,
-    > Entity for HashMap<usize, T, S>
+impl<T: crate::FromSql + crate::ToSql, S: std::hash::BuildHasher + Default>
+    Entity for HashMap<usize, T, S>
 {
     fn from(tuple: &crate::Tuple<'_>) -> Self {
         let mut hashmap = HashMap::default();

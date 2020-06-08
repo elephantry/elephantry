@@ -1,5 +1,5 @@
 mod employee {
-    #[derive(Clone, Debug, elephantry::Entity)]
+    #[derive(Debug, elephantry::Entity)]
     pub struct Entity {
         pub employee_id: i32,
         pub first_name: String,
@@ -100,7 +100,7 @@ select {employee_projection}
 }
 
 mod department {
-    #[derive(Clone, Debug, elephantry::Entity)]
+    #[derive(Debug, elephantry::Entity)]
     pub struct Entity {
         department_id: i32,
         name: String,

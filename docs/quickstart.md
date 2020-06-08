@@ -140,7 +140,7 @@ you can use the `elephantry::Entity` derive macro:
 
 ```rust
 mod employee {
-    #[derive(Clone, Debug, elephantry::Entity)]
+    #[derive(Debug, elephantry::Entity)]
     struct Entity {
         employee_id: i32,
         first_name: String,
@@ -459,7 +459,7 @@ entity:
 ```rust
 use elephantry::{Model, Structure};
 
-#[derive(Clone, Debug, elephantry::Entity)]
+#[derive(Debug, elephantry::Entity)]
 pub struct Entity {
     pub employee_id: i32,
     pub first_name: String,

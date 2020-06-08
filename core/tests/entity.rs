@@ -1,4 +1,4 @@
-#[derive(Clone, Debug)]
+#[derive(Debug)]
 struct Event {
     #[cfg(feature = "uuid")]
     uuid: Option<uuid::Uuid>,
@@ -67,7 +67,7 @@ impl<'a> EventModel<'a> {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Debug)]
 struct EventExtra {
     #[cfg(feature = "uuid")]
     uuid: Option<uuid::Uuid>,

@@ -94,7 +94,7 @@ impl<T: crate::FromSql> crate::FromSql for Array<T> {
     }
 }
 
-impl<T: crate::FromSql + Clone> Into<Vec<T>> for Array<T> {
+impl<T: crate::FromSql> Into<Vec<T>> for Array<T> {
     fn into(self) -> Vec<T> {
         if self.ndim > 1 {
             panic!(

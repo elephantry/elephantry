@@ -1,4 +1,4 @@
-#[derive(Clone, Debug, elephantry_derive::Entity)]
+#[derive(Debug, elephantry_derive::Entity)]
 #[entity(internal)]
 pub struct Schema {
     pub name: String,
@@ -30,7 +30,7 @@ order by 1;
         .collect()
 }
 
-#[derive(Clone, Debug, elephantry_derive::Entity)]
+#[derive(Debug, elephantry_derive::Entity)]
 #[entity(internal)]
 pub struct Relation {
     pub name: String,
@@ -75,7 +75,7 @@ order by name asc;
         .collect()
 }
 
-#[derive(Clone, Debug, elephantry_derive::Entity)]
+#[derive(Debug, elephantry_derive::Entity)]
 #[entity(internal)]
 pub struct Column {
     pub is_primary: bool,
