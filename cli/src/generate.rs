@@ -3,12 +3,13 @@ use std::io::Write;
 
 pub fn schema(
     connection: &elephantry::Connection,
+    prefix_dir: &str,
     schema: &str,
 ) -> crate::Result<()> {
     let relations = elephantry::inspect::schema(connection, schema);
 
     for r in relations {
-        relation(connection, schema, &r.name)?;
+        relation(connection, prefix_dir, schema, &r.name)?;
     }
 
     Ok(())
@@ -16,10 +17,11 @@ pub fn schema(
 
 pub fn relation(
     connection: &elephantry::Connection,
+    prefix_dir: &str,
     schema: &str,
     relation: &str,
 ) -> crate::Result<()> {
-    let dir = format!("model/{}", schema);
+    let dir = format!("{}/model/{}", prefix_dir, schema);
     std::fs::create_dir_all(&dir)?;
 
     let filename = format!("{}/{}.rs", dir, relation);
@@ -91,10 +93,11 @@ impl elephantry::Structure for Structure {{
 
 pub fn entity(
     connection: &elephantry::Connection,
+    prefix_dir: &str,
     schema: &str,
     relation: &str,
 ) -> crate::Result<()> {
-    let dir = format!("model/{}", schema);
+    let dir = format!("{}/model/{}", prefix_dir, schema);
     std::fs::create_dir_all(&dir)?;
 
     let filename = format!("{}/{}.rs", dir, relation);
@@ -117,7 +120,10 @@ where
     let columns = elephantry::inspect::relation(connection, schema, relation);
 
     if columns.is_empty() {
-        return Err(crate::Error::MissingRelation(format!("{}.{}", schema, relation)));
+        return Err(crate::Error::MissingRelation(format!(
+            "{}.{}",
+            schema, relation
+        )));
     }
 
     let mut fields = Vec::new();

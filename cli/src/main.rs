@@ -5,8 +5,8 @@ mod generate;
 mod inspect;
 mod pq;
 
-use structopt::StructOpt;
 use error::Error;
+use structopt::StructOpt;
 
 type Result<T> = std::result::Result<T, crate::Error>;
 
@@ -39,6 +39,8 @@ enum Opt {
         about = "Generate structure, model and entity file for all relations in a schema."
     )]
     GenerateSchema {
+        #[structopt(long, short = "d", default_value = "src")]
+        prefix_dir: String,
         #[structopt(default_value = "public")]
         schema: String,
     },
@@ -47,12 +49,16 @@ enum Opt {
         about = "Generate structure, model and entity file for a given relation"
     )]
     GenerateRelation {
+        #[structopt(long, short = "d", default_value = "src")]
+        prefix_dir: String,
         relation: String,
         #[structopt(default_value = "public")]
         schema: String,
     },
     #[structopt(name = "generate:entity", about = "Generate an Entity class")]
     GenerateEntity {
+        #[structopt(long, short = "d", default_value = "src")]
+        prefix_dir: String,
         relation: String,
         #[structopt(default_value = "public")]
         schema: String,
@@ -79,16 +85,19 @@ fn main() -> Result<()> {
             relation,
         } => inspect::relation(&connection, &schema, &relation),
         Opt::GenerateSchema {
+            prefix_dir,
             schema,
-        } => generate::schema(&connection, &schema)?,
+        } => generate::schema(&connection, &prefix_dir, &schema)?,
         Opt::GenerateRelation {
+            prefix_dir,
             schema,
             relation,
-        } => generate::relation(&connection, &schema, &relation)?,
+        } => generate::relation(&connection, &prefix_dir, &schema, &relation)?,
         Opt::GenerateEntity {
+            prefix_dir,
             schema,
             relation,
-        } => generate::entity(&connection, &schema, &relation)?,
+        } => generate::entity(&connection, &prefix_dir, &schema, &relation)?,
     }
 
     Ok(())
