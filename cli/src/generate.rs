@@ -48,7 +48,6 @@ pub struct Model<'a> {{
     connection: &'a elephantry::Connection,
 }}
 
-
 impl<'a> elephantry::Model<'a> for Model<'a> {{
     type Entity = Entity;
     type Structure = Structure;
@@ -65,20 +64,16 @@ impl<'a> elephantry::Model<'a> for Model<'a> {{
         file,
         r#"pub struct Structure;
 
-impl elephantry::Structure for Structure
-{{
-    fn relation() -> &'static str
-    {{
+impl elephantry::Structure for Structure {{
+    fn relation() -> &'static str {{
         "{schema}.{relation}"
     }}
 
-    fn primary_key() -> &'static [&'static str]
-    {{
+    fn primary_key() -> &'static [&'static str] {{
         &[{pk}]
     }}
 
-    fn definition() -> &'static [&'static str]
-    {{
+    fn definition() -> &'static [&'static str] {{
         &[
 {definition}
         ]
