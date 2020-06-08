@@ -141,33 +141,33 @@ mod test {
     crate::sql_test!(int4range, std::ops::Range<i32>, [(
         "'[0, 10)'",
         0_i32..10
-    ),]);
+    )]);
 
     crate::sql_test!(int8range, std::ops::Range<i64>, [(
         "'[0, 10)'",
         0_i64..10
-    ),]);
+    )]);
 
     #[cfg(feature = "numeric")]
     crate::sql_test!(numrange, std::ops::Range<bigdecimal::BigDecimal>, [(
         "'[3900, 20000)'",
         bigdecimal::BigDecimal::from(3_900)
             ..bigdecimal::BigDecimal::from(20_000)
-    ),]);
+    )]);
 
     #[cfg(feature = "date")]
     crate::sql_test!(daterange, std::ops::Range<chrono::NaiveDate>, [(
         "'[1970-01-01, 2010-01-01)'",
         chrono::NaiveDate::from_ymd(1970, 01, 01)
             ..chrono::NaiveDate::from_ymd(2010, 01, 01)
-    ),]);
+    )]);
 
     #[cfg(feature = "date")]
     crate::sql_test!(tsrange, std::ops::Range<chrono::NaiveDateTime>, [(
         "'[1970-01-01 00:00:00, 2010-01-01 00:00:00)'",
         chrono::NaiveDate::from_ymd(1970, 01, 01).and_hms(0, 0, 0)
             ..chrono::NaiveDate::from_ymd(2010, 01, 01).and_hms(0, 0, 0)
-    ),]);
+    )]);
 
     #[cfg(feature = "date")]
     crate::sql_test!(
@@ -183,6 +183,6 @@ mod test {
                     chrono::NaiveDate::from_ymd(2010, 01, 01).and_hms(0, 0, 0),
                     chrono::offset::Utc
                 )
-        ),]
+        )]
     );
 }

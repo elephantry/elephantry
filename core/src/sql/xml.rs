@@ -48,5 +48,5 @@ mod test {
     crate::sql_test!(xml, xmltree::Element, [(
         format!("'{}'", super::XML),
         xmltree::Element::parse(super::XML.as_bytes()).unwrap()
-    ),]);
+    )]);
 }

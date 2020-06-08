@@ -35,5 +35,5 @@ impl crate::FromSql for Money {
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(money, crate::Money, [("1.00", crate::Money::from(100)),]);
+    crate::sql_test!(money, crate::Money, [("1.00", crate::Money::from(100))]);
 }

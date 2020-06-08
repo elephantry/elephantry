@@ -40,5 +40,5 @@ mod test {
     crate::sql_test!(json, serde_json::value::Value, [(
         "'{\"foo\": \"bar\"}'",
         serde_json::json!({"foo": "bar"})
-    ),]);
+    )]);
 }

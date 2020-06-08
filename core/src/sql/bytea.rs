@@ -60,5 +60,5 @@ mod test {
     crate::sql_test!(bytea, crate::Bytea, [(
         "'abcd'",
         crate::Bytea::from(Vec::from("abcd"))
-    ),]);
+    )]);
 }

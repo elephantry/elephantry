@@ -59,5 +59,5 @@ mod test {
     crate::sql_test!(line, crate::Line, [(
         "'{1, 2, 3}'",
         crate::Line::new(1., 2., 3.)
-    ),]);
+    )]);
 }

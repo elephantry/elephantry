@@ -73,5 +73,5 @@ mod test {
     crate::sql_test!(circle, crate::Circle, [(
         "'0, 0, 5'",
         crate::Circle::new(0., 0., 5.)
-    ),]);
+    )]);
 }
