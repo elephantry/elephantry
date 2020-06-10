@@ -217,18 +217,16 @@ impl Connection {
     {
         use crate::Entity;
 
-        let projection = M::create_projection();
-
         let mut tuple = Vec::new();
         let mut params = Vec::new();
         let mut fields = Vec::new();
         let mut x = 1;
 
-        for field in projection.fields_name() {
+        for field in M::Structure::definition() {
             if let Some(value) = entity.get(&field) {
                 tuple.push(value);
                 params.push(format!("${}", x));
-                fields.push(field);
+                fields.push(*field);
                 x += 1;
             }
         }
@@ -256,10 +254,9 @@ impl Connection {
     {
         use crate::Entity;
 
-        let projection = M::create_projection();
         let mut data = HashMap::new();
 
-        for field in projection.fields_name() {
+        for field in M::Structure::definition() {
             let value = match entity.get(&field) {
                 Some(value) => value,
                 None => &Option::<&str>::None,
