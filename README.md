@@ -40,3 +40,12 @@ elephantry.update_one(elephantry::pk!{id => entity.id}, entity)?;
 elephantry.delete_one(entity)?;
 elephantry.delete_where("deleted = $1", &[&true])?;
 ```
+
+## Projects using Elephantry
+
+- [explain](https://github.com/sanpii/explain) — Transform postgresql explain to a graph;
+- [sav](https://github.com/sanpii/sav) — A simple CRUD application to archive
+    bought item waranty.
+
+If you want to add your project here, please [create a pull
+request](https://github.com/sanpii/elephantry/pulls).
