@@ -4,7 +4,7 @@ description = "Macro implementation of #[derive(Entity)]"
 repository = "https://github.com/sanpii/elephantry/tree/master/derive"
 homepage = "https://github.com/sanpii/elephantry"
 license = "MIT"
-version = "0.3.0"
+version = "0.4.0"
 authors = ["Sanpi <sanpi@homecomputing.fr>"]
 edition = "2018"
 
