@@ -1,8 +1,8 @@
 [package]
 name = "elephantry-derive"
 description = "Macro implementation of #[derive(Entity)]"
-repository = "https://github.com/sanpii/elephantry/tree/master/derive"
-homepage = "https://github.com/sanpii/elephantry"
+repository = "https://github.com/elephantry/elephantry/tree/master/derive"
+homepage = "https://github.com/elephantry/elephantry"
 license = "MIT"
 version = "0.4.0"
 authors = ["Sanpi <sanpi@homecomputing.fr>"]
