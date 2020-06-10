@@ -15,6 +15,7 @@ pub enum Error {
     Io(std::io::Error),
     MissingField(String),
     NotNull,
+    PrimaryKey,
     Sql(crate::pq::Result),
     ToSql {
         pg_type: crate::pq::Type,
@@ -52,6 +53,7 @@ impl std::fmt::Display for Error {
                 value,
                 ..
             } => format!("Invalid {} value: {}", rust_type, value),
+            Error::PrimaryKey => "Invalid primary key".to_string(),
             Error::ToSql {
                 rust_type,
                 message,

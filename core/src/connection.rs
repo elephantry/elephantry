@@ -98,7 +98,7 @@ impl Connection {
     where
         M: crate::Model<'a>,
     {
-        let (clause, params) = self.pk_clause::<M>(pk);
+        let (clause, params) = self.pk_clause::<M>(pk)?;
         let mut tuples = self.find_where::<M>(&clause, &params, None)?;
 
         Ok(match tuples.next() {
@@ -275,7 +275,7 @@ impl Connection {
     where
         M: crate::Model<'a>,
     {
-        let (clause, mut params) = self.pk_clause::<M>(&pk);
+        let (clause, mut params) = self.pk_clause::<M>(&pk)?;
         let mut x = params.len() + 1;
         let mut set = Vec::new();
         let projection = M::default_projection();
@@ -320,7 +320,7 @@ impl Connection {
     where
         M: crate::Model<'a>,
     {
-        let (clause, params) = self.pk_clause::<M>(&pk);
+        let (clause, params) = self.pk_clause::<M>(&pk)?;
         let mut results = self.delete_where::<M>(&clause, &params)?;
 
         Ok(results.next().unwrap())
@@ -347,14 +347,14 @@ impl Connection {
     fn pk_clause<'a, 'b, M>(
         &self,
         pk: &HashMap<&str, &'b dyn crate::ToSql>,
-    ) -> (String, Vec<&'b dyn crate::ToSql>)
+    ) -> crate::Result<(String, Vec<&'b dyn crate::ToSql>)>
     where
         M: crate::Model<'a>,
     {
         let keys: Vec<_> = pk.keys().copied().collect();
 
         if keys != M::Structure::primary_key() {
-            panic!("Invalid pk");
+            return Err(crate::Error::PrimaryKey);
         }
 
         let clause =
@@ -371,6 +371,6 @@ impl Connection {
 
         let params: Vec<_> = pk.values().copied().collect();
 
-        (clause, params)
+        Ok((clause, params))
     }
 }
