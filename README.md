@@ -45,7 +45,9 @@ elephantry.delete_where("deleted = $1", &[&true])?;
 
 - [explain](https://github.com/sanpii/explain) — Transform postgresql explain to a graph;
 - [sav](https://github.com/sanpii/sav) — A simple CRUD application to archive
-    bought item waranty.
+    bought item waranty;
+- [out of gafam](https://github.com/sanpii/out-of-gafam) — Generate RSS feed for
+    GAFAM (youtube, facebook, instagram and twitter).
 
 If you want to add your project here, please [create a pull
 request](https://github.com/sanpii/elephantry/pulls).
