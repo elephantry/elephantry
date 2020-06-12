@@ -53,7 +53,8 @@ impl crate::FromSql for bigdecimal::BigDecimal {
             if x < weight {
                 result *= bigdecimal::BigDecimal::from(NBASE);
                 result += bigdecimal::BigDecimal::from(digit);
-            } else {
+            }
+            else {
                 assert_ne!(dscale, 0);
 
                 result += bigdecimal::BigDecimal::from(
