@@ -1,7 +1,7 @@
 [package]
 name = "elephantry"
 description = "Object model manager for PostgreSQL"
-repository = "https://github.com/elephantry/elephantry/tree/master/core"
+repository = "https://github.com/elephantry/elephantry"
 homepage = "https://github.com/elephantry/elephantry"
 license = "MIT"
 version = "0.4.0"
