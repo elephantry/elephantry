@@ -79,9 +79,7 @@ mod test {
 
                 #[test]
                 fn from_text() -> crate::Result<()> {
-                    let conn = crate::test::new_conn();
-                    conn.execute("create extension if not exists hstore")?;
-                    conn.execute("set lc_monetary to 'en_US.UTF-8';")?;
+                    let conn = crate::test::new_conn()?;
 
                     for (value, expected) in &$tests {
                         let result = conn.execute(&format!(
@@ -100,8 +98,7 @@ mod test {
 
                 #[test]
                 fn from_binary() -> crate::Result<()> {
-                    let conn = crate::test::new_conn();
-                    conn.execute("set lc_monetary to 'en_US.UTF-8';")?;
+                    let conn = crate::test::new_conn()?;
 
                     for (value, expected) in &$tests {
                         let result = conn
@@ -124,8 +121,7 @@ mod test {
 
                 #[test]
                 fn to() -> crate::Result<()> {
-                    let conn = crate::test::new_conn();
-                    conn.execute("set lc_monetary to 'en_US.UTF-8';")?;
+                    let conn = crate::test::new_conn()?;
 
                     for (_, value) in &$tests {
                         let result = conn.query::<HashMap<String, String>>(
@@ -146,12 +142,16 @@ mod test {
             .unwrap_or_else(|_| "host=localhost".to_string())
     }
 
-    pub fn new_conn() -> crate::Pool {
+    pub fn new_conn() -> crate::Result<crate::Pool> {
         INIT.call_once(|| {
             pretty_env_logger::init();
         });
 
-        crate::Pool::new(&dsn()).unwrap()
+        let conn = crate::Pool::new(&dsn())?;
+        conn.execute("create extension if not exists hstore")?;
+        conn.execute("set lc_monetary to 'en_US.UTF-8';")?;
+
+        Ok(conn)
     }
 
     #[test]
