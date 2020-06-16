@@ -120,4 +120,4 @@ name = "08-async"
 required-features = ["date", "numeric"]
 
 [badges]
-gitlab = { repository = "sanpi/elephantry.rs", branch = "master" }
+gitlab = { repository = "elephantry/elephantry", branch = "master" }
