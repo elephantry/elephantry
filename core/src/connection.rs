@@ -373,4 +373,8 @@ impl Connection {
 
         Ok((clause, params))
     }
+
+    pub fn has_broken(&self) -> bool {
+        self.connection.status() == libpq::connection::Status::Bad
+    }
 }
