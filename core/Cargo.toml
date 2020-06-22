@@ -39,7 +39,7 @@ path = "../derive"
 version = "0.4"
 
 [dependencies.geo-types]
-version = "0.5"
+version = "0.6"
 optional = true
 
 [dependencies.postgres_money]
