@@ -75,7 +75,7 @@ impl Connection {
         let mut param_formats = Vec::new();
 
         for param in params.iter() {
-            param_types.push(param.ty());
+            param_types.push(param.ty().oid);
             param_values.push(param.to_sql()?);
             param_formats.push(param.format());
         }
