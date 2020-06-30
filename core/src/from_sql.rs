@@ -241,4 +241,8 @@ mod test {
     crate::sql_test!(varchar, Option<String>, [("null", None::<String>)]);
 
     crate::sql_test!(text, String, [("'foo'", "foo"), ("''", "")]);
+
+    crate::sql_test!(us_postal_code, String, [
+        ("'12345'", "12345".to_string()),
+    ]);
 }
