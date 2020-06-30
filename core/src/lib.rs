@@ -152,6 +152,17 @@ mod test {
         let conn = crate::Pool::new(&dsn())?;
         conn.execute("create extension if not exists hstore")?;
         conn.execute("set lc_monetary to 'en_US.UTF-8';")?;
+        conn.execute(
+            "
+do $$
+begin
+    if not exists (select 1 from pg_type where typname = 'compfoo')
+    then
+        create type compfoo as (f1 int, f2 text);
+    end if;
+end$$;
+        ",
+        )?;
 
         Ok(conn)
     }

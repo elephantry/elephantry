@@ -1,6 +1,7 @@
 #[cfg(feature = "bit")]
 mod bit;
 mod bytea;
+mod composite;
 #[cfg(feature = "date")]
 mod date;
 #[cfg(feature = "geo")]
@@ -29,6 +30,7 @@ pub use self::uuid::*;
 #[cfg(feature = "bit")]
 pub use bit::*;
 pub use bytea::*;
+pub use composite::*;
 #[cfg(feature = "date")]
 pub use date::*;
 #[cfg(feature = "geo")]

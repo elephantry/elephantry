@@ -46,7 +46,7 @@ impl<'a> Tuple<'a> {
     where
         T: crate::FromSql,
     {
-        let ty = self.result.field_type(n).unwrap_or(crate::pq::types::TEXT);
+        let ty = self.field_type(n);
         let format = self.result.field_format(n);
         let value = self.result.value(self.index, n);
 
@@ -63,5 +63,25 @@ impl<'a> Tuple<'a> {
 
     pub fn field_name(&self, n: usize) -> Option<String> {
         self.result.field_name(n)
+    }
+
+    fn field_type(&self, n: usize) -> crate::pq::Type {
+        use std::convert::TryFrom;
+
+        let oid = self.result.field_type(n);
+
+        let ty = match crate::pq::Type::try_from(oid) {
+            Ok(ty) => ty,
+            Err(_) => {
+                crate::pq::Type {
+                    oid,
+                    name: "composite",
+                    descr: "Composite type",
+                    kind: libpq::types::Kind::Composite,
+                }
+            },
+        };
+
+        ty
     }
 }

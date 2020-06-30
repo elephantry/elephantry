@@ -1,5 +1,6 @@
 #![warn(rust_2018_idioms)]
 
+mod composite;
 mod entity;
 
 #[derive(Clone, Debug)]
@@ -29,6 +30,15 @@ impl syn::parse::Parse for Params {
             internal,
         })
     }
+}
+
+#[proc_macro_derive(Composite, attributes(composite))]
+pub fn composite_derive(
+    input: proc_macro::TokenStream,
+) -> proc_macro::TokenStream {
+    let ast = syn::parse(input).unwrap();
+
+    composite::impl_macro(&ast)
 }
 
 #[proc_macro_derive(Entity, attributes(entity))]
