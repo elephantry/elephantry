@@ -2,6 +2,7 @@
 
 mod composite;
 mod entity;
+mod r#enum;
 
 #[derive(Clone, Debug)]
 struct Params {
@@ -48,4 +49,11 @@ pub fn entity_derive(
     let ast = syn::parse(input).unwrap();
 
     entity::impl_macro(&ast)
+}
+
+#[proc_macro_derive(Enum, attributes(r#enum))]
+pub fn enum_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
+    let ast = syn::parse(input).unwrap();
+
+    r#enum::impl_macro(&ast)
 }

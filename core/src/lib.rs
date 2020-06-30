@@ -160,6 +160,11 @@ begin
     then
         create type compfoo as (f1 int, f2 text);
     end if;
+
+    if not exists (select 1 from pg_type where typname = 'mood')
+    then
+        create type mood as enum ('Sad', 'Ok', 'Happy');
+    end if;
 end$$;
         ",
         )?;

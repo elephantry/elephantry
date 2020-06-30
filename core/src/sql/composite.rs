@@ -9,17 +9,6 @@ pub trait Composite {
         ty: &crate::pq::Type,
         values: &[Option<&[u8]>],
     ) -> crate::Result<Box<Self>>;
-}
-
-impl<C: Composite> crate::ToSql for C {
-    fn ty(&self) -> crate::pq::Type {
-        crate::pq::types::Type {
-            oid: 0,
-            descr: Self::name(),
-            name: Self::name(),
-            kind: libpq::types::Kind::Composite,
-        }
-    }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
         let mut data = "(".as_bytes().to_vec();
@@ -37,6 +26,52 @@ impl<C: Composite> crate::ToSql for C {
         data.extend_from_slice(")\0".as_bytes());
 
         Ok(Some(data))
+    }
+
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/rowtypes.c#L649
+     */
+    fn from_binary(
+        ty: &crate::pq::Type,
+        raw: Option<&[u8]>,
+    ) -> crate::Result<Box<Self>> {
+        use byteorder::ReadBytesExt;
+
+        let mut data = raw.unwrap();
+        let mut values: Vec<Option<&[u8]>> = Vec::new();
+
+        let validcols = data.read_i32::<byteorder::BigEndian>()?;
+
+        for _ in 0..validcols {
+            let _column_type = data.read_i32::<byteorder::BigEndian>()?;
+            let length = data.read_i32::<byteorder::BigEndian>()?;
+
+            if length < 0 {
+                values.push(None);
+                continue;
+            }
+
+            let value = &data[..length as usize];
+            values.push(Some(value));
+            data = &data[length as usize..];
+        }
+
+        Self::from_binary_values(ty, &values)
+    }
+}
+
+impl<C: Composite> crate::ToSql for C {
+    fn ty(&self) -> crate::pq::Type {
+        crate::pq::types::Type {
+            oid: 0,
+            descr: Self::name(),
+            name: Self::name(),
+            kind: libpq::types::Kind::Composite,
+        }
+    }
+
+    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
+        self.to_sql()
     }
 }
 
@@ -63,35 +98,11 @@ impl<C: Composite> crate::FromSql for C {
         Self::from_text_values(ty, &values).map(|x| *x)
     }
 
-    /*
-     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/rowtypes.c#L649
-     */
     fn from_binary(
         ty: &crate::pq::Type,
         raw: Option<&[u8]>,
     ) -> crate::Result<Self> {
-        use byteorder::ReadBytesExt;
-
-        let mut data = raw.unwrap();
-        let mut values: Vec<Option<&[u8]>> = Vec::new();
-
-        let validcols = data.read_i32::<byteorder::BigEndian>()?;
-
-        for _ in 0..validcols {
-            let _column_type = data.read_i32::<byteorder::BigEndian>()?;
-            let length = data.read_i32::<byteorder::BigEndian>()?;
-
-            if length < 0 {
-                values.push(None);
-                continue;
-            }
-
-            let value = &data[..length as usize];
-            values.push(Some(value));
-            data = &data[length as usize..];
-        }
-
-        Self::from_binary_values(ty, &values).map(|x| *x)
+        Self::from_binary(ty, raw).map(|x| *x)
     }
 }
 
