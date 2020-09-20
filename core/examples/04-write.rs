@@ -10,17 +10,15 @@ mod employee {
         pub department_id: i32,
     }
 
-    pub struct Model<'a> {
-        connection: &'a elephantry::Connection,
+    pub struct Model {
     }
 
-    impl<'a> elephantry::Model<'a> for Model<'a> {
+    impl<'a> elephantry::Model<'a> for Model {
         type Entity = Entity;
         type Structure = Structure;
 
-        fn new(connection: &'a elephantry::Connection) -> Self {
+        fn new(_: &'a elephantry::Connection) -> Self {
             Self {
-                connection,
             }
         }
     }

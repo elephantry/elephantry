@@ -45,6 +45,7 @@ impl elephantry::Entity for Event {
 }
 
 struct EventModel<'a> {
+    #[allow(dead_code)]
     connection: &'a elephantry::Connection,
 }
 
@@ -60,6 +61,7 @@ impl<'a> elephantry::Model<'a> for EventModel<'a> {
 }
 
 impl<'a> EventModel<'a> {
+    #[allow(dead_code)]
     fn count_uniq_visitor(&self) -> elephantry::Result<u32> {
         self.connection
             .execute("select count(distinct visitor_id) as count from event")

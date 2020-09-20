@@ -17,7 +17,7 @@ mod employee {
         type Entity = Entity;
         type Structure = Structure;
 
-        fn new(connection: &'a elephantry::Connection) -> Self {
+        fn new(_connection: &'a elephantry::Connection) -> Self {
             Self {}
         }
 
