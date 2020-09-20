@@ -23,7 +23,7 @@ version = "0.6"
 optional = true
 
 [dependencies.bigdecimal]
-version = "0.1"
+version = "0.2"
 optional = true
 
 [dependencies.chrono]

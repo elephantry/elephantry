@@ -78,6 +78,8 @@ mod test {
         ($sql_type:ident, $rust_type:ty, $tests:expr) => {
             mod $sql_type {
                 use std::collections::HashMap;
+                #[allow(unused_imports)]
+                use std::convert::TryFrom;
 
                 #[test]
                 fn from_text() -> crate::Result<()> {
