@@ -18,9 +18,17 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
 
     let from_body = fields.iter().map(|field| {
         let name = &field.ident;
+        let ty = &field.ty;
 
-        quote::quote! {
-            #name: tuple.get(stringify!(#name))
+        if is_option(ty) {
+            quote::quote! {
+                #name: tuple.try_get(stringify!(#name)).ok()
+            }
+        }
+        else {
+            quote::quote! {
+                #name: tuple.get(stringify!(#name))
+            }
         }
     });
 
