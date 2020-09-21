@@ -120,7 +120,11 @@ name = "07-relations"
 required-features = ["date", "numeric"]
 
 [[example]]
-name = "08-async"
+name = "08-composite"
+required-features = ["date", "numeric"]
+
+[[example]]
+name = "09-async"
 required-features = ["date", "numeric"]
 
 [badges]

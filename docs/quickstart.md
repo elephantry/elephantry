@@ -517,13 +517,63 @@ And you can see [07-relations](../core/examples/07-relations.rs) for the
 complete example. How many queries do you think would be executed with an
 ORM?⁶
 
-You know everything there is to know about elephantry, the rest depends on your
-imagination and your mastery of SQL.
+# Composite type
 
-To go further on this last point:
+With PostgreSQL, when you create a table, you also create a type with the same
+name.
 
-- [Modern SQL](https://modern-sql.com);
-- [The Art of PostgreSQL](https://theartofpostgresql.com).
+```SQL
+select employee from employee;
+
+┌────────────────────────────────────────────────┐
+│                    employee                    │
+├────────────────────────────────────────────────┤
+│ (1,jean,dupont,1952-03-21,t,20000.00,3)        │
+│ (2,alexis,gelbetchev,1960-09-12,t,17500.00,3)  │
+│ (3,michèle,pfizer,1956-01-07,t,15000.00,4)     │
+│ (4,laurent,galatier,1969-05-19,t,13850.00,5)   │
+│ (5,david,roneker,1972-12-02,t,9000.00,5)       │
+│ (6,ishaam,elraouï,1978-06-21,f,5600.00,6)      │
+│ (7,estelle,"li jih",1976-08-07,f,5300.00,6)    │
+│ (8,jean-pierre,kassem,1964-03-30,t,8700.00,10) │
+│ (9,alexandre,jardin,1983-09-14,f,4500.00,9)    │
+│ (10,jérome,binet,1981-11-03,f,4800.00,9)       │
+│ (11,david,garadjian,1985-02-28,f,4500.00,8)    │
+│ (12,louise,monacor,1988-07-11,t,4100.00,8)     │
+│ (13,patrick,cordier,1980-01-28,f,4700.00,8)    │
+│ (14,sébastien,grossein,1987-10-18,f,3900.00,8) │
+└────────────────────────────────────────────────┘
+```
+
+Here `employee` is a *composite type* contains all fields of the corresponding
+table.
+
+You can use composite type to retreive all fields for relations:
+
+```rust
+#[derive(Debug, elephantry::Entity)]
+pub struct Entity {
+    pub employee_id: i32,
+    pub first_name: String,
+    pub last_name: String,
+    pub birth_date: chrono::NaiveDate,
+    pub is_manager: bool,
+    pub day_salary: bigdecimal::BigDecimal,
+    pub departments: Vec<Department>,
+}
+
+#[derive(Debug, elephantry::Composite)]
+pub struct Department {
+    department_id: i32,
+    name: String,
+    parent_id: Option<i32>,
+}
+```
+
+See [08-composite.rs](../core/examples/06-complex.rs).
+
+Composite types can also be created with [create
+type](https://www.postgresql.org/docs/current/rowtypes.html).
 
 # Async
 
@@ -535,8 +585,18 @@ available in async context. To benefit from it, simply use the
 let results = elephantry.r#async().query::<employee::Entity>("select * from employee").await?;
 ```
 
-You can see the [08-async.rs](../core/examples/08-async.rs) example⁷, it’s a
+You can see the [09-async.rs](../core/examples/09-async.rs) example⁷, it’s a
 rewrite of second example in async context.
+
+# More
+
+You know everything there is to know about elephantry, the rest depends on your
+imagination and your mastery of SQL.
+
+To go further on this last point:
+
+- [Modern SQL](https://modern-sql.com);
+- [The Art of PostgreSQL](https://theartofpostgresql.com).
 
 ---
 
