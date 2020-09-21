@@ -2,9 +2,9 @@ use std::collections::HashMap;
 
 #[derive(Debug)]
 pub struct Projection {
-    pub relation: String,
-    pub alias: Option<String>,
-    pub fields: HashMap<String, String>,
+    relation: String,
+    alias: Option<String>,
+    fields: HashMap<String, String>,
 }
 
 impl Projection {
