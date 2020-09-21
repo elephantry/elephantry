@@ -133,7 +133,9 @@ impl Connection {
         query: &'a str,
     ) -> std::borrow::Cow<'a, str> {
         lazy_static::lazy_static! {
-            static ref REGEX: regex::Regex = regex::Regex::new(r"\$\*").unwrap();
+            static ref REGEX: regex::Regex =
+                #[allow(clippy::trivial_regex)]
+                regex::Regex::new(r"\$\*").unwrap();
         }
 
         let mut count = 0;
