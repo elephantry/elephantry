@@ -66,8 +66,15 @@ impl<T: crate::FromSql> crate::FromSql for Array<T> {
 
         let has_nulls = data.read_i32::<byteorder::BigEndian>()? != 0;
 
-        let elemtype: crate::pq::Type =
-            data.read_u32::<byteorder::BigEndian>()?.try_into().unwrap();
+        let oid = data.read_u32::<byteorder::BigEndian>()?;
+        let elemtype: crate::pq::Type = oid.try_into().unwrap_or_else(|_| {
+            crate::pq::Type {
+                oid,
+                descr: "Custom type",
+                name: "custom",
+                kind: libpq::types::Kind::Composite,
+            }
+        });
 
         let mut dimensions = Vec::new();
         let mut lower_bounds = Vec::new();
