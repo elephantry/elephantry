@@ -10,16 +10,14 @@ mod employee {
         pub department_id: i32,
     }
 
-    pub struct Model {
-    }
+    pub struct Model {}
 
     impl<'a> elephantry::Model<'a> for Model {
         type Entity = Entity;
         type Structure = Structure;
 
         fn new(_: &'a elephantry::Connection) -> Self {
-            Self {
-            }
+            Self {}
         }
     }
 

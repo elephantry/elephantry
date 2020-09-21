@@ -119,8 +119,8 @@ mod test {
     #[test]
     fn bin_vec() -> crate::Result<()> {
         let elephantry = crate::test::new_conn()?;
-        let results: Vec<i32> = elephantry
-            .query_one("SELECT '{1, 2}'::int4[]", &[])?;
+        let results: Vec<i32> =
+            elephantry.query_one("SELECT '{1, 2}'::int4[]", &[])?;
 
         assert_eq!(results, vec![1, 2]);
 
@@ -130,8 +130,8 @@ mod test {
     #[test]
     fn bin_array_str() -> crate::Result<()> {
         let elephantry = crate::test::new_conn()?;
-        let results: Vec<Option<String>> = elephantry
-            .query_one("SELECT '{null, str}'::text[]", &[])?;
+        let results: Vec<Option<String>> =
+            elephantry.query_one("SELECT '{null, str}'::text[]", &[])?;
 
         assert_eq!(results, vec![None, Some("str".to_string())]);
 

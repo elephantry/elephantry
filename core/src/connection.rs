@@ -7,7 +7,10 @@ pub struct Connection {
     connection: libpq::Connection,
 }
 
-extern "C" fn notice_processor(_arg: *mut std::ffi::c_void, message: *const i8) {
+extern "C" fn notice_processor(
+    _arg: *mut std::ffi::c_void,
+    message: *const i8,
+) {
     let message = unsafe { std::ffi::CStr::from_ptr(message) };
 
     log::info!("{}", message.to_str().unwrap().trim());
@@ -29,7 +32,10 @@ impl Connection {
         connection.set_client_encoding(libpq::Encoding::UTF8);
 
         unsafe {
-            connection.set_notice_processor(Some(notice_processor), std::ptr::null_mut());
+            connection.set_notice_processor(
+                Some(notice_processor),
+                std::ptr::null_mut(),
+            );
         }
 
         Ok(Self {
