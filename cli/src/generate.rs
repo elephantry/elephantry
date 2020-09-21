@@ -29,18 +29,17 @@ pub fn relation(
 
     write_entity(&mut file, connection, schema, relation)?;
 
-    let columns = elephantry::inspect::relation(connection, schema, relation);
     let mut pk = Vec::new();
-    let mut definition = Vec::new();
+    let mut columns = Vec::new();
 
-    for column in &columns {
+    for column in &elephantry::inspect::relation(connection, schema, relation) {
         let name = column.name.to_snake();
 
         if column.is_primary {
             pk.push(format!("\"{}\"", name));
         }
 
-        definition.push(format!("            \"{name}\",", name = name,));
+        columns.push(format!("            \"{name}\",", name = name,));
     }
 
     write!(
@@ -75,9 +74,9 @@ impl elephantry::Structure for Structure {{
         &[{pk}]
     }}
 
-    fn definition() -> &'static [&'static str] {{
+    fn columns() -> &'static [&'static str] {{
         &[
-{definition}
+{columns}
         ]
     }}
 }}
@@ -85,7 +84,7 @@ impl elephantry::Structure for Structure {{
         pk = pk.join(","),
         schema = schema,
         relation = relation,
-        definition = definition.join("\n")
+        columns = columns.join("\n")
     )?;
 
     Ok(())

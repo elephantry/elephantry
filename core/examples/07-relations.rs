@@ -85,7 +85,7 @@ select {employee_projection}
             &["employee_id"]
         }
 
-        fn definition() -> &'static [&'static str] {
+        fn columns() -> &'static [&'static str] {
             &[
                 "employee_id",
                 "first_name",
@@ -129,7 +129,7 @@ mod department {
             &["department_id"]
         }
 
-        fn definition() -> &'static [&'static str] {
+        fn columns() -> &'static [&'static str] {
             &["department_id", "name", "parent_id"]
         }
     }

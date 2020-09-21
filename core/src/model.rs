@@ -11,7 +11,7 @@ pub trait Model<'a> {
 
         crate::Projection::new(
             &Self::Structure::relation(),
-            &Self::Structure::definition(),
+            &Self::Structure::columns(),
         )
     }
 

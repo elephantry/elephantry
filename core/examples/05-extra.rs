@@ -37,7 +37,7 @@ mod employee {
             &["employee_id"]
         }
 
-        fn definition() -> &'static [&'static str] {
+        fn columns() -> &'static [&'static str] {
             &[
                 "employee_id",
                 "first_name",

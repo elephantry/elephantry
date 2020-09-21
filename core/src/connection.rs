@@ -239,7 +239,7 @@ impl Connection {
         let mut fields = Vec::new();
         let mut x = 1;
 
-        for field in M::Structure::definition() {
+        for field in M::Structure::columns() {
             if let Some(value) = entity.get(&field) {
                 tuple.push(value);
                 params.push(format!("${}", x));
@@ -273,7 +273,7 @@ impl Connection {
 
         let mut data = HashMap::new();
 
-        for field in M::Structure::definition() {
+        for field in M::Structure::columns() {
             let value = match entity.get(&field) {
                 Some(value) => value,
                 None => &Option::<&str>::None,

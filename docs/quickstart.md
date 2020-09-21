@@ -214,7 +214,7 @@ impl elephantry::Structure for Structure {
         &["employee_id"]
     }
 
-    fn definition() -> &'static [&'static str] {
+    fn columns() -> &'static [&'static str] {
         &[
             "employee_id",
             "first_name",
@@ -230,7 +230,7 @@ impl elephantry::Structure for Structure {
 
 The `elephantry::Structure::relation` function returns the name of the table
 (but it can be a view), `elephantry::Structure::primary_key` the field or fields
-composing the primary key, and finally `elephantry::Structure::definition` will
+composing the primary key, and finally `elephantry::Structure::columns` will
 contain the list of the fields of our table.
 
 And finally the `elephantry::Model` feature allows to make the link between an
