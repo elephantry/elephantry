@@ -50,6 +50,11 @@ optional = true
 version = "0.8"
 optional = true
 
+[dependencies.rocket_contrib]
+version = "0.4"
+optional = true
+features = ["databases"]
+
 [dependencies.serde]
 version = "1.0"
 optional = true
@@ -92,6 +97,7 @@ json = ["serde_json"]
 money = ["postgres_money"]
 numeric = ["bigdecimal"]
 net = ["macaddr"]
+rocket = ["r2d2", "rocket_contrib"]
 serde-support = ["serde", "serde_derive"]
 xml = ["xmltree"]
 

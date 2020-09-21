@@ -4,6 +4,8 @@ pub mod inspect;
 pub mod pq;
 #[cfg(feature = "r2d2")]
 pub mod r2d2;
+#[cfg(feature = "rocket")]
+pub mod rocket;
 
 mod array;
 mod r#async;
