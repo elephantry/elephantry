@@ -44,41 +44,44 @@ elephantry.delete_where("deleted = $1", &[&true])?;
 ## Features
 
 - r2d2 — adds support for [r2d2](https://crates.io/crates/r2d2) generic
-  connection pool; rocket — adds support for
-- [rocket](https://rocket.rs/v0.4/guide/state/#databases) web framewok;
-  serde-support — adds support for de/serialization via
-- [serde](https://serde.rs/).
+    connection pool;
+- rocket — adds support for
+    [rocket](https://rocket.rs/v0.4/guide/state/#databases) web framewok;
+- serde-support — adds support for de/serialization via
+    [serde](https://serde.rs/).
 
 ### Types
 
 - bit — adds support for
-  [bit](https://www.postgresql.org/docs/current/datatype-bit.html) type;
+    [bit](https://www.postgresql.org/docs/current/datatype-bit.html) type;
 - date — adds support for
-  [date](https://www.postgresql.org/docs/current/datatype-datetime.html) type;
+    [date](https://www.postgresql.org/docs/current/datatype-datetime.html) type;
 - geo — adds support for
-  [geometric](https://www.postgresql.org/docs/current/datatype-geometric.html)
-  type;
+    [geometric](https://www.postgresql.org/docs/current/datatype-geometric.html)
+    type;
 - json — adds support for
-  [json](https://www.postgresql.org/docs/current/datatype-json.html) type;
+    [json](https://www.postgresql.org/docs/current/datatype-json.html) type;
 - money — adds support for
-  [money](https://www.postgresql.org/docs/current/datatype-money.html) type;
+    [money](https://www.postgresql.org/docs/current/datatype-money.html) type;
 - net — adds support for
-  [network](https://www.postgresql.org/docs/current/datatype-net-types.html)
-  type;
+    [network](https://www.postgresql.org/docs/current/datatype-net-types.html)
+    type;
 - numeric — adds support for
-  [numeric](https://www.postgresql.org/docs/current/datatype-numeric.html) type;
+    [numeric](https://www.postgresql.org/docs/current/datatype-numeric.html)
+    type;
 - time — adds support for
-  [time](https://www.postgresql.org/docs/current/datatype-datetime.html) type;
+    [time](https://www.postgresql.org/docs/current/datatype-datetime.html) type;
 - uuid — adds support for
-  [uuid](https://www.postgresql.org/docs/current/datatype-uuid.html) type;
+    [uuid](https://www.postgresql.org/docs/current/datatype-uuid.html) type;
 - xml — adds support for
-  [xml](https://www.postgresql.org/docs/current/datatype-xml.html) type.
+    [xml](https://www.postgresql.org/docs/current/datatype-xml.html) type.
 
 
 ## Projects using Elephantry
 
 - [todo](https://github.com/elephantry/todo) — Todo rocket example app;
-- [explain](https://github.com/sanpii/explain) — Transform postgresql explain to a graph;
+- [explain](https://github.com/sanpii/explain) — Transform postgresql explain to
+    a graph;
 - [sav](https://github.com/sanpii/sav) — A simple CRUD application to archive
     bought item waranty;
 - [out of gafam](https://github.com/sanpii/out-of-gafam) — Generate RSS feed for
