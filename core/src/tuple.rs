@@ -5,7 +5,7 @@ pub struct Tuple<'a> {
 }
 
 impl<'a> Tuple<'a> {
-    pub fn from(result: &'a libpq::Result, index: usize) -> Self {
+    pub(crate) fn from(result: &'a libpq::Result, index: usize) -> Self {
         Self {
             result,
             index,
