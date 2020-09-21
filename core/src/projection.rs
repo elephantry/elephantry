@@ -43,7 +43,7 @@ impl Projection {
         &self.fields
     }
 
-    pub fn fields_name(&self) -> Vec<String> {
+    pub fn field_names(&self) -> Vec<String> {
         self.fields.keys().cloned().collect()
     }
 
