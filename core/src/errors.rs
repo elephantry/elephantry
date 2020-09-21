@@ -5,10 +5,7 @@ pub enum Error {
     /** An error in async context. */
     Async(String),
     /** Connection error */
-    Connect {
-        dsn: String,
-        message: String,
-    },
+    Connect { dsn: String, message: String },
     /** Unable to transform a SQL field in rust value */
     FromSql {
         pg_type: crate::pq::Type,

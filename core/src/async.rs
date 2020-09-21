@@ -34,7 +34,9 @@ impl<'c> std::future::Future for Async<'c> {
 }
 
 impl<'c> Async<'c> {
-    pub(crate) fn new(connection: &'c std::sync::Mutex<libpq::Connection>) -> Self {
+    pub(crate) fn new(
+        connection: &'c std::sync::Mutex<libpq::Connection>,
+    ) -> Self {
         Self {
             last_result: None,
             connection,
@@ -51,7 +53,8 @@ impl<'c> Async<'c> {
         query: &str,
     ) -> crate::Result<crate::pq::Result> {
         self.connection
-            .lock().unwrap()
+            .lock()
+            .unwrap()
             .send_query(&query)
             .map_err(crate::Error::Async)?;
 
@@ -103,7 +106,8 @@ impl<'c> Async<'c> {
         }
 
         self.connection
-            .lock().unwrap()
+            .lock()
+            .unwrap()
             .send_query_params(
                 query,
                 &param_types,

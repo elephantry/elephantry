@@ -17,7 +17,11 @@ impl<E: crate::Entity> Rows<E> {
      */
     pub fn get(&self, n: usize) -> E {
         self.try_get(n).unwrap_or_else(|| {
-            panic!("Unable to retreive row: the len is {} but the index is {}", self.len(), n)
+            panic!(
+                "Unable to retreive row: the len is {} but the index is {}",
+                self.len(),
+                n
+            )
         })
     }
 

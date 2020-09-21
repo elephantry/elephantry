@@ -116,7 +116,8 @@ impl Connection {
         }
 
         self.connection
-            .lock().unwrap()
+            .lock()
+            .unwrap()
             .exec_params(
                 &self.order_parameters(query),
                 &param_types,
@@ -127,7 +128,10 @@ impl Connection {
             .try_into()
     }
 
-    fn order_parameters<'a>(&self, query: &'a str) -> std::borrow::Cow<'a, str> {
+    fn order_parameters<'a>(
+        &self,
+        query: &'a str,
+    ) -> std::borrow::Cow<'a, str> {
         let regex = regex::Regex::new(r"\$\*").unwrap();
         let mut count = 0;
 
@@ -283,7 +287,6 @@ impl Connection {
 
         Ok(results.get(0).try_get("result")?)
     }
-
 
     /**
      * Insert a new entity in the database.
@@ -484,8 +487,7 @@ impl Connection {
      * Determines if the connection is no longer usable.
      */
     pub fn has_broken(&self) -> bool {
-        self.connection
-            .lock().unwrap()
-            .status() == libpq::connection::Status::Bad
+        self.connection.lock().unwrap().status()
+            == libpq::connection::Status::Bad
     }
 }
