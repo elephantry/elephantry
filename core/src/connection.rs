@@ -4,7 +4,7 @@ use std::convert::TryInto;
 
 #[derive(Debug)]
 pub struct Connection {
-    connection: libpq::Connection,
+    connection: std::sync::Mutex<libpq::Connection>,
 }
 
 extern "C" fn notice_processor(
@@ -39,7 +39,7 @@ impl Connection {
         }
 
         Ok(Self {
-            connection,
+            connection: std::sync::Mutex::new(connection),
         })
     }
 
@@ -59,7 +59,7 @@ impl Connection {
     }
 
     pub fn execute(&self, query: &str) -> crate::Result<crate::pq::Result> {
-        self.connection.exec(&query).try_into()
+        self.connection.lock().unwrap().exec(&query).try_into()
     }
 
     pub fn query<E: crate::Entity>(
@@ -97,6 +97,7 @@ impl Connection {
         }
 
         self.connection
+            .lock().unwrap()
             .exec_params(
                 query,
                 &param_types,
@@ -393,6 +394,8 @@ impl Connection {
     }
 
     pub fn has_broken(&self) -> bool {
-        self.connection.status() == libpq::connection::Status::Bad
+        self.connection
+            .lock().unwrap()
+            .status() == libpq::connection::Status::Bad
     }
 }

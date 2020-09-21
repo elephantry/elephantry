@@ -1,7 +1,7 @@
 #[derive(Debug)]
 pub struct Async<'c> {
     last_result: Option<crate::pq::Result>,
-    connection: &'c libpq::Connection,
+    connection: &'c std::sync::Mutex<libpq::Connection>,
 }
 
 impl<'c> std::future::Future for Async<'c> {
@@ -11,7 +11,7 @@ impl<'c> std::future::Future for Async<'c> {
         mut self: std::pin::Pin<&mut Self>,
         ctx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<Self::Output> {
-        if let Some(result) = self.connection.result() {
+        if let Some(result) = self.connection.lock().unwrap().result() {
             use std::convert::TryInto;
             self.last_result = Some(result.try_into().unwrap());
         }
@@ -29,7 +29,7 @@ impl<'c> std::future::Future for Async<'c> {
 }
 
 impl<'c> Async<'c> {
-    pub(crate) fn new(connection: &'c libpq::Connection) -> Self {
+    pub(crate) fn new(connection: &'c std::sync::Mutex<libpq::Connection>) -> Self {
         Self {
             last_result: None,
             connection,
@@ -41,6 +41,7 @@ impl<'c> Async<'c> {
         query: &str,
     ) -> crate::Result<crate::pq::Result> {
         self.connection
+            .lock().unwrap()
             .send_query(&query)
             .map_err(crate::Error::Async)?;
 
@@ -82,6 +83,7 @@ impl<'c> Async<'c> {
         }
 
         self.connection
+            .lock().unwrap()
             .send_query_params(
                 query,
                 &param_types,
