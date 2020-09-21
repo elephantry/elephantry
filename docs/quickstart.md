@@ -590,6 +590,9 @@ rewrite of second example in async context.
 
 # More
 
+You can also see the [todo](https://github.com/elephantry/todo) rocket
+application for a real example.
+
 You know everything there is to know about elephantry, the rest depends on your
 imagination and your mastery of SQL.
 

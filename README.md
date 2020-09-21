@@ -43,6 +43,7 @@ elephantry.delete_where("deleted = $1", &[&true])?;
 
 ## Projects using Elephantry
 
+- [todo](https://github.com/elephantry/todo) — Todo rocket example app;
 - [explain](https://github.com/sanpii/explain) — Transform postgresql explain to a graph;
 - [sav](https://github.com/sanpii/sav) — A simple CRUD application to archive
     bought item waranty;
