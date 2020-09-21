@@ -264,7 +264,7 @@ impl Connection {
         &self,
         pk: &HashMap<&str, &dyn crate::ToSql>,
         entity: &M::Entity,
-    ) -> crate::Result<M::Entity>
+    ) -> crate::Result<Option<M::Entity>>
     where
         M: crate::Model<'a>,
     {
@@ -287,7 +287,7 @@ impl Connection {
         &self,
         pk: &HashMap<&str, &dyn crate::ToSql>,
         data: &HashMap<String, &dyn crate::ToSql>,
-    ) -> crate::Result<M::Entity>
+    ) -> crate::Result<Option<M::Entity>>
     where
         M: crate::Model<'a>,
     {
@@ -314,13 +314,15 @@ impl Connection {
 
         let results = self.send_query(&query, &params)?;
 
-        Ok(M::create_entity(&results.get(0)))
+        let entity = results.try_get(0).map(|x| M::create_entity(&x));
+
+        Ok(entity)
     }
 
     pub fn delete_one<'a, M>(
         &self,
         entity: &M::Entity,
-    ) -> crate::Result<M::Entity>
+    ) -> crate::Result<Option<M::Entity>>
     where
         M: crate::Model<'a>,
     {
@@ -332,14 +334,14 @@ impl Connection {
     pub fn delete_by_pk<'a, M>(
         &self,
         pk: &HashMap<&str, &dyn crate::ToSql>,
-    ) -> crate::Result<M::Entity>
+    ) -> crate::Result<Option<M::Entity>>
     where
         M: crate::Model<'a>,
     {
         let (clause, params) = self.pk_clause::<M>(&pk)?;
         let mut results = self.delete_where::<M>(&clause, &params)?;
 
-        Ok(results.next().unwrap())
+        Ok(results.next())
     }
 
     pub fn delete_where<'a, M>(
