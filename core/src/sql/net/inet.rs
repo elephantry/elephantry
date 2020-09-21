@@ -25,37 +25,24 @@ impl crate::FromSql for std::net::IpAddr {
         ty: &crate::pq::Type,
         raw: Option<&[u8]>,
     ) -> crate::Result<Self> {
-        use byteorder::ReadBytesExt;
+        use std::convert::TryFrom;
 
-        const AF_INET: u8 = 2;
-        const AF_INET6: u8 = 3;
+        let network =
+            super::Network::try_from(crate::from_sql::not_null(raw)?)?;
 
-        let mut buf = crate::from_sql::not_null(raw)?;
-        let ip_familly = buf.read_u8()?;
-        let _bits = buf.read_u8()?;
-        let is_cidr = buf.read_u8()?;
-        let _nb = buf.read_u8()? as usize;
-
-        if is_cidr == 1 {
+        if network.is_cidr {
             return Err(Self::error(ty, "std::net::IpAddr", raw));
         }
 
-        let ip = if ip_familly == AF_INET {
-            let ipv4 = std::net::Ipv4Addr::from(
-                buf.read_u32::<byteorder::BigEndian>()?,
-            );
-
-            ipv4.into()
-        }
-        else if ip_familly == AF_INET6 {
-            let ipv6 = std::net::Ipv6Addr::from(
-                buf.read_u128::<byteorder::BigEndian>()?,
-            );
-
-            ipv6.into()
-        }
-        else {
-            return Err(Self::error(ty, "std::net::IpAddr", raw));
+        let ip = match network.ip_familly {
+            super::IpFamilly::Inet => {
+                let ipv4 = std::net::Ipv4Addr::from(network.ip as u32);
+                ipv4.into()
+            },
+            super::IpFamilly::Inet6 => {
+                let ipv6 = std::net::Ipv6Addr::from(network.ip);
+                ipv6.into()
+            },
         };
 
         Ok(ip)
