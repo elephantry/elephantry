@@ -1,15 +1,12 @@
 pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
-    let attribute = ast.attrs.iter().find(|a| {
+    let parameters: crate::Params = ast.attrs.iter().find(|a| {
         a.path.segments.len() == 1 && a.path.segments[0].ident == "entity"
-    });
-
-    let parameters = match attribute {
-        Some(attribute) => {
-            syn::parse2(attribute.tokens.clone())
-                .expect("Invalid entity attribute!")
-        },
-        None => crate::Params::default(),
-    };
+    })
+    .map(|x| {
+        syn::parse2(x.tokens.clone())
+            .expect("Invalid entity attribute!")
+    })
+    .unwrap_or_default();
 
     let fields = match ast.data {
         syn::Data::Struct(ref s) => &s.fields,
@@ -33,14 +30,32 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
     });
 
     let get_body = fields.iter().map(|field| {
+        let field_params: crate::FieldParams = field.attrs.iter().find(|a| {
+            a.path.segments.len() == 1 && a.path.segments[0].ident == "elephantry"
+        })
+        .map(|x| {
+            syn::parse2(x.tokens.clone())
+                .expect("Invalid entity attribute!")
+        })
+        .unwrap_or_default();
+
         let name = &field.ident;
         let ty = &field.ty;
 
         if is_option(ty) {
-            quote::quote! {
-                stringify!(#name) => match self.#name {
-                    Some(ref value) => Some(value),
-                    None => None,
+            if field_params.default {
+                quote::quote! {
+                    stringify!(#name) => match self.#name {
+                        Some(ref value) => Some(value),
+                        None => Default::default(),
+                    }
+                }
+            } else {
+                quote::quote! {
+                    stringify!(#name) => match self.#name {
+                        Some(ref value) => Some(value),
+                        None => None,
+                    }
                 }
             }
         }

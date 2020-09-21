@@ -33,6 +33,35 @@ impl syn::parse::Parse for Params {
     }
 }
 
+#[derive(Clone, Debug)]
+struct FieldParams {
+    default: bool,
+}
+
+impl Default for FieldParams {
+    fn default() -> Self {
+        Self {
+            default: false,
+        }
+    }
+}
+
+impl syn::parse::Parse for FieldParams {
+    fn parse(input: syn::parse::ParseStream<'_>) -> syn::parse::Result<Self> {
+        let content;
+        syn::parenthesized!(content in input);
+
+        let default = match content.parse::<syn::Ident>() {
+            Ok(default) => default == "default",
+            Err(_) => false,
+        };
+
+        Ok(FieldParams {
+            default,
+        })
+    }
+}
+
 /**
  * Impl [`Composite`] trait.
  *
@@ -52,7 +81,7 @@ pub fn composite_derive(
  *
  * [`Entity`]: trait.Entity.html
  */
-#[proc_macro_derive(Entity, attributes(entity))]
+#[proc_macro_derive(Entity, attributes(entity, elephantry))]
 pub fn entity_derive(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {

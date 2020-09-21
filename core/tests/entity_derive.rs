@@ -5,6 +5,7 @@ struct Event {
     #[cfg(not(feature = "uuid"))]
     uuid: Option<String>,
     name: String,
+    #[elephantry(default)]
     visitor_id: i32,
     #[cfg(feature = "json")]
     properties: serde_json::Value,
@@ -48,6 +49,7 @@ struct EventExtra {
     #[cfg(not(feature = "uuid"))]
     uuid: Option<String>,
     name: String,
+    #[elephantry(default)]
     visitor_id: i32,
     #[cfg(feature = "json")]
     properties: serde_json::Value,

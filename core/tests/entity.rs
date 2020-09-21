@@ -5,7 +5,7 @@ struct Event {
     #[cfg(not(feature = "uuid"))]
     uuid: Option<String>,
     name: String,
-    visitor_id: i32,
+    visitor_id: Option<i32>,
     #[cfg(feature = "json")]
     properties: serde_json::Value,
     #[cfg(not(feature = "json"))]
@@ -36,7 +36,12 @@ impl elephantry::Entity for Event {
                 }
             },
             "name" => Some(&self.name),
-            "visitor_id" => Some(&self.visitor_id),
+            "visitor_id" => {
+                match self.visitor_id {
+                    Some(ref visitor_id) => Some(visitor_id),
+                    None => Default::default(),
+                }
+            },
             "properties" => Some(&self.properties),
             "browser" => Some(&self.browser),
             _ => None,
@@ -76,7 +81,7 @@ struct EventExtra {
     #[cfg(not(feature = "uuid"))]
     uuid: Option<String>,
     name: String,
-    visitor_id: i32,
+    visitor_id: Option<i32>,
     #[cfg(feature = "json")]
     properties: serde_json::Value,
     #[cfg(not(feature = "json"))]
@@ -111,7 +116,12 @@ impl elephantry::Entity for EventExtra {
                 }
             },
             "name" => Some(&self.name),
-            "visitor_id" => Some(&self.visitor_id),
+            "visitor_id" => {
+                match self.visitor_id {
+                    Some(ref visitor_id) => Some(visitor_id),
+                    None => Default::default(),
+                }
+            },
             "properties" => Some(&self.properties),
             "browser" => Some(&self.browser),
             "os" => {

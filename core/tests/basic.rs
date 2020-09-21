@@ -38,7 +38,7 @@ fn main() {
     let new_event = Event {
         uuid: None,
         name: "purchase".to_string(),
-        visitor_id: 15,
+        visitor_id: Some(15),
         #[cfg(feature = "json")]
         properties: serde_json::json!({ "amount": 200 }),
         #[cfg(not(feature = "json"))]
