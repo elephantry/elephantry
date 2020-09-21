@@ -146,5 +146,5 @@ where
 
     println!("{:?}", new_entity);
 
-    new_entity
+    new_entity.unwrap()
 }
