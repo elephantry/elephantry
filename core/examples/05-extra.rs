@@ -11,7 +11,7 @@ mod employee {
         pub age: elephantry::Interval,
     }
 
-    pub struct Model {}
+    pub struct Model;
 
     impl<'a> elephantry::Model<'a> for Model {
         type Entity = Entity;

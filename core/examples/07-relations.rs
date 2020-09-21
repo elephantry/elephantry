@@ -107,7 +107,7 @@ mod department {
         parent_id: Option<i32>,
     }
 
-    pub struct Model {}
+    pub struct Model;
 
     impl<'a> elephantry::Model<'a> for Model {
         type Entity = Entity;
