@@ -1,12 +1,14 @@
 pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
-    let parameters: crate::Params = ast.attrs.iter().find(|a| {
-        a.path.segments.len() == 1 && a.path.segments[0].ident == "entity"
-    })
-    .map(|x| {
-        syn::parse2(x.tokens.clone())
-            .expect("Invalid entity attribute!")
-    })
-    .unwrap_or_default();
+    let parameters: crate::Params = ast
+        .attrs
+        .iter()
+        .find(|a| {
+            a.path.segments.len() == 1 && a.path.segments[0].ident == "entity"
+        })
+        .map(|x| {
+            syn::parse2(x.tokens.clone()).expect("Invalid entity attribute!")
+        })
+        .unwrap_or_default();
 
     let fields = match ast.data {
         syn::Data::Struct(ref s) => &s.fields,
@@ -30,14 +32,18 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
     });
 
     let get_body = fields.iter().map(|field| {
-        let field_params: crate::FieldParams = field.attrs.iter().find(|a| {
-            a.path.segments.len() == 1 && a.path.segments[0].ident == "elephantry"
-        })
-        .map(|x| {
-            syn::parse2(x.tokens.clone())
-                .expect("Invalid entity attribute!")
-        })
-        .unwrap_or_default();
+        let field_params: crate::FieldParams = field
+            .attrs
+            .iter()
+            .find(|a| {
+                a.path.segments.len() == 1
+                    && a.path.segments[0].ident == "elephantry"
+            })
+            .map(|x| {
+                syn::parse2(x.tokens.clone())
+                    .expect("Invalid entity attribute!")
+            })
+            .unwrap_or_default();
 
         let name = &field.ident;
         let ty = &field.ty;
@@ -50,7 +56,8 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
                         None => Default::default(),
                     }
                 }
-            } else {
+            }
+            else {
                 quote::quote! {
                     stringify!(#name) => match self.#name {
                         Some(ref value) => Some(value),
