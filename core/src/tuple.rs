@@ -70,7 +70,7 @@ impl<'a> Tuple<'a> {
 
         let oid = self.result.field_type(n);
 
-        let ty = match crate::pq::Type::try_from(oid) {
+        match crate::pq::Type::try_from(oid) {
             Ok(ty) => ty,
             Err(_) => {
                 crate::pq::Type {
@@ -80,8 +80,6 @@ impl<'a> Tuple<'a> {
                     kind: libpq::types::Kind::Composite,
                 }
             },
-        };
-
-        ty
+        }
     }
 }

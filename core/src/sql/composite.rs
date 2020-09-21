@@ -11,7 +11,7 @@ pub trait Composite {
     ) -> crate::Result<Box<Self>>;
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
-        let mut data = "(".as_bytes().to_vec();
+        let mut data = b"(".to_vec();
 
         for field in self.to_vec() {
             if let Some(mut value) = field.to_sql()? {
@@ -23,7 +23,7 @@ pub trait Composite {
 
         data.pop();
 
-        data.extend_from_slice(")\0".as_bytes());
+        data.extend_from_slice(b")\0");
 
         Ok(Some(data))
     }
