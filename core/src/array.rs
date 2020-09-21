@@ -5,6 +5,9 @@
 use byteorder::ReadBytesExt;
 use std::convert::TryInto;
 
+/**
+ * Rust type for [array](https://www.postgresql.org/docs/current/arrays.html).
+ */
 #[derive(Clone, Debug)]
 pub struct Array<T> {
     ndim: usize,

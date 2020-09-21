@@ -1,5 +1,11 @@
+/**
+ * Trait to convert rust enum to [postgresql
+ * enum](https://www.postgresql.org/docs/current/datatype-enum.html).
+ */
 pub trait Enum: std::fmt::Debug {
+    /** Enum name */
     fn name() -> &'static str;
+    /** Convert str to enum value */
     fn from_text(value: &str) -> crate::Result<Box<Self>>;
 }
 

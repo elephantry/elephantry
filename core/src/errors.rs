@@ -2,28 +2,40 @@ pub type Result<T> = std::result::Result<T, crate::Error>;
 
 #[derive(Debug)]
 pub enum Error {
+    /** An error in async context. */
     Async(String),
+    /** Connection error */
     Connect {
         dsn: String,
         message: String,
     },
+    /** Unable to transform a SQL field in rust value */
     FromSql {
         pg_type: crate::pq::Type,
         rust_type: String,
         value: String,
     },
+    /** Input/Output error */
     Io(std::io::Error),
+    /** Our result set require an extra field to build the entity */
     MissingField(String),
+    /** Fetch a null value in a non-option type */
     NotNull,
+    /** Incomplete primary key */
     PrimaryKey,
+    /** SQL error */
     Sql(crate::pq::Result),
+    /** Unable to transform a rust value to SQL */
     ToSql {
         pg_type: crate::pq::Type,
         rust_type: String,
         message: Option<String>,
     },
+    /** UTF8 error */
     Utf8(std::string::FromUtf8Error),
+    /** Unknow error */
     Unknow,
+    /** XML error */
     #[cfg(feature = "xml")]
     Xml(xmltree::Error),
 }

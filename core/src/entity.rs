@@ -1,7 +1,17 @@
 use std::collections::HashMap;
 
+/**
+ * Trait to translate SQL row to struct and vice versa.
+ *
+ * You probably should use the [`Entity`] derive macro instead of writing the
+ * impl by yourself.
+ *
+ * [`Entity`]: derive.Entity.html
+ */
 pub trait Entity {
+    /** Create a new struct from SQL result. */
     fn from(tuple: &crate::Tuple<'_>) -> Self;
+    /** Get the value of the field named `field`. */
     fn get(&self, field: &str) -> Option<&dyn crate::ToSql>;
 }
 

@@ -2,6 +2,9 @@ use crate::Structure;
 use std::collections::HashMap;
 use std::convert::TryInto;
 
+/**
+ * A connection to a database.
+ */
 #[derive(Debug)]
 pub struct Connection {
     connection: std::sync::Mutex<libpq::Connection>,
@@ -47,6 +50,11 @@ impl Connection {
         crate::Async::new(&self.connection)
     }
 
+    /**
+     * Creates a new connection from [`Config`].
+     *
+     * [`Config`]: struct.Config.html
+     */
     pub fn from_config(config: &crate::Config) -> crate::Result<Self> {
         Self::new(&config.to_string())
     }
@@ -58,10 +66,16 @@ impl Connection {
         M::new(self)
     }
 
+    /**
+     * Executes a simple text query, without parameter.
+     */
     pub fn execute(&self, query: &str) -> crate::Result<crate::pq::Result> {
         self.connection.lock().unwrap().exec(&query).try_into()
     }
 
+    /**
+     * Executes a simple query, can have parameters.
+     */
     pub fn query<E: crate::Entity>(
         &self,
         query: &str,
@@ -70,6 +84,11 @@ impl Connection {
         Ok(self.send_query(&query, params)?.into())
     }
 
+    /**
+     * Likes [`query`] but peaks only the first result.
+     *
+     * [`query`]: #method.query
+     */
     pub fn query_one<E: crate::Entity>(
         &self,
         query: &str,
@@ -108,6 +127,10 @@ impl Connection {
             .try_into()
     }
 
+    /**
+     * Return an entity upon its primary key. If no entities are found, `None`
+     * is returned.
+     */
     pub fn find_by_pk<'a, M>(
         &self,
         pk: &HashMap<&str, &dyn crate::ToSql>,
@@ -124,6 +147,13 @@ impl Connection {
         })
     }
 
+    /**
+     * Return all elements from a relation. If a suffix is given, it is append
+     * to the query. This is mainly useful for "order by" statements.
+     *
+     * NOTE: suffix is inserted as is with NO ESCAPING. DO NOT use it to place
+     * "where" condition nor any untrusted params.
+     */
     pub fn find_all<'a, M>(
         &self,
         suffix: Option<&str>,
@@ -141,6 +171,12 @@ impl Connection {
         self.query(&query, &[])
     }
 
+    /**
+     * Perform a simple select on a given condition
+     *
+     * NOTE: suffix is inserted as is with NO ESCAPING. DO NOT use it to place
+     * "where" condition nor any untrusted params.
+     */
     pub fn find_where<'a, M>(
         &self,
         clause: &str,
@@ -161,6 +197,12 @@ impl Connection {
         self.query(&query, params)
     }
 
+    /**
+     * Paginate a query.
+     *
+     * This is done with limit/offset, read why it’s probably not a good idea to
+     * use it: <https://use-the-index-luke.com/no-offset>.
+     */
     pub fn paginate_find_where<'a, M>(
         &self,
         clause: &str,
@@ -187,6 +229,9 @@ impl Connection {
         Ok(pager)
     }
 
+    /**
+     * Return the number of records matching a condition.
+     */
     pub fn count_where<'a, M>(
         &self,
         clause: &str,
@@ -206,6 +251,9 @@ impl Connection {
         Ok(results.get(0).try_get("count")?)
     }
 
+    /**
+     * Check if rows matching the given condition do exist or not.
+     */
     pub fn exist_where<'a, M>(
         &self,
         clause: &str,
@@ -225,6 +273,12 @@ impl Connection {
         Ok(results.get(0).try_get("result")?)
     }
 
+
+    /**
+     * Insert a new entity in the database.
+     *
+     * Returns the entity with values from database (ie: default values).
+     */
     pub fn insert_one<'a, M>(
         &self,
         entity: &M::Entity,
@@ -261,6 +315,11 @@ impl Connection {
         Ok(M::create_entity(&results.get(0)))
     }
 
+    /**
+     * Update the entity.
+     *
+     * Returns the entity with values from database.
+     */
     pub fn update_one<'a, M>(
         &self,
         pk: &HashMap<&str, &dyn crate::ToSql>,
@@ -284,6 +343,10 @@ impl Connection {
         self.update_by_pk::<M>(&pk, &data)
     }
 
+    /**
+     * Update a record and fetch it with its new values. If no records match
+     * the given key, `None` is returned.
+     */
     pub fn update_by_pk<'a, M>(
         &self,
         pk: &HashMap<&str, &dyn crate::ToSql>,
@@ -320,6 +383,11 @@ impl Connection {
         Ok(entity)
     }
 
+    /**
+     * Delete an entity from a table.
+     *
+     * Returns the entity fetched from the deleted record.
+     */
     pub fn delete_one<'a, M>(
         &self,
         entity: &M::Entity,
@@ -332,6 +400,10 @@ impl Connection {
         self.delete_by_pk::<M>(&pk)
     }
 
+    /**
+     * Delete a record from its primary key. The deleted entity is returned or
+     * `None` if not found.
+     */
     pub fn delete_by_pk<'a, M>(
         &self,
         pk: &HashMap<&str, &dyn crate::ToSql>,
@@ -345,6 +417,10 @@ impl Connection {
         Ok(results.next())
     }
 
+    /**
+     * Delete records by a given condition. A collection of all deleted entries
+     * is returned.
+     */
     pub fn delete_where<'a, M>(
         &self,
         clause: &str,
@@ -393,6 +469,9 @@ impl Connection {
         Ok((clause, params))
     }
 
+    /**
+     * Determines if the connection is no longer usable.
+     */
     pub fn has_broken(&self) -> bool {
         self.connection
             .lock().unwrap()

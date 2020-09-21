@@ -1,3 +1,6 @@
+/**
+ * Represent a set of values, a row of results.
+ */
 #[derive(Clone, Debug)]
 pub struct Tuple<'a> {
     result: &'a libpq::Result,
@@ -12,6 +15,13 @@ impl<'a> Tuple<'a> {
         }
     }
 
+    /**
+     * Retreive the value of field `name` of the tuple.
+     *
+     * # Panics
+     *
+     * Panics if `n` is greater than or equal to tuple length.
+     */
     pub fn get<T>(&self, name: &str) -> T
     where
         T: crate::FromSql,
@@ -21,6 +31,10 @@ impl<'a> Tuple<'a> {
         })
     }
 
+    /**
+     * Retreive the value of field `name` of the tuple, or `None` if `n` is
+     * greater than or equal to the length of the tuple.
+     */
     pub fn try_get<T>(&self, name: &str) -> crate::Result<T>
     where
         T: crate::FromSql,
@@ -33,6 +47,13 @@ impl<'a> Tuple<'a> {
         self.try_nth(n)
     }
 
+    /**
+     * Retreive the nth field.
+     *
+     * # Panics
+     *
+     * Panics if `n` is greater than or equal to the length of the tuple.
+     */
     pub fn nth<T>(&self, n: usize) -> T
     where
         T: crate::FromSql,
@@ -42,6 +63,10 @@ impl<'a> Tuple<'a> {
         })
     }
 
+    /**
+     * Retreive the nth field, or `None` if `n` is greater than or equal to the
+     * length of the tuple.
+     */
     pub fn try_nth<T>(&self, n: usize) -> crate::Result<T>
     where
         T: crate::FromSql,
@@ -53,14 +78,24 @@ impl<'a> Tuple<'a> {
         crate::FromSql::from_sql(&ty, format, value)
     }
 
+    /**
+     * Number of field.
+     */
     pub fn len(&self) -> usize {
         self.result.nfields()
     }
 
+    /**
+     * Is the tuple is empty (doesn’t contain field)?
+     */
     pub fn is_empty(&self) -> bool {
         self.len() == 0
     }
 
+    /**
+     * Retreive the name of field at position `n`, or `None` if `n` is greater
+     * than or equal to the length of the tuple.
+     */
     pub fn field_name(&self, n: usize) -> Option<String> {
         self.result.field_name(n)
     }

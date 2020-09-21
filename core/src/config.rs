@@ -1,3 +1,6 @@
+/**
+ * Connection configuration.
+ */
 #[derive(Clone, Debug)]
 pub struct Config {
     pub host: Option<String>,

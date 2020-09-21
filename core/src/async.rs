@@ -1,3 +1,8 @@
+/**
+ * This `struct` is created by the [`Connection::async`] method.
+ *
+ * [`Connection::async`]: struct.Connection.html#method.async
+ */
 #[derive(Debug)]
 pub struct Async<'c> {
     last_result: Option<crate::pq::Result>,
@@ -36,6 +41,11 @@ impl<'c> Async<'c> {
         }
     }
 
+    /**
+     * Async version of [`Connection::execute`].
+     *
+     * [`Connection::execute`]: struct.Connection.html#method.execute
+     */
     pub async fn execute(
         self,
         query: &str,
@@ -48,6 +58,11 @@ impl<'c> Async<'c> {
         Ok(self.await)
     }
 
+    /**
+     * Async version of [`Connection::query`].
+     *
+     * [`Connection::query`]: struct.Connection.html#method.query
+     */
     pub async fn query<E: crate::Entity>(
         self,
         query: &str,
@@ -56,6 +71,11 @@ impl<'c> Async<'c> {
         Ok(self.send_query(&query, params).await?.into())
     }
 
+    /**
+     * Async version of [`Connection::query_one`].
+     *
+     * [`Connection::query_one`]: struct.Connection.html#method.query_one
+     */
     pub async fn query_one<E: crate::Entity>(
         self,
         query: &str,

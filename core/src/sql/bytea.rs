@@ -1,3 +1,6 @@
+/**
+ * Rust type for [bytea](https://www.postgresql.org/docs/current/datatype-binary.html).
+ */
 #[derive(Clone, Debug, PartialEq)]
 pub struct Bytea(Vec<u8>);
 

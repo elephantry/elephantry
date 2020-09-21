@@ -1,3 +1,8 @@
+/**
+ * This `struct` is created by the [`Connection::paginate_find_where`] method.
+ *
+ * [`Connection::paginate_find_where`]: struct.Connection.html#method.paginate_find_where
+ */
 #[derive(Debug)]
 pub struct Pager<E: crate::Entity> {
     rows: crate::Rows<E>,

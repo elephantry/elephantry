@@ -33,6 +33,11 @@ impl syn::parse::Parse for Params {
     }
 }
 
+/**
+ * Impl [`Composite`] trait.
+ *
+ * [`Composite`]: trait.Composite.html
+ */
 #[proc_macro_derive(Composite, attributes(composite))]
 pub fn composite_derive(
     input: proc_macro::TokenStream,
@@ -42,6 +47,11 @@ pub fn composite_derive(
     composite::impl_macro(&ast)
 }
 
+/**
+ * Impl [`Entity`] trait.
+ *
+ * [`Entity`]: trait.Entity.html
+ */
 #[proc_macro_derive(Entity, attributes(entity))]
 pub fn entity_derive(
     input: proc_macro::TokenStream,
@@ -51,6 +61,11 @@ pub fn entity_derive(
     entity::impl_macro(&ast)
 }
 
+/**
+ * Impl [`Enum`] trait.
+ *
+ * [`Enum`]: trait.Enum.html
+ */
 #[proc_macro_derive(Enum, attributes(r#enum))]
 pub fn enum_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let ast = syn::parse(input).unwrap();

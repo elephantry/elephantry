@@ -34,16 +34,33 @@ macro_rules! number {
     };
 }
 
+/**
+ * Trait to allow a rust type to be translated form a SQL value.
+ */
 pub trait FromSql: Sized {
+    /**
+     * Create a new struct from the binary representation.
+     *
+     * See the postgresql
+     * [adt](https://github.com/postgres/postgres/tree/REL_12_0/src/backend/utils/adt)
+     * module source code, mainly `*_send` functions.
+     */
     fn from_binary(
         ty: &crate::pq::Type,
         raw: Option<&[u8]>,
     ) -> crate::Result<Self>;
+
+    /**
+     * Create a new struct from the text representation.
+     */
     fn from_text(
         ty: &crate::pq::Type,
         raw: Option<&str>,
     ) -> crate::Result<Self>;
 
+    /**
+     * Create a new struct from SQL value.
+     */
     fn from_sql(
         ty: &crate::pq::Type,
         format: crate::pq::Format,

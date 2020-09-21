@@ -7,6 +7,9 @@ pub struct Schema {
     pub comment: String,
 }
 
+/**
+ * Retreive schemas of the connected database.
+ */
 pub fn database(connection: &crate::Connection) -> Vec<Schema> {
     connection
         .query(
@@ -39,6 +42,9 @@ pub struct Relation {
     pub comment: Option<String>,
 }
 
+/**
+ * Retreive relations (ie: tables, views, …) of `schema`.
+ */
 pub fn schema(connection: &crate::Connection, schema: &str) -> Vec<Relation> {
     connection
         .query(
@@ -87,6 +93,9 @@ pub struct Column {
     pub comment: Option<String>,
 }
 
+/**
+ * Retreive columns of the `schema.relation` relation.
+ */
 pub fn relation(
     connection: &crate::Connection,
     schema: &str,

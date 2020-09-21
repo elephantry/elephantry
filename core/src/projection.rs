@@ -1,5 +1,8 @@
 use std::collections::HashMap;
 
+/**
+ * Define the content of SELECT or RETURNING (projection) statements.
+ */
 #[derive(Debug)]
 pub struct Projection {
     relation: String,
@@ -8,6 +11,9 @@ pub struct Projection {
 }
 
 impl Projection {
+    /**
+     * Create a new projection with `fields`.
+     */
     pub fn new(relation: &str, fields: &[&str]) -> Self {
         let mut map = HashMap::new();
         for field in fields {
@@ -21,32 +27,50 @@ impl Projection {
         }
     }
 
+    /**
+     * Add alias for the relation name.
+     */
     pub fn alias(mut self, alias: &str) -> Projection {
         self.alias = Some(alias.to_string());
 
         self
     }
 
+    /**
+     * Add a field from the projection.
+     */
     pub fn add_field(mut self, name: &str, row: &str) -> Projection {
         self.fields.insert(name.to_string(), row.to_string());
 
         self
     }
 
+    /**
+     * Unset an existing field.
+     */
     pub fn unset_field(mut self, name: &str) -> Projection {
         self.fields.remove(name);
 
         self
     }
 
+    /**
+     * Return the list of fields.
+     */
     pub fn fields(&self) -> &HashMap<String, String> {
         &self.fields
     }
 
+    /**
+     * Return fields names list.
+     */
     pub fn field_names(&self) -> Vec<String> {
         self.fields.keys().cloned().collect()
     }
 
+    /**
+     * Return if the given field exist.
+     */
     pub fn has_field(&self, name: &str) -> bool {
         self.fields.contains_key(name)
     }

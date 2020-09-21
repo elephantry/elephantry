@@ -1,5 +1,10 @@
+/**
+ * Trait to allow a rust type to be translated to a SQL value.
+ */
 pub trait ToSql {
+    /** The corresponding SQL type */
     fn ty(&self) -> crate::pq::Type;
+    /** Convert the value */
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>>;
 
     fn format(&self) -> crate::pq::Format {

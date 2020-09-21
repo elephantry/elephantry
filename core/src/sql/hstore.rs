@@ -1,5 +1,8 @@
 use std::collections::HashMap;
 
+/**
+ * Rust type for [hstore](https://www.postgresql.org/docs/current/hstore.html).
+ */
 #[derive(Clone, Debug, PartialEq)]
 pub struct Hstore(HashMap<String, Option<String>>);
 

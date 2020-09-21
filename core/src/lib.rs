@@ -1,6 +1,8 @@
 #![warn(rust_2018_idioms)]
 
+/** database inspection module. */
 pub mod inspect;
+/** libpq abstraction layer. */
 pub mod pq;
 #[cfg(feature = "r2d2")]
 pub mod r2d2;
@@ -46,11 +48,14 @@ pub use tuple::*;
 use pgpass::*;
 
 /**
- * Easily create pk argument for where clause, including find_by_pk function
+ * Easily create pk argument for where clause, including [`find_by_pk`]
+ * function.
  *
  * pk!(uuid)
  * pk![uuid, name]
  * pk!{uuid => "uuid", name => "name"}
+ *
+ * [`find_by_pk`]: struct.Connection.html#method.find_by_pk
  */
 #[macro_export]
 macro_rules! pk {

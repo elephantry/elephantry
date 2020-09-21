@@ -1,10 +1,18 @@
+/**
+ * Trait to convert rust struct to [composite
+ * type](https://www.postgresql.org/docs/current/rowtypes.html).
+ */
 pub trait Composite {
+    /** Composite type name. */
     fn name() -> &'static str;
+    /** Convert struct to a vector of SQL value. */
     fn to_vec(&self) -> Vec<&dyn crate::ToSql>;
+    /** Create a new struct from SQL result in text format. */
     fn from_text_values(
         ty: &crate::pq::Type,
         values: &[Option<&str>],
     ) -> crate::Result<Box<Self>>;
+    /** Create a new struct from SQL result in binary format. */
     fn from_binary_values(
         ty: &crate::pq::Type,
         values: &[Option<&[u8]>],

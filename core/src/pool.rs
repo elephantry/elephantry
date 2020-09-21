@@ -1,5 +1,8 @@
 use std::collections::HashMap;
 
+/**
+ * Connections pool.
+ */
 #[derive(Debug)]
 pub struct Pool {
     default: String,
@@ -7,18 +10,32 @@ pub struct Pool {
 }
 
 impl Pool {
+    /**
+     * Create a new pool with a default connection.
+     */
     pub fn new(url: &str) -> crate::Result<Self> {
         Self::default().add_default("default", url)
     }
 
+    /**
+     * Create a new pool with a default connection from [`Config`].
+     *
+     * [`Config`]: struct.Config.html
+     */
     pub fn from_config(config: &crate::Config) -> crate::Result<Self> {
         Self::default().add_default("default", &config.to_string())
     }
 
+    /**
+     * Add a default connection.
+     */
     pub fn add_default(self, name: &str, url: &str) -> crate::Result<Self> {
         self.add(name, url, true)
     }
 
+    /**
+     * Add a connection.
+     */
     pub fn add_connection(self, name: &str, url: &str) -> crate::Result<Self> {
         self.add(name, url, false)
     }
@@ -39,18 +56,30 @@ impl Pool {
         Ok(self)
     }
 
+    /**
+     * Retreive the default connection.
+     */
     pub fn get_default(&self) -> Option<&crate::Connection> {
         self.connections.get(&self.default)
     }
 
+    /**
+     * Set the connection `name` as default.
+     */
     pub fn set_default(&mut self, name: &str) {
         self.default = name.to_string();
     }
 
+    /**
+     * Retreive the connection `name`, on `None` if not exists.
+     */
     pub fn get(&self, name: &str) -> Option<&crate::Connection> {
         self.connections.get(&name.to_string())
     }
 
+    /**
+     * Remove the connection `name`.
+     */
     pub fn remove(&mut self, name: &str) {
         self.connections.remove(&name.to_string());
     }
