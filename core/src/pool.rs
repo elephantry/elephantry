@@ -50,7 +50,7 @@ impl Pool {
             .insert(name.to_string(), crate::Connection::new(url)?);
 
         if default {
-            self.set_default(name);
+            self.set_default(name)?;
         }
 
         Ok(self)
@@ -66,8 +66,17 @@ impl Pool {
     /**
      * Set the connection `name` as default.
      */
-    pub fn set_default(&mut self, name: &str) {
+    pub fn set_default(&mut self, name: &str) -> crate::Result<()> {
+        if !self.connections.contains_key(name) {
+            return Err(crate::Error::Connect {
+                dsn: name.to_string(),
+                message: format!("Unable to set {} connection as default, unknow connection", name),
+            });
+        }
+
         self.default = name.to_string();
+
+        Ok(())
     }
 
     /**
