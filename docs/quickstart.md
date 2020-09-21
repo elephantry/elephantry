@@ -37,6 +37,9 @@ object persistent layer.
 If you want to read more about the difference between ORM and OMM, you can read
 [Why Pomm?](http://www.pomm-project.org/news/why-pomm.html)
 
+Or if you prefer a video, you can see [Unleash Postgresql features in your PHP
+developments](https://www.youtube.com/watch?v=l0IY0vO07zQ).
+
 # Setting
 
 This paradigm change involves we should start by design our database instead of
