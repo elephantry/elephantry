@@ -18,7 +18,7 @@ impl ToRust for elephantry::pq::Type {
             "character" | "char" => "i8",
             "character varying" | "varchar" => "String",
             #[cfg(feature = "network")]
-            "cidr" => todo!(),
+            "cidr" => "ipnetwork::IpNetwork",
             #[cfg(feature = "geo")]
             "circle" => "elephantry::Circle",
             #[cfg(feature = "chrono")]
