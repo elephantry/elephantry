@@ -6,7 +6,9 @@ pub struct Rows<E: crate::Entity> {
 
 impl<E: crate::Entity> Rows<E> {
     pub fn get(&self, n: usize) -> E {
-        self.try_get(n).unwrap()
+        self.try_get(n).unwrap_or_else(|| {
+            panic!("Unable to retreive row: the len is {} but the index is {}", self.len(), n)
+        })
     }
 
     pub fn try_get(&self, n: usize) -> Option<E> {
