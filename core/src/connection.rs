@@ -118,13 +118,24 @@ impl Connection {
         self.connection
             .lock().unwrap()
             .exec_params(
-                query,
+                &self.order_parameters(query),
                 &param_types,
                 &param_values,
                 &param_formats,
                 crate::pq::Format::Binary,
             )
             .try_into()
+    }
+
+    fn order_parameters<'a>(&self, query: &'a str) -> std::borrow::Cow<'a, str> {
+        let regex = regex::Regex::new(r"\$\*").unwrap();
+        let mut count = 0;
+
+        regex.replace_all(query, |captures: &regex::Captures<'_>| {
+            count += 1;
+
+            captures[0].replace("$*", &format!("${}", count))
+        })
     }
 
     /**
