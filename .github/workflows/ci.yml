@@ -1,0 +1,74 @@
+on:
+  pull_request:
+    branches: [ master ]
+  push:
+    branches: [ master, test ]
+
+env:
+  CARGO_TERM_COLOR: always
+  DATABASE_URL: postgres://postgres:root@localhost/
+
+jobs:
+  lint_fmt:
+    name: cargo fmt
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          override: true
+          components: rustfmt
+      - name: Check formating
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: -- --check
+
+  lint_clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          override: true
+          components: clippy
+      - name: Run clippy
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: --all-features -- --deny warnings
+
+  tests:
+    name: Tests
+    strategy:
+      matrix:
+        mode: ["debug", "release"]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          override: true
+
+      - name: Install postgreSQL (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libpq-dev postgresql
+          sudo service postgresql start && sleep 3
+          sudo -u postgres psql --command "ALTER USER postgres PASSWORD 'root';"
+
+      - name: Run tests (debug)
+        if: matrix.mode == 'debug'
+        run: cargo test --all-features
+
+      - name: Run tests (release)
+        if: matrix.mode == 'release'
+        run: cargo test --all-features --release
