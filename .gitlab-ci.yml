@@ -1,4 +1,4 @@
-image: "rust:latest"
+image: "rustlang/rust:nightly"
 
 stages:
     - lint
@@ -8,7 +8,6 @@ variables:
     CARGO_HOME: $CI_PROJECT_DIR/cargo
 
 lint:fmt:
-    image: "rustlang/rust:nightly"
     stage: lint
     before_script:
         - rustup component add rustfmt
@@ -19,7 +18,7 @@ lint:clippy:
     stage: lint
     before_script:
         - rustup component add clippy
-    script: cargo clippy --all-features -- --deny warnings
+    script: cargo +nightly clippy --all-features -- --deny warnings
 
 .test: &test
     stage: test
@@ -35,7 +34,7 @@ lint:clippy:
         - sudo -u postgres psql --command "create database root with owner root;";
     script:
         - export DATABASE_URL='host=localhost password=1234'
-        - cargo test --all-features $CARGO_FLAGS
+        - cargo +nightly test --all-features $CARGO_FLAGS
 
 test:debug:
     <<: *test
