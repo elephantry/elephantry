@@ -74,11 +74,13 @@ impl<T: crate::FromSql> crate::FromSql for std::ops::Range<T> {
         ty: &crate::pq::Type,
         raw: Option<&str>,
     ) -> crate::Result<Self> {
-        let regex =
-            regex::Regex::new(r"[\[\(](?P<start>.?*),(?P<end>.?*)[\]\)]")
-                .unwrap();
+        lazy_static::lazy_static! {
+            static ref REGEX: regex::Regex =
+                regex::Regex::new(r"[\[\(](?P<start>.?*),(?P<end>.?*)[\]\)]")
+                    .unwrap();
+        }
 
-        let matches = regex.captures(crate::not_null(raw)?).unwrap();
+        let matches = REGEX.captures(crate::not_null(raw)?).unwrap();
 
         // tstzrange are quoted
         let start =

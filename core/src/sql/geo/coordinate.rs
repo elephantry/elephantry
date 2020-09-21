@@ -45,12 +45,13 @@ impl std::str::FromStr for Coordinates {
     type Err = ();
 
     fn from_str(s: &str) -> Result<Coordinates, Self::Err> {
+        lazy_static::lazy_static! {
+            static ref REGEX: regex::Regex = regex::Regex::new(r"([\d\.]+)").unwrap();
+        }
+
         let mut coordinates = Vec::new();
 
-        // @TODO static
-        let regex = regex::Regex::new(r"([\d\.]+)").unwrap();
-
-        let mut matches = regex.find_iter(s);
+        let mut matches = REGEX.find_iter(s);
 
         while let Some(x) = Self::coordinate(&matches.next()) {
             let y = match Self::coordinate(&matches.next()) {

@@ -36,10 +36,11 @@ impl crate::FromSql for Circle {
         ty: &crate::pq::Type,
         raw: Option<&str>,
     ) -> crate::Result<Self> {
-        // @todo static
-        let regex = regex::Regex::new(r"([\d\.]+)").unwrap();
+        lazy_static::lazy_static! {
+            static ref REGEX: regex::Regex = regex::Regex::new(r"([\d\.]+)").unwrap();
+        }
 
-        let mut matches = regex.find_iter(crate::not_null(raw)?);
+        let mut matches = REGEX.find_iter(crate::not_null(raw)?);
         let x = crate::Coordinates::coordinate(&matches.next())
             .ok_or_else(|| Self::error(ty, "elephantry::Circle", raw))?;
         let y = crate::Coordinates::coordinate(&matches.next())

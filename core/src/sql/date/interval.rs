@@ -175,17 +175,20 @@ impl crate::FromSql for Interval {
         ty: &crate::pq::Type,
         raw: Option<&str>,
     ) -> crate::Result<Self> {
+        lazy_static::lazy_static! {
+            static ref REGEX: regex::Regex = regex::Regex::new(
+                r"((?P<years>\d+) years?)? ?((?P<months>\d+) (months?|mons?))? ?((?P<days>\d+) days?)? ?((?P<hours>\d+):(?P<mins>\d+):(?P<secs>\d+))?(\.(?P<usecs>\d+))?",
+            )
+            .unwrap();
+        }
+
         let s = String::from_text(ty, raw)?;
 
         if s.as_str() == "00:00:00" {
             return Ok(Self::default());
         }
 
-        let re = regex::Regex::new(
-            r"((?P<years>\d+) years?)? ?((?P<months>\d+) (months?|mons?))? ?((?P<days>\d+) days?)? ?((?P<hours>\d+):(?P<mins>\d+):(?P<secs>\d+))?(\.(?P<usecs>\d+))?",
-        )
-        .unwrap();
-        let caps = match re.captures(&s) {
+        let caps = match REGEX.captures(&s) {
             Some(caps) => caps,
             None => return Err(Self::error(ty, "elephantry::Interval", raw)),
         };

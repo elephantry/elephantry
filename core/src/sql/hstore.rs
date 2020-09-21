@@ -78,14 +78,15 @@ impl crate::FromSql for Hstore {
         _: &crate::pq::Type,
         raw: Option<&str>,
     ) -> crate::Result<Self> {
-        let mut hstore = Self::new();
-        // @TODO static
-        let regex = regex::Regex::new(
-            "\"(?P<key>.*?)\"=>(\"(?P<value>.*?)\"|(?P<null>NULL))",
-        )
-        .unwrap();
+        lazy_static::lazy_static! {
+            static ref REGEX: regex::Regex = regex::Regex::new(
+                "\"(?P<key>.*?)\"=>(\"(?P<value>.*?)\"|(?P<null>NULL))",
+            ).unwrap();
+        }
 
-        for capture in regex.captures_iter(crate::not_null(raw)?) {
+        let mut hstore = Self::new();
+
+        for capture in REGEX.captures_iter(crate::not_null(raw)?) {
             let key = capture.name("key").unwrap().as_str().to_string();
             let value = if capture.name("null").is_some() {
                 None
