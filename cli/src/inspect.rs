@@ -134,3 +134,31 @@ pub fn enums(connection: &elephantry::Connection, schema: &str) {
     );
     println!("{}", table.render());
 }
+
+pub fn domains(connection: &elephantry::Connection, schema: &str) {
+    let domains = elephantry::inspect::domains(connection, schema);
+
+    let mut table = term_table::Table::new();
+    table.style = term_table::TableStyle::rounded();
+
+    table.add_row(term_table::row::Row::new(vec![
+        term_table::table_cell::TableCell::new("name"),
+        term_table::table_cell::TableCell::new("description"),
+    ]));
+
+    for domain in &domains {
+        table.add_row(term_table::row::Row::new(vec![
+            term_table::table_cell::TableCell::new(&domain.name),
+            term_table::table_cell::TableCell::new(
+                &domain.description.clone().unwrap_or_default(),
+            ),
+        ]));
+    }
+
+    println!(
+        "\nFound {} domain(s) in schema '{}'.",
+        domains.len(),
+        schema
+    );
+    println!("{}", table.render());
+}

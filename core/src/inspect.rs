@@ -162,6 +162,31 @@ pub fn enums(
     connection: &crate::Connection,
     schema: &str,
 ) -> Vec<Enum> {
+    types(connection, schema, 'e').collect()
+}
+
+#[derive(Debug, elephantry_derive::Entity)]
+#[entity(internal)]
+pub struct Domain {
+    pub name: String,
+    pub description: Option<String>,
+}
+
+/**
+ * Retreive domain for `schema`.
+ */
+pub fn domains(
+    connection: &crate::Connection,
+    schema: &str,
+) -> Vec<Enum> {
+    types(connection, schema, 'd').collect()
+}
+
+fn types<E: crate::Entity>(
+    connection: &crate::Connection,
+    schema: &str,
+    typtype: char,
+) -> crate::Rows<E> {
     connection
         .query(
             r#"
@@ -174,16 +199,17 @@ select pg_catalog.format_type(t.oid, null) as "name",
     ) as "elements",
     pg_catalog.obj_description(t.oid, 'pg_type') as "description"
 from pg_catalog.pg_type t
-    left join pg_catalog.pg_namespace n ON n.oid = t.typnamespace
-where t.typcategory = 'E'
+    left join pg_catalog.pg_namespace n on n.oid = t.typnamespace
+where t.typtype = $*
+    and n.nspname = $*
+    and (t.typrelid = 0 or (select c.relkind = 'c' from pg_catalog.pg_class c where c.oid = t.typrelid))
     and not exists(select 1 from pg_catalog.pg_type el where el.oid = t.typelem and el.typarray = t.oid)
     and n.nspname <> 'pg_catalog'
     and n.nspname <> 'information_schema'
     and pg_catalog.pg_type_is_visible(t.oid)
 order by 1;
     "#,
-            &[&schema],
+            &[&typtype, &schema],
         )
         .unwrap()
-        .collect()
 }
