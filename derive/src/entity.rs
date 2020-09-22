@@ -16,22 +16,6 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
     };
 
     let from_body = fields.iter().map(|field| {
-        let name = &field.ident;
-        let ty = &field.ty;
-
-        if is_option(ty) {
-            quote::quote! {
-                #name: tuple.try_get(stringify!(#name)).ok()
-            }
-        }
-        else {
-            quote::quote! {
-                #name: tuple.get(stringify!(#name))
-            }
-        }
-    });
-
-    let get_body = fields.iter().map(|field| {
         let field_params: crate::FieldParams = field
             .attrs
             .iter()
@@ -48,21 +32,31 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
         let name = &field.ident;
         let ty = &field.ty;
 
-        if is_option(ty) {
-            if field_params.default {
-                quote::quote! {
-                    stringify!(#name) => match self.#name {
-                        Some(ref value) => Some(value),
-                        None => Default::default(),
-                    }
-                }
+        if field_params.default {
+            quote::quote! {
+                #name: tuple.try_get(stringify!(#name)).unwrap_or_default()
             }
-            else {
-                quote::quote! {
-                    stringify!(#name) => match self.#name {
-                        Some(ref value) => Some(value),
-                        None => None,
-                    }
+        } else if is_option(ty) {
+            quote::quote! {
+                #name: tuple.try_get(stringify!(#name)).ok()
+            }
+        }
+        else {
+            quote::quote! {
+                #name: tuple.get(stringify!(#name))
+            }
+        }
+    });
+
+    let get_body = fields.iter().map(|field| {
+        let name = &field.ident;
+        let ty = &field.ty;
+
+        if is_option(ty) {
+            quote::quote! {
+                stringify!(#name) => match self.#name {
+                    Some(ref value) => Some(value),
+                    None => None,
                 }
             }
         }
