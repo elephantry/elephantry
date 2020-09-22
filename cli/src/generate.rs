@@ -147,6 +147,51 @@ pub struct Entity {{
     Ok(())
 }
 
+pub fn enums(
+    connection: &elephantry::Connection,
+    prefix_dir: &str,
+    schema: &str,
+) -> crate::Result<()> {
+    let dir = format!("{}/enums", prefix_dir);
+    std::fs::create_dir_all(&dir)?;
+
+    let filename = format!("{}/{}.rs", dir, schema);
+    let mut file = std::io::BufWriter::new(std::fs::File::create(filename)?);
+
+    for enumeration in &elephantry::inspect::enums(connection, schema) {
+        write_enum(&mut file, &enumeration)?;
+    }
+
+    Ok(())
+}
+
+fn write_enum<W>(
+    file: &mut std::io::BufWriter<W>,
+    enumeration: &elephantry::inspect::Enum,
+) -> crate::Result<()>
+where
+    W: std::io::Write,
+{
+    let elements = enumeration
+        .elements
+        .iter()
+        .map(|x| format!("    {},", x))
+        .collect::<Vec<_>>();
+
+    write!(
+        file,
+        r"#[derive(elephantry::Enum)]
+pub struct {name} {{
+{elements}
+}}
+",
+        name = enumeration.name,
+        elements = elements.join("\n"),
+    )?;
+
+    Ok(())
+}
+
 fn ty_to_rust(column: &elephantry::inspect::Column) -> String {
     use crate::pq::ToRust;
     use std::convert::TryFrom;
