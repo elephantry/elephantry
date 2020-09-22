@@ -146,3 +146,44 @@ order by
         .unwrap()
         .collect()
 }
+
+#[derive(Debug, elephantry_derive::Entity)]
+#[entity(internal)]
+pub struct Enum {
+    pub name: String,
+    pub elements: Vec<String>,
+    pub description: Option<String>,
+}
+
+/**
+ * Retreive enumeration for `schema`.
+ */
+pub fn enums(
+    connection: &crate::Connection,
+    schema: &str,
+) -> Vec<Enum> {
+    connection
+        .query(
+            r#"
+select pg_catalog.format_type(t.oid, null) as "name",
+    array(
+        select e.enumlabel
+        from pg_catalog.pg_enum e
+        where e.enumtypid = t.oid
+        order by e.enumsortorder
+    ) as "elements",
+    pg_catalog.obj_description(t.oid, 'pg_type') as "description"
+from pg_catalog.pg_type t
+    left join pg_catalog.pg_namespace n ON n.oid = t.typnamespace
+where t.typcategory = 'E'
+    and not exists(select 1 from pg_catalog.pg_type el where el.oid = t.typelem and el.typarray = t.oid)
+    and n.nspname <> 'pg_catalog'
+    and n.nspname <> 'information_schema'
+    and pg_catalog.pg_type_is_visible(t.oid)
+order by 1;
+    "#,
+            &[&schema],
+        )
+        .unwrap()
+        .collect()
+}

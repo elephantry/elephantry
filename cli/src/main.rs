@@ -34,6 +34,11 @@ enum Opt {
         #[structopt(default_value = "public")]
         schema: String,
     },
+    #[structopt(name = "inspect:enums", about = "List enums")]
+    InspectEnums {
+        #[structopt(default_value = "public")]
+        schema: String,
+    },
     #[structopt(
         name = "generate:schema-all",
         about = "Generate structure, model and entity file for all relations in a schema."
@@ -84,6 +89,9 @@ fn main() -> Result<()> {
             schema,
             relation,
         } => inspect::relation(&connection, &schema, &relation),
+        Opt::InspectEnums {
+            schema,
+        } => inspect::enums(&connection, &schema),
         Opt::GenerateSchema {
             prefix_dir,
             schema,

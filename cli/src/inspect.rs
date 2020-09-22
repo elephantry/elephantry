@@ -101,3 +101,36 @@ pub fn relation(
     println!("\nRelation {}.{}", schema, relation);
     println!("{}", table.render());
 }
+
+pub fn enums(connection: &elephantry::Connection, schema: &str) {
+    let enumerations = elephantry::inspect::enums(connection, schema);
+
+    let mut table = term_table::Table::new();
+    table.style = term_table::TableStyle::rounded();
+
+    table.add_row(term_table::row::Row::new(vec![
+        term_table::table_cell::TableCell::new("name"),
+        term_table::table_cell::TableCell::new("elements"),
+        term_table::table_cell::TableCell::new("description"),
+    ]));
+
+    for enumeration in &enumerations {
+        table.add_row(term_table::row::Row::new(vec![
+            term_table::table_cell::TableCell::new(&enumeration.name),
+            term_table::table_cell::TableCell::new(&format!(
+                "{:?}",
+                enumeration.elements
+            )),
+            term_table::table_cell::TableCell::new(
+                &enumeration.description.clone().unwrap_or_default(),
+            ),
+        ]));
+    }
+
+    println!(
+        "\nFound {} enum(s) in schema '{}'.",
+        enumerations.len(),
+        schema
+    );
+    println!("{}", table.render());
+}
