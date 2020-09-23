@@ -1,5 +1,45 @@
 #![warn(rust_2018_idioms)]
 
+/*!
+ * | SQL type             | Rust type                | Feature |
+ * |----------------------|--------------------------|---------|
+ * | `bigint`             | `i64`                    |         |
+ * | `bit`                | `u8`                     | bit     |
+ * | `bit varying`        | `bit_vec::BitVec`        | bit     |
+ * | `boolean`            | `bool`                   |         |
+ * | `box`                | `elephantry::Box`        | geo     |
+ * | `bytea`              | `elephantry::Bytea`      |         |
+ * | `char`               | `i8`                     |         |
+ * | `varchar`            | `String`                 |         |
+ * | `cidr`               | `ipnetwork::IpNetwork`   | net     |
+ * | `circle`             | `elephantry::Circle`     | geo     |
+ * | `date`               | `chrono::NaiveDate`      | chrono  |
+ * | `double precision`   | `f64`                    |         |
+ * | `hstore`             | `elephantry::Hstore`     |         |
+ * | `inet`               | `std::net::IpAddr`       | net     |
+ * | `integer`            | `i32`                    |         |
+ * | `json`/`jsonb`       | `serde::value::Value`    | json    |
+ * | `line`               | `elephantry::Line`       | geo     |
+ * | `lseg`               | `elephantry::Segment`    | geo     |
+ * | `macaddr`            | `macaddr::MacAddr6`      | net     |
+ * | `macaddr8`           | `macaddr::MacAddr8`      | net     |
+ * | `money`              | `f32`                    |         |
+ * | `numeric`            | `bigdecimal::BigDecimal` | numeric |
+ * | `path`               | `elephantry::Path`       | geo     |
+ * | `point`              | `elephantry::Point`      | geo     |
+ * | `polygon`            | `elephantry::Polygon`    | geo     |
+ * | `real`               | `f32`                    |         |
+ * | `record`             | `tuple`                  |         |
+ * | `smallint`           | `i16`                    |         |
+ * | `text`               | `String`                 |         |
+ * | `time`               | `chrono::NaiveTime`      | date    |
+ * | `timetz`             |                          | date    |
+ * | `timestamp`          | `chrono::NaiveDateTime`  | date    |
+ * | `timestamptz`        | `chrono::DateTime`       | date    |
+ * | `uuid`               | `uuid::Uuid`             | uuid    |
+ * | `xml`                | `xmltree::Element`       | xml     |
+ */
+
 /** database inspection module. */
 pub mod inspect;
 /** libpq abstraction layer. */
