@@ -162,3 +162,40 @@ pub fn domains(connection: &elephantry::Connection, schema: &str) {
     );
     println!("{}", table.render());
 }
+
+pub fn composites(connection: &elephantry::Connection, schema: &str) {
+    let composites = elephantry::inspect::composites(connection, schema);
+
+    let mut table = term_table::Table::new();
+    table.style = term_table::TableStyle::rounded();
+
+    table.add_row(term_table::row::Row::new(vec![
+        term_table::table_cell::TableCell::new("name"),
+        term_table::table_cell::TableCell::new("fields"),
+        term_table::table_cell::TableCell::new("description"),
+    ]));
+
+    for composite in &composites {
+        let fields = composite
+            .fields
+            .iter()
+            .map(|(n, t)| format!("{}::{}", n, t))
+            .collect::<Vec<_>>()
+            .join(", ");
+
+        table.add_row(term_table::row::Row::new(vec![
+            term_table::table_cell::TableCell::new(&composite.name),
+            term_table::table_cell::TableCell::new(&fields),
+            term_table::table_cell::TableCell::new(
+                &composite.description.clone().unwrap_or_default(),
+            ),
+        ]));
+    }
+
+    println!(
+        "\nFound {} composite type(s) in schema '{}'.",
+        composites.len(),
+        schema
+    );
+    println!("{}", table.render());
+}
