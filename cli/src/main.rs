@@ -85,6 +85,13 @@ enum Opt {
         #[structopt(default_value = "public")]
         schema: String,
     },
+    #[structopt(name = "generate:composites", about = "Generate composites")]
+    GenerateComposites {
+        #[structopt(long, short = "d", default_value = "src")]
+        prefix_dir: String,
+        #[structopt(default_value = "public")]
+        schema: String,
+    },
 }
 
 fn main() -> Result<()> {
@@ -133,6 +140,10 @@ fn main() -> Result<()> {
             prefix_dir,
             schema,
         } => generate::enums(&connection, &prefix_dir, &schema)?,
+        Opt::GenerateComposites {
+            prefix_dir,
+            schema,
+        } => generate::composites(&connection, &prefix_dir, &schema)?,
     }
 
     Ok(())

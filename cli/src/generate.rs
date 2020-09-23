@@ -192,6 +192,53 @@ pub struct {name} {{
     Ok(())
 }
 
+pub fn composites(
+    connection: &elephantry::Connection,
+    prefix_dir: &str,
+    schema: &str,
+) -> crate::Result<()> {
+    let dir = format!("{}/composites", prefix_dir);
+    std::fs::create_dir_all(&dir)?;
+
+    let filename = format!("{}/{}.rs", dir, schema);
+    let mut file = std::io::BufWriter::new(std::fs::File::create(filename)?);
+
+    for composite in &elephantry::inspect::composites(connection, schema) {
+        write_composite(&mut file, &composite)?;
+    }
+
+    Ok(())
+}
+
+fn write_composite<W>(
+    file: &mut std::io::BufWriter<W>,
+    composite: &elephantry::inspect::Composite,
+) -> crate::Result<()>
+where
+    W: std::io::Write,
+{
+    let fields = composite
+        .fields
+        .iter()
+        .map(|(name, ty)| {
+            format!("    {}: {},", name, crate::pq::sql_to_rust(ty))
+        })
+        .collect::<Vec<_>>();
+
+    write!(
+        file,
+        r"#[derive(elephantry::Composite)]
+pub struct {name} {{
+{fields}
+}}
+",
+        name = composite.name.to_camel(),
+        fields = fields.join("\n")
+    )?;
+
+    Ok(())
+}
+
 fn ty_to_rust(column: &elephantry::inspect::Column) -> String {
     use crate::pq::ToRust;
     use std::convert::TryFrom;
