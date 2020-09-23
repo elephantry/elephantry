@@ -81,69 +81,84 @@ mod test {
     static INIT: std::sync::Once = std::sync::Once::new();
 
     #[macro_export]
-    macro_rules! sql_test {
+    macro_rules! sql_test_from {
         ($sql_type:ident, $rust_type:ty, $tests:expr) => {
-            mod $sql_type {
-                use std::collections::HashMap;
-                #[allow(unused_imports)]
-                use std::convert::TryFrom;
+            use std::collections::HashMap;
+            #[allow(unused_imports)]
+            use std::convert::TryFrom;
 
-                #[test]
-                fn from_text() -> crate::Result<()> {
-                    let conn = crate::test::new_conn()?;
+            #[test]
+            fn from_text() -> crate::Result<()> {
+                let conn = crate::test::new_conn()?;
 
-                    for (value, expected) in &$tests {
-                        let result = conn.execute(&format!(
+                for (value, expected) in &$tests {
+                    let result = conn.execute(&format!(
                             "select {}::{} as actual",
                             value,
                             stringify!($sql_type)
-                        ))?;
-                        assert_eq!(
-                            result.get(0).get::<$rust_type>("actual"),
-                            *expected
-                        );
-                    }
-
-                    Ok(())
+                    ))?;
+                    assert_eq!(
+                        result.get(0).get::<$rust_type>("actual"),
+                        *expected
+                    );
                 }
 
-                #[test]
-                fn from_binary() -> crate::Result<()> {
-                    let conn = crate::test::new_conn()?;
+                Ok(())
+            }
 
-                    for (value, expected) in &$tests {
-                        let result = conn
-                            .query::<HashMap<String, $rust_type>>(
-                                &format!(
-                                    "select {}::{} as actual",
-                                    value,
-                                    stringify!($sql_type)
-                                ),
-                                &[],
-                            )?;
-                        assert_eq!(
-                            result.get(0).get("actual").unwrap(),
-                            expected
-                        );
-                    }
+            #[test]
+            fn from_binary() -> crate::Result<()> {
+                let conn = crate::test::new_conn()?;
 
-                    Ok(())
+                for (value, expected) in &$tests {
+                    let result = conn
+                        .query::<HashMap<String, $rust_type>>(
+                            &format!(
+                                "select {}::{} as actual",
+                                value,
+                                stringify!($sql_type)
+                            ),
+                            &[],
+                        )?;
+                    assert_eq!(
+                        result.get(0).get("actual").unwrap(),
+                        expected
+                    );
                 }
 
-                #[test]
-                fn to() -> crate::Result<()> {
-                    let conn = crate::test::new_conn()?;
+                Ok(())
+            }
+        };
+    }
 
-                    for (_, value) in &$tests {
-                        let result = conn.query::<HashMap<String, String>>(
-                            &format!("select $1::{}", stringify!($sql_type)),
-                            &[value],
-                        );
-                        assert!(result.is_ok());
-                    }
+    #[macro_export]
+    macro_rules! sql_test_to {
+        ($sql_type:ident, $rust_type:ty, $tests:expr) => {
+            #[test]
+            fn to() -> crate::Result<()> {
+                use std::collections::HashMap;
+                let conn = crate::test::new_conn()?;
 
-                    Ok(())
+                for (_, value) in &$tests {
+                    let result = conn.query::<HashMap<String, String>>(
+                        &format!("select $1::{}", stringify!($sql_type)),
+                        &[value],
+                    );
+                    dbg!(&result);
+                    assert!(result.is_ok());
                 }
+
+                Ok(())
+            }
+        };
+    }
+
+    #[macro_export]
+    macro_rules! sql_test {
+        ($sql_type:ident, $rust_type:ty, $tests:expr) => {
+            mod $sql_type {
+                $crate::sql_test_from!($sql_type, $rust_type, $tests);
+                $crate::sql_test_to!($sql_type, $rust_type, $tests);
             }
         };
     }

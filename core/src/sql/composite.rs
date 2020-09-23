@@ -3,68 +3,52 @@
  * type](https://www.postgresql.org/docs/current/rowtypes.html).
  */
 pub trait Composite {
-    /** Composite type name. */
+    /**
+     * Composite type name.
+     */
     fn name() -> &'static str;
-    /** Convert struct to a vector of SQL value. */
+
+    /**
+     * Convert struct to a vector of SQL value.
+     */
     fn to_vec(&self) -> Vec<&dyn crate::ToSql>;
-    /** Create a new struct from SQL result in text format. */
+
+    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
+        crate::sql::record::vec_to_sql(&self.to_vec())
+    }
+
+    /**
+     * Create a new struct from SQL result in text format.
+     */
     fn from_text_values(
         ty: &crate::pq::Type,
         values: &[Option<&str>],
     ) -> crate::Result<Box<Self>>;
-    /** Create a new struct from SQL result in binary format. */
+
+    /**
+     * Create a new struct from SQL result in binary format.
+     */
     fn from_binary_values(
         ty: &crate::pq::Type,
         values: &[Option<&[u8]>],
     ) -> crate::Result<Box<Self>>;
 
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
-        let mut data = b"(".to_vec();
-
-        for field in self.to_vec() {
-            if let Some(mut value) = field.to_sql()? {
-                value.pop();
-                data.append(&mut value);
-            }
-            data.push(b',');
-        }
-
-        data.pop();
-
-        data.extend_from_slice(b")\0");
-
-        Ok(Some(data))
-    }
-
-    /*
-     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/rowtypes.c#L649
-     */
     fn from_binary(
         ty: &crate::pq::Type,
         raw: Option<&[u8]>,
     ) -> crate::Result<Box<Self>> {
-        use byteorder::ReadBytesExt;
-
-        let mut data = raw.unwrap();
-        let mut values: Vec<Option<&[u8]>> = Vec::new();
-
-        let validcols = data.read_i32::<byteorder::BigEndian>()?;
-
-        for _ in 0..validcols {
-            let _column_type = data.read_i32::<byteorder::BigEndian>()?;
-            let length = data.read_i32::<byteorder::BigEndian>()?;
-
-            if length < 0 {
-                values.push(None);
-                continue;
-            }
-
-            let value = &data[..length as usize];
-            values.push(Some(value));
-            data = &data[length as usize..];
-        }
+        let values = crate::sql::record::binary_to_vec(raw)?;
 
         Self::from_binary_values(ty, &values)
+    }
+
+    fn from_text(
+        ty: &crate::pq::Type,
+        raw: Option<&str>,
+    ) -> crate::Result<Box<Self>> {
+        let values = crate::sql::record::text_to_vec(raw)?;
+
+        Self::from_text_values(ty, &values)
     }
 }
 
@@ -88,22 +72,7 @@ impl<C: Composite> crate::FromSql for C {
         ty: &crate::pq::Type,
         raw: Option<&str>,
     ) -> crate::Result<Self> {
-        let s = crate::not_null(raw)?
-            .trim_start_matches('(')
-            .trim_end_matches(')');
-        let values = s
-            .split(',')
-            .map(|x| {
-                if x.is_empty() {
-                    None
-                }
-                else {
-                    Some(x)
-                }
-            })
-            .collect::<Vec<_>>();
-
-        Self::from_text_values(ty, &values).map(|x| *x)
+        Self::from_text(ty, raw).map(|x| *x)
     }
 
     fn from_binary(

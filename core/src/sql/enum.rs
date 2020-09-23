@@ -20,15 +20,11 @@ impl<E: Enum> crate::Composite for E {
         format!("{:?}", self).to_sql()
     }
 
-    fn to_vec(&self) -> Vec<&dyn crate::ToSql> {
-        unreachable!()
-    }
-
-    fn from_text_values(
-        _ty: &crate::pq::Type,
-        values: &[Option<&str>],
+    fn from_text(
+        _: &crate::pq::Type,
+        raw: Option<&str>,
     ) -> crate::Result<Box<Self>> {
-        Self::from_text(crate::not_null(values[0])?)
+        Self::from_text(crate::not_null(raw)?)
     }
 
     fn from_binary(
@@ -38,6 +34,17 @@ impl<E: Enum> crate::Composite for E {
         use crate::FromSql;
 
         Self::from_text(&String::from_binary(ty, raw)?)
+    }
+
+    fn to_vec(&self) -> Vec<&dyn crate::ToSql> {
+        unreachable!()
+    }
+
+    fn from_text_values(
+        _: &crate::pq::Type,
+        _: &[Option<&str>],
+    ) -> crate::Result<Box<Self>> {
+        unreachable!();
     }
 
     fn from_binary_values(
