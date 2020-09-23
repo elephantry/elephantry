@@ -9,6 +9,10 @@ pub trait Enum: std::fmt::Debug {
     fn from_text(value: &str) -> crate::Result<Box<Self>>;
 }
 
+/*
+ * @FIXME impl FromSql/ToSql instead
+ * https://github.com/rust-lang/rfcs/blob/master/text/1210-impl-specialization.md
+ */
 impl<E: Enum> crate::Composite for E {
     fn name() -> &'static str {
         E::name()
