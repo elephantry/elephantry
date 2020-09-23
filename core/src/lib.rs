@@ -32,8 +32,8 @@
  * | `record`             | `tuple`                  |         |
  * | `smallint`           | `i16`                    |         |
  * | `text`               | `String`                 |         |
- * | `time`               | `chrono::NaiveTime`      | date    |
- * | `timetz`             |                          | date    |
+ * | `time`               | `elephantry::Time`       | time    |
+ * | `timetz`             | `elephantry::TimeTz`     | time    |
  * | `timestamp`          | `chrono::NaiveDateTime`  | date    |
  * | `timestamptz`        | `chrono::DateTime`       | date    |
  * | `uuid`               | `uuid::Uuid`             | uuid    |
