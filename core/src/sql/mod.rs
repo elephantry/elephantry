@@ -17,9 +17,9 @@ mod net;
 #[cfg(feature = "numeric")]
 mod numeric;
 mod range;
+mod record;
 #[cfg(feature = "time")]
 mod time;
-mod record;
 #[cfg(feature = "uuid")]
 mod uuid;
 #[cfg(feature = "xml")]

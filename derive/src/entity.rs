@@ -36,7 +36,8 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
             quote::quote! {
                 #name: tuple.try_get(stringify!(#name)).unwrap_or_default()
             }
-        } else if is_option(ty) {
+        }
+        else if is_option(ty) {
             quote::quote! {
                 #name: tuple.try_get(stringify!(#name)).ok()
             }

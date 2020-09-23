@@ -133,9 +133,9 @@ mod test {
 
                 for (value, expected) in &$tests {
                     let result = conn.execute(&format!(
-                            "select {}::{} as actual",
-                            value,
-                            stringify!($sql_type)
+                        "select {}::{} as actual",
+                        value,
+                        stringify!($sql_type)
                     ))?;
                     assert_eq!(
                         result.get(0).get::<$rust_type>("actual"),
@@ -151,19 +151,15 @@ mod test {
                 let conn = crate::test::new_conn()?;
 
                 for (value, expected) in &$tests {
-                    let result = conn
-                        .query::<HashMap<String, $rust_type>>(
-                            &format!(
-                                "select {}::{} as actual",
-                                value,
-                                stringify!($sql_type)
-                            ),
-                            &[],
-                        )?;
-                    assert_eq!(
-                        result.get(0).get("actual").unwrap(),
-                        expected
-                    );
+                    let result = conn.query::<HashMap<String, $rust_type>>(
+                        &format!(
+                            "select {}::{} as actual",
+                            value,
+                            stringify!($sql_type)
+                        ),
+                        &[],
+                    )?;
+                    assert_eq!(result.get(0).get("actual").unwrap(), expected);
                 }
 
                 Ok(())

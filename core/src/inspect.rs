@@ -158,10 +158,7 @@ pub struct Enum {
 /**
  * Retreive enumeration for `schema`.
  */
-pub fn enums(
-    connection: &crate::Connection,
-    schema: &str,
-) -> Vec<Enum> {
+pub fn enums(connection: &crate::Connection, schema: &str) -> Vec<Enum> {
     types(connection, schema, 'e').collect()
 }
 
@@ -175,10 +172,7 @@ pub struct Domain {
 /**
  * Retreive domain for `schema`.
  */
-pub fn domains(
-    connection: &crate::Connection,
-    schema: &str,
-) -> Vec<Enum> {
+pub fn domains(connection: &crate::Connection, schema: &str) -> Vec<Enum> {
     types(connection, schema, 'd').collect()
 }
 
@@ -198,8 +192,8 @@ pub fn composites(
     connection: &crate::Connection,
     schema: &str,
 ) -> Vec<Composite> {
-    let mut composites = types(connection, schema, 'c')
-        .collect::<Vec<Composite>>();
+    let mut composites =
+        types(connection, schema, 'c').collect::<Vec<Composite>>();
 
     for composite in &mut composites {
         composite.fields = composite_fields(connection, &composite.name);
@@ -208,9 +202,13 @@ pub fn composites(
     composites
 }
 
-fn composite_fields(connection: &crate::Connection, composite: &str) -> Vec<(String, String)> {
-    connection.query(
-        r#"
+fn composite_fields(
+    connection: &crate::Connection,
+    composite: &str,
+) -> Vec<(String, String)> {
+    connection
+        .query(
+            r#"
 select row(a.attname, pg_catalog.format_type(a.atttypid, a.atttypmod))
     from pg_catalog.pg_attribute a
     join pg_catalog.pg_class c
@@ -219,10 +217,10 @@ select row(a.attname, pg_catalog.format_type(a.atttypid, a.atttypmod))
     where a.attnum > 0 and not a.attisdropped
     order by a.attnum;
         "#,
-        &[&composite],
-    )
-    .unwrap()
-    .collect()
+            &[&composite],
+        )
+        .unwrap()
+        .collect()
 }
 
 fn types<E: crate::Entity>(
