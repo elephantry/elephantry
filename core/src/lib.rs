@@ -52,7 +52,6 @@ pub mod r2d2;
 #[cfg(feature = "rocket")]
 pub mod rocket;
 
-mod array;
 mod r#async;
 mod config;
 mod connection;
@@ -70,7 +69,6 @@ mod structure;
 mod to_sql;
 mod tuple;
 
-pub use array::*;
 pub use config::*;
 pub use connection::*;
 pub use elephantry_derive::*;

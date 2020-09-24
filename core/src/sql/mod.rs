@@ -1,3 +1,4 @@
+mod array;
 #[cfg(feature = "bit")]
 mod bit;
 mod bytea;
@@ -29,6 +30,7 @@ mod xml;
 pub use self::time::*;
 #[cfg(feature = "uuid")]
 pub use self::uuid::*;
+pub use array::*;
 #[cfg(feature = "bit")]
 pub use bit::*;
 pub use bytea::*;
