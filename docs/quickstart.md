@@ -238,8 +238,8 @@ The `elephantry::Structure::relation` function returns the name of the table
 composing the primary key, and finally `elephantry::Structure::columns` will
 contain the list of the fields of our table.
 
-And finally the `elephantry::Model` feature allows to make the link between an
-entity and a structure:
+The `elephantry::Model` trait creates the link between an entity and a
+structure:
 
 ```rust
 struct Model;
@@ -310,7 +310,7 @@ and retrieve them with these additional fields (where, why not, don’t get all
 fields⁴).
 
 This will be possible with the model. The default projection⁵ contains all
-the fields of our table, but it is possible to defin another one via the
+the fields of our table, but it is possible to define another one via the
 `elephantry::Model::create_projection` function:
 
 ```rust
@@ -323,8 +323,8 @@ impl<'a> elephantry::Model<'a> for Model {
 ```
 
 Here we add to our select a field that will contain the age of the employee.
-Note the notation `%:birth_date:%` which will be replaced by the name complete
-the field and escape if necessary.
+Note the notation `%:birth_date:%` which will be replaced by the complet name of
+the field and escape it if necessary.
 
 Without forgetting to add this field to our entity:
 
@@ -575,7 +575,7 @@ pub struct Department {
 }
 ```
 
-See [08-composite.rs](../core/examples/06-complex.rs).
+See [08-composite.rs](../core/examples/08-composite.rs).
 
 Composite types can also be created with [create
 type](https://www.postgresql.org/docs/current/rowtypes.html).
@@ -612,7 +612,7 @@ To go further on this last point:
 
 ² A tool that launches like `psql` but explain a query instead of execute its.
 
-³ Constant time access O(1).
+³ Constant time access `O(1)`.
 
 ⁴ This is particularly useful for not retrieving sensitive data like
   passwords.
