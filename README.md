@@ -5,7 +5,7 @@
 [![Github actions](https://github.com/elephantry/elephantry/workflows/.github/workflows/ci.yml/badge.svg)](https://github.com/elephantry/elephantry/actions?query=workflow%3A.github%2Fworkflows%2Fci.yml)
 [![Build Status](https://gitlab.com/elephantry/elephantry/badges/master/pipeline.svg)](https://gitlab.com/elephantry/elephantry/commits/master)
 
-![](docs/logo.png)
+![](docs/banner.png)
 
 When Rust meets PostgreSQL.
 
