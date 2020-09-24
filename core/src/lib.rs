@@ -1,5 +1,7 @@
 #![warn(rust_2018_idioms)]
-#![doc(html_logo_url = "https://raw.githubusercontent.com/elephantry/elephantry/master/docs/logo.png")]
+#![doc(
+    html_logo_url = "https://raw.githubusercontent.com/elephantry/elephantry/master/docs/logo.png"
+)]
 
 /*!
  * | SQL type             | Rust type                | Feature |
