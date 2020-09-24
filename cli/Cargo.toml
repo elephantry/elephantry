@@ -1,6 +1,6 @@
 [package]
 name = "elephantry-cli"
-version = "0.6.1"
+version = "0.7.0"
 description = "elephantry cli tool"
 repository = "https://github.com/elephantry/elephantry/tree/master/cli"
 homepage = "https://github.com/elephantry/elephantry"
@@ -15,5 +15,5 @@ structopt = "0.3"
 term-table = "1.1"
 
 [dependencies.elephantry]
-version = "0.6"
+version = "0.7"
 path = "../core/"
