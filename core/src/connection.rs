@@ -235,7 +235,7 @@ impl Connection {
         M: crate::Model<'a>,
     {
         let suffix = format!(
-            "{} offset {} limit {}",
+            "{} offset {} fetch first {} rows only",
             suffix.unwrap_or_default(),
             max_per_page * (page - 1),
             max_per_page
