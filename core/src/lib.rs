@@ -51,6 +51,7 @@ pub mod pq;
 pub mod r2d2;
 #[cfg(feature = "rocket")]
 pub mod rocket;
+pub mod transaction;
 
 mod r#async;
 mod config;
@@ -84,6 +85,7 @@ pub use rows::*;
 pub use sql::*;
 pub use structure::*;
 pub use to_sql::*;
+pub use transaction::Transaction;
 pub use tuple::*;
 
 use pgpass::*;

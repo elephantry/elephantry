@@ -593,6 +593,16 @@ let results = elephantry.r#async().query::<employee::Entity>("select * from empl
 You can see the [09-async.rs](../core/examples/09-async.rs) example⁷, it’s a
 rewrite of second example in async context.
 
+# Transaction
+
+As async, there is a second layer dedicated to transactions available via
+`Connection::transaction` function.
+
+This layer allows you to start (begin) a new transaction, commit, roolback, …
+
+You can see the [10-transaction.rs](../core/examples/10-transaction.rs) for a
+complete example.
+
 # More
 
 You can also see the [todo](https://github.com/elephantry/todo) rocket

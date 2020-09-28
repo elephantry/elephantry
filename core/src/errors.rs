@@ -6,6 +6,8 @@ pub enum Error {
     Async(String),
     /** Connection error */
     Connect { dsn: String, message: String },
+    /** Escaping error */
+    Escape(String, String),
     /** Unable to transform a SQL field in rust value */
     FromSql {
         pg_type: crate::pq::Type,
@@ -45,6 +47,9 @@ impl std::fmt::Display for Error {
             Error::Connect {
                 message, ..
             } => message.clone(),
+            Error::Escape(param, error) => {
+                format!("Unable to escape '{}': {}", param, error)
+            },
             Error::Sql(result) => {
                 result
                     .error_message()

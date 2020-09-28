@@ -24,7 +24,7 @@ create temporary table employee (
     birth_date date not null check (age(birth_date) >= '18 years'::interval),
     is_manager boolean not null default false,
     day_salary numeric(7,2) not null,
-    department_id integer not null references department(department_id)
+    department_id integer not null references department(department_id) deferrable
 );
 
 insert into employee (first_name, last_name, department_id, birth_date, day_salary, is_manager) values

@@ -50,6 +50,22 @@ impl Connection {
         crate::Async::new(&self.connection)
     }
 
+    pub fn transaction(&self) -> crate::Transaction<'_> {
+        crate::Transaction::new(&self)
+    }
+
+    pub(crate) fn transaction_status(&self) -> libpq::transaction::Status {
+        self.connection.lock().unwrap().transaction_status()
+    }
+
+    pub(crate) fn escape_identifier(&self, str: &str) -> crate::Result<String> {
+        self.connection
+            .lock()
+            .unwrap()
+            .escape_identifier(str)
+            .map_err(|e| crate::Error::Escape(str.to_string(), e))
+    }
+
     /**
      * Creates a new connection from [`Config`].
      *
