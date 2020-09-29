@@ -511,4 +511,48 @@ impl Connection {
         self.connection.lock().unwrap().status()
             == libpq::connection::Status::Bad
     }
+
+    /**
+     * Send a NOTIFY event to the database server. An optional data can be sent
+     * with the notification.
+     */
+    pub fn notify(
+        &self,
+        channel: &str,
+        data: Option<&str>,
+    ) -> crate::Result<()> {
+        let data = self.escape_literal(data.unwrap_or_default())?;
+
+        let query = format!("notify {}, {}", channel, data);
+
+        self.execute(&query).map(|_| ())
+    }
+
+    /**
+     * Start to listen on the given channel.
+     *
+     * Note: when listen is issued in a transaction it is unlisten when the
+     * transaction is committed or rollback.
+     */
+    pub fn listen(&self, channel: &str) -> crate::Result<()> {
+        let query = format!("listen {}", channel);
+
+        self.execute(&query).map(|_| ())
+    }
+
+    /**
+     * Check if a notification is pending. If so, the payload is returned.
+     * Otherwise, `None` is returned.
+     */
+    pub fn notifies(&self) -> Option<crate::pq::Notify> {
+        self.connection.lock().unwrap().notifies()
+    }
+
+    fn escape_literal(&self, str: &str) -> crate::Result<String> {
+        self.connection
+            .lock()
+            .unwrap()
+            .escape_literal(str)
+            .map_err(|e| crate::Error::Escape(str.to_string(), e))
+    }
 }
