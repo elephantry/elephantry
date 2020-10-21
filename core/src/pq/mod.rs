@@ -1,7 +1,7 @@
 pub use libpq::state;
 
-pub use libpq::types;
 pub use libpq::connection::Notify;
+pub use libpq::types;
 pub type Format = libpq::Format;
 pub type Oid = libpq::Oid;
 pub type Type = libpq::Type;
