@@ -7,7 +7,7 @@ struct Auth {
 }
 
 impl Auth {
-    fn split<'a>(line: &'a str) -> Vec<&'a str> {
+    fn split(line: &str) -> Vec<&str> {
         let mut tokens = Vec::new();
         let mut slash = false;
         let mut last_pos = 0;
