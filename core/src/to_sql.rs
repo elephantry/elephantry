@@ -129,7 +129,7 @@ impl<T: ToSql> ToSql for Option<T> {
     fn ty(&self) -> crate::pq::Type {
         match self {
             Some(data) => data.ty(),
-            None => crate::pq::types::TEXT,
+            None => crate::pq::types::UNKNOWN,
         }
     }
 
