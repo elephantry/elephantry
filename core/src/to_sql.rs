@@ -162,8 +162,12 @@ impl<T: ToSql> ToSql for Vec<T> {
             data.extend_from_slice(&element[..element.len() - 1]);
             data.push(b',');
         }
-        *data.last_mut().unwrap() = b'}';
-        data.push(b'\0');
+
+        if data.last() == Some(&b',') {
+            data.pop();
+        }
+
+        data.extend_from_slice("}\0".as_bytes());
 
         Ok(Some(data))
     }
@@ -171,12 +175,19 @@ impl<T: ToSql> ToSql for Vec<T> {
 
 #[cfg(test)]
 mod test {
+    use crate::ToSql;
+
     #[test]
     fn vec_to_sql() {
-        use crate::ToSql;
-
         let vec = vec![1, 2, 3];
 
         assert_eq!(vec.to_sql().unwrap(), Some(b"{1,2,3}\0".to_vec()));
+    }
+
+    #[test]
+    fn empty_vec() {
+        let vec = Vec::<String>::new();
+
+        assert_eq!(vec.to_sql().unwrap(), Some(b"{}\0".to_vec()));
     }
 }
