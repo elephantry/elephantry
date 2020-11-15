@@ -143,9 +143,11 @@ impl<T: ToSql> ToSql for Option<T> {
 
 impl<T: ToSql> ToSql for Vec<T> {
     fn ty(&self) -> crate::pq::Type {
+        use crate::pq::ToArray;
+
         match self.get(0) {
-            Some(data) => data.ty(),
-            None => crate::pq::types::TEXT,
+            Some(data) => data.ty().to_array(),
+            None => crate::pq::types::TEXT_ARRAY,
         }
     }
 
