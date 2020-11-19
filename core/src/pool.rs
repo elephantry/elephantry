@@ -20,7 +20,7 @@ impl Pool {
     /**
      * Create a new pool with a default connection from [`Config`].
      *
-     * [`Config`]: struct.Config.html
+     * [`Config`]: crate::Config
      */
     pub fn from_config(config: &crate::Config) -> crate::Result<Self> {
         Self::default().add_default("default", &config.to_string())

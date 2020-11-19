@@ -69,7 +69,7 @@ impl Connection {
     /**
      * Creates a new connection from [`Config`].
      *
-     * [`Config`]: struct.Config.html
+     * [`Config`]: crate::Config
      */
     pub fn from_config(config: &crate::Config) -> crate::Result<Self> {
         Self::new(&config.to_string())

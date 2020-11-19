@@ -1,7 +1,7 @@
 /**
  * This `struct` is created by the [`Connection::async`] method.
  *
- * [`Connection::async`]: struct.Connection.html#method.async
+ * [`Connection::async`]: crate::Connection::async
  */
 #[derive(Debug)]
 pub struct Async<'c> {
@@ -46,7 +46,7 @@ impl<'c> Async<'c> {
     /**
      * Async version of [`Connection::execute`].
      *
-     * [`Connection::execute`]: struct.Connection.html#method.execute
+     * [`Connection::execute`]: crate::Connection::execute
      */
     pub async fn execute(
         self,
@@ -64,7 +64,7 @@ impl<'c> Async<'c> {
     /**
      * Async version of [`Connection::query`].
      *
-     * [`Connection::query`]: struct.Connection.html#method.query
+     * [`Connection::query`]: crate::Connection::query
      */
     pub async fn query<E: crate::Entity>(
         self,
@@ -77,7 +77,7 @@ impl<'c> Async<'c> {
     /**
      * Async version of [`Connection::query_one`].
      *
-     * [`Connection::query_one`]: struct.Connection.html#method.query_one
+     * [`Connection::query_one`]: crate::Connection::query_one
      */
     pub async fn query_one<E: crate::Entity>(
         self,

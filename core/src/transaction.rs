@@ -1,7 +1,7 @@
 /**
  * This `struct` is created by the [`Connection::transaction`] method.
  *
- * [`Connection::transaction`]: struct.Connection.html#method.transaction
+ * [`Connection::transaction`]: crate::Connection::transaction
  */
 pub struct Transaction<'c> {
     connection: &'c crate::Connection,

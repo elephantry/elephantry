@@ -1,7 +1,7 @@
 /**
  * This `struct` is created by the [`Connection::paginate_find_where`] method.
  *
- * [`Connection::paginate_find_where`]: struct.Connection.html#method.paginate_find_where
+ * [`Connection::paginate_find_where`]: crate::Connection::paginate_find_where
  */
 #[derive(Debug)]
 pub struct Pager<E: crate::Entity> {

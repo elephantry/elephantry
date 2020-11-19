@@ -92,11 +92,13 @@ use pgpass::*;
  * Easily create pk argument for where clause, including [`find_by_pk`]
  * function.
  *
+ * ```
  * pk!(uuid)
  * pk![uuid, name]
  * pk!{uuid => "uuid", name => "name"}
+ * ```
  *
- * [`find_by_pk`]: struct.Connection.html#method.find_by_pk
+ * [`find_by_pk`]: crate::Connection::find_by_pk
  */
 #[macro_export]
 macro_rules! pk {
