@@ -220,10 +220,7 @@ impl<T: FromSql> FromSql for Vec<T> {
 }
 
 impl FromSql for () {
-    fn from_text(
-        _: &crate::pq::Type,
-        _: Option<&str>,
-    ) -> crate::Result<Self> {
+    fn from_text(_: &crate::pq::Type, _: Option<&str>) -> crate::Result<Self> {
         Ok(())
     }
 

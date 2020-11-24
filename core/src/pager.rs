@@ -98,6 +98,13 @@ impl<E: crate::Entity> Pager<E> {
     pub fn max_per_page(&self) -> usize {
         self.max_per_page
     }
+
+    /**
+     * Get results rows.
+     */
+    pub fn rows(&self) -> &crate::Rows<E> {
+        &self.rows
+    }
 }
 
 #[cfg(feature = "serde-support")]
