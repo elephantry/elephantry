@@ -107,6 +107,15 @@ impl<E: crate::Entity> Pager<E> {
     }
 }
 
+impl<E: crate::Entity> std::iter::IntoIterator for Pager<E> {
+    type IntoIter = crate::Rows<Self::Item>;
+    type Item = E;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.rows
+    }
+}
+
 #[cfg(feature = "serde-support")]
 impl<E: crate::Entity + serde::Serialize> serde::Serialize for Pager<E> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
