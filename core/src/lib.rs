@@ -93,9 +93,14 @@ use pgpass::*;
  * function.
  *
  * ```
- * pk!(uuid)
- * pk![uuid, name]
- * pk!{uuid => "uuid", name => "name"}
+ * # #[macro_use] extern crate elephantry;
+ * # fn main() {
+ * # let uuid = "";
+ * # let name = "";
+ * pk!(uuid);
+ * pk![uuid, name];
+ * pk!{uuid => "uuid", name => "name"};
+ * # }
  * ```
  *
  * [`find_by_pk`]: crate::Connection::find_by_pk
