@@ -22,6 +22,7 @@
  * | `json`/`jsonb`       | `serde::value::Value`    | json    |
  * | `line`               | `elephantry::Line`       | geo     |
  * | `lseg`               | `elephantry::Segment`    | geo     |
+ * | `null`               | `()`                     |         |
  * | `macaddr`            | `macaddr::MacAddr6`      | net     |
  * | `macaddr8`           | `macaddr::MacAddr8`      | net     |
  * | `money`              | `f32`                    |         |

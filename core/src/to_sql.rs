@@ -175,6 +175,16 @@ impl<T: ToSql> ToSql for Vec<T> {
     }
 }
 
+impl ToSql for () {
+    fn ty(&self) -> crate::pq::Type {
+        crate::pq::types::UNKNOWN
+    }
+
+    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
+        Ok(None)
+    }
+}
+
 #[cfg(test)]
 mod test {
     use crate::ToSql;

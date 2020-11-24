@@ -219,6 +219,22 @@ impl<T: FromSql> FromSql for Vec<T> {
     }
 }
 
+impl FromSql for () {
+    fn from_text(
+        _: &crate::pq::Type,
+        _: Option<&str>,
+    ) -> crate::Result<Self> {
+        Ok(())
+    }
+
+    fn from_binary(
+        _: &crate::pq::Type,
+        _: Option<&[u8]>,
+    ) -> crate::Result<Self> {
+        Ok(())
+    }
+}
+
 #[cfg(test)]
 mod test {
     crate::sql_test!(float4, f32, [(1., 1.), (-1., -1.), (2.1, 2.1)]);
@@ -263,4 +279,6 @@ mod test {
         "'12345'",
         "12345".to_string()
     ),]);
+
+    crate::sql_test!(unknown, (), [("null", ())]);
 }
