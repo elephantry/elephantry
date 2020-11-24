@@ -12,7 +12,12 @@ pub struct Pager<E: crate::Entity> {
 }
 
 impl<E: crate::Entity> Pager<E> {
-    pub(crate) fn new(
+    /**
+     * Creates a new page.
+     *
+     * `page` starts at 1.
+     */
+    pub fn new(
         rows: crate::Rows<E>,
         count: usize,
         page: usize,
