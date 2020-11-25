@@ -68,6 +68,7 @@ mod sql;
 mod structure;
 mod to_sql;
 mod tuple;
+mod r#where;
 
 pub use config::*;
 pub use connection::*;
@@ -80,6 +81,7 @@ pub use pager::*;
 pub use pool::*;
 pub use projection::*;
 pub use r#async::*;
+pub use r#where::*;
 pub use rows::*;
 pub use sql::*;
 pub use structure::*;
