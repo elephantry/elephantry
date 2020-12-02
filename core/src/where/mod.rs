@@ -115,7 +115,8 @@ impl<'a> Where<'a> {
         }
 
         if let Some(element) = &self.element {
-            self.stack = vec![Self::from(&element, self.params.clone()), rhs.clone()];
+            self.stack =
+                vec![Self::from(&element, self.params.clone()), rhs.clone()];
             self.element = None;
             self.params = Vec::new();
         }
