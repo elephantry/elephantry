@@ -120,17 +120,15 @@ impl<'a> Where<'a> {
             self.element = None;
             self.params = Vec::new();
         }
+        else if self.operator == operator {
+            self.stack.push(rhs.clone());
+        }
         else {
-            if self.operator == operator {
-                self.stack.push(rhs.clone());
-            }
-            else {
-                let mut new = Self::new();
-                new.stack = self.stack.clone();
-                new.operator = self.operator.clone();
+            let mut new = Self::new();
+            new.stack = self.stack.clone();
+            new.operator = self.operator.clone();
 
-                self.stack = vec![new, rhs.clone()];
-            }
+            self.stack = vec![new, rhs.clone()];
         }
 
         self.operator = operator.to_string();
