@@ -72,6 +72,12 @@ impl<'a> Builder<'a> {
     }
 }
 
+impl<'a> Default for Builder<'a> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[cfg(test)]
 mod test {
     #[test]
