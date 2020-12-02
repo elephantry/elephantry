@@ -1,0 +1,32 @@
+#!/bin/bash
+
+set -euo pipefail
+
+main()
+{
+    local version=$1
+
+    cargo +nightly fmt -- --check
+    cargo +nightly clippy --all-features -- --deny warnings
+
+    sed -i '0,/version/{s/^version = ".*"/version = "'$version'"/}' derive/Cargo.toml core/Cargo.toml cli/Cargo.toml
+
+    git add derive/Cargo.toml core/Cargo.toml cli/Cargo.toml
+    git commit --message "v$version"
+    git tag "$version"
+
+    for crate in derive core cli
+    do
+        cd $crate
+
+        cargo publish
+        sleep 5
+
+        cd -
+    done
+
+    git push
+    git push --tags
+}
+
+main $*
