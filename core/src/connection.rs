@@ -321,6 +321,38 @@ impl Connection {
     where
         M: crate::Model<'a>,
     {
+        self.insert::<M>(entity, None).map(|x| x.unwrap())
+    }
+
+    /**
+     * Try to insert a new entity in the database. On constraint violation error
+     * on `target` you can do an alternative action `action`.
+     *
+     * See [ON CONFLICT clause](https://www.postgresql.org/docs/current/sql-insert.html#SQL-ON-CONFLICT).
+     *
+     * Returns the entity with values from database (ie: default values).
+     */
+    pub fn upsert_one<'a, M>(
+        &self,
+        entity: &M::Entity,
+        target: &str,
+        action: &str,
+    ) -> crate::Result<Option<M::Entity>>
+    where
+        M: crate::Model<'a>,
+    {
+        let suffix = format!("on conflict {} do {}", target, action);
+        self.insert::<M>(entity, Some(suffix.as_str()))
+    }
+
+    fn insert<'a, M>(
+        &self,
+        entity: &M::Entity,
+        suffix: Option<&str>,
+    ) -> crate::Result<Option<M::Entity>>
+    where
+        M: crate::Model<'a>,
+    {
         use crate::Entity;
 
         let mut tuple = Vec::new();
@@ -338,16 +370,18 @@ impl Connection {
         }
 
         let query = format!(
-            "INSERT INTO {} ({}) VALUES({}) RETURNING {};",
+            "INSERT INTO {} ({}) VALUES({}) {} RETURNING {};",
             M::Structure::relation(),
             fields.join(", "),
             params.join(", "),
+            suffix.unwrap_or_default(),
             M::create_projection(),
         );
 
         let results = self.send_query(&query, tuple.as_slice())?;
+        let result = results.try_get(0).map(|x| M::create_entity(&x));
 
-        Ok(M::create_entity(&results.get(0)))
+        Ok(result)
     }
 
     /**

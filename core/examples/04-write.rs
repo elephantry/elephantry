@@ -74,10 +74,25 @@ fn insert(
         department_id: 3,
     };
 
-    let entity = elephantry.insert_one::<employee::Model>(&employee)?;
-    dbg!(&entity);
+    let inserted_entity =
+        elephantry.insert_one::<employee::Model>(&employee)?;
+    dbg!(&inserted_entity);
 
-    Ok(entity)
+    let upsert_nothing = elephantry.upsert_one::<employee::Model>(
+        &inserted_entity,
+        "(employee_id)",
+        "nothing",
+    )?;
+    dbg!(&upsert_nothing);
+
+    let upsert_update = elephantry.upsert_one::<employee::Model>(
+        &inserted_entity,
+        "(employee_id)",
+        "update set employee_id = default",
+    )?;
+    dbg!(&upsert_update);
+
+    Ok(inserted_entity)
 }
 
 fn update(
