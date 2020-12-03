@@ -169,7 +169,7 @@ impl<T: ToSql> ToSql for Vec<T> {
             data.pop();
         }
 
-        data.extend_from_slice("}\0".as_bytes());
+        data.extend_from_slice(b"}\0");
 
         Ok(Some(data))
     }
