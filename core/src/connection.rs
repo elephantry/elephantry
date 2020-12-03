@@ -588,7 +588,10 @@ impl Connection {
      * Otherwise, `None` is returned.
      */
     pub fn notifies(&self) -> Option<crate::pq::Notify> {
-        self.connection.lock().unwrap().notifies()
+        let connection = self.connection.lock().unwrap();
+
+        connection.consume_input().ok();
+        connection.notifies()
     }
 
     fn escape_literal(&self, str: &str) -> crate::Result<String> {
