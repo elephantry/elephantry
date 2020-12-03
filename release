@@ -11,7 +11,7 @@ main()
 
     sed -i '0,/version/{s/^version = ".*"/version = "'$version'"/}' derive/Cargo.toml core/Cargo.toml cli/Cargo.toml
 
-    git add derive/Cargo.toml core/Cargo.toml cli/Cargo.toml
+    git add RELEASES.md derive/Cargo.toml core/Cargo.toml cli/Cargo.toml
     git commit --message "v$version"
     git tag "$version"
 
