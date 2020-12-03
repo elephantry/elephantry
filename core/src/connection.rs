@@ -575,6 +575,15 @@ impl Connection {
     }
 
     /**
+     * Stop to listen on the given channel.
+     */
+    pub fn unlisten(&self, channel: &str) -> crate::Result<()> {
+        let query = format!("unlisten {}", channel);
+
+        self.execute(&query).map(|_| ())
+    }
+
+    /**
      * Check if a notification is pending. If so, the payload is returned.
      * Otherwise, `None` is returned.
      */
