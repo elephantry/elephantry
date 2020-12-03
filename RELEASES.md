@@ -1,3 +1,9 @@
+# Veriosn 1.3.0
+
+- Impl `Default` for `where::Builder`;
+- Adds `Connection::upset` function;
+- ADds `Connection::unlisten` function.
+
 # Version 1.2.0
 
 - Adds `Where` and `where::Builder` structs to dynamically create where clause;
