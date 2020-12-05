@@ -147,7 +147,7 @@ impl<T: ToSql> ToSql for Vec<T> {
 
         match self.get(0) {
             Some(data) => data.ty().to_array(),
-            None => crate::pq::types::TEXT_ARRAY,
+            None => crate::pq::types::UNKNOWN,
         }
     }
 
