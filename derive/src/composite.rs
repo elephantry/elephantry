@@ -39,6 +39,7 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
     let from_text_body = fields.iter().enumerate().map(|(x, field)| {
         let name = &field.ident;
         let ty = &field.ty;
+        crate::check_type(ty);
 
         quote::quote! {
             #name: <#ty>::from_text(ty, values[#x])?

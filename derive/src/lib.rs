@@ -101,3 +101,59 @@ pub fn enum_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
 
     r#enum::impl_macro(&ast)
 }
+
+pub(crate) fn check_type(ty: &syn::Type) {
+    #[allow(unused_mut)]
+    let mut features = Vec::new();
+    #[cfg(feature = "bit")]
+    features.push("bit");
+    #[cfg(feature = "date")]
+    features.push("date");
+    #[cfg(feature = "geo")]
+    features.push("geo");
+    #[cfg(feature = "json")]
+    features.push("json");
+    #[cfg(feature = "net")]
+    features.push("net");
+    #[cfg(feature = "numeric")]
+    features.push("numeric");
+    #[cfg(feature = "time")]
+    features.push("time");
+    #[cfg(feature = "uuid")]
+    features.push("uuid");
+    #[cfg(feature = "xml")]
+    features.push("xml");
+
+    let types = [
+        ("bit", "bit_vec::BitVec"),
+        ("bit", "u8"),
+        ("date", "chrono::DateTime"),
+        ("date", "chrono::NaiveDate"),
+        ("date", "chrono::NaiveDateTime"),
+        ("geo", "elephantry::Box"),
+        ("geo", "elephantry::Circle"),
+        ("geo", "elephantry::Line"),
+        ("geo", "elephantry::Path"),
+        ("geo", "elephantry::Point"),
+        ("geo", "elephantry::Polygon"),
+        ("geo", "elephantry::Segment"),
+        ("json", "serde_json::value::Value"),
+        ("net", "ipnetwork::IpNetwork"),
+        ("net", "macaddr::MacAddr6"),
+        ("net", "macaddr::MacAddr8"),
+        ("net", "std::net::IpAddr"),
+        ("numeric", "bigdecimal::BigDecimal"),
+        ("time", "elephantry::Time"),
+        ("time", "elephantry::TimeTz"),
+        ("uuid", "uuid::Uuid"),
+        ("xml", "xmltree::Element"),
+    ];
+
+    for (feature, feature_ty) in &types {
+        if !features.contains(feature) {
+            if ty == &syn::parse_str(feature_ty).unwrap() {
+                panic!("Enable '{}' feature to use the type `{}` in this entity", feature, feature_ty);
+            }
+        }
+    }
+}

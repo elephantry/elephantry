@@ -13,4 +13,19 @@ proc-macro = true
 
 [dependencies]
 quote = "1.0"
-syn = "1.0"
+
+[dependencies.syn]
+version = "1.0"
+features = ["extra-traits"]
+
+[features]
+default = []
+bit = []
+date = []
+geo = []
+json = []
+money = []
+numeric = []
+net = []
+uuid = []
+xml = []

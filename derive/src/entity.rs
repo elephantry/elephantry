@@ -31,6 +31,7 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
 
         let name = &field.ident;
         let ty = &field.ty;
+        crate::check_type(ty);
 
         if field_params.default {
             quote::quote! {
