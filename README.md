@@ -79,12 +79,14 @@ elephantry.delete_where("deleted = $1", &[&true])?;
 ## Projects using Elephantry
 
 - [todo](https://github.com/elephantry/todo) — Todo rocket example app;
-- [explain](https://github.com/sanpii/explain) — Transform postgresql explain to
-    a graph;
+- [explain](https://github.com/sanpii/explain) — A CLI tool transforms
+    postgresql explain to a graph;
 - [sav](https://github.com/sanpii/sav) — A simple CRUD application to archive
-    bought item waranty;
+    bought item waranty build with rocket;
 - [out of gafam](https://github.com/sanpii/out-of-gafam) — Generate RSS feed for
-    GAFAM (youtube, facebook, instagram and twitter).
+    GAFAM (youtube, facebook, instagram and twitter) using actix.
+- [captainstat](https://github.com/sanpii/captainstat) — Another simple
+    application builds with actix to display statitics.
 
 If you want to add your project here, please [create a pull
 request](https://github.com/elephantry/elephantry/pulls).
