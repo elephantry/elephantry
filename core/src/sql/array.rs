@@ -60,7 +60,7 @@ impl<T: crate::FromSql> crate::FromSql for Array<T> {
         _: &crate::pq::Type,
         raw: Option<&[u8]>,
     ) -> crate::Result<Self> {
-        let mut data = raw.unwrap();
+        let mut data = crate::not_null(raw)?;
 
         let ndim = data.read_i32::<byteorder::BigEndian>()?;
         if ndim < 0 {
