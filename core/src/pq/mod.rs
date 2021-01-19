@@ -9,12 +9,12 @@ pub type State = libpq::State;
 pub type Type = libpq::Type;
 
 pub(crate) trait ToArray {
-    fn to_array(self) -> Self;
+    fn to_array(&self) -> Self;
 }
 
 impl ToArray for Type {
-    fn to_array(self) -> Self {
-        match self {
+    fn to_array(&self) -> Self {
+        match *self {
             types::ACLITEM => types::ACLITEM_ARRAY,
             types::BIT => types::BIT_ARRAY,
             types::BOOL => types::BOOL_ARRAY,
@@ -84,7 +84,7 @@ impl ToArray for Type {
             types::VARCHAR => types::VARCHAR_ARRAY,
             types::XID => types::XID_ARRAY,
             types::XML => types::XML_ARRAY,
-            _ => self,
+            _ => self.clone(),
         }
     }
 }
