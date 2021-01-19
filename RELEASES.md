@@ -1,4 +1,8 @@
-# Veriosn 1.3.0
+# Verion 1.4.0
+
+- derive proc_macro check at compile time if required features are enable.
+
+# Verion 1.3.0
 
 - Impl `Default` for `where::Builder`;
 - Adds `Connection::upset` function;
