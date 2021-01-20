@@ -1,5 +1,6 @@
 # Verion 1.4.0
 
+- Adds `values` macro;
 - Adds `Rows::into_vec` function.
 
 # Verion 1.3.0

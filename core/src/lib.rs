@@ -127,6 +127,32 @@ macro_rules! pk {
     }}
 }
 
+/**
+ * Likes [`pk`] macro but for value argument, including [`update_by_pk`]
+ * function.
+ *
+ * [`pk`]: crate::pk
+ * [`update_by_pk`]: crate::Connection::update_by_pk
+ */
+#[macro_export]
+macro_rules! values {
+    ($($pk:ident),+ $(,)?) => {
+        $crate::values!($(
+            $pk => $pk,
+        )*)
+    };
+
+    ($($key:expr => $value:expr),+ $(,)?) => {{
+        let mut hash = std::collections::HashMap::new();
+
+        $(
+            hash.insert(stringify!($key).to_string(), &$value as &dyn $crate::ToSql);
+        )*
+
+        hash
+    }}
+}
+
 #[cfg(test)]
 mod test {
     static INIT: std::sync::Once = std::sync::Once::new();
