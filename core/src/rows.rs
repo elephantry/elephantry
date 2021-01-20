@@ -32,6 +32,13 @@ impl<E: crate::Entity> Rows<E> {
     pub fn try_get(&self, n: usize) -> Option<E> {
         self.result.try_get(n).map(|x| E::from(&x))
     }
+
+    /**
+     * Converts `Rows` into a vector.
+     */
+    pub fn into_vec(self) -> Vec<E> {
+        self.collect()
+    }
 }
 
 impl<E: crate::Entity> std::iter::Iterator for Rows<E> {

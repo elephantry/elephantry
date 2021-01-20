@@ -1,6 +1,6 @@
 # Verion 1.4.0
 
-- derive proc_macro check at compile time if required features are enable.
+- Adds `Rows::into_vec` function.
 
 # Verion 1.3.0
 
