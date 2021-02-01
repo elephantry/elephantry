@@ -3,7 +3,7 @@ use std::collections::HashMap;
 /**
  * Connections pool.
  */
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Pool {
     default: String,
     connections: HashMap<String, crate::Connection>,
