@@ -5,9 +5,9 @@ use std::convert::TryInto;
 /**
  * A connection to a database.
  */
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Connection {
-    connection: std::sync::Mutex<libpq::Connection>,
+    connection: std::sync::Arc<std::sync::Mutex<libpq::Connection>>,
 }
 
 extern "C" fn notice_processor(
@@ -42,7 +42,7 @@ impl Connection {
         }
 
         Ok(Self {
-            connection: std::sync::Mutex::new(connection),
+            connection: std::sync::Arc::new(std::sync::Mutex::new(connection)),
         })
     }
 
