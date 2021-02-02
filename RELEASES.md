@@ -1,3 +1,7 @@
+# Verion 1.5.0
+
+- Impl `Clone` for `Connection` and `Pool`.
+
 # Verion 1.4.0
 
 - Adds `values` macro;
