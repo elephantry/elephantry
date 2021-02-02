@@ -8,6 +8,7 @@ main()
 
     cargo +nightly fmt -- --check
     cargo +nightly clippy --all-features -- --deny warnings
+    cargo +nightly test --all-features
 
     sed -i '0,/version/{s/^version = ".*"/version = "'$version'"/}' derive/Cargo.toml core/Cargo.toml cli/Cargo.toml
 
