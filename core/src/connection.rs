@@ -284,7 +284,7 @@ impl Connection {
 
         let results = self.send_query(&query, params)?;
 
-        Ok(results.get(0).try_get("count")?)
+        results.get(0).try_get("count")
     }
 
     /**
@@ -306,7 +306,7 @@ impl Connection {
 
         let results = self.send_query(&query, params)?;
 
-        Ok(results.get(0).try_get("result")?)
+        results.get(0).try_get("result")
     }
 
     /**

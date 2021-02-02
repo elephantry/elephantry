@@ -48,8 +48,7 @@ where
     let mut end = end.to_sql()?.unwrap();
     end.pop(); // removes \0
 
-    let mut vec = Vec::new();
-    vec.push(start_char);
+    let mut vec = vec![start_char];
     vec.append(&mut start);
     vec.push(b',');
     vec.append(&mut end);

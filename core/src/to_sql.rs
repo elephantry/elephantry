@@ -152,9 +152,8 @@ impl<T: ToSql> ToSql for Vec<T> {
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
-        let mut data = Vec::new();
+        let mut data = vec![b'{'];
 
-        data.push(b'{');
         for x in self {
             let element = match x.to_sql()? {
                 Some(element) => element,

@@ -103,16 +103,16 @@ impl<T: crate::FromSql> crate::FromSql for Array<T> {
     }
 }
 
-impl<T: crate::FromSql> Into<Vec<T>> for Array<T> {
-    fn into(self) -> Vec<T> {
-        if self.ndim > 1 {
+impl<T: crate::FromSql> From<Array<T>> for Vec<T> {
+    fn from(array: Array<T>) -> Self {
+        if array.ndim > 1 {
             panic!(
                 "Unable to transform {} dimension array as vector",
-                self.ndim
+                array.ndim
             );
         }
 
-        self.collect()
+        array.collect()
     }
 }
 
