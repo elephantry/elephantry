@@ -128,7 +128,7 @@ where
     let mut fields = Vec::new();
 
     for column in &columns {
-        let name = column.name.to_snake();
+        let name = name_to_rust(&column);
         let ty = ty_to_rust(&column);
 
         fields.push(format!("    pub {}: {},", name, ty));
@@ -256,4 +256,28 @@ fn ty_to_rust(column: &elephantry::inspect::Column) -> String {
     }
 
     rty
+}
+
+fn name_to_rust(column: &elephantry::inspect::Column) -> String {
+    let mut name = column.name.to_snake();
+
+    if is_keyword(&name) {
+        name = format!("r#{}", name);
+    }
+
+    name
+}
+
+fn is_keyword(name: &str) -> bool {
+    static KEYWORDS: &'static [&'static str] = &[
+        "as", "break", "const", "continue", "crate", "else", "enum", "extern",
+        "false", "fn", "for", "if", "impl", "in", "let", "loop", "match", "mod",
+        "move", "mut", "pub", "ref", "return", "self", "Self", "static",
+        "struct", "super", "trait", "true", "type", "unsafe", "use", "where",
+        "while", "async", "await", "dyn", "abstract", "become", "box", "do",
+        "final", "macro", "override", "priv", "typeof", "unsized", "virtual",
+        "yield", "try",
+    ];
+
+    KEYWORDS.contains(&name)
 }
