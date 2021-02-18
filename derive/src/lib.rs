@@ -152,7 +152,10 @@ pub(crate) fn check_type(ty: &syn::Type) {
     for (feature, feature_ty) in &types {
         if !features.contains(feature) {
             if ty == &syn::parse_str(feature_ty).unwrap() {
-                panic!("Enable '{}' feature to use the type `{}` in this entity", feature, feature_ty);
+                panic!(
+                    "Enable '{}' feature to use the type `{}` in this entity",
+                    feature, feature_ty
+                );
             }
         }
     }

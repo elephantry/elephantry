@@ -249,7 +249,8 @@ fn ty_to_rust(column: &elephantry::inspect::Column) -> String {
 
     let mut rty = if matches!(ty.kind, elephantry::pq::types::Kind::Array(_)) {
         format!("Vec<{}>", ty.to_rust())
-    } else {
+    }
+    else {
         ty.to_rust()
     };
 
@@ -273,8 +274,8 @@ fn name_to_rust(column: &elephantry::inspect::Column) -> String {
 fn is_keyword(name: &str) -> bool {
     static KEYWORDS: &'static [&'static str] = &[
         "as", "break", "const", "continue", "crate", "else", "enum", "extern",
-        "false", "fn", "for", "if", "impl", "in", "let", "loop", "match", "mod",
-        "move", "mut", "pub", "ref", "return", "self", "Self", "static",
+        "false", "fn", "for", "if", "impl", "in", "let", "loop", "match",
+        "mod", "move", "mut", "pub", "ref", "return", "self", "Self", "static",
         "struct", "super", "trait", "true", "type", "unsafe", "use", "where",
         "while", "async", "await", "dyn", "abstract", "become", "box", "do",
         "final", "macro", "override", "priv", "typeof", "unsized", "virtual",

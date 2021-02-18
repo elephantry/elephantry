@@ -107,10 +107,13 @@ fn column_type(column: &elephantry::inspect::Column) -> String {
 
     let ty = if let Ok(ty) = elephantry::pq::types::Type::try_from(column.oid) {
         match ty.kind {
-            elephantry::pq::types::Kind::Array(_) => format!("{}[]", ty.name.trim_start_matches('_')),
+            elephantry::pq::types::Kind::Array(_) => {
+                format!("{}[]", ty.name.trim_start_matches('_'))
+            },
             _ => ty.name.to_string(),
         }
-    } else {
+    }
+    else {
         column.ty.clone()
     };
 

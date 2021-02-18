@@ -52,8 +52,7 @@ impl crate::FromSql for chrono::DateTime<chrono::offset::FixedOffset> {
         ty: &crate::pq::Type,
         raw: Option<&[u8]>,
     ) -> crate::Result<Self> {
-        let utc =
-            chrono::DateTime::<chrono::Utc>::from_binary(ty, raw)?;
+        let utc = chrono::DateTime::<chrono::Utc>::from_binary(ty, raw)?;
         Ok(utc.with_timezone(&chrono::offset::FixedOffset::east(0)))
     }
 }
@@ -81,8 +80,7 @@ impl crate::FromSql for chrono::DateTime<chrono::offset::Local> {
         ty: &crate::pq::Type,
         raw: Option<&[u8]>,
     ) -> crate::Result<Self> {
-        let utc =
-            chrono::DateTime::<chrono::Utc>::from_binary(ty, raw)?;
+        let utc = chrono::DateTime::<chrono::Utc>::from_binary(ty, raw)?;
         Ok(utc.with_timezone(&chrono::offset::Local))
     }
 }
