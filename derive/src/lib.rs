@@ -103,26 +103,26 @@ pub fn enum_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
 }
 
 pub(crate) fn check_type(ty: &syn::Type) {
-    #[allow(unused_mut)]
-    let mut features = Vec::new();
-    #[cfg(feature = "bit")]
-    features.push("bit");
-    #[cfg(feature = "date")]
-    features.push("date");
-    #[cfg(feature = "geo")]
-    features.push("geo");
-    #[cfg(feature = "json")]
-    features.push("json");
-    #[cfg(feature = "net")]
-    features.push("net");
-    #[cfg(feature = "numeric")]
-    features.push("numeric");
-    #[cfg(feature = "time")]
-    features.push("time");
-    #[cfg(feature = "uuid")]
-    features.push("uuid");
-    #[cfg(feature = "xml")]
-    features.push("xml");
+    let features = vec![
+        #[cfg(feature = "bit")]
+        "bit",
+        #[cfg(feature = "date")]
+        "date",
+        #[cfg(feature = "geo")]
+        "geo",
+        #[cfg(feature = "json")]
+        "json",
+        #[cfg(feature = "net")]
+        "net",
+        #[cfg(feature = "numeric")]
+        "numeric",
+        #[cfg(feature = "time")]
+        "time",
+        #[cfg(feature = "uuid")]
+        "uuid",
+        #[cfg(feature = "xml")]
+        "xml",
+    ];
 
     let types = [
         ("bit", "bit_vec::BitVec"),
@@ -150,13 +150,13 @@ pub(crate) fn check_type(ty: &syn::Type) {
     ];
 
     for (feature, feature_ty) in &types {
-        if !features.contains(feature) {
-            if ty == &syn::parse_str(feature_ty).unwrap() {
-                panic!(
-                    "Enable '{}' feature to use the type `{}` in this entity",
-                    feature, feature_ty
-                );
-            }
+        if !features.contains(feature)
+            && ty == &syn::parse_str(feature_ty).unwrap()
+        {
+            panic!(
+                "Enable '{}' feature to use the type `{}` in this entity",
+                feature, feature_ty
+            );
         }
     }
 }

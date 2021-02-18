@@ -272,7 +272,7 @@ fn name_to_rust(column: &elephantry::inspect::Column) -> String {
 }
 
 fn is_keyword(name: &str) -> bool {
-    static KEYWORDS: &'static [&'static str] = &[
+    static KEYWORDS: &[&str] = &[
         "as", "break", "const", "continue", "crate", "else", "enum", "extern",
         "false", "fn", "for", "if", "impl", "in", "let", "loop", "match",
         "mod", "move", "mut", "pub", "ref", "return", "self", "Self", "static",
