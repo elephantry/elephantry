@@ -245,10 +245,15 @@ fn ty_to_rust(column: &elephantry::inspect::Column) -> String {
 
     let ty = elephantry::pq::Type::try_from(column.oid).unwrap();
 
-    if column.is_notnull {
+    let mut rty = if matches!(ty.kind, elephantry::pq::types::Kind::Array(_)) {
+        format!("Vec<{}>", ty.to_rust())
+    } else {
         ty.to_rust()
+    };
+
+    if !column.is_notnull {
+        rty = format!("Option<{}>", rty);
     }
-    else {
-        format!("Option<{}>", ty.to_rust())
-    }
+
+    rty
 }

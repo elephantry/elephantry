@@ -87,7 +87,7 @@ pub fn relation(
         table.add_row(term_table::row::Row::new(vec![
             term_table::table_cell::TableCell::new(primary),
             term_table::table_cell::TableCell::new(&column.name),
-            term_table::table_cell::TableCell::new(&column.ty),
+            term_table::table_cell::TableCell::new(&column_type(&column)),
             term_table::table_cell::TableCell::new(
                 column.default.clone().unwrap_or_default(),
             ),
@@ -100,6 +100,21 @@ pub fn relation(
 
     println!("\nRelation {}.{}", schema, relation);
     println!("{}", table.render());
+}
+
+fn column_type(column: &elephantry::inspect::Column) -> String {
+    use std::convert::TryFrom;
+
+    let ty = if let Ok(ty) = elephantry::pq::types::Type::try_from(column.oid) {
+        match ty.kind {
+            elephantry::pq::types::Kind::Array(_) => format!("{}[]", ty.name.trim_start_matches('_')),
+            _ => ty.name.to_string(),
+        }
+    } else {
+        column.ty.clone()
+    };
+
+    ty
 }
 
 pub fn enums(connection: &elephantry::Connection, schema: &str) {
