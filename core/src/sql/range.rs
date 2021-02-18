@@ -173,16 +173,16 @@ mod test {
     #[cfg(feature = "date")]
     crate::sql_test!(
         tstzrange,
-        std::ops::Range<chrono::DateTime<chrono::offset::Utc>>,
+        std::ops::Range<chrono::DateTime<chrono::Utc>>,
         [(
             "'[1970-01-01 00:00:00+00, 2010-01-01 00:00:00+00)'",
-            chrono::DateTime::<chrono::offset::Utc>::from_utc(
+            chrono::DateTime::<chrono::Utc>::from_utc(
                 chrono::NaiveDate::from_ymd(1970, 01, 01).and_hms(0, 0, 0),
-                chrono::offset::Utc
+                chrono::Utc
             )
-                ..chrono::DateTime::<chrono::offset::Utc>::from_utc(
+                ..chrono::DateTime::<chrono::Utc>::from_utc(
                     chrono::NaiveDate::from_ymd(2010, 01, 01).and_hms(0, 0, 0),
-                    chrono::offset::Utc
+                    chrono::Utc
                 )
         )]
     );

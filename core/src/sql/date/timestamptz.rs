@@ -1,4 +1,4 @@
-impl crate::ToSql for chrono::DateTime<chrono::offset::Utc> {
+impl crate::ToSql for chrono::DateTime<chrono::Utc> {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::TIMESTAMPTZ
     }
@@ -8,7 +8,7 @@ impl crate::ToSql for chrono::DateTime<chrono::offset::Utc> {
     }
 }
 
-impl crate::FromSql for chrono::DateTime<chrono::offset::Utc> {
+impl crate::FromSql for chrono::DateTime<chrono::Utc> {
     fn from_text(
         ty: &crate::pq::Type,
         raw: Option<&str>,
@@ -17,7 +17,7 @@ impl crate::FromSql for chrono::DateTime<chrono::offset::Utc> {
             ty, raw,
         )?;
 
-        Ok(ts.with_timezone(&chrono::offset::Utc))
+        Ok(ts.with_timezone(&chrono::Utc))
     }
 
     fn from_binary(
@@ -25,7 +25,7 @@ impl crate::FromSql for chrono::DateTime<chrono::offset::Utc> {
         raw: Option<&[u8]>,
     ) -> crate::Result<Self> {
         let naive = chrono::NaiveDateTime::from_binary(ty, raw)?;
-        Ok(chrono::DateTime::from_utc(naive, chrono::offset::Utc))
+        Ok(chrono::DateTime::from_utc(naive, chrono::Utc))
     }
 }
 
@@ -53,7 +53,7 @@ impl crate::FromSql for chrono::DateTime<chrono::offset::FixedOffset> {
         raw: Option<&[u8]>,
     ) -> crate::Result<Self> {
         let utc =
-            chrono::DateTime::<chrono::offset::Utc>::from_binary(ty, raw)?;
+            chrono::DateTime::<chrono::Utc>::from_binary(ty, raw)?;
         Ok(utc.with_timezone(&chrono::offset::FixedOffset::east(0)))
     }
 }
@@ -73,7 +73,7 @@ impl crate::FromSql for chrono::DateTime<chrono::offset::Local> {
         ty: &crate::pq::Type,
         raw: Option<&str>,
     ) -> crate::Result<Self> {
-        let utc = chrono::DateTime::<chrono::offset::Utc>::from_text(ty, raw)?;
+        let utc = chrono::DateTime::<chrono::Utc>::from_text(ty, raw)?;
         Ok(utc.with_timezone(&chrono::offset::Local))
     }
 
@@ -82,18 +82,18 @@ impl crate::FromSql for chrono::DateTime<chrono::offset::Local> {
         raw: Option<&[u8]>,
     ) -> crate::Result<Self> {
         let utc =
-            chrono::DateTime::<chrono::offset::Utc>::from_binary(ty, raw)?;
+            chrono::DateTime::<chrono::Utc>::from_binary(ty, raw)?;
         Ok(utc.with_timezone(&chrono::offset::Local))
     }
 }
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(timestamptz, chrono::DateTime<chrono::offset::Utc>, [(
+    crate::sql_test!(timestamptz, chrono::DateTime<chrono::Utc>, [(
         "'1970-01-01 00:00:00+00'",
-        chrono::DateTime::<chrono::offset::Utc>::from_utc(
+        chrono::DateTime::<chrono::Utc>::from_utc(
             chrono::NaiveDateTime::from_timestamp(0, 0),
-            chrono::offset::Utc
+            chrono::Utc
         ),
     )]);
 }
