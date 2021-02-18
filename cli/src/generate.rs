@@ -8,6 +8,8 @@ pub fn schema(
 ) -> crate::Result<()> {
     let relations = elephantry::inspect::schema(connection, schema);
 
+    add_mod(&format!("{}/model", prefix_dir), &schema)?;
+
     for r in relations {
         relation(connection, prefix_dir, schema, &r.name)?;
     }
@@ -22,7 +24,7 @@ pub fn relation(
     relation: &str,
 ) -> crate::Result<()> {
     let dir = format!("{}/model/{}", prefix_dir, schema);
-    std::fs::create_dir_all(&dir)?;
+    add_mod(&dir, &relation)?;
 
     let filename = format!("{}/{}.rs", dir, relation);
     let mut file = std::io::BufWriter::new(std::fs::File::create(filename)?);
@@ -97,7 +99,7 @@ pub fn entity(
     relation: &str,
 ) -> crate::Result<()> {
     let dir = format!("{}/model/{}", prefix_dir, schema);
-    std::fs::create_dir_all(&dir)?;
+    add_mod(&dir, &relation)?;
 
     let filename = format!("{}/{}.rs", dir, relation);
     let mut file = std::io::BufWriter::new(std::fs::File::create(filename)?);
@@ -280,4 +282,17 @@ fn is_keyword(name: &str) -> bool {
     ];
 
     KEYWORDS.contains(&name)
+}
+
+fn add_mod(dir: &str, name: &str) -> crate::Result<()> {
+    std::fs::create_dir_all(&dir)?;
+
+    let mod_filename = format!("{}/mod.rs", dir);
+    let mut file = std::fs::OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(&mod_filename)?;
+    file.write_all(format!("mod {};\n", name).as_bytes())?;
+
+    Ok(())
 }
