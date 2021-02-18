@@ -84,6 +84,7 @@ order by name asc;
 #[derive(Debug, elephantry_derive::Entity)]
 #[entity(internal)]
 pub struct Column {
+    #[elephantry(default)]
     pub is_primary: bool,
     pub name: String,
     pub oid: crate::pq::Oid,
