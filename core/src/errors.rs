@@ -1,106 +1,50 @@
 pub type Result<T> = std::result::Result<T, crate::Error>;
 
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
 pub enum Error {
     /** An error in async context. */
+    #[error("Async error: {0}")]
     Async(String),
     /** Connection error */
+    #[error("{message}")]
     Connect { dsn: String, message: String },
     /** Escaping error */
+    #[error("Unable to escape '{0}': {1}")]
     Escape(String, String),
     /** Unable to transform a SQL field in rust value */
+    #[error("Invalid {rust_type} value: {value}")]
     FromSql {
         pg_type: crate::pq::Type,
         rust_type: String,
         value: String,
     },
     /** Input/Output error */
-    Io(std::io::Error),
+    #[error("I/O error: {0}")]
+    Io(#[from] std::io::Error),
     /** Our result set require an extra field to build the entity */
+    #[error("Missing field {0}")]
     MissingField(String),
     /** Fetch a null value in a non-option type */
+    #[error("Try to retreive null field as non-option type")]
     NotNull,
     /** Incomplete primary key */
+    #[error("Invalid primary key")]
     PrimaryKey,
     /** SQL error */
+    #[error("{}", .0.error_message().unwrap_or_else(|| "Unknow SQL error".to_string()))]
     Sql(crate::pq::Result),
     /** Unable to transform a rust value to SQL */
+    #[error("Invalid {rust_type} value: '{}'", message.clone().unwrap_or_else(|| "unknow".to_string()))]
     ToSql {
         pg_type: crate::pq::Type,
         rust_type: String,
         message: Option<String>,
     },
     /** UTF8 error */
-    Utf8(std::string::FromUtf8Error),
+    #[error("Invalid utf8 value: {0}")]
+    Utf8(#[from] std::string::FromUtf8Error),
     /** XML error */
     #[cfg(feature = "xml")]
-    Xml(xmltree::Error),
-}
-
-impl std::error::Error for Error {
-}
-
-impl std::fmt::Display for Error {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let s = match self {
-            Error::Async(message) => format!("Async error: {}", message),
-            Error::Connect {
-                message, ..
-            } => message.clone(),
-            Error::Escape(param, error) => {
-                format!("Unable to escape '{}': {}", param, error)
-            },
-            Error::Sql(result) => {
-                result
-                    .error_message()
-                    .unwrap_or_else(|| "Unknow SQL error".to_string())
-            },
-            Error::MissingField(field) => format!("Missing field {}", field),
-            Error::NotNull => {
-                "Try to retreive null field as non-option type".to_string()
-            },
-            Error::Io(err) => format!("I/O error: {}", err),
-            Error::FromSql {
-                rust_type,
-                value,
-                ..
-            } => format!("Invalid {} value: {}", rust_type, value),
-            Error::PrimaryKey => "Invalid primary key".to_string(),
-            Error::ToSql {
-                rust_type,
-                message,
-                ..
-            } => {
-                format!(
-                    "Invalid {} value: '{}'",
-                    rust_type,
-                    message.clone().unwrap_or_else(|| "unknow".to_string())
-                )
-            },
-            Error::Utf8(err) => format!("Invalid utf8 value: {}", err),
-            #[cfg(feature = "xml")]
-            Error::Xml(err) => format!("Xml error: {}", err),
-        };
-
-        write!(f, "{}", s)
-    }
-}
-
-impl From<std::string::FromUtf8Error> for Error {
-    fn from(err: std::string::FromUtf8Error) -> Self {
-        Error::Utf8(err)
-    }
-}
-
-impl From<std::io::Error> for Error {
-    fn from(err: std::io::Error) -> Self {
-        Error::Io(err)
-    }
-}
-
-#[cfg(feature = "xml")]
-impl From<xmltree::Error> for Error {
-    fn from(err: xmltree::Error) -> Self {
-        Error::Xml(err)
-    }
+    #[error("Xml error: {0}")]
+    Xml(#[from] xmltree::Error),
 }
