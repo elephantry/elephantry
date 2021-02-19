@@ -42,8 +42,8 @@ version = "1.0.0"
 optional = true
 
 [dependencies.elephantry-derive]
-path = "../derive"
 version = "1.6"
+path = "../derive"
 
 [dependencies.geo-types]
 version = "0.7"
