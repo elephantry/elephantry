@@ -1,6 +1,6 @@
 [package]
 name = "elephantry-cli"
-version = "1.6.0"
+version = "1.6.1"
 description = "elephantry cli tool"
 repository = "https://github.com/elephantry/elephantry/tree/master/cli"
 homepage = "https://elephantry.github.io"
