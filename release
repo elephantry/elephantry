@@ -15,21 +15,28 @@ main()
     sed -i -r -e '/dependencies\.elephantry/ {n; s/^version = ".*"/version = "'$short_version'"/}' cli/Cargo.toml core/Cargo.toml
 
     git add RELEASES.md derive/Cargo.toml core/Cargo.toml cli/Cargo.toml
-    git commit --message "v$version"
-    git tag "$version"
+    git diff
 
-    for crate in derive core cli
-    do
-        cd $crate
+    read -p "Are you sure? [yN]" -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]
+    then
+        git commit --message "v$version"
+        git tag "$version"
 
-        cargo publish
-        sleep 5
+        for crate in derive core cli
+        do
+            cd $crate
 
-        cd -
-    done
+            cargo publish
+            sleep 5
 
-    git push
-    git push --tags
+            cd -
+        done
+
+        git push
+        git push --tags
+    fi
 }
 
 main $*
