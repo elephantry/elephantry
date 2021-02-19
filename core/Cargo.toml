@@ -2,7 +2,7 @@
 name = "elephantry"
 description = "Object model manager for PostgreSQL"
 repository = "https://github.com/elephantry/elephantry"
-homepage = "https://elephantry.github.io/site"
+homepage = "https://elephantry.github.io"
 license = "MIT"
 version = "1.6.0"
 authors = ["Sanpi <sanpi@homecomputing.fr>"]

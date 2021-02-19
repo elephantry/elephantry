@@ -2,7 +2,7 @@
 name = "elephantry-derive"
 description = "Macro implementation of #[derive(Entity)]"
 repository = "https://github.com/elephantry/elephantry/tree/master/derive"
-homepage = "https://elephantry.github.io/site"
+homepage = "https://elephantry.github.io"
 license = "MIT"
 version = "1.6.0"
 authors = ["Sanpi <sanpi@homecomputing.fr>"]
