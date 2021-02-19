@@ -15,6 +15,15 @@ main()
     sed -i -r -e '/dependencies\.elephantry/ {n; s/^version = ".*"/version = "'$short_version'"/}' cli/Cargo.toml core/Cargo.toml
 
     git add RELEASES.md derive/Cargo.toml core/Cargo.toml cli/Cargo.toml
+    git diff --cached
+
+    read -p "Are you sure? [yN]" -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]
+    then
+        return 0
+    fi
+
     git commit --message "v$version"
     git tag "$version"
 
