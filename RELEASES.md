@@ -1,3 +1,16 @@
+# Verion 1.6.0
+
+- `elephantry::inspect` functions will returns `crate::Result` in next major
+    version;
+- Checks features at compilation time for `Entity` derive.
+
+## Cli
+
+- Display error if schema/relation doesn’t exist;
+- Correctly handles array types;
+- Prefix reserved rust keyword;
+- Generates mod.rs files.
+
 # Verion 1.5.0
 
 - Impl `Clone` for `Connection` and `Pool`.
