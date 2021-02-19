@@ -97,6 +97,7 @@ features = ["attributes"]
 
 [features]
 default = []
+v2 = []
 bit = ["bit-vec", "elephantry-derive/bit"]
 date = ["chrono", "elephantry-derive/date"]
 geo = ["geo-types", "elephantry-derive/geo"]

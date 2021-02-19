@@ -1,3 +1,5 @@
+#![allow(unused_variables)]
+
 #[derive(Debug, elephantry_derive::Entity)]
 #[entity(internal)]
 pub struct Schema {
@@ -7,10 +9,7 @@ pub struct Schema {
     pub comment: String,
 }
 
-/**
- * Retreive schemas of the connected database.
- */
-pub fn database(connection: &crate::Connection) -> Vec<Schema> {
+fn _database(connection: &crate::Connection) -> crate::Result<Vec<Schema>> {
     connection
         .query(
             r#"
@@ -29,8 +28,27 @@ order by 1;
 "#,
             &[],
         )
-        .unwrap()
-        .collect()
+        .map(|x| x.collect())
+}
+
+/**
+ * Retreive schemas of the connected database.
+ */
+#[deprecated(
+    since = "1.6",
+    note = "enable the v2 feature to use the new signature."
+)]
+#[cfg(not(feature = "v2"))]
+pub fn database(connection: &crate::Connection) -> Vec<Schema> {
+    _database(&connection).unwrap()
+}
+
+/**
+ * Retreive schemas of the connected database.
+ */
+#[cfg(feature = "v2")]
+pub fn database(connection: &crate::Connection) -> crate::Result<Vec<Schema>> {
+    _database(connection)
 }
 
 #[derive(Debug, elephantry_derive::Entity)]
@@ -42,20 +60,15 @@ pub struct Relation {
     pub comment: Option<String>,
 }
 
-/**
- * Retreive relations (ie: tables, views, …) of `schema`.
- */
-pub fn schema(connection: &crate::Connection, schema: &str) -> Vec<Relation> {
+pub fn _schema(
+    connection: &crate::Connection,
+    schema: &str,
+) -> crate::Result<Vec<Relation>> {
+    let oid = schema_oid(connection, &schema)?;
+
     connection
         .query(
             r#"
-with schema as(
-    select
-        s.oid as oid
-    from
-        pg_catalog.pg_namespace s
-    where s.nspname = $1
-)
 select
     cl.relname      as "name",
     case
@@ -71,14 +84,36 @@ from
     pg_catalog.pg_class cl
         left join pg_catalog.pg_description des on
             cl.oid = des.objoid and des.objsubid = 0
-join schema on schema.oid = cl.relnamespace
 where relkind in ('r', 'v', 'm', 'f')
+and cl.relnamespace = $*
 order by name asc;
 "#,
-            &[&schema],
+            &[&oid],
         )
-        .unwrap()
-        .collect()
+        .map(|x| x.collect())
+}
+
+/**
+ * Retreive relations (ie: tables, views, …) of `schema`.
+ */
+#[deprecated(
+    since = "1.6",
+    note = "enable the v2 feature to use the new signature."
+)]
+#[cfg(not(feature = "v2"))]
+pub fn schema(connection: &crate::Connection, schema: &str) -> Vec<Relation> {
+    _schema(&connection, schema).unwrap()
+}
+
+/**
+ * Retreive relations (ie: tables, views, …) of `schema`.
+ */
+#[cfg(feature = "v2")]
+pub fn schema(
+    connection: &crate::Connection,
+    schema: &str,
+) -> crate::Result<Vec<Relation>> {
+    _schema(&connection, schema)
 }
 
 #[derive(Debug, elephantry_derive::Entity)]
@@ -94,30 +129,40 @@ pub struct Column {
     pub comment: Option<String>,
 }
 
-/**
- * Retreive columns of the `schema.relation` relation.
- */
-pub fn relation(
+pub fn _relation(
     connection: &crate::Connection,
     schema: &str,
     relation: &str,
-) -> Vec<Column> {
-    connection
-        .query(
+) -> crate::Result<Vec<Column>> {
+    let oid = connection
+        .query_one::<i32>(
             r#"
-with relation as(
-    select
-    c.oid as oid
+select c.oid as oid
     from
         pg_catalog.pg_class c
             left join pg_catalog.pg_namespace n on n.oid = c.relnamespace
-    where
-    n.nspname = $1
-    and c.relname = $2
-)
+    where n.nspname = $1
+        and c.relname = $2
+    "#,
+            &[&schema, &relation],
+        )
+        .map_err(|e| {
+            #[cfg(feature = "v2")]
+            return crate::Error::Inspect(format!(
+                "Unknow relation {}.{}",
+                schema, relation
+            ));
+
+            #[cfg(not(feature = "v2"))]
+            return e;
+        })?;
+
+    connection
+        .query(
+            r#"
 select
     att.attnum = any(ind.indkey) as "is_primary",
-    att.attname      as "name",
+    att.attname as "name",
     typ.oid as "oid",
     case
         when name.nspname = 'pg_catalog' then typ.typname
@@ -128,7 +173,6 @@ select
     dsc.description as "comment"
 from
   pg_catalog.pg_attribute att
-    join relation on att.attrelid = relation.oid
     join pg_catalog.pg_type  typ  on att.atttypid = typ.oid
     join pg_catalog.pg_class cla  on att.attrelid = cla.oid
     join pg_catalog.pg_namespace clns on cla.relnamespace = clns.oid
@@ -139,13 +183,41 @@ from
 where
     att.attnum > 0
     and not att.attisdropped
+    and att.attrelid = $*
 order by
     att.attnum
 "#,
-            &[&schema, &relation],
+            &[&oid],
         )
-        .unwrap()
-        .collect()
+        .map(|x| x.collect())
+}
+
+/**
+ * Retreive columns of the `schema.relation` relation.
+ */
+#[deprecated(
+    since = "1.6",
+    note = "enable the v2 feature to use the new signature."
+)]
+#[cfg(not(feature = "v2"))]
+pub fn relation(
+    connection: &crate::Connection,
+    schema: &str,
+    relation: &str,
+) -> Vec<Column> {
+    _relation(connection, schema, relation).unwrap()
+}
+
+/**
+ * Retreive columns of the `schema.relation` relation.
+ */
+#[cfg(feature = "v2")]
+pub fn relation(
+    connection: &crate::Connection,
+    schema: &str,
+    relation: &str,
+) -> crate::Result<Vec<Column>> {
+    _relation(connection, schema, relation)
 }
 
 #[derive(Debug, elephantry_derive::Entity)]
@@ -159,8 +231,24 @@ pub struct Enum {
 /**
  * Retreive enumeration for `schema`.
  */
+#[deprecated(
+    since = "1.6",
+    note = "enable the v2 feature to use the new signature."
+)]
+#[cfg(not(feature = "v2"))]
 pub fn enums(connection: &crate::Connection, schema: &str) -> Vec<Enum> {
-    types(connection, schema, 'e').collect()
+    types(connection, schema, 'e').unwrap().collect()
+}
+
+/**
+ * Retreive enumeration for `schema`.
+ */
+#[cfg(feature = "v2")]
+pub fn enums(
+    connection: &crate::Connection,
+    schema: &str,
+) -> crate::Result<Vec<Enum>> {
+    types(connection, schema, 'e').map(|x| x.collect())
 }
 
 #[derive(Debug, elephantry_derive::Entity)]
@@ -173,8 +261,24 @@ pub struct Domain {
 /**
  * Retreive domain for `schema`.
  */
+#[deprecated(
+    since = "1.6",
+    note = "enable the v2 feature to use the new signature."
+)]
+#[cfg(not(feature = "v2"))]
 pub fn domains(connection: &crate::Connection, schema: &str) -> Vec<Enum> {
-    types(connection, schema, 'd').collect()
+    types(connection, schema, 'd').unwrap().collect()
+}
+
+/**
+ * Retreive domain for `schema`.
+ */
+#[cfg(feature = "v2")]
+pub fn domains(
+    connection: &crate::Connection,
+    schema: &str,
+) -> crate::Result<Vec<Enum>> {
+    types(connection, schema, 'd').map(|x| x.collect())
 }
 
 #[derive(Debug, elephantry_derive::Entity)]
@@ -186,27 +290,50 @@ pub struct Composite {
     pub description: Option<String>,
 }
 
+pub fn _composites(
+    connection: &crate::Connection,
+    schema: &str,
+) -> crate::Result<Vec<Composite>> {
+    let mut composites =
+        types(connection, schema, 'c')?.collect::<Vec<Composite>>();
+
+    for composite in &mut composites {
+        composite.fields = composite_fields(connection, &composite.name)?;
+    }
+
+    Ok(composites)
+}
+
 /**
  * Retreive composite type for `schema`.
  */
+#[deprecated(
+    since = "1.6",
+    note = "enable the v2 feature to use the new signature."
+)]
+#[cfg(not(feature = "v2"))]
 pub fn composites(
     connection: &crate::Connection,
     schema: &str,
 ) -> Vec<Composite> {
-    let mut composites =
-        types(connection, schema, 'c').collect::<Vec<Composite>>();
+    _composites(connection, schema).unwrap()
+}
 
-    for composite in &mut composites {
-        composite.fields = composite_fields(connection, &composite.name);
-    }
-
-    composites
+/**
+ * Retreive composite type for `schema`.
+ */
+#[cfg(feature = "v2")]
+pub fn composites(
+    connection: &crate::Connection,
+    schema: &str,
+) -> crate::Result<Vec<Composite>> {
+    _composites(connection, schema)
 }
 
 fn composite_fields(
     connection: &crate::Connection,
     composite: &str,
-) -> Vec<(String, String)> {
+) -> crate::Result<Vec<(String, String)>> {
     connection
         .query(
             r#"
@@ -220,15 +347,16 @@ select row(a.attname, pg_catalog.format_type(a.atttypid, a.atttypmod))
         "#,
             &[&composite],
         )
-        .unwrap()
-        .collect()
+        .map(|x| x.collect())
 }
 
 fn types<E: crate::Entity>(
     connection: &crate::Connection,
     schema: &str,
     typtype: char,
-) -> crate::Rows<E> {
+) -> crate::Result<crate::Rows<E>> {
+    schema_oid(connection, schema)?;
+
     connection
         .query(
             r#"
@@ -253,5 +381,28 @@ order by 1;
     "#,
             &[&typtype, &schema],
         )
-        .unwrap()
+}
+
+fn schema_oid(
+    connection: &crate::Connection,
+    name: &str,
+) -> crate::Result<i32> {
+    connection
+        .query_one::<i32>(
+            r#"
+select
+    s.oid as oid
+from
+    pg_catalog.pg_namespace s
+where s.nspname = $*
+    "#,
+            &[&name],
+        )
+        .map_err(|e| {
+            #[cfg(feature = "v2")]
+            return crate::Error::Inspect(format!("Unknow schema {}", name));
+
+            #[cfg(not(feature = "v2"))]
+            return e;
+        })
 }

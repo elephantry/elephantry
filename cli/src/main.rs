@@ -125,26 +125,24 @@ fn main() -> Result<()> {
         Opt::GenerateSchema {
             prefix_dir,
             schema,
-        } => generate::schema(&connection, &prefix_dir, &schema)?,
+        } => generate::schema(&connection, &prefix_dir, &schema),
         Opt::GenerateRelation {
             prefix_dir,
             schema,
             relation,
-        } => generate::relation(&connection, &prefix_dir, &schema, &relation)?,
+        } => generate::relation(&connection, &prefix_dir, &schema, &relation),
         Opt::GenerateEntity {
             prefix_dir,
             schema,
             relation,
-        } => generate::entity(&connection, &prefix_dir, &schema, &relation)?,
+        } => generate::entity(&connection, &prefix_dir, &schema, &relation),
         Opt::GenerateEnums {
             prefix_dir,
             schema,
-        } => generate::enums(&connection, &prefix_dir, &schema)?,
+        } => generate::enums(&connection, &prefix_dir, &schema),
         Opt::GenerateComposites {
             prefix_dir,
             schema,
-        } => generate::composites(&connection, &prefix_dir, &schema)?,
+        } => generate::composites(&connection, &prefix_dir, &schema),
     }
-
-    Ok(())
 }

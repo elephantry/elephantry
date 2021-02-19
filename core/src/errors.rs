@@ -18,6 +18,10 @@ pub enum Error {
         rust_type: String,
         value: String,
     },
+    /** Inspector error */
+    #[cfg(feature = "v2")]
+    #[error("{0}")]
+    Inspect(String),
     /** Input/Output error */
     #[error("I/O error: {0}")]
     Io(#[from] std::io::Error),

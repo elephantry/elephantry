@@ -1,11 +1,7 @@
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
 pub enum Error {
-    Io(std::io::Error),
-    MissingRelation(String),
-}
-
-impl From<std::io::Error> for Error {
-    fn from(error: std::io::Error) -> Self {
-        Self::Io(error)
-    }
+    #[error("{0}")]
+    Sql(#[from] elephantry::Error),
+    #[error("{0}")]
+    Io(#[from] std::io::Error),
 }

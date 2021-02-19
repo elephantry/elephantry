@@ -1,4 +1,4 @@
-pub fn database(connection: &elephantry::Connection) {
+pub fn database(connection: &elephantry::Connection) -> crate::Result<()> {
     let mut table = term_table::Table::new();
     table.style = term_table::TableStyle::rounded();
 
@@ -9,7 +9,7 @@ pub fn database(connection: &elephantry::Connection) {
         term_table::table_cell::TableCell::new("comment"),
     ]));
 
-    for schema in elephantry::inspect::database(connection).iter() {
+    for schema in elephantry::inspect::database(connection)?.iter() {
         table.add_row(term_table::row::Row::new(vec![
             term_table::table_cell::TableCell::new(&schema.name),
             term_table::table_cell::TableCell::new(&schema.oid),
@@ -19,10 +19,15 @@ pub fn database(connection: &elephantry::Connection) {
     }
 
     println!("{}", table.render());
+
+    Ok(())
 }
 
-pub fn schema(connection: &elephantry::Connection, schema: &str) {
-    let relations = elephantry::inspect::schema(connection, schema);
+pub fn schema(
+    connection: &elephantry::Connection,
+    schema: &str,
+) -> crate::Result<()> {
+    let relations = elephantry::inspect::schema(connection, schema)?;
     let mut table = term_table::Table::new();
     table.style = term_table::TableStyle::rounded();
 
@@ -50,13 +55,15 @@ pub fn schema(connection: &elephantry::Connection, schema: &str) {
         schema
     );
     println!("{}", table.render());
+
+    Ok(())
 }
 
 pub fn relation(
     connection: &elephantry::Connection,
     schema: &str,
     relation: &str,
-) {
+) -> crate::Result<()> {
     let mut table = term_table::Table::new();
     table.style = term_table::TableStyle::rounded();
 
@@ -69,7 +76,7 @@ pub fn relation(
         term_table::table_cell::TableCell::new("comment"),
     ]));
 
-    for column in elephantry::inspect::relation(connection, schema, relation) {
+    for column in elephantry::inspect::relation(connection, schema, relation)? {
         let primary = if column.is_primary {
             "*".to_string()
         }
@@ -100,6 +107,8 @@ pub fn relation(
 
     println!("\nRelation {}.{}", schema, relation);
     println!("{}", table.render());
+
+    Ok(())
 }
 
 fn column_type(column: &elephantry::inspect::Column) -> String {
@@ -120,8 +129,11 @@ fn column_type(column: &elephantry::inspect::Column) -> String {
     ty
 }
 
-pub fn enums(connection: &elephantry::Connection, schema: &str) {
-    let enumerations = elephantry::inspect::enums(connection, schema);
+pub fn enums(
+    connection: &elephantry::Connection,
+    schema: &str,
+) -> crate::Result<()> {
+    let enumerations = elephantry::inspect::enums(connection, schema)?;
 
     let mut table = term_table::Table::new();
     table.style = term_table::TableStyle::rounded();
@@ -151,10 +163,15 @@ pub fn enums(connection: &elephantry::Connection, schema: &str) {
         schema
     );
     println!("{}", table.render());
+
+    Ok(())
 }
 
-pub fn domains(connection: &elephantry::Connection, schema: &str) {
-    let domains = elephantry::inspect::domains(connection, schema);
+pub fn domains(
+    connection: &elephantry::Connection,
+    schema: &str,
+) -> crate::Result<()> {
+    let domains = elephantry::inspect::domains(connection, schema)?;
 
     let mut table = term_table::Table::new();
     table.style = term_table::TableStyle::rounded();
@@ -179,10 +196,15 @@ pub fn domains(connection: &elephantry::Connection, schema: &str) {
         schema
     );
     println!("{}", table.render());
+
+    Ok(())
 }
 
-pub fn composites(connection: &elephantry::Connection, schema: &str) {
-    let composites = elephantry::inspect::composites(connection, schema);
+pub fn composites(
+    connection: &elephantry::Connection,
+    schema: &str,
+) -> crate::Result<()> {
+    let composites = elephantry::inspect::composites(connection, schema)?;
 
     let mut table = term_table::Table::new();
     table.style = term_table::TableStyle::rounded();
@@ -216,4 +238,6 @@ pub fn composites(connection: &elephantry::Connection, schema: &str) {
         schema
     );
     println!("{}", table.render());
+
+    Ok(())
 }
