@@ -107,7 +107,8 @@ numeric = ["bigdecimal", "elephantry-derive/numeric"]
 net = ["ipnetwork", "macaddr", "elephantry-derive/net"]
 rocket = ["r2d2", "rocket_contrib"]
 serde-support = ["serde", "serde_derive"]
-#uuid = ["uuid", "elephantry-derive/uuid"]
+# @see https://github.com/rust-lang/cargo/issues/5565
+#uuid = ["dep:uuid", "elephantry-derive/uuid"]
 xml = ["xmltree", "elephantry-derive/xml"]
 
 [[example]]
