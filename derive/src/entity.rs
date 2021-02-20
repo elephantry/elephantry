@@ -82,6 +82,7 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
     };
 
     let gen = quote::quote! {
+        #[automatically_derived]
         impl #elephantry::Entity for #name
         {
             fn from(tuple: &#elephantry::Tuple<'_>) -> Self

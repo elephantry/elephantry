@@ -56,6 +56,7 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
     });
 
     let gen = quote::quote! {
+        #[automatically_derived]
         impl #elephantry::Composite for #name {
             fn name() -> &'static str {
                 stringify!(#name)
