@@ -1,5 +1,5 @@
 #[derive(Debug)]
-struct Event {
+struct Event<T: elephantry::FromSql + elephantry::ToSql> {
     #[cfg(feature = "uuid")]
     uuid: Option<uuid::Uuid>,
     #[cfg(not(feature = "uuid"))]
@@ -14,9 +14,10 @@ struct Event {
     browser: serde_json::Value,
     #[cfg(not(feature = "json"))]
     browser: String,
+    generic: Option<T>,
 }
 
-impl elephantry::Entity for Event {
+impl<T: elephantry::FromSql + elephantry::ToSql> elephantry::Entity for Event<T> {
     fn from(tuple: &elephantry::Tuple) -> Self {
         Self {
             uuid: tuple.get("uuid"),
@@ -24,6 +25,7 @@ impl elephantry::Entity for Event {
             visitor_id: tuple.get("visitor_id"),
             properties: tuple.get("properties"),
             browser: tuple.get("browser"),
+            generic: tuple.get("generic"),
         }
     }
 
@@ -55,7 +57,7 @@ struct EventModel<'a> {
 }
 
 impl<'a> elephantry::Model<'a> for EventModel<'a> {
-    type Entity = Event;
+    type Entity = Event<String>;
     type Structure = EventStructure;
 
     fn new(connection: &'a elephantry::Connection) -> Self {
@@ -75,7 +77,7 @@ impl<'a> EventModel<'a> {
 }
 
 #[derive(Debug)]
-struct EventExtra {
+struct EventExtra<T> {
     #[cfg(feature = "uuid")]
     uuid: Option<uuid::Uuid>,
     #[cfg(not(feature = "uuid"))]
@@ -88,14 +90,15 @@ struct EventExtra {
     properties: String,
     #[cfg(feature = "json")]
     browser: serde_json::Value,
+    generic: Option<T>,
     #[cfg(not(feature = "json"))]
     browser: String,
     os: Option<String>,
 }
 
-impl elephantry::Entity for EventExtra {
+impl<T: elephantry::Entity> elephantry::Entity for EventExtra<T> {
     fn from(tuple: &elephantry::Tuple) -> Self {
-        let event = <Event as elephantry::Entity>::from(tuple);
+        let event = <Event<String> as elephantry::Entity>::from(tuple);
 
         Self {
             uuid: event.uuid,
@@ -103,6 +106,7 @@ impl elephantry::Entity for EventExtra {
             visitor_id: event.visitor_id,
             properties: event.properties,
             browser: event.browser,
+            generic: None,
             os: tuple.get("os"),
         }
     }
@@ -138,7 +142,7 @@ impl elephantry::Entity for EventExtra {
 struct EventExtraModel;
 
 impl<'a> elephantry::Model<'a> for EventExtraModel {
-    type Entity = EventExtra;
+    type Entity = EventExtra<String>;
     type Structure = EventStructure;
 
     fn new(_: &'a elephantry::Connection) -> Self {

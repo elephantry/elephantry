@@ -1,5 +1,5 @@
 #[derive(Debug, elephantry::Entity)]
-struct Event {
+struct Event<T: elephantry::FromSql + elephantry::ToSql> {
     #[cfg(feature = "uuid")]
     uuid: Option<uuid::Uuid>,
     #[cfg(not(feature = "uuid"))]
@@ -15,6 +15,8 @@ struct Event {
     browser: serde_json::Value,
     #[cfg(not(feature = "json"))]
     browser: String,
+    #[elephantry(default)]
+    generic: Option<T>,
 }
 
 struct EventModel<'a> {
@@ -23,7 +25,7 @@ struct EventModel<'a> {
 }
 
 impl<'a> elephantry::Model<'a> for EventModel<'a> {
-    type Entity = Event;
+    type Entity = Event<String>;
     type Structure = EventStructure;
 
     fn new(connection: &'a elephantry::Connection) -> Self {

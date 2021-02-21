@@ -81,9 +81,11 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
         }
     };
 
+    let (impl_generics, ty_generics, where_clause) = ast.generics.split_for_impl();
+
     let gen = quote::quote! {
         #[automatically_derived]
-        impl #elephantry::Entity for #name
+        impl #impl_generics #elephantry::Entity for #name #ty_generics #where_clause
         {
             fn from(tuple: &#elephantry::Tuple<'_>) -> Self
             {

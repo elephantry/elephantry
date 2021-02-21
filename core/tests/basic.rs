@@ -35,7 +35,7 @@ fn main() {
     println!();
 
     println!("Insert one row:\n");
-    let new_event = Event {
+    let new_event = Event::<String> {
         uuid: None,
         name: "purchase".to_string(),
         visitor_id: Some(15),
@@ -48,6 +48,7 @@ fn main() {
         #[cfg(not(feature = "json"))]
         browser: "{ \"name\": \"Firefox\", \"resolution\": { \"x\": 1280, \"y\": 800 } }"
             .to_string(),
+        generic: None,
     };
     let mut entity = insert_one::<EventModel>(connection, &new_event);
     println!();
