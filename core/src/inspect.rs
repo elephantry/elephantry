@@ -164,7 +164,7 @@ pub struct Domain {
     note = "use crate::v2::inspect::domains instead"
 )]
 #[cfg(not(feature = "v2"))]
-pub fn domains(connection: &crate::Connection, schema: &str) -> Vec<Enum> {
+pub fn domains(connection: &crate::Connection, schema: &str) -> Vec<Domain> {
     crate::v2::inspect::domains(connection, schema).unwrap()
 }
 
@@ -179,7 +179,7 @@ pub fn domains(connection: &crate::Connection, schema: &str) -> Vec<Enum> {
 pub fn domains(
     connection: &crate::Connection,
     schema: &str,
-) -> crate::Result<Vec<Enum>> {
+) -> crate::Result<Vec<Domain>> {
     crate::v2::inspect::domains(connection, schema)
 }
 

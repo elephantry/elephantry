@@ -143,7 +143,7 @@ pub fn enums(
 pub fn domains(
     connection: &crate::Connection,
     schema: &str,
-) -> crate::Result<Vec<crate::inspect::Enum>> {
+) -> crate::Result<Vec<crate::inspect::Domain>> {
     crate::inspect::types(connection, schema, 'd').map(|x| x.collect())
 }
 
