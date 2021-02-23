@@ -6,7 +6,7 @@ pub fn schema(
     prefix_dir: &str,
     schema: &str,
 ) -> crate::Result<()> {
-    let relations = elephantry::inspect::schema(connection, schema)?;
+    let relations = elephantry::v2::inspect::schema(connection, schema)?;
 
     add_mod(&format!("{}/model", prefix_dir), &schema)?;
 
@@ -34,7 +34,7 @@ pub fn relation(
     let mut pk = Vec::new();
     let mut columns = Vec::new();
 
-    for column in &elephantry::inspect::relation(connection, schema, relation)?
+    for column in &elephantry::v2::inspect::relation(connection, schema, relation)?
     {
         let name = column.name.to_snake();
 
@@ -119,7 +119,7 @@ fn write_entity<W>(
 where
     W: std::io::Write,
 {
-    let columns = elephantry::inspect::relation(connection, schema, relation)?;
+    let columns = elephantry::v2::inspect::relation(connection, schema, relation)?;
 
     let mut fields = Vec::new();
 
@@ -154,7 +154,7 @@ pub fn enums(
     let filename = format!("{}/{}.rs", dir, schema);
     let mut file = std::io::BufWriter::new(std::fs::File::create(filename)?);
 
-    for enumeration in &elephantry::inspect::enums(connection, schema)? {
+    for enumeration in &elephantry::v2::inspect::enums(connection, schema)? {
         write_enum(&mut file, &enumeration)?;
     }
 
@@ -199,7 +199,7 @@ pub fn composites(
     let filename = format!("{}/{}.rs", dir, schema);
     let mut file = std::io::BufWriter::new(std::fs::File::create(filename)?);
 
-    for composite in &elephantry::inspect::composites(connection, schema)? {
+    for composite in &elephantry::v2::inspect::composites(connection, schema)? {
         write_composite(&mut file, &composite)?;
     }
 
