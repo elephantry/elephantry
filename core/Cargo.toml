@@ -7,7 +7,7 @@ license = "MIT"
 version = "1.6.0"
 authors = ["Sanpi <sanpi@homecomputing.fr>"]
 edition = "2018"
-readme = "../README.md"
+readme = "../docs/README.md"
 keywords = ["database", "postgresql"]
 categories = ["database"]
 
