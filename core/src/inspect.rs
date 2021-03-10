@@ -13,7 +13,7 @@ pub struct Schema {
  * Retreive schemas of the connected database.
  */
 #[deprecated(
-    since = "1.6",
+    since = "1.6.0",
     note = "use crate::v2::inspect::database instead"
 )]
 #[cfg(not(feature = "v2"))]
@@ -25,7 +25,7 @@ pub fn database(connection: &crate::Connection) -> Vec<Schema> {
  * Retreive schemas of the connected database.
  */
 #[deprecated(
-    since = "1.7",
+    since = "1.7.0",
     note = "use crate::v2::inspect::database instead"
 )]
 #[cfg(feature = "v2")]
@@ -46,7 +46,7 @@ pub struct Relation {
  * Retreive relations (ie: tables, views, …) of `schema`.
  */
 #[deprecated(
-    since = "1.6",
+    since = "1.6.0",
     note = "use crate::v2::inspect::schema instead"
 )]
 #[cfg(not(feature = "v2"))]
@@ -58,7 +58,7 @@ pub fn schema(connection: &crate::Connection, schema: &str) -> Vec<Relation> {
  * Retreive relations (ie: tables, views, …) of `schema`.
  */
 #[deprecated(
-    since = "1.7",
+    since = "1.7.0",
     note = "use crate::v2::inspect::schema instead"
 )]
 #[cfg(feature = "v2")]
@@ -86,7 +86,7 @@ pub struct Column {
  * Retreive columns of the `schema.relation` relation.
  */
 #[deprecated(
-    since = "1.6",
+    since = "1.6.0",
     note = "use crate::v2::inspect::relation instead"
 )]
 #[cfg(not(feature = "v2"))]
@@ -102,7 +102,7 @@ pub fn relation(
  * Retreive columns of the `schema.relation` relation.
  */
 #[deprecated(
-    since = "1.7",
+    since = "1.7.0",
     note = "use crate::v2::inspect::relation instead"
 )]
 #[cfg(feature = "v2")]
@@ -126,7 +126,7 @@ pub struct Enum {
  * Retreive enumeration for `schema`.
  */
 #[deprecated(
-    since = "1.6",
+    since = "1.6.0",
     note = "use crate::v2::inspect::enums instead"
 )]
 #[cfg(not(feature = "v2"))]
@@ -138,7 +138,7 @@ pub fn enums(connection: &crate::Connection, schema: &str) -> Vec<Enum> {
  * Retreive enumeration for `schema`.
  */
 #[deprecated(
-    since = "1.6",
+    since = "1.6.0",
     note = "use crate::v2::inspect::enums instead"
 )]
 #[cfg(feature = "v2")]
@@ -160,7 +160,7 @@ pub struct Domain {
  * Retreive domain for `schema`.
  */
 #[deprecated(
-    since = "1.6",
+    since = "1.6.0",
     note = "use crate::v2::inspect::domains instead"
 )]
 #[cfg(not(feature = "v2"))]
@@ -172,7 +172,7 @@ pub fn domains(connection: &crate::Connection, schema: &str) -> Vec<Domain> {
  * Retreive domain for `schema`.
  */
 #[deprecated(
-    since = "1.7",
+    since = "1.7.0",
     note = "use crate::v2::inspect::domains instead"
 )]
 #[cfg(feature = "v2")]
@@ -196,7 +196,7 @@ pub struct Composite {
  * Retreive composite type for `schema`.
  */
 #[deprecated(
-    since = "1.6",
+    since = "1.6.0",
     note = "use crate::v2::inspect::composites instead"
 )]
 #[cfg(not(feature = "v2"))]
@@ -211,7 +211,7 @@ pub fn composites(
  * Retreive composite type for `schema`.
  */
 #[deprecated(
-    since = "1.7",
+    since = "1.7.0",
     note = "use crate::v2::inspect::composites instead"
 )]
 #[cfg(feature = "v2")]

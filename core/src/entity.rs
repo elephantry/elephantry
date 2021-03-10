@@ -41,10 +41,8 @@ impl<T: crate::FromSql + crate::ToSql, S: std::hash::BuildHasher + Default>
     }
 
     fn get(&self, field: &str) -> Option<&dyn crate::ToSql> {
-        match self.get(field) {
-            Some(value) => Some(value),
-            None => None,
-        }
+        self.get(field)
+            .map(|x| x as &dyn crate::ToSql)
     }
 }
 
@@ -63,10 +61,8 @@ impl<T: crate::FromSql + crate::ToSql, S: std::hash::BuildHasher + Default>
     }
 
     fn get(&self, field: &str) -> Option<&dyn crate::ToSql> {
-        match self.get(&field.parse::<usize>().unwrap()) {
-            Some(value) => Some(value),
-            None => None,
-        }
+        self.get(&field.parse::<usize>().unwrap())
+            .map(|x| x as &dyn crate::ToSql)
     }
 }
 

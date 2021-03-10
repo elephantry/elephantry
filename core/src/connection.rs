@@ -177,10 +177,7 @@ impl Connection {
         let (clause, params) = self.pk_clause::<M>(pk)?;
         let mut tuples = self.find_where::<M>(&clause, &params, None)?;
 
-        Ok(match tuples.next() {
-            Some(e) => Some(e),
-            None => None,
-        })
+        Ok(tuples.next())
     }
 
     /**
