@@ -42,7 +42,7 @@ pub(crate) fn sql_to_rust(sql: &str) -> String {
         "serial" | "serial4" => "i32",
         "text" => "String",
         "time" | "time without time zone" => "chrono::NaiveTime",
-        "time with time zone" | "timetz" => todo!(),
+        "time with time zone" | "timetz" => "elephantry::TimeTz",
         "timestamp" | "timestamp without time zone" => "chrono::NaiveDateTime",
         "timestamp with time zone" | "timestamptz" => {
             "chrono::DateTime<chrono::FixedOffset>"
