@@ -76,7 +76,9 @@ pub fn relation(
         term_table::table_cell::TableCell::new("comment"),
     ]));
 
-    for column in elephantry::v2::inspect::relation(connection, schema, relation)? {
+    for column in
+        elephantry::v2::inspect::relation(connection, schema, relation)?
+    {
         let primary = if column.is_primary {
             "*".to_string()
         }

@@ -45,10 +45,7 @@ pub struct Relation {
 /**
  * Retreive relations (ie: tables, views, …) of `schema`.
  */
-#[deprecated(
-    since = "1.6.0",
-    note = "use crate::v2::inspect::schema instead"
-)]
+#[deprecated(since = "1.6.0", note = "use crate::v2::inspect::schema instead")]
 #[cfg(not(feature = "v2"))]
 pub fn schema(connection: &crate::Connection, schema: &str) -> Vec<Relation> {
     crate::v2::inspect::schema(&connection, schema).unwrap()
@@ -57,10 +54,7 @@ pub fn schema(connection: &crate::Connection, schema: &str) -> Vec<Relation> {
 /**
  * Retreive relations (ie: tables, views, …) of `schema`.
  */
-#[deprecated(
-    since = "1.7.0",
-    note = "use crate::v2::inspect::schema instead"
-)]
+#[deprecated(since = "1.7.0", note = "use crate::v2::inspect::schema instead")]
 #[cfg(feature = "v2")]
 pub fn schema(
     connection: &crate::Connection,
@@ -125,10 +119,7 @@ pub struct Enum {
 /**
  * Retreive enumeration for `schema`.
  */
-#[deprecated(
-    since = "1.6.0",
-    note = "use crate::v2::inspect::enums instead"
-)]
+#[deprecated(since = "1.6.0", note = "use crate::v2::inspect::enums instead")]
 #[cfg(not(feature = "v2"))]
 pub fn enums(connection: &crate::Connection, schema: &str) -> Vec<Enum> {
     crate::v2::inspect::enums(connection, schema).unwrap()
@@ -137,10 +128,7 @@ pub fn enums(connection: &crate::Connection, schema: &str) -> Vec<Enum> {
 /**
  * Retreive enumeration for `schema`.
  */
-#[deprecated(
-    since = "1.6.0",
-    note = "use crate::v2::inspect::enums instead"
-)]
+#[deprecated(since = "1.6.0", note = "use crate::v2::inspect::enums instead")]
 #[cfg(feature = "v2")]
 pub fn enums(
     connection: &crate::Connection,
@@ -159,10 +147,7 @@ pub struct Domain {
 /**
  * Retreive domain for `schema`.
  */
-#[deprecated(
-    since = "1.6.0",
-    note = "use crate::v2::inspect::domains instead"
-)]
+#[deprecated(since = "1.6.0", note = "use crate::v2::inspect::domains instead")]
 #[cfg(not(feature = "v2"))]
 pub fn domains(connection: &crate::Connection, schema: &str) -> Vec<Domain> {
     crate::v2::inspect::domains(connection, schema).unwrap()
@@ -171,10 +156,7 @@ pub fn domains(connection: &crate::Connection, schema: &str) -> Vec<Domain> {
 /**
  * Retreive domain for `schema`.
  */
-#[deprecated(
-    since = "1.7.0",
-    note = "use crate::v2::inspect::domains instead"
-)]
+#[deprecated(since = "1.7.0", note = "use crate::v2::inspect::domains instead")]
 #[cfg(feature = "v2")]
 pub fn domains(
     connection: &crate::Connection,

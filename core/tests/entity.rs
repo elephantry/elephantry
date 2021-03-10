@@ -17,7 +17,9 @@ struct Event<T: elephantry::FromSql + elephantry::ToSql> {
     generic: Option<T>,
 }
 
-impl<T: elephantry::FromSql + elephantry::ToSql> elephantry::Entity for Event<T> {
+impl<T: elephantry::FromSql + elephantry::ToSql> elephantry::Entity
+    for Event<T>
+{
     fn from(tuple: &elephantry::Tuple) -> Self {
         Self {
             uuid: tuple.get("uuid"),

@@ -34,7 +34,8 @@ pub fn relation(
     let mut pk = Vec::new();
     let mut columns = Vec::new();
 
-    for column in &elephantry::v2::inspect::relation(connection, schema, relation)?
+    for column in
+        &elephantry::v2::inspect::relation(connection, schema, relation)?
     {
         let name = column.name.to_snake();
 
@@ -119,7 +120,8 @@ fn write_entity<W>(
 where
     W: std::io::Write,
 {
-    let columns = elephantry::v2::inspect::relation(connection, schema, relation)?;
+    let columns =
+        elephantry::v2::inspect::relation(connection, schema, relation)?;
 
     let mut fields = Vec::new();
 

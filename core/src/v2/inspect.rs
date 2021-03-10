@@ -3,7 +3,9 @@
 /**
  * Retreive schemas of the connected database.
  */
-pub fn database(connection: &crate::Connection) -> crate::Result<Vec<crate::inspect::Schema>> {
+pub fn database(
+    connection: &crate::Connection,
+) -> crate::Result<Vec<crate::inspect::Schema>> {
     connection
         .query(
             r#"
@@ -154,11 +156,12 @@ pub fn composites(
     connection: &crate::Connection,
     schema: &str,
 ) -> crate::Result<Vec<crate::inspect::Composite>> {
-    let mut composites =
-        crate::inspect::types(connection, schema, 'c')?.collect::<Vec<crate::inspect::Composite>>();
+    let mut composites = crate::inspect::types(connection, schema, 'c')?
+        .collect::<Vec<crate::inspect::Composite>>();
 
     for composite in &mut composites {
-        composite.fields = crate::inspect::composite_fields(connection, &composite.name)?;
+        composite.fields =
+            crate::inspect::composite_fields(connection, &composite.name)?;
     }
 
     Ok(composites)
