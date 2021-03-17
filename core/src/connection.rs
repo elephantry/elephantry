@@ -606,6 +606,9 @@ impl Connection {
             .map_err(|e| crate::Error::Escape(str.to_string(), e))
     }
 
+    /**
+     * Reports the status of the server.
+     */
     pub fn ping(&self) -> crate::Result<()> {
         let connection = self.connection.lock().unwrap();
 
