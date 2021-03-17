@@ -4,12 +4,5 @@ fn main() -> elephantry::Result<()> {
 
     let elephantry = elephantry::Pool::from_config(&config.try_into()?)?;
 
-    let msg = match elephantry.ping() {
-        elephantry::PingStatus::Ok => "Ok".to_string(),
-        status => format!("Connection error: {:?}", status),
-    };
-
-    println!("{}", msg);
-
-    Ok(())
+    elephantry.ping()
 }

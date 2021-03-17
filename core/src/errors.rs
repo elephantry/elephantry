@@ -35,6 +35,9 @@ pub enum Error {
     /** Fetch a null value in a non-option type */
     #[error("Try to retreive null field as non-option type")]
     NotNull,
+    /** Ping error */
+    #[error("Ping error: {0:?}")]
+    Ping(crate::PingStatus),
     /** Incomplete primary key */
     #[error("Invalid primary key")]
     PrimaryKey,

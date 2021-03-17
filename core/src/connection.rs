@@ -606,7 +606,7 @@ impl Connection {
             .map_err(|e| crate::Error::Escape(str.to_string(), e))
     }
 
-    pub fn ping(&self) -> PingStatus {
+    pub fn ping(&self) -> crate::Result<()> {
         let connection = self.connection.lock().unwrap();
 
         let mut params = HashMap::new();
@@ -618,6 +618,9 @@ impl Connection {
             params.insert("password".to_string(), password);
         }
 
-        libpq::Connection::ping_params(&params, false)
+        match libpq::Connection::ping_params(&params, false) {
+            PingStatus::Ok => Ok(()),
+            status => Err(crate::Error::Ping(status)),
+        }
     }
 }
