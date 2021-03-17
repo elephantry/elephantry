@@ -626,4 +626,22 @@ impl Connection {
             status => Err(crate::Error::Ping(status)),
         }
     }
+
+    /**
+     * Retreives connection configuration.
+     */
+    pub fn config(&self) -> crate::Result<crate::Config> {
+        let connection = self.connection.lock().unwrap();
+        let info = libpq::v2::connection::info(&connection);
+
+        let config = crate::Config {
+            dbname: info.get("dbname").map(|x| x.val.clone()).flatten(),
+            host: info.get("host").map(|x| x.val.clone()).flatten(),
+            password: info.get("password").map(|x| x.val.clone()).flatten(),
+            port: info.get("port").map(|x| x.val.clone()).flatten(),
+            user: info.get("user").map(|x| x.val.clone()).flatten(),
+        };
+
+        Ok(config)
+    }
 }

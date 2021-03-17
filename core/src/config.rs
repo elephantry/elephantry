@@ -32,28 +32,28 @@ impl Config {
         }
     }
 
-    #[deprecated(note="Use Config.user field instead", since="1.7.0")]
+    #[deprecated(note="Use Connection::config() instead", since="1.7.0")]
     pub fn user(&self) -> String {
         get!(self.user, "PGUSER", std::env::var("USER").unwrap())
     }
 
-    #[deprecated(note="Use Config.host field instead", since="1.7.0")]
+    #[deprecated(note="Use Connection::config() instead", since="1.7.0")]
     pub fn host(&self) -> String {
         get!(self.host, "PGHOST", "/run/postgresql".to_string())
     }
 
-    #[deprecated(note="Use Config.dbname field instead", since="1.7.0")]
+    #[deprecated(note="Use Connection::config() instead", since="1.7.0")]
     pub fn dbname(&self) -> String {
         #![allow(deprecated)]
         get!(self.dbname, "PGDATABASE", self.user())
     }
 
-    #[deprecated(note="Use Config.port field instead", since="1.7.0")]
+    #[deprecated(note="Use Connection::config() instead", since="1.7.0")]
     pub fn port(&self) -> String {
         get!(self.port, "PGPORT", "5432".to_string())
     }
 
-    #[deprecated(note="Use Config.password field instead", since="1.7.0")]
+    #[deprecated(note="Use Connection::config() instead", since="1.7.0")]
     pub fn password(&self) -> Option<String> {
         self.password.clone()
     }
