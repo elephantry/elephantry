@@ -35,6 +35,15 @@ pub enum Error {
     /** Fetch a null value in a non-option type */
     #[error("Try to retreive null field as non-option type")]
     NotNull,
+    /** Parse error */
+    #[error("{0}")]
+    Parse(String),
+    /** Parse bool error */
+    #[error("{0}")]
+    ParseBoolError(#[from] std::str::ParseBoolError),
+    /** Parse int error */
+    #[error("{0}")]
+    ParseIntError(#[from] std::num::ParseIntError),
     /** Ping error */
     #[error("Ping error: {0:?}")]
     Ping(crate::PingStatus),

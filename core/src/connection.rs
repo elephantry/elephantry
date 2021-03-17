@@ -635,13 +635,91 @@ impl Connection {
         let info = libpq::v2::connection::info(&connection);
 
         let config = crate::Config {
+            application_name: info
+                .get("application_name")
+                .map(|x| x.val.clone())
+                .flatten(),
+            channel_binding: self.config_get(&info, "channel_binding")?,
+            client_encoding: info
+                .get("client_encoding")
+                .map(|x| x.val.clone())
+                .flatten(),
+            connect_timeout: self.config_get(&info, "connect_timeout")?,
             dbname: info.get("dbname").map(|x| x.val.clone()).flatten(),
+            fallback_application_name: info
+                .get("fallback_application_name")
+                .map(|x| x.val.clone())
+                .flatten(),
+            gssencmode: self.config_get(&info, "gssencmode")?,
+            gsslib: info.get("gsslib").map(|x| x.val.clone()).flatten(),
+            hostaddr: info.get("hostaddr").map(|x| x.val.clone()).flatten(),
             host: info.get("host").map(|x| x.val.clone()).flatten(),
+            keepalives_count: self.config_get(&info, "keepalives_count")?,
+            keepalives_idle: self.config_get(&info, "keepalives_idle")?,
+            keepalives_interval: self
+                .config_get(&info, "keepalives_interval")?,
+            keepalives: self
+                .config_get::<i32>(&info, "keepalives")?
+                .map(|x| x == 1),
+            krbsrvname: info.get("krbsrvname").map(|x| x.val.clone()).flatten(),
+            options: info.get("options").map(|x| x.val.clone()).flatten(),
+            passfile: info.get("passfile").map(|x| x.val.clone()).flatten(),
             password: info.get("password").map(|x| x.val.clone()).flatten(),
             port: info.get("port").map(|x| x.val.clone()).flatten(),
+            replication: info
+                .get("replication")
+                .map(|x| x.val.clone())
+                .flatten(),
+            requirepeer: info
+                .get("requirepeer")
+                .map(|x| x.val.clone())
+                .flatten(),
+            service: info.get("service").map(|x| x.val.clone()).flatten(),
+            sslcert: info.get("sslcert").map(|x| x.val.clone()).flatten(),
+            sslcompression: self
+                .config_get::<i32>(&info, "sslcompression")?
+                .map(|x| x == 1),
+            sslcrl: info.get("sslcrl").map(|x| x.val.clone()).flatten(),
+            sslkey: info.get("sslkey").map(|x| x.val.clone()).flatten(),
+            ssl_max_protocol_version: info
+                .get("ssl_max_protocol_version")
+                .map(|x| x.val.clone())
+                .flatten(),
+            ssl_min_protocol_version: info
+                .get("ssl_min_protocol_version")
+                .map(|x| x.val.clone())
+                .flatten(),
+            sslmode: self.config_get(&info, "sslmode")?,
+            sslpassword: info
+                .get("sslpassword")
+                .map(|x| x.val.clone())
+                .flatten(),
+            sslrootcert: info
+                .get("sslrootcert")
+                .map(|x| x.val.clone())
+                .flatten(),
+            target_session_attrs: self
+                .config_get(&info, "target_session_attrs")?,
+            tcp_user_timeout: self.config_get(&info, "tcp_user_timeout")?,
             user: info.get("user").map(|x| x.val.clone()).flatten(),
         };
 
         Ok(config)
+    }
+
+    fn config_get<T>(
+        &self,
+        info: &HashMap<String, libpq::connection::Info>,
+        name: &str,
+    ) -> Result<Option<T>, <T as std::str::FromStr>::Err>
+    where
+        T: std::str::FromStr,
+    {
+        let r = match info.get(name).map(|x| x.val.clone()) {
+            Some(Some(val)) => Some(val.parse()?),
+            _ => None,
+        };
+
+        Ok(r)
     }
 }
