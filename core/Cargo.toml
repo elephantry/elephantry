@@ -69,10 +69,7 @@ features = ["databases"]
 [dependencies.serde]
 version = "1.0"
 optional = true
-
-[dependencies.serde_derive]
-version = "1.0"
-optional = true
+features = ["derive"]
 
 [dependencies.serde_json]
 version = "1.0"
@@ -101,9 +98,10 @@ features = ["attributes"]
 
 [features]
 default = []
+# @deprecated
 v2 = []
 bit = ["bit-vec", "elephantry-derive/bit"]
-config-support = ["config", "serde-support"]
+config-support = ["config", "serde"]
 date = ["chrono", "elephantry-derive/date"]
 geo = ["geo-types", "elephantry-derive/geo"]
 json = ["serde_json", "elephantry-derive/json"]
@@ -111,7 +109,8 @@ money = ["postgres_money", "elephantry-derive/money"]
 numeric = ["bigdecimal", "elephantry-derive/numeric"]
 net = ["ipnetwork", "macaddr", "elephantry-derive/net"]
 rocket = ["r2d2", "rocket_contrib"]
-serde-support = ["serde", "serde_derive"]
+# @deprecated
+serde-support = ["serde"]
 # @see https://github.com/rust-lang/cargo/issues/5565
 #uuid = ["dep:uuid", "elephantry-derive/uuid"]
 xml = ["xmltree", "elephantry-derive/xml"]

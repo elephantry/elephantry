@@ -66,7 +66,7 @@ impl<E: crate::Entity> std::ops::Deref for Rows<E> {
     }
 }
 
-#[cfg(feature = "serde-support")]
+#[cfg(feature = "serde")]
 impl<E: crate::Entity + serde::Serialize> serde::Serialize for Rows<E> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where

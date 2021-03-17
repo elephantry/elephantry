@@ -48,8 +48,7 @@ elephantry.delete_where("deleted = $1", &[&true])?;
     connection pool;
 - rocket — adds support for
     [rocket](https://rocket.rs/v0.4/guide/state/#databases) web framewok;
-- serde-support — adds support for de/serialization via
-    [serde](https://serde.rs/).
+- serde — adds support for de/serialization via [serde](https://serde.rs/).
 
 ### Types
 

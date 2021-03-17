@@ -116,7 +116,7 @@ impl<E: crate::Entity> std::iter::IntoIterator for Pager<E> {
     }
 }
 
-#[cfg(feature = "serde-support")]
+#[cfg(feature = "serde")]
 impl<E: crate::Entity + serde::Serialize> serde::Serialize for Pager<E> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where

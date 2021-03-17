@@ -1,8 +1,5 @@
 #[derive(Clone, Debug)]
-#[cfg_attr(
-    feature = "serde-support",
-    derive(serde_derive::Serialize, serde_derive::Deserialize)
-)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Interval {
     pub years: i32,
     pub months: i32,
