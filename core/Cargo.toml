@@ -98,6 +98,7 @@ features = ["attributes"]
 
 [features]
 default = []
+all-types = ["bit", "date", "geo", "json", "money", "net", "numeric", "time", "uuid", "xml"]
 # @deprecated
 v2 = []
 bit = ["bit-vec", "elephantry-derive/bit"]
@@ -106,8 +107,8 @@ date = ["chrono", "elephantry-derive/date"]
 geo = ["geo-types", "elephantry-derive/geo"]
 json = ["serde_json", "elephantry-derive/json"]
 money = ["postgres_money", "elephantry-derive/money"]
-numeric = ["bigdecimal", "elephantry-derive/numeric"]
 net = ["ipnetwork", "macaddr", "elephantry-derive/net"]
+numeric = ["bigdecimal", "elephantry-derive/numeric"]
 rocket = ["r2d2", "rocket_contrib"]
 # @deprecated
 serde-support = ["serde"]
