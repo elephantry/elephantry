@@ -42,6 +42,8 @@ elephantry.delete_where("deleted = $1", &[&true])?;
 
 ## Features
 
+- config-support — adds support for [config](https://crates.io/crates/config)
+    layered configuration system;
 - r2d2 — adds support for [r2d2](https://crates.io/crates/r2d2) generic
     connection pool;
 - rocket — adds support for

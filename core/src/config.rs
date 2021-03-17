@@ -2,6 +2,7 @@
  * Connection configuration.
  */
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "serde-support", derive(serde_derive::Deserialize))]
 pub struct Config {
     pub host: Option<String>,
     pub user: Option<String>,

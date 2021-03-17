@@ -33,6 +33,10 @@ optional = true
 version = "0.4"
 optional = true
 
+[dependencies.config]
+version = "0.10"
+optional = true
+
 [dependencies.ipnetwork]
 version = "0.17"
 optional = true
@@ -99,6 +103,7 @@ features = ["attributes"]
 default = []
 v2 = []
 bit = ["bit-vec", "elephantry-derive/bit"]
+config-support = ["config", "serde-support"]
 date = ["chrono", "elephantry-derive/date"]
 geo = ["geo-types", "elephantry-derive/geo"]
 json = ["serde_json", "elephantry-derive/json"]
@@ -110,6 +115,10 @@ serde-support = ["serde", "serde_derive"]
 # @see https://github.com/rust-lang/cargo/issues/5565
 #uuid = ["dep:uuid", "elephantry-derive/uuid"]
 xml = ["xmltree", "elephantry-derive/xml"]
+
+[[example]]
+name = "00-config"
+required-features = ["config-support"]
 
 [[example]]
 name = "02-query"

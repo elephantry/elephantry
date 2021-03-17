@@ -71,7 +71,7 @@ mod to_sql;
 mod tuple;
 mod r#where;
 
-pub use config::*;
+pub use crate::config::*;
 pub use connection::*;
 pub use elephantry_derive::*;
 pub use entity::*;

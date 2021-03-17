@@ -5,6 +5,10 @@ pub enum Error {
     /** An error in async context. */
     #[error("Async error: {0}")]
     Async(String),
+    /** Configuration error */
+    #[cfg(feature = "config-support")]
+    #[error("Config error: {0}")]
+    Config(#[from] config::ConfigError),
     /** Connection error */
     #[error("{message}")]
     Connect { dsn: String, message: String },
