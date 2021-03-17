@@ -61,7 +61,6 @@ mod errors;
 mod from_sql;
 mod model;
 mod pager;
-mod pgpass;
 mod pool;
 mod projection;
 mod rows;
@@ -89,8 +88,6 @@ pub use structure::*;
 pub use to_sql::*;
 pub use transaction::Transaction;
 pub use tuple::*;
-
-use pgpass::*;
 
 /**
  * Easily create pk argument for where clause, including [`find_by_pk`]
