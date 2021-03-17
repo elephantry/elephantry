@@ -3,6 +3,13 @@ use std::collections::HashMap;
 use std::convert::TryInto;
 
 /**
+ * Result type of [`ping`] function.
+ *
+ * [`ping`]: crate::Connection::ping
+ */
+pub type PingStatus = libpq::ping::Status;
+
+/**
  * A connection to a database.
  */
 #[derive(Clone, Debug)]
@@ -597,5 +604,20 @@ impl Connection {
             .unwrap()
             .escape_literal(str)
             .map_err(|e| crate::Error::Escape(str.to_string(), e))
+    }
+
+    pub fn ping(&self) -> PingStatus {
+        let connection = self.connection.lock().unwrap();
+
+        let mut params = HashMap::new();
+        params.insert("dbname".to_string(), connection.db());
+        params.insert("host".to_string(), connection.host());
+        params.insert("port".to_string(), connection.port());
+        params.insert("user".to_string(), connection.user());
+        if let Some(password) = connection.pass() {
+            params.insert("password".to_string(), password);
+        }
+
+        libpq::Connection::ping_params(&params, false)
     }
 }
