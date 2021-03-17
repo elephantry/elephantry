@@ -1,7 +1,7 @@
 /**
  * Connection configuration.
  */
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct Config {
     pub dbname: Option<String>,
@@ -23,13 +23,7 @@ macro_rules! get {
 
 impl Config {
     pub fn new() -> Self {
-        Config {
-            dbname: None,
-            host: None,
-            password: None,
-            port: None,
-            user: None,
-        }
+        Self::default()
     }
 
     #[deprecated(note="Use Connection::config() instead", since="1.7.0")]
@@ -56,12 +50,6 @@ impl Config {
     #[deprecated(note="Use Connection::config() instead", since="1.7.0")]
     pub fn password(&self) -> Option<String> {
         self.password.clone()
-    }
-}
-
-impl Default for Config {
-    fn default() -> Self {
-        Self::new()
     }
 }
 
