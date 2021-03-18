@@ -18,7 +18,7 @@ fn main() -> elephantry::Result {
 }
 
 fn listen(elephantry: &elephantry::Connection) -> elephantry::Result {
-    while let Some(notify) = elephantry::v2::connection::notifies(elephantry)? {
+    while let Some(notify) = elephantry.notifies()? {
         dbg!(notify);
     }
 

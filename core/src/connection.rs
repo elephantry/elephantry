@@ -14,7 +14,7 @@ pub type PingStatus = libpq::ping::Status;
  */
 #[derive(Clone, Debug)]
 pub struct Connection {
-    pub(crate) connection: std::sync::Arc<std::sync::Mutex<libpq::Connection>>,
+    connection: std::sync::Arc<std::sync::Mutex<libpq::Connection>>,
 }
 
 extern "C" fn notice_processor(_arg: *mut std::ffi::c_void, message: *const i8) {
@@ -535,9 +535,14 @@ impl Connection {
     /**
      * Determines if the connection is no longer usable.
      */
-    #[deprecated(note = "use v2::connection::has_broken instead", since = "1.7.0")]
-    pub fn has_broken(&self) -> bool {
-        crate::v2::connection::has_broken(self).unwrap()
+    pub fn has_broken(&self) -> crate::Result<bool> {
+        let status = self
+            .connection
+            .lock()
+            .map_err(|e| crate::Error::Mutex(e.to_string()))?
+            .status();
+
+        Ok(status == libpq::connection::Status::Bad)
     }
 
     /**
@@ -577,9 +582,14 @@ impl Connection {
      * Check if a notification is pending. If so, the payload is returned.
      * Otherwise, `None` is returned.
      */
-    #[deprecated(note = "use v2::connection::notifies instead", since = "1.7.0")]
-    pub fn notifies(&self) -> Option<crate::pq::Notify> {
-        crate::v2::connection::notifies(self).unwrap()
+    pub fn notifies(&self) -> crate::Result<Option<crate::pq::Notify>> {
+        let connection = self
+            .connection
+            .lock()
+            .map_err(|e| crate::Error::Mutex(e.to_string()))?;
+
+        connection.consume_input().ok();
+        Ok(connection.notifies())
     }
 
     fn escape_literal(&self, str: &str) -> crate::Result<String> {

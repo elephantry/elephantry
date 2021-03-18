@@ -9,7 +9,7 @@ pub fn database(connection: &elephantry::Connection) -> crate::Result {
         term_table::table_cell::TableCell::new("comment"),
     ]));
 
-    for schema in elephantry::v2::inspect::database(connection)?.iter() {
+    for schema in elephantry::inspect::database(connection)?.iter() {
         table.add_row(term_table::row::Row::new(vec![
             term_table::table_cell::TableCell::new(&schema.name),
             term_table::table_cell::TableCell::new(&schema.oid),
@@ -24,7 +24,7 @@ pub fn database(connection: &elephantry::Connection) -> crate::Result {
 }
 
 pub fn schema(connection: &elephantry::Connection, schema: &str) -> crate::Result {
-    let relations = elephantry::v2::inspect::schema(connection, schema)?;
+    let relations = elephantry::inspect::schema(connection, schema)?;
     let mut table = term_table::Table::new();
     table.style = term_table::TableStyle::rounded();
 
@@ -71,7 +71,7 @@ pub fn relation(
         term_table::table_cell::TableCell::new("comment"),
     ]));
 
-    for column in elephantry::v2::inspect::relation(connection, schema, relation)? {
+    for column in elephantry::inspect::relation(connection, schema, relation)? {
         let primary = if column.is_primary {
             "*".to_string()
         } else {
@@ -118,7 +118,7 @@ fn column_type(column: &elephantry::inspect::Column) -> String {
 }
 
 pub fn enums(connection: &elephantry::Connection, schema: &str) -> crate::Result {
-    let enumerations = elephantry::v2::inspect::enums(connection, schema)?;
+    let enumerations = elephantry::inspect::enums(connection, schema)?;
 
     let mut table = term_table::Table::new();
     table.style = term_table::TableStyle::rounded();
@@ -150,7 +150,7 @@ pub fn enums(connection: &elephantry::Connection, schema: &str) -> crate::Result
 }
 
 pub fn domains(connection: &elephantry::Connection, schema: &str) -> crate::Result {
-    let domains = elephantry::v2::inspect::domains(connection, schema)?;
+    let domains = elephantry::inspect::domains(connection, schema)?;
 
     let mut table = term_table::Table::new();
     table.style = term_table::TableStyle::rounded();
@@ -178,7 +178,7 @@ pub fn domains(connection: &elephantry::Connection, schema: &str) -> crate::Resu
 }
 
 pub fn composites(connection: &elephantry::Connection, schema: &str) -> crate::Result {
-    let composites = elephantry::v2::inspect::composites(connection, schema)?;
+    let composites = elephantry::inspect::composites(connection, schema)?;
 
     let mut table = term_table::Table::new();
     table.style = term_table::TableStyle::rounded();

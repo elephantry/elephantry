@@ -51,7 +51,6 @@ pub mod r2d2;
 #[cfg(feature = "rocket")]
 pub mod rocket;
 pub mod transaction;
-pub mod v2;
 
 mod r#async;
 mod config;

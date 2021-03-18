@@ -27,7 +27,7 @@ impl r2d2::ManageConnection for ConnectionManager {
     }
 
     fn has_broken(&self, conn: &mut Self::Connection) -> bool {
-        crate::v2::connection::has_broken(conn).unwrap_or(true)
+        conn.has_broken().unwrap_or(true)
     }
 }
 

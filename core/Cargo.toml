@@ -99,8 +99,6 @@ features = ["attributes"]
 [features]
 default = []
 all-types = ["bit", "date", "geo", "json", "money", "net", "numeric", "time", "uuid", "xml"]
-# @deprecated
-v2 = []
 bit = ["bit-vec", "elephantry-derive/bit"]
 config-support = ["config", "serde"]
 date = ["chrono", "elephantry-derive/date"]
@@ -110,8 +108,6 @@ money = ["postgres_money", "elephantry-derive/money"]
 net = ["ipnetwork", "macaddr", "elephantry-derive/net"]
 numeric = ["bigdecimal", "elephantry-derive/numeric"]
 rocket = ["r2d2", "rocket_contrib"]
-# @deprecated
-serde-support = ["serde"]
 # @see https://github.com/rust-lang/cargo/issues/5565
 #uuid = ["dep:uuid", "elephantry-derive/uuid"]
 xml = ["xmltree", "elephantry-derive/xml"]

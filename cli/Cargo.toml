@@ -17,5 +17,4 @@ thiserror = "1.0"
 
 [dependencies.elephantry]
 version = "1.7"
-features = ["v2"]
 path = "../core/"

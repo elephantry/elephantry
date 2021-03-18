@@ -118,9 +118,10 @@ impl Result {
         self.len() == 0
     }
 
-    #[deprecated(note = "use v2::pq::result::state instead", since = "1.7.0")]
-    pub fn state(&self) -> State {
-        crate::v2::pq::result::state(self).unwrap()
+    pub fn state(&self) -> Option<crate::pq::State> {
+        self.inner
+            .error_field(libpq::result::ErrorField::Sqlstate)
+            .map(crate::pq::State::from_code)
     }
 }
 
