@@ -4,7 +4,7 @@ include!("entity_derive.rs");
 #[cfg(not(feature = "derive"))]
 include!("entity.rs");
 
-fn main() -> elephantry::Result<()> {
+fn main() -> elephantry::Result {
     let database_url = std::env::var("DATABASE_URL")
         .unwrap_or_else(|_| "postgres://localhost/elephantry".to_string());
     let elephantry =
@@ -81,7 +81,7 @@ fn main() -> elephantry::Result<()> {
 fn find_by_pk<'a, M>(
     connection: &elephantry::Connection,
     uuid: &str,
-) -> elephantry::Result<()>
+) -> elephantry::Result
 where
     M: elephantry::Model<'a>,
     M::Entity: std::fmt::Debug,
@@ -100,7 +100,7 @@ where
 
 fn find_all<'a, M>(
     connection: &elephantry::Connection,
-) -> elephantry::Result<()>
+) -> elephantry::Result
 where
     M: elephantry::Model<'a>,
     M::Entity: std::fmt::Debug,

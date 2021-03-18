@@ -5,7 +5,7 @@ pub fn schema(
     connection: &elephantry::Connection,
     prefix_dir: &str,
     schema: &str,
-) -> crate::Result<()> {
+) -> crate::Result {
     let relations = elephantry::v2::inspect::schema(connection, schema)?;
 
     add_mod(&format!("{}/model", prefix_dir), &schema)?;
@@ -22,7 +22,7 @@ pub fn relation(
     prefix_dir: &str,
     schema: &str,
     relation: &str,
-) -> crate::Result<()> {
+) -> crate::Result {
     let dir = format!("{}/model/{}", prefix_dir, schema);
     add_mod(&dir, &relation)?;
 
@@ -99,7 +99,7 @@ pub fn entity(
     prefix_dir: &str,
     schema: &str,
     relation: &str,
-) -> crate::Result<()> {
+) -> crate::Result {
     let dir = format!("{}/model/{}", prefix_dir, schema);
     add_mod(&dir, &relation)?;
 
@@ -116,7 +116,7 @@ fn write_entity<W>(
     connection: &elephantry::Connection,
     schema: &str,
     relation: &str,
-) -> crate::Result<()>
+) -> crate::Result
 where
     W: std::io::Write,
 {
@@ -149,7 +149,7 @@ pub fn enums(
     connection: &elephantry::Connection,
     prefix_dir: &str,
     schema: &str,
-) -> crate::Result<()> {
+) -> crate::Result {
     let dir = format!("{}/enums", prefix_dir);
     std::fs::create_dir_all(&dir)?;
 
@@ -166,7 +166,7 @@ pub fn enums(
 fn write_enum<W>(
     file: &mut std::io::BufWriter<W>,
     enumeration: &elephantry::inspect::Enum,
-) -> crate::Result<()>
+) -> crate::Result
 where
     W: std::io::Write,
 {
@@ -194,7 +194,7 @@ pub fn composites(
     connection: &elephantry::Connection,
     prefix_dir: &str,
     schema: &str,
-) -> crate::Result<()> {
+) -> crate::Result {
     let dir = format!("{}/composites", prefix_dir);
     std::fs::create_dir_all(&dir)?;
 
@@ -211,7 +211,7 @@ pub fn composites(
 fn write_composite<W>(
     file: &mut std::io::BufWriter<W>,
     composite: &elephantry::inspect::Composite,
-) -> crate::Result<()>
+) -> crate::Result
 where
     W: std::io::Write,
 {
@@ -282,7 +282,7 @@ fn is_keyword(name: &str) -> bool {
     KEYWORDS.contains(&name)
 }
 
-fn add_mod(dir: &str, name: &str) -> crate::Result<()> {
+fn add_mod(dir: &str, name: &str) -> crate::Result {
     std::fs::create_dir_all(&dir)?;
 
     let mod_filename = format!("{}/mod.rs", dir);

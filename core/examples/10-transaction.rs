@@ -126,7 +126,7 @@ mod department {
     }
 }
 
-fn main() -> elephantry::Result<()> {
+fn main() -> elephantry::Result {
     pretty_env_logger::init();
 
     let database_url = std::env::var("DATABASE_URL")

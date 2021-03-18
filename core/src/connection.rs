@@ -564,7 +564,7 @@ impl Connection {
         &self,
         channel: &str,
         data: Option<&str>,
-    ) -> crate::Result<()> {
+    ) -> crate::Result {
         let data = self.escape_literal(data.unwrap_or_default())?;
 
         let query = format!("notify {}, {}", channel, data);
@@ -578,7 +578,7 @@ impl Connection {
      * Note: when listen is issued in a transaction it is unlisten when the
      * transaction is committed or rollback.
      */
-    pub fn listen(&self, channel: &str) -> crate::Result<()> {
+    pub fn listen(&self, channel: &str) -> crate::Result {
         let query = format!("listen {}", channel);
 
         self.execute(&query).map(|_| ())
@@ -587,7 +587,7 @@ impl Connection {
     /**
      * Stop to listen on the given channel.
      */
-    pub fn unlisten(&self, channel: &str) -> crate::Result<()> {
+    pub fn unlisten(&self, channel: &str) -> crate::Result {
         let query = format!("unlisten {}", channel);
 
         self.execute(&query).map(|_| ())

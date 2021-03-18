@@ -122,7 +122,7 @@ impl<T: crate::FromSql> From<Array<T>> for Vec<T> {
 #[cfg(test)]
 mod test {
     #[test]
-    fn bin_vec() -> crate::Result<()> {
+    fn bin_vec() -> crate::Result {
         let elephantry = crate::test::new_conn()?;
         let results: Vec<i32> =
             elephantry.query_one("SELECT '{1, 2}'::int4[]", &[])?;
@@ -133,7 +133,7 @@ mod test {
     }
 
     #[test]
-    fn bin_array_str() -> crate::Result<()> {
+    fn bin_array_str() -> crate::Result {
         let elephantry = crate::test::new_conn()?;
         let results: Vec<Option<String>> =
             elephantry.query_one("SELECT '{null, str}'::text[]", &[])?;

@@ -81,7 +81,7 @@ mod test {
     use std::collections::HashMap;
 
     #[test]
-    fn hashmap_str_from_sql() -> crate::Result<()> {
+    fn hashmap_str_from_sql() -> crate::Result {
         let elephantry = crate::test::new_conn()?;
         let results: Vec<HashMap<String, i32>> =
             elephantry.query("SELECT 1 as n", &[])?.collect();
@@ -92,7 +92,7 @@ mod test {
     }
 
     #[test]
-    fn hashmap_usize_from_sql() -> crate::Result<()> {
+    fn hashmap_usize_from_sql() -> crate::Result {
         let elephantry = crate::test::new_conn()?;
         let results: Vec<HashMap<usize, i32>> =
             elephantry.query("SELECT 1 as n", &[])?.collect();

@@ -93,14 +93,14 @@ impl<'c> Transaction<'c> {
     /**
      * Start a new transaction.
      */
-    pub fn start(&self) -> crate::Result<()> {
+    pub fn start(&self) -> crate::Result {
         self.exec("begin transaction")
     }
 
     /**
      * Commit a transaction.
      */
-    pub fn commit(&self) -> crate::Result<()> {
+    pub fn commit(&self) -> crate::Result {
         self.exec("commit transaction")
     }
 
@@ -109,7 +109,7 @@ impl<'c> Transaction<'c> {
      * rollback to the given savepoint. Otherwise, the whole transaction is
      * rollback.
      */
-    pub fn roolback(&self, name: Option<&str>) -> crate::Result<()> {
+    pub fn roolback(&self, name: Option<&str>) -> crate::Result {
         let query = match name {
             Some(name) => format!("rollback to savepoint {}", name),
             None => "rollback transaction".to_string(),
@@ -121,7 +121,7 @@ impl<'c> Transaction<'c> {
     /**
      * Set a savepoint in a transaction.
      */
-    pub fn set_save_point(&self, name: &str) -> crate::Result<()> {
+    pub fn set_save_point(&self, name: &str) -> crate::Result {
         let query = format!("savepoint {}", name);
 
         self.exec(&query)
@@ -130,7 +130,7 @@ impl<'c> Transaction<'c> {
     /**
      * Drop a savepoint.
      */
-    pub fn release_savepoint(&self, name: &str) -> crate::Result<()> {
+    pub fn release_savepoint(&self, name: &str) -> crate::Result {
         let query = format!("release savepoint {}", name);
 
         self.exec(&query)
@@ -165,7 +165,7 @@ impl<'c> Transaction<'c> {
         &self,
         keys: Option<Vec<&str>>,
         constraints: Constraints,
-    ) -> crate::Result<()> {
+    ) -> crate::Result {
         let name = if let Some(keys) = keys {
             keys.iter()
                 .map(|key| self.escape_identifier(key))
@@ -197,7 +197,7 @@ impl<'c> Transaction<'c> {
     pub fn set_isolation_level(
         &self,
         level: IsolationLevel,
-    ) -> crate::Result<()> {
+    ) -> crate::Result {
         let query = format!("set transaction isolation level {}", level);
 
         self.exec(&query)
@@ -209,13 +209,13 @@ impl<'c> Transaction<'c> {
      *
      * See <http://www.postgresql.org/docs/current/sql-set-transaction.html>
      */
-    pub fn set_access_mode(&self, mode: AccessMode) -> crate::Result<()> {
+    pub fn set_access_mode(&self, mode: AccessMode) -> crate::Result {
         let query = format!("set transaction {}", mode);
 
         self.exec(&query)
     }
 
-    fn exec(&self, query: &str) -> crate::Result<()> {
+    fn exec(&self, query: &str) -> crate::Result {
         self.connection.execute(query).map(|_| ())
     }
 }

@@ -66,7 +66,7 @@ impl Pool {
     /**
      * Set the connection `name` as default.
      */
-    pub fn set_default(&mut self, name: &str) -> crate::Result<()> {
+    pub fn set_default(&mut self, name: &str) -> crate::Result {
         if !self.connections.contains_key(name) {
             return Err(crate::Error::Connect {
                 dsn: name.to_string(),

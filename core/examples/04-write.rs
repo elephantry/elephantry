@@ -46,7 +46,7 @@ mod employee {
     }
 }
 
-fn main() -> elephantry::Result<()> {
+fn main() -> elephantry::Result {
     pretty_env_logger::init();
 
     let database_url = std::env::var("DATABASE_URL")
@@ -98,7 +98,7 @@ fn insert(
 fn update(
     elephantry: &elephantry::Pool,
     entity: &employee::Entity,
-) -> elephantry::Result<()> {
+) -> elephantry::Result {
     let mut entity = entity.clone();
     entity.day_salary = 20_000.into();
 
@@ -123,7 +123,7 @@ fn update(
 fn delete(
     elephantry: &elephantry::Pool,
     entity: &employee::Entity,
-) -> elephantry::Result<()> {
+) -> elephantry::Result {
     let deleted_entity = elephantry.delete_one::<employee::Model>(&entity)?;
     dbg!(deleted_entity);
 

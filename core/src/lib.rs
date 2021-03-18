@@ -163,7 +163,7 @@ mod test {
             use std::convert::TryFrom;
 
             #[test]
-            fn from_text() -> crate::Result<()> {
+            fn from_text() -> crate::Result {
                 let conn = crate::test::new_conn()?;
 
                 for (value, expected) in &$tests {
@@ -182,7 +182,7 @@ mod test {
             }
 
             #[test]
-            fn from_binary() -> crate::Result<()> {
+            fn from_binary() -> crate::Result {
                 let conn = crate::test::new_conn()?;
 
                 for (value, expected) in &$tests {
@@ -206,7 +206,7 @@ mod test {
     macro_rules! sql_test_to {
         ($sql_type:ident, $rust_type:ty, $tests:expr) => {
             #[test]
-            fn to() -> crate::Result<()> {
+            fn to() -> crate::Result {
                 use std::collections::HashMap;
                 let conn = crate::test::new_conn()?;
 

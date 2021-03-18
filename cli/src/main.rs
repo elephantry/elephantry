@@ -8,7 +8,7 @@ mod pq;
 use error::Error;
 use structopt::StructOpt;
 
-type Result<T> = std::result::Result<T, crate::Error>;
+type Result<T = ()> = std::result::Result<T, crate::Error>;
 
 #[derive(Debug, StructOpt)]
 enum Opt {
@@ -94,7 +94,7 @@ enum Opt {
     },
 }
 
-fn main() -> Result<()> {
+fn main() -> Result {
     dotenv::dotenv().ok();
 
     let opt = Opt::from_args();

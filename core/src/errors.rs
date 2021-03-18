@@ -1,4 +1,4 @@
-pub type Result<T> = std::result::Result<T, crate::Error>;
+pub type Result<T = ()> = std::result::Result<T, crate::Error>;
 
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
