@@ -67,8 +67,8 @@ jobs:
 
       - name: Run tests (debug)
         if: matrix.mode == 'debug'
-        run: cargo test --all-features
+        run: RUST_TEST_THREADS=1 cargo test --all-features
 
       - name: Run tests (release)
         if: matrix.mode == 'release'
-        run: cargo test --all-features --release
+        run: RUST_TEST_THREADS=1 cargo test --all-features --release
