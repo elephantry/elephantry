@@ -56,7 +56,7 @@ pub(crate) fn binary_to_vec(
 ) -> crate::Result<Vec<Option<&[u8]>>> {
     use byteorder::ReadBytesExt;
 
-    let mut data = raw.unwrap();
+    let mut data = crate::not_null(raw)?;
     let mut values: Vec<Option<&[u8]>> = Vec::new();
 
     let validcols = data.read_i32::<byteorder::BigEndian>()?;

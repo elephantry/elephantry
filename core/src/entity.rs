@@ -32,7 +32,10 @@ impl<T: crate::FromSql + crate::ToSql, S: std::hash::BuildHasher + Default>
         let mut hashmap = HashMap::default();
 
         for x in 0..tuple.len() {
-            let name = tuple.field_name(x).unwrap();
+            let name = match tuple.field_name(x) {
+                Some(name) => name,
+                None => continue,
+            };
             let value = tuple.nth(x);
             hashmap.insert(name, value);
         }
@@ -60,7 +63,15 @@ impl<T: crate::FromSql + crate::ToSql, S: std::hash::BuildHasher + Default>
     }
 
     fn get(&self, field: &str) -> Option<&dyn crate::ToSql> {
-        self.get(&field.parse::<usize>().unwrap())
+        let x = match field.parse::<usize>() {
+            Ok(x) => x,
+            Err(err) => {
+                log::error!("Unable to retreive HashMap field: {}", err);
+                return None;
+            },
+        };
+
+        self.get(&x)
             .map(|x| x as &dyn crate::ToSql)
     }
 }

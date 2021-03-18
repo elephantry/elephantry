@@ -4,34 +4,31 @@ include!("entity_derive.rs");
 #[cfg(not(feature = "derive"))]
 include!("entity.rs");
 
-fn main() {
+fn main() -> elephantry::Result<()> {
     let database_url = std::env::var("DATABASE_URL")
         .unwrap_or_else(|_| "postgres://localhost/elephantry".to_string());
-    let elephantry = elephantry::Pool::default()
-        .add_default("elephantry", &database_url)
-        .unwrap();
-    let connection = elephantry.get_default().unwrap();
+    let elephantry =
+        elephantry::Pool::default().add_default("elephantry", &database_url)?;
 
-    let count = connection
-        .count_where::<EventModel>("name = $1", &[&"pageview"])
-        .unwrap();
+    let count =
+        elephantry.count_where::<EventModel>("name = $1", &[&"pageview"])?;
     println!("Count events: {}", count);
     assert_eq!(count, 7);
     println!();
 
     println!("Find one event:\n");
     find_by_pk::<EventModel>(
-        connection,
+        &elephantry,
         "f186b680-237d-449d-ad66-ad91c4e53d3d",
-    );
+    )?;
     println!();
 
     println!("Find all events:\n");
-    find_all::<EventModel>(connection);
+    find_all::<EventModel>(&elephantry)?;
     println!();
 
     println!("Find all extra events:\n");
-    find_all::<EventExtraModel>(connection);
+    find_all::<EventExtraModel>(&elephantry)?;
     println!();
 
     println!("Insert one row:\n");
@@ -50,64 +47,65 @@ fn main() {
             .to_string(),
         generic: None,
     };
-    let mut entity = insert_one::<EventModel>(connection, &new_event);
+    let mut entity = insert_one::<EventModel>(&elephantry, &new_event)?;
     println!();
 
     println!("Update one row:\n");
     entity.name = "pageview".to_string();
     let entity = update_one::<EventModel>(
-        connection,
+        &elephantry,
         &elephantry::pk!(uuid => entity.uuid),
         &entity,
-    );
+    )?;
     assert_eq!(&entity.name, "pageview");
     println!();
 
     println!("Delete one row\n");
-    connection.delete_one::<EventModel>(&entity).unwrap();
+    elephantry.delete_one::<EventModel>(&entity)?;
     let uuid = entity.uuid.unwrap();
-    assert!(connection
-        .find_by_pk::<EventModel>(&elephantry::pk! {uuid => uuid})
-        .unwrap()
+    assert!(elephantry
+        .find_by_pk::<EventModel>(&elephantry::pk! {uuid => uuid})?
         .is_none());
     assert_eq!(
-        connection
-            .exist_where::<EventModel>("uuid = $1", &[&uuid])
-            .unwrap(),
+        elephantry.exist_where::<EventModel>("uuid = $1", &[&uuid])?,
         false
     );
 
-    let count = connection
-        .model::<EventModel>()
-        .count_uniq_visitor()
-        .unwrap();
+    let count = elephantry.model::<EventModel>().count_uniq_visitor()?;
     assert_eq!(count, 4);
     println!("Count uniq visitor: {}", count);
+
+    Ok(())
 }
 
-fn find_by_pk<'a, M>(connection: &elephantry::Connection, uuid: &str)
+fn find_by_pk<'a, M>(
+    connection: &elephantry::Connection,
+    uuid: &str,
+) -> elephantry::Result<()>
 where
     M: elephantry::Model<'a>,
     M::Entity: std::fmt::Debug,
 {
     #[cfg(feature = "uuid")]
     let uuid = uuid::Uuid::parse_str(uuid).unwrap();
-    let event = connection
-        .find_by_pk::<EventModel>(&elephantry::pk!(uuid))
-        .unwrap();
+    let event = connection.find_by_pk::<EventModel>(&elephantry::pk!(uuid))?;
 
     match event {
         Some(event) => println!("{:?}", event),
         None => println!("Event '{}' not found", uuid),
     };
+
+    Ok(())
 }
 
-fn find_all<'a, M>(connection: &elephantry::Connection)
+fn find_all<'a, M>(
+    connection: &elephantry::Connection,
+) -> elephantry::Result<()>
 where
     M: elephantry::Model<'a>,
     M::Entity: std::fmt::Debug,
 {
-    let events = connection.find_all::<M>(None).unwrap();
+    let events = connection.find_all::<M>(None)?;
 
     if events.is_empty() {
         println!("No events in database.");
@@ -117,35 +115,37 @@ where
             println!("{:?}", event);
         }
     }
+
+    Ok(())
 }
 
 fn insert_one<'a, M>(
     connection: &elephantry::Connection,
     entity: &M::Entity,
-) -> M::Entity
+) -> elephantry::Result<M::Entity>
 where
     M: elephantry::Model<'a>,
     M::Entity: std::fmt::Debug,
 {
-    let new_entity = connection.insert_one::<M>(&entity).unwrap();
+    let new_entity = connection.insert_one::<M>(&entity)?;
 
     println!("{:?}", new_entity);
 
-    new_entity
+    Ok(new_entity)
 }
 
 fn update_one<'a, M>(
     connection: &elephantry::Connection,
     pk: &std::collections::HashMap<&str, &dyn elephantry::ToSql>,
     entity: &M::Entity,
-) -> M::Entity
+) -> elephantry::Result<M::Entity>
 where
     M: elephantry::Model<'a>,
     M::Entity: std::fmt::Debug,
 {
-    let new_entity = connection.update_one::<M>(pk, entity).unwrap();
+    let new_entity = connection.update_one::<M>(pk, entity)?;
 
     println!("{:?}", new_entity);
 
-    new_entity.unwrap()
+    Ok(new_entity.unwrap())
 }

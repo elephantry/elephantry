@@ -102,47 +102,46 @@ fn main() -> Result<()> {
         .expect("Missing DATABASE_URL env variable");
     let elephantry =
         elephantry::Pool::new(&dsn).expect("Unable to connect to postgresql");
-    let connection = elephantry.get_default().unwrap();
 
     match opt {
-        Opt::InspectDatabase {} => inspect::database(&connection),
+        Opt::InspectDatabase {} => inspect::database(&elephantry),
         Opt::InspectSchema {
             schema,
-        } => inspect::schema(&connection, &schema),
+        } => inspect::schema(&elephantry, &schema),
         Opt::InspectRelation {
             schema,
             relation,
-        } => inspect::relation(&connection, &schema, &relation),
+        } => inspect::relation(&elephantry, &schema, &relation),
         Opt::InspectEnums {
             schema,
-        } => inspect::enums(&connection, &schema),
+        } => inspect::enums(&elephantry, &schema),
         Opt::InspectDomains {
             schema,
-        } => inspect::domains(&connection, &schema),
+        } => inspect::domains(&elephantry, &schema),
         Opt::InspectComposites {
             schema,
-        } => inspect::composites(&connection, &schema),
+        } => inspect::composites(&elephantry, &schema),
         Opt::GenerateSchema {
             prefix_dir,
             schema,
-        } => generate::schema(&connection, &prefix_dir, &schema),
+        } => generate::schema(&elephantry, &prefix_dir, &schema),
         Opt::GenerateRelation {
             prefix_dir,
             schema,
             relation,
-        } => generate::relation(&connection, &prefix_dir, &schema, &relation),
+        } => generate::relation(&elephantry, &prefix_dir, &schema, &relation),
         Opt::GenerateEntity {
             prefix_dir,
             schema,
             relation,
-        } => generate::entity(&connection, &prefix_dir, &schema, &relation),
+        } => generate::entity(&elephantry, &prefix_dir, &schema, &relation),
         Opt::GenerateEnums {
             prefix_dir,
             schema,
-        } => generate::enums(&connection, &prefix_dir, &schema),
+        } => generate::enums(&elephantry, &prefix_dir, &schema),
         Opt::GenerateComposites {
             prefix_dir,
             schema,
-        } => generate::composites(&connection, &prefix_dir, &schema),
+        } => generate::composites(&elephantry, &prefix_dir, &schema),
     }
 }

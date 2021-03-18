@@ -43,7 +43,7 @@ impl crate::FromSql for Bytea {
         let mut v = Vec::new();
 
         while pos < string.len() {
-            v.push(u8::from_str_radix(&string[pos..pos + 2], 16).unwrap());
+            v.push(u8::from_str_radix(&string[pos..pos + 2], 16)?);
             pos += 2;
         }
 

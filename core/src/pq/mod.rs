@@ -91,7 +91,7 @@ impl ToArray for Type {
 
 #[derive(Debug)]
 pub struct Result {
-    inner: libpq::Result,
+    pub(crate) inner: libpq::Result,
     current_tuple: std::cell::RefCell<usize>,
 }
 
@@ -118,13 +118,9 @@ impl Result {
         self.len() == 0
     }
 
+    #[deprecated(note = "use v2::pq::result::state instead", since = "1.7.0")]
     pub fn state(&self) -> State {
-        State::from_code(
-            &self
-                .inner
-                .error_field(libpq::result::ErrorField::Sqlstate)
-                .unwrap(),
-        )
+        crate::v2::pq::result::state(self).unwrap()
     }
 }
 

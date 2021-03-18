@@ -8,17 +8,19 @@ fn main() -> elephantry::Result<()> {
 
     elephantry.listen(CHANNEL_NAME)?;
     elephantry.notify(CHANNEL_NAME, Some("payload"))?;
-    listen(&elephantry);
+    listen(&elephantry)?;
 
     elephantry.unlisten(CHANNEL_NAME)?;
     elephantry.notify(CHANNEL_NAME, Some("payload"))?;
-    listen(&elephantry);
+    listen(&elephantry)?;
 
     Ok(())
 }
 
-fn listen(elephantry: &elephantry::Connection) {
-    while let Some(notify) = elephantry.notifies() {
+fn listen(elephantry: &elephantry::Connection) -> elephantry::Result<()> {
+    while let Some(notify) = elephantry::v2::connection::notifies(elephantry)? {
         dbg!(notify);
     }
+
+    Ok(())
 }

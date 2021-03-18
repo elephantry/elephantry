@@ -69,11 +69,10 @@ pub trait FromSql: Sized {
         match format {
             crate::pq::Format::Binary => Self::from_binary(ty, raw),
             crate::pq::Format::Text => {
-                Self::from_text(
-                    ty,
-                    raw.map(|x| String::from_utf8(x.to_vec()).unwrap())
-                        .as_deref(),
-                )
+                let text = raw.map(|x| String::from_utf8(x.to_vec()))
+                    .transpose()?;
+
+                Self::from_text(ty, text.as_deref())
             },
         }
     }
@@ -171,10 +170,10 @@ impl<T: FromSql> FromSql for Option<T> {
 
 impl FromSql for char {
     fn from_text(
-        _: &crate::pq::Type,
+        ty: &crate::pq::Type,
         raw: Option<&str>,
     ) -> crate::Result<Self> {
-        Ok(not_null(raw)?.chars().next().unwrap())
+        not_null(raw)?.chars().next().ok_or_else(|| Self::error(ty, "char", raw))
     }
 
     fn from_binary(

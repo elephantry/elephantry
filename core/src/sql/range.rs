@@ -36,7 +36,10 @@ where
         Unbounded => panic!("Unsupported unbounded range"),
     };
 
-    let mut start = start.to_sql()?.unwrap();
+    let mut start = match start.to_sql()? {
+        Some(start) => start,
+        None => return Ok(None),
+    };
     start.pop(); // removes \0
 
     let (end_char, end) = match range.end_bound() {
@@ -45,7 +48,10 @@ where
         Unbounded => panic!("Unsupported unbounded range"),
     };
 
-    let mut end = end.to_sql()?.unwrap();
+    let mut end = match end.to_sql()? {
+        Some(end) => end,
+        None => return Ok(None),
+    };
     end.pop(); // removes \0
 
     let mut vec = vec![start_char];

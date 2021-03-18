@@ -21,7 +21,9 @@ impl crate::FromSql for u8 {
     ) -> crate::Result<Self> {
         let bytes = bit_vec::BitVec::from_text(ty, raw)?;
 
-        Ok(bytes.get(0).unwrap() as u8)
+        bytes.get(0)
+            .map(|x| x as u8)
+            .ok_or_else(|| Self::error(ty, "u8", raw))
     }
 
     /*
@@ -33,7 +35,9 @@ impl crate::FromSql for u8 {
     ) -> crate::Result<Self> {
         let bytes = bit_vec::BitVec::from_binary(ty, raw)?;
 
-        Ok(bytes.get(0).unwrap() as u8)
+        bytes.get(0)
+            .map(|x| x as u8)
+            .ok_or_else(|| Self::error(ty, "u8", raw))
     }
 }
 

@@ -16,7 +16,12 @@ impl<'c> std::future::Future for Async<'c> {
         mut self: std::pin::Pin<&mut Self>,
         ctx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<Self::Output> {
-        if let Some(result) = self.connection.lock().unwrap().result() {
+        let connection = match self.connection.lock() {
+            Ok(connection) => connection,
+            Err(_) => return std::task::Poll::Pending,
+        };
+
+        if let Some(result) = connection.result() {
             use std::convert::TryInto;
             self.last_result = Some(result.try_into().unwrap());
         }

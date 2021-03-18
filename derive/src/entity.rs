@@ -115,5 +115,5 @@ fn is_option(ty: &syn::Type) -> bool {
 
     typepath.path.leading_colon.is_none()
         && typepath.path.segments.len() == 1
-        && typepath.path.segments.iter().next().unwrap().ident == "Option"
+        && typepath.path.segments.iter().next().map(|x| x.ident.to_string()) == Some("Option".to_string())
 }

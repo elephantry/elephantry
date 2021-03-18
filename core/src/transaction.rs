@@ -166,17 +166,10 @@ impl<'c> Transaction<'c> {
         keys: Option<Vec<&str>>,
         constraints: Constraints,
     ) -> crate::Result<()> {
-        let escape = |x| self.connection.escape_identifier(x).unwrap();
-
         let name = if let Some(keys) = keys {
             keys.iter()
-                .map(|key| {
-                    key.split('.')
-                        .map(|x| escape(x))
-                        .collect::<Vec<_>>()
-                        .join(".")
-                })
-                .collect::<Vec<_>>()
+                .map(|key| self.escape_identifier(key))
+                .collect::<crate::Result<Vec<_>>>()?
                 .join(", ")
         }
         else {
@@ -186,6 +179,13 @@ impl<'c> Transaction<'c> {
         let query = format!("set constraints {} {}", name, constraints);
 
         self.exec(&query)
+    }
+
+    fn escape_identifier(&self, id: &str) -> crate::Result<String> {
+        id.split('.')
+            .map(|x| self.connection.escape_identifier(x))
+            .collect::<crate::Result<Vec<_>>>()
+            .map(|x| x.join("."))
     }
 
     /**

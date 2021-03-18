@@ -127,7 +127,7 @@ where
 
     for column in &columns {
         let name = name_to_rust(&column);
-        let ty = ty_to_rust(&column);
+        let ty = ty_to_rust(&column)?;
 
         fields.push(format!("    pub {}: {},", name, ty));
     }
@@ -237,11 +237,12 @@ pub struct {name} {{
     Ok(())
 }
 
-fn ty_to_rust(column: &elephantry::inspect::Column) -> String {
+fn ty_to_rust(column: &elephantry::inspect::Column) -> crate::Result<String> {
     use crate::pq::ToRust;
     use std::convert::TryFrom;
 
-    let ty = elephantry::pq::Type::try_from(column.oid).unwrap();
+    let ty = elephantry::pq::Type::try_from(column.oid)
+        .map_err(crate::Error::Libpq)?;
 
     let mut rty = if matches!(ty.kind, elephantry::pq::types::Kind::Array(_)) {
         format!("Vec<{}>", ty.to_rust())
@@ -254,7 +255,7 @@ fn ty_to_rust(column: &elephantry::inspect::Column) -> String {
         rty = format!("Option<{}>", rty);
     }
 
-    rty
+    Ok(rty)
 }
 
 fn name_to_rust(column: &elephantry::inspect::Column) -> String {

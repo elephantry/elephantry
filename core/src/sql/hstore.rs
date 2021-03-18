@@ -104,7 +104,7 @@ impl crate::FromSql for Hstore {
      * https://github.com/postgres/postgres/blob/REL_12_0/contrib/hstore/hstore_io.c#L1226
      */
     fn from_binary(
-        _: &crate::pq::Type,
+        ty: &crate::pq::Type,
         raw: Option<&[u8]>,
     ) -> crate::Result<Self> {
         use byteorder::ReadBytesExt;
@@ -114,7 +114,8 @@ impl crate::FromSql for Hstore {
         let count = buf.read_i32::<byteorder::BigEndian>()?;
 
         for _ in 0..count {
-            let key = Self::read_string(&mut buf)?.unwrap();
+            let key = Self::read_string(&mut buf)?
+                .ok_or_else(|| Self::error(ty, "Hstore", raw))?;
             let value = Self::read_string(&mut buf)?;
 
             hstore.insert(key, value);

@@ -41,10 +41,13 @@ impl<T: crate::FromSql> Iterator for Array<T> {
         };
         self.data = buf[len..].to_vec();
 
-        Some(
-            T::from_sql(&self.elemtype, crate::pq::Format::Binary, value)
-                .unwrap(),
-        )
+        match T::from_sql(&self.elemtype, crate::pq::Format::Binary, value) {
+            Ok(x) => Some(x),
+            Err(err) => {
+                log::error!("Unable to convert array element from SQL: {}", err);
+                None
+            }
+        }
     }
 }
 
