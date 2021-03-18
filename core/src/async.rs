@@ -5,12 +5,12 @@
  */
 #[derive(Debug)]
 pub struct Async<'c> {
-    last_result: Option<crate::pq::Result>,
+    last_result: Option<crate::Result<crate::pq::Result>>,
     connection: &'c std::sync::Mutex<libpq::Connection>,
 }
 
 impl<'c> std::future::Future for Async<'c> {
-    type Output = crate::pq::Result;
+    type Output = crate::Result<crate::pq::Result>;
 
     fn poll(
         mut self: std::pin::Pin<&mut Self>,
@@ -23,7 +23,7 @@ impl<'c> std::future::Future for Async<'c> {
 
         if let Some(result) = connection.result() {
             use std::convert::TryInto;
-            self.last_result = Some(result.try_into().unwrap());
+            self.last_result = Some(result.try_into());
         }
         else {
             let last_result = std::mem::replace(&mut self.last_result, None);
@@ -63,7 +63,7 @@ impl<'c> Async<'c> {
             .send_query(&query)
             .map_err(crate::Error::Async)?;
 
-        Ok(self.await)
+        self.await
     }
 
     /**
@@ -122,6 +122,6 @@ impl<'c> Async<'c> {
             )
             .map_err(crate::Error::Async)?;
 
-        Ok(self.await)
+        self.await
     }
 }
