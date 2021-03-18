@@ -1,4 +1,13 @@
-# Verion 1.6.0
+# Version 1.7.0
+
+- Adds `all-types` feature;
+- Deprecates `serde-support` feature in favour of `serde`;
+- Adds [config](https://crates.io/crates/config) support via the
+    `config-support` feature;
+- Adds `elephantry::Connection::ping` function;
+- Derive macros support generic.
+
+# Version 1.6.0
 
 - `elephantry::inspect` functions will returns `crate::Result` in next major
     version;
@@ -11,16 +20,16 @@
 - Prefix reserved rust keyword;
 - Generates mod.rs files.
 
-# Verion 1.5.0
+# Version 1.5.0
 
 - Impl `Clone` for `Connection` and `Pool`.
 
-# Verion 1.4.0
+# Version 1.4.0
 
 - Adds `values` macro;
 - Adds `Rows::into_vec` function.
 
-# Verion 1.3.0
+# Version 1.3.0
 
 - Impl `Default` for `where::Builder`;
 - Adds `Connection::upset` function;
