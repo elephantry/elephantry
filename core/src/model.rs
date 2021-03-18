@@ -40,16 +40,22 @@ pub trait Model<'a> {
         <Self::Entity as crate::Entity>::from(&tuple)
     }
 
-    fn primary_key(entity: &Self::Entity) -> HashMap<&'static str, &dyn crate::ToSql> {
+    fn primary_key(
+        entity: &Self::Entity,
+    ) -> crate::Result<HashMap<&'static str, &dyn crate::ToSql>> {
         use crate::Entity;
         use crate::Structure;
 
         let mut pk = HashMap::new();
 
         for field in Self::Structure::primary_key() {
-            pk.insert(*field, entity.get(field).unwrap());
+            pk.insert(*field, entity.get(field).ok_or(crate::Error::PrimaryKey)?);
         }
 
-        pk
+        if pk.is_empty() {
+            return Err(crate::Error::PrimaryKey);
+        }
+
+        Ok(pk)
     }
 }

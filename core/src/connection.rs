@@ -460,7 +460,7 @@ impl Connection {
     where
         M: crate::Model<'a>,
     {
-        let pk = M::primary_key(&entity);
+        let pk = M::primary_key(&entity)?;
 
         self.delete_by_pk::<M>(&pk)
     }
