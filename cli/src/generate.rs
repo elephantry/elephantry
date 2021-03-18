@@ -34,9 +34,7 @@ pub fn relation(
     let mut pk = Vec::new();
     let mut columns = Vec::new();
 
-    for column in
-        &elephantry::v2::inspect::relation(connection, schema, relation)?
-    {
+    for column in &elephantry::v2::inspect::relation(connection, schema, relation)? {
         let name = column.name.to_snake();
 
         if column.is_primary {
@@ -120,8 +118,7 @@ fn write_entity<W>(
 where
     W: std::io::Write,
 {
-    let columns =
-        elephantry::v2::inspect::relation(connection, schema, relation)?;
+    let columns = elephantry::v2::inspect::relation(connection, schema, relation)?;
 
     let mut fields = Vec::new();
 
@@ -145,11 +142,7 @@ pub struct Entity {{
     Ok(())
 }
 
-pub fn enums(
-    connection: &elephantry::Connection,
-    prefix_dir: &str,
-    schema: &str,
-) -> crate::Result {
+pub fn enums(connection: &elephantry::Connection, prefix_dir: &str, schema: &str) -> crate::Result {
     let dir = format!("{}/enums", prefix_dir);
     std::fs::create_dir_all(&dir)?;
 
@@ -218,9 +211,7 @@ where
     let fields = composite
         .fields
         .iter()
-        .map(|(name, ty)| {
-            format!("    {}: {},", name, crate::pq::sql_to_rust(ty))
-        })
+        .map(|(name, ty)| format!("    {}: {},", name, crate::pq::sql_to_rust(ty)))
         .collect::<Vec<_>>();
 
     write!(
@@ -241,13 +232,11 @@ fn ty_to_rust(column: &elephantry::inspect::Column) -> crate::Result<String> {
     use crate::pq::ToRust;
     use std::convert::TryFrom;
 
-    let ty = elephantry::pq::Type::try_from(column.oid)
-        .map_err(crate::Error::Libpq)?;
+    let ty = elephantry::pq::Type::try_from(column.oid).map_err(crate::Error::Libpq)?;
 
     let mut rty = if matches!(ty.kind, elephantry::pq::types::Kind::Array(_)) {
         format!("Vec<{}>", ty.to_rust())
-    }
-    else {
+    } else {
         ty.to_rust()
     };
 
@@ -270,13 +259,11 @@ fn name_to_rust(column: &elephantry::inspect::Column) -> String {
 
 fn is_keyword(name: &str) -> bool {
     static KEYWORDS: &[&str] = &[
-        "as", "break", "const", "continue", "crate", "else", "enum", "extern",
-        "false", "fn", "for", "if", "impl", "in", "let", "loop", "match",
-        "mod", "move", "mut", "pub", "ref", "return", "self", "Self", "static",
-        "struct", "super", "trait", "true", "type", "unsafe", "use", "where",
-        "while", "async", "await", "dyn", "abstract", "become", "box", "do",
-        "final", "macro", "override", "priv", "typeof", "unsized", "virtual",
-        "yield", "try",
+        "as", "break", "const", "continue", "crate", "else", "enum", "extern", "false", "fn",
+        "for", "if", "impl", "in", "let", "loop", "match", "mod", "move", "mut", "pub", "ref",
+        "return", "self", "Self", "static", "struct", "super", "trait", "true", "type", "unsafe",
+        "use", "where", "while", "async", "await", "dyn", "abstract", "become", "box", "do",
+        "final", "macro", "override", "priv", "typeof", "unsized", "virtual", "yield", "try",
     ];
 
     KEYWORDS.contains(&name)

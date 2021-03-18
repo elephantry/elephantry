@@ -49,8 +49,8 @@ mod employee {
 fn main() -> elephantry::Result {
     pretty_env_logger::init();
 
-    let database_url = std::env::var("DATABASE_URL")
-        .unwrap_or_else(|_| "postgres://localhost".to_string());
+    let database_url =
+        std::env::var("DATABASE_URL").unwrap_or_else(|_| "postgres://localhost".to_string());
     let elephantry = elephantry::Pool::new(&database_url)?;
     elephantry.execute(include_str!("structure.sql"))?;
 
@@ -61,9 +61,7 @@ fn main() -> elephantry::Result {
     Ok(())
 }
 
-fn insert(
-    elephantry: &elephantry::Pool,
-) -> elephantry::Result<employee::Entity> {
+fn insert(elephantry: &elephantry::Pool) -> elephantry::Result<employee::Entity> {
     let employee = employee::Entity {
         employee_id: None,
         first_name: "First name".to_string(),
@@ -74,15 +72,11 @@ fn insert(
         department_id: 3,
     };
 
-    let inserted_entity =
-        elephantry.insert_one::<employee::Model>(&employee)?;
+    let inserted_entity = elephantry.insert_one::<employee::Model>(&employee)?;
     dbg!(&inserted_entity);
 
-    let upsert_nothing = elephantry.upsert_one::<employee::Model>(
-        &inserted_entity,
-        "(employee_id)",
-        "nothing",
-    )?;
+    let upsert_nothing =
+        elephantry.upsert_one::<employee::Model>(&inserted_entity, "(employee_id)", "nothing")?;
     dbg!(&upsert_nothing);
 
     let upsert_update = elephantry.upsert_one::<employee::Model>(
@@ -95,10 +89,7 @@ fn insert(
     Ok(inserted_entity)
 }
 
-fn update(
-    elephantry: &elephantry::Pool,
-    entity: &employee::Entity,
-) -> elephantry::Result {
+fn update(elephantry: &elephantry::Pool, entity: &employee::Entity) -> elephantry::Result {
     let mut entity = entity.clone();
     entity.day_salary = 20_000.into();
 
@@ -120,21 +111,15 @@ fn update(
     Ok(())
 }
 
-fn delete(
-    elephantry: &elephantry::Pool,
-    entity: &employee::Entity,
-) -> elephantry::Result {
+fn delete(elephantry: &elephantry::Pool, entity: &employee::Entity) -> elephantry::Result {
     let deleted_entity = elephantry.delete_one::<employee::Model>(&entity)?;
     dbg!(deleted_entity);
 
-    let deleted_entity = elephantry.delete_by_pk::<employee::Model>(
-        &elephantry::pk!(employee_id => entity.employee_id),
-    )?;
+    let deleted_entity = elephantry
+        .delete_by_pk::<employee::Model>(&elephantry::pk!(employee_id => entity.employee_id))?;
     dbg!(deleted_entity);
 
-    elephantry.delete_where::<employee::Model>("employee_id = $1", &[
-        &entity.employee_id,
-    ])?;
+    elephantry.delete_where::<employee::Model>("employee_id = $1", &[&entity.employee_id])?;
 
     Ok(())
 }

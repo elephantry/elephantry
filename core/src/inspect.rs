@@ -12,10 +12,7 @@ pub struct Schema {
 /**
  * Retreive schemas of the connected database.
  */
-#[deprecated(
-    since = "1.6.0",
-    note = "use crate::v2::inspect::database instead"
-)]
+#[deprecated(since = "1.6.0", note = "use crate::v2::inspect::database instead")]
 #[cfg(not(feature = "v2"))]
 pub fn database(connection: &crate::Connection) -> Vec<Schema> {
     crate::v2::inspect::database(&connection).unwrap()
@@ -24,10 +21,7 @@ pub fn database(connection: &crate::Connection) -> Vec<Schema> {
 /**
  * Retreive schemas of the connected database.
  */
-#[deprecated(
-    since = "1.7.0",
-    note = "use crate::v2::inspect::database instead"
-)]
+#[deprecated(since = "1.7.0", note = "use crate::v2::inspect::database instead")]
 #[cfg(feature = "v2")]
 pub fn database(connection: &crate::Connection) -> crate::Result<Vec<Schema>> {
     crate::v2::inspect::database(connection)
@@ -56,10 +50,7 @@ pub fn schema(connection: &crate::Connection, schema: &str) -> Vec<Relation> {
  */
 #[deprecated(since = "1.7.0", note = "use crate::v2::inspect::schema instead")]
 #[cfg(feature = "v2")]
-pub fn schema(
-    connection: &crate::Connection,
-    schema: &str,
-) -> crate::Result<Vec<Relation>> {
+pub fn schema(connection: &crate::Connection, schema: &str) -> crate::Result<Vec<Relation>> {
     crate::v2::inspect::schema(&connection, schema)
 }
 
@@ -79,26 +70,16 @@ pub struct Column {
 /**
  * Retreive columns of the `schema.relation` relation.
  */
-#[deprecated(
-    since = "1.6.0",
-    note = "use crate::v2::inspect::relation instead"
-)]
+#[deprecated(since = "1.6.0", note = "use crate::v2::inspect::relation instead")]
 #[cfg(not(feature = "v2"))]
-pub fn relation(
-    connection: &crate::Connection,
-    schema: &str,
-    relation: &str,
-) -> Vec<Column> {
+pub fn relation(connection: &crate::Connection, schema: &str, relation: &str) -> Vec<Column> {
     crate::v2::inspect::relation(connection, schema, relation).unwrap()
 }
 
 /**
  * Retreive columns of the `schema.relation` relation.
  */
-#[deprecated(
-    since = "1.7.0",
-    note = "use crate::v2::inspect::relation instead"
-)]
+#[deprecated(since = "1.7.0", note = "use crate::v2::inspect::relation instead")]
 #[cfg(feature = "v2")]
 pub fn relation(
     connection: &crate::Connection,
@@ -130,10 +111,7 @@ pub fn enums(connection: &crate::Connection, schema: &str) -> Vec<Enum> {
  */
 #[deprecated(since = "1.6.0", note = "use crate::v2::inspect::enums instead")]
 #[cfg(feature = "v2")]
-pub fn enums(
-    connection: &crate::Connection,
-    schema: &str,
-) -> crate::Result<Vec<Enum>> {
+pub fn enums(connection: &crate::Connection, schema: &str) -> crate::Result<Vec<Enum>> {
     crate::v2::inspect::enums(connection, schema)
 }
 
@@ -158,10 +136,7 @@ pub fn domains(connection: &crate::Connection, schema: &str) -> Vec<Domain> {
  */
 #[deprecated(since = "1.7.0", note = "use crate::v2::inspect::domains instead")]
 #[cfg(feature = "v2")]
-pub fn domains(
-    connection: &crate::Connection,
-    schema: &str,
-) -> crate::Result<Vec<Domain>> {
+pub fn domains(connection: &crate::Connection, schema: &str) -> crate::Result<Vec<Domain>> {
     crate::v2::inspect::domains(connection, schema)
 }
 
@@ -177,30 +152,18 @@ pub struct Composite {
 /**
  * Retreive composite type for `schema`.
  */
-#[deprecated(
-    since = "1.6.0",
-    note = "use crate::v2::inspect::composites instead"
-)]
+#[deprecated(since = "1.6.0", note = "use crate::v2::inspect::composites instead")]
 #[cfg(not(feature = "v2"))]
-pub fn composites(
-    connection: &crate::Connection,
-    schema: &str,
-) -> Vec<Composite> {
+pub fn composites(connection: &crate::Connection, schema: &str) -> Vec<Composite> {
     crate::v2::inspect::composites(connection, schema).unwrap()
 }
 
 /**
  * Retreive composite type for `schema`.
  */
-#[deprecated(
-    since = "1.7.0",
-    note = "use crate::v2::inspect::composites instead"
-)]
+#[deprecated(since = "1.7.0", note = "use crate::v2::inspect::composites instead")]
 #[cfg(feature = "v2")]
-pub fn composites(
-    connection: &crate::Connection,
-    schema: &str,
-) -> crate::Result<Vec<Composite>> {
+pub fn composites(connection: &crate::Connection, schema: &str) -> crate::Result<Vec<Composite>> {
     crate::v2::inspect::composites(connection, schema)
 }
 
@@ -257,10 +220,7 @@ order by 1;
         )
 }
 
-pub(crate) fn schema_oid(
-    connection: &crate::Connection,
-    name: &str,
-) -> crate::Result<i32> {
+pub(crate) fn schema_oid(connection: &crate::Connection, name: &str) -> crate::Result<i32> {
     connection
         .query_one::<i32>(
             r#"

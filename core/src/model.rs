@@ -22,10 +22,7 @@ pub trait Model<'a> {
     fn default_projection() -> crate::Projection {
         use crate::Structure;
 
-        crate::Projection::new(
-            &Self::Structure::relation(),
-            &Self::Structure::columns(),
-        )
+        crate::Projection::new(&Self::Structure::relation(), &Self::Structure::columns())
     }
 
     /**
@@ -43,9 +40,7 @@ pub trait Model<'a> {
         <Self::Entity as crate::Entity>::from(&tuple)
     }
 
-    fn primary_key(
-        entity: &Self::Entity,
-    ) -> HashMap<&'static str, &dyn crate::ToSql> {
+    fn primary_key(entity: &Self::Entity) -> HashMap<&'static str, &dyn crate::ToSql> {
         use crate::Entity;
         use crate::Structure;
 

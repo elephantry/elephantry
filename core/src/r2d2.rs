@@ -22,10 +22,7 @@ impl r2d2::ManageConnection for ConnectionManager {
         self.etablish()
     }
 
-    fn is_valid(
-        &self,
-        conn: &mut Self::Connection,
-    ) -> std::result::Result<(), Self::Error> {
+    fn is_valid(&self, conn: &mut Self::Connection) -> std::result::Result<(), Self::Error> {
         conn.execute("SELECT 1").map(|_| ())
     }
 

@@ -40,10 +40,7 @@ impl crate::ToSql for Polygon {
 }
 
 impl crate::FromSql for Polygon {
-    fn from_text(
-        ty: &crate::pq::Type,
-        raw: Option<&str>,
-    ) -> crate::Result<Self> {
+    fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let path = crate::Path::from_text(ty, raw)?;
 
         Ok(Self::new(&path))
@@ -52,10 +49,7 @@ impl crate::FromSql for Polygon {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L3440
      */
-    fn from_binary(
-        _: &crate::pq::Type,
-        raw: Option<&[u8]>,
-    ) -> crate::Result<Self> {
+    fn from_binary(_: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         use byteorder::ReadBytesExt;
 
         let mut buf = crate::from_sql::not_null(raw)?;
@@ -76,16 +70,20 @@ impl crate::FromSql for Polygon {
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(polygon, crate::Polygon, [(
-        "'((0, 0), (10, 10), (10, 0), (0, 0))'",
-        crate::Polygon::new(&crate::Path::new(
-            &vec![
-                crate::Coordinate::new(0., 0.),
-                crate::Coordinate::new(10., 10.),
-                crate::Coordinate::new(10., 0.),
-                crate::Coordinate::new(0., 0.),
-            ]
-            .into()
-        ))
-    )]);
+    crate::sql_test!(
+        polygon,
+        crate::Polygon,
+        [(
+            "'((0, 0), (10, 10), (10, 0), (0, 0))'",
+            crate::Polygon::new(&crate::Path::new(
+                &vec![
+                    crate::Coordinate::new(0., 0.),
+                    crate::Coordinate::new(10., 10.),
+                    crate::Coordinate::new(10., 0.),
+                    crate::Coordinate::new(0., 0.),
+                ]
+                .into()
+            ))
+        )]
+    );
 }

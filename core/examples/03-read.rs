@@ -49,8 +49,8 @@ mod employee {
 fn main() -> elephantry::Result {
     pretty_env_logger::init();
 
-    let database_url = std::env::var("DATABASE_URL")
-        .unwrap_or_else(|_| "postgres://localhost".to_string());
+    let database_url =
+        std::env::var("DATABASE_URL").unwrap_or_else(|_| "postgres://localhost".to_string());
     let elephantry = elephantry::Pool::new(&database_url)?;
     elephantry.execute(include_str!("structure.sql"))?;
 
@@ -66,8 +66,7 @@ fn main() -> elephantry::Result {
 fn find_by_pk(elephantry: &elephantry::Pool) -> elephantry::Result {
     println!("# Find by primary key\n");
 
-    let employee = elephantry
-        .find_by_pk::<employee::Model>(&elephantry::pk!(employee_id => 1))?;
+    let employee = elephantry.find_by_pk::<employee::Model>(&elephantry::pk!(employee_id => 1))?;
     println!("{:?}\n", employee);
 
     Ok(())
@@ -75,8 +74,7 @@ fn find_by_pk(elephantry: &elephantry::Pool) -> elephantry::Result {
 
 fn find_all(elephantry: &elephantry::Pool) -> elephantry::Result {
     println!("# Find all\n");
-    let employees = elephantry
-        .find_all::<employee::Model>(Some("order by birth_date desc"))?;
+    let employees = elephantry.find_all::<employee::Model>(Some("order by birth_date desc"))?;
 
     for employee in employees {
         println!("{} {}", employee.first_name, employee.last_name);
@@ -89,11 +87,7 @@ fn find_all(elephantry: &elephantry::Pool) -> elephantry::Result {
 fn find_where(elephantry: &elephantry::Pool) -> elephantry::Result {
     println!("# Find where\n");
 
-    let managers = elephantry.find_where::<employee::Model>(
-        "is_manager = $1",
-        &[&true],
-        None,
-    )?;
+    let managers = elephantry.find_where::<employee::Model>("is_manager = $1", &[&true], None)?;
 
     for manager in managers {
         println!("{} {}", manager.first_name, manager.last_name);
@@ -106,8 +100,7 @@ fn find_where(elephantry: &elephantry::Pool) -> elephantry::Result {
 fn count_where(elephantry: &elephantry::Pool) -> elephantry::Result {
     println!("# Count where\n");
 
-    let n = elephantry
-        .count_where::<employee::Model>("is_manager = $1", &[&true])?;
+    let n = elephantry.count_where::<employee::Model>("is_manager = $1", &[&true])?;
     println!("{}\n", n);
 
     Ok(())
@@ -116,8 +109,7 @@ fn count_where(elephantry: &elephantry::Pool) -> elephantry::Result {
 fn exist_where(elephantry: &elephantry::Pool) -> elephantry::Result {
     println!("# Exist where\n");
 
-    let exist = elephantry
-        .exist_where::<employee::Model>("day_salary < $1", &[&10_000])?;
+    let exist = elephantry.exist_where::<employee::Model>("day_salary < $1", &[&10_000])?;
     println!("{}\n", exist);
 
     Ok(())

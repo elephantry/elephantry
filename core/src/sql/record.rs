@@ -1,6 +1,4 @@
-pub(crate) fn vec_to_sql(
-    vec: &[&dyn crate::ToSql],
-) -> crate::Result<Option<Vec<u8>>> {
+pub(crate) fn vec_to_sql(vec: &[&dyn crate::ToSql]) -> crate::Result<Option<Vec<u8>>> {
     let mut data = b"(".to_vec();
 
     for ref field in vec {
@@ -18,9 +16,7 @@ pub(crate) fn vec_to_sql(
     Ok(Some(data))
 }
 
-pub(crate) fn text_to_vec(
-    raw: Option<&str>,
-) -> crate::Result<Vec<Option<&str>>> {
+pub(crate) fn text_to_vec(raw: Option<&str>) -> crate::Result<Vec<Option<&str>>> {
     let s = crate::not_null(raw)?;
 
     if !s.starts_with('(') && !s.ends_with(')') {
@@ -35,14 +31,7 @@ pub(crate) fn text_to_vec(
         .trim_start_matches('(')
         .trim_end_matches(')')
         .split(',')
-        .map(|x| {
-            if x.is_empty() {
-                None
-            }
-            else {
-                Some(x)
-            }
-        })
+        .map(|x| if x.is_empty() { None } else { Some(x) })
         .collect::<Vec<_>>();
 
     Ok(values)
@@ -51,9 +40,7 @@ pub(crate) fn text_to_vec(
 /*
  * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/rowtypes.c#L649
  */
-pub(crate) fn binary_to_vec(
-    raw: Option<&[u8]>,
-) -> crate::Result<Vec<Option<&[u8]>>> {
+pub(crate) fn binary_to_vec(raw: Option<&[u8]>) -> crate::Result<Vec<Option<&[u8]>>> {
     use byteorder::ReadBytesExt;
 
     let mut data = crate::not_null(raw)?;
@@ -252,8 +239,9 @@ tuple_impls! {
 
 #[cfg(test)]
 mod test {
-    crate::sql_test_from!(record, (i32, String), [(
-        "(1, 'foo')",
-        (1, "foo".to_string())
-    ),]);
+    crate::sql_test_from!(
+        record,
+        (i32, String),
+        [("(1, 'foo')", (1, "foo".to_string())),]
+    );
 }

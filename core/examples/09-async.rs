@@ -13,8 +13,8 @@ mod employee {
 
 #[async_std::main]
 async fn main() -> elephantry::Result {
-    let database_url = std::env::var("DATABASE_URL")
-        .unwrap_or_else(|_| "postgres://localhost".to_string());
+    let database_url =
+        std::env::var("DATABASE_URL").unwrap_or_else(|_| "postgres://localhost".to_string());
     let elephantry = elephantry::Pool::new(&database_url)?;
 
     elephantry
@@ -33,10 +33,7 @@ async fn main() -> elephantry::Result {
 
     let total_salary = elephantry
         .r#async()
-        .query_one::<bigdecimal::BigDecimal>(
-            "select sum(day_salary) from employee",
-            &[],
-        )
+        .query_one::<bigdecimal::BigDecimal>("select sum(day_salary) from employee", &[])
         .await?;
 
     dbg!(total_salary);

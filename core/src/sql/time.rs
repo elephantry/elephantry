@@ -13,21 +13,14 @@ impl crate::ToSql for Time {
 }
 
 impl crate::FromSql for Time {
-    fn from_text(
-        ty: &crate::pq::Type,
-        raw: Option<&str>,
-    ) -> crate::Result<Self> {
-        Time::parse(crate::not_null(raw)?, "%T")
-            .map_err(|_| Self::error(ty, "time", raw))
+    fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
+        Time::parse(crate::not_null(raw)?, "%T").map_err(|_| Self::error(ty, "time", raw))
     }
 
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/date.c#L1281
      */
-    fn from_binary(
-        ty: &crate::pq::Type,
-        raw: Option<&[u8]>,
-    ) -> crate::Result<Self> {
+    fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         let usec = i64::from_binary(ty, raw)?;
 
         Ok(Time::midnight() + time::Duration::microseconds(usec))
@@ -45,10 +38,7 @@ impl crate::ToSql for TimeTz {
 }
 
 impl crate::FromSql for TimeTz {
-    fn from_text(
-        ty: &crate::pq::Type,
-        raw: Option<&str>,
-    ) -> crate::Result<Self> {
+    fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let value = crate::not_null(raw)?;
         dbg!(&value);
 
@@ -79,10 +69,7 @@ impl crate::FromSql for TimeTz {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/date.c#L2063
      */
-    fn from_binary(
-        _: &crate::pq::Type,
-        raw: Option<&[u8]>,
-    ) -> crate::Result<Self> {
+    fn from_binary(_: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         use byteorder::ReadBytesExt;
 
         let mut buf = crate::from_sql::not_null(raw)?;
@@ -98,19 +85,27 @@ impl crate::FromSql for TimeTz {
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(time, crate::Time, [
-        ("'00:00:00'", crate::Time::midnight()),
-        ("'01:02:03'", time::time!(01:02:03)),
-    ]);
+    crate::sql_test!(
+        time,
+        crate::Time,
+        [
+            ("'00:00:00'", crate::Time::midnight()),
+            ("'01:02:03'", time::time!(01:02:03)),
+        ]
+    );
 
-    crate::sql_test!(timetz, crate::TimeTz, [
-        (
-            "'00:00:00+0000'",
-            (crate::Time::midnight(), crate::Timezone::UTC)
-        ),
-        (
-            "'01:02:03+0200'",
-            (time::time!(01:02:03), time::offset!(+2))
-        ),
-    ]);
+    crate::sql_test!(
+        timetz,
+        crate::TimeTz,
+        [
+            (
+                "'00:00:00+0000'",
+                (crate::Time::midnight(), crate::Timezone::UTC)
+            ),
+            (
+                "'01:02:03+0200'",
+                (time::time!(01:02:03), time::offset!(+2))
+            ),
+        ]
+    );
 }

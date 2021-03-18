@@ -40,12 +40,7 @@ impl Pool {
         self.add(name, url, false)
     }
 
-    fn add(
-        mut self,
-        name: &str,
-        url: &str,
-        default: bool,
-    ) -> crate::Result<Self> {
+    fn add(mut self, name: &str, url: &str, default: bool) -> crate::Result<Self> {
         self.connections
             .insert(name.to_string(), crate::Connection::new(url)?);
 

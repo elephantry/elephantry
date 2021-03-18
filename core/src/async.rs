@@ -24,8 +24,7 @@ impl<'c> std::future::Future for Async<'c> {
         if let Some(result) = connection.result() {
             use std::convert::TryInto;
             self.last_result = Some(result.try_into());
-        }
-        else {
+        } else {
             let last_result = std::mem::replace(&mut self.last_result, None);
 
             if let Some(result) = last_result {
@@ -39,9 +38,7 @@ impl<'c> std::future::Future for Async<'c> {
 }
 
 impl<'c> Async<'c> {
-    pub(crate) fn new(
-        connection: &'c std::sync::Mutex<libpq::Connection>,
-    ) -> Self {
+    pub(crate) fn new(connection: &'c std::sync::Mutex<libpq::Connection>) -> Self {
         Self {
             last_result: None,
             connection,
@@ -53,10 +50,7 @@ impl<'c> Async<'c> {
      *
      * [`Connection::execute`]: crate::Connection::execute
      */
-    pub async fn execute(
-        self,
-        query: &str,
-    ) -> crate::Result<crate::pq::Result> {
+    pub async fn execute(self, query: &str) -> crate::Result<crate::pq::Result> {
         self.connection
             .lock()
             .map_err(|e| crate::Error::Mutex(e.to_string()))?

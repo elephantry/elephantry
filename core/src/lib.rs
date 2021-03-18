@@ -172,10 +172,7 @@ mod test {
                         value,
                         stringify!($sql_type)
                     ))?;
-                    assert_eq!(
-                        result.get(0).get::<$rust_type>("actual"),
-                        *expected
-                    );
+                    assert_eq!(result.get(0).get::<$rust_type>("actual"), *expected);
                 }
 
                 Ok(())
@@ -187,11 +184,7 @@ mod test {
 
                 for (value, expected) in &$tests {
                     let result = conn.query::<HashMap<String, $rust_type>>(
-                        &format!(
-                            "select {}::{} as actual",
-                            value,
-                            stringify!($sql_type)
-                        ),
+                        &format!("select {}::{} as actual", value, stringify!($sql_type)),
                         &[],
                     )?;
                     assert_eq!(result.get(0).get("actual").unwrap(), expected);
@@ -235,8 +228,7 @@ mod test {
     }
 
     pub fn dsn() -> String {
-        std::env::var("DATABASE_URL")
-            .unwrap_or_else(|_| "host=localhost".to_string())
+        std::env::var("DATABASE_URL").unwrap_or_else(|_| "host=localhost".to_string())
     }
 
     pub fn new_conn() -> crate::Result<crate::Pool> {

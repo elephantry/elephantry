@@ -14,10 +14,7 @@ impl crate::ToSql for xmltree::Element {
 }
 
 impl crate::FromSql for xmltree::Element {
-    fn from_text(
-        ty: &crate::pq::Type,
-        raw: Option<&str>,
-    ) -> crate::Result<Self> {
+    fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         xmltree::Element::parse(crate::not_null(raw)?.as_bytes())
             .map_err(|_| Self::error(ty, "sxd_document::Package", raw))
     }
@@ -25,10 +22,7 @@ impl crate::FromSql for xmltree::Element {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/xml.c#L418
      */
-    fn from_binary(
-        ty: &crate::pq::Type,
-        raw: Option<&[u8]>,
-    ) -> crate::Result<Self> {
+    fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         let s = String::from_binary(ty, raw)?;
 
         Self::from_text(ty, Some(&s))
@@ -45,8 +39,12 @@ mod test {
   <datum>Math &gt; others</datum>
 </data>"#;
 
-    crate::sql_test!(xml, xmltree::Element, [(
-        format!("'{}'", super::XML),
-        xmltree::Element::parse(super::XML.as_bytes()).unwrap()
-    )]);
+    crate::sql_test!(
+        xml,
+        xmltree::Element,
+        [(
+            format!("'{}'", super::XML),
+            xmltree::Element::parse(super::XML.as_bytes()).unwrap()
+        )]
+    );
 }

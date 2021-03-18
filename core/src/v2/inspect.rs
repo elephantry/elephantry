@@ -3,9 +3,7 @@
 /**
  * Retreive schemas of the connected database.
  */
-pub fn database(
-    connection: &crate::Connection,
-) -> crate::Result<Vec<crate::inspect::Schema>> {
+pub fn database(connection: &crate::Connection) -> crate::Result<Vec<crate::inspect::Schema>> {
     connection
         .query(
             r#"
@@ -85,10 +83,7 @@ select c.oid as oid
         )
         .map_err(|e| {
             #[cfg(feature = "v2")]
-            return crate::Error::Inspect(format!(
-                "Unknow relation {}.{}",
-                schema, relation
-            ));
+            return crate::Error::Inspect(format!("Unknow relation {}.{}", schema, relation));
 
             #[cfg(not(feature = "v2"))]
             return e;
@@ -156,12 +151,11 @@ pub fn composites(
     connection: &crate::Connection,
     schema: &str,
 ) -> crate::Result<Vec<crate::inspect::Composite>> {
-    let mut composites = crate::inspect::types(connection, schema, 'c')?
-        .collect::<Vec<crate::inspect::Composite>>();
+    let mut composites =
+        crate::inspect::types(connection, schema, 'c')?.collect::<Vec<crate::inspect::Composite>>();
 
     for composite in &mut composites {
-        composite.fields =
-            crate::inspect::composite_fields(connection, &composite.name)?;
+        composite.fields = crate::inspect::composite_fields(connection, &composite.name)?;
     }
 
     Ok(composites)

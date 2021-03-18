@@ -2,7 +2,9 @@
  * Determines if the connection is no longer usable.
  */
 pub fn has_broken(connection: &crate::Connection) -> crate::Result<bool> {
-    let status = connection.connection.lock()
+    let status = connection
+        .connection
+        .lock()
         .map_err(|e| crate::Error::Mutex(e.to_string()))?
         .status();
 
@@ -14,7 +16,9 @@ pub fn has_broken(connection: &crate::Connection) -> crate::Result<bool> {
  * Otherwise, `None` is returned.
  */
 pub fn notifies(connection: &crate::Connection) -> crate::Result<Option<crate::pq::Notify>> {
-    let connection = connection.connection.lock()
+    let connection = connection
+        .connection
+        .lock()
         .map_err(|e| crate::Error::Mutex(e.to_string()))?;
 
     connection.consume_input().ok();

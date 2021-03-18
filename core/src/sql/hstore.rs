@@ -18,8 +18,7 @@ impl Hstore {
 
         let s = if len < 0 {
             None
-        }
-        else {
+        } else {
             let mut vec = Vec::new();
             for _ in 0..len {
                 vec.push(buf.read_u8()?);
@@ -74,10 +73,7 @@ impl crate::ToSql for crate::Hstore {
 }
 
 impl crate::FromSql for Hstore {
-    fn from_text(
-        _: &crate::pq::Type,
-        raw: Option<&str>,
-    ) -> crate::Result<Self> {
+    fn from_text(_: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         lazy_static::lazy_static! {
             static ref REGEX: regex::Regex = regex::Regex::new(
                 "\"(?P<key>.*?)\"=>(\"(?P<value>.*?)\"|(?P<null>NULL))",
@@ -90,8 +86,7 @@ impl crate::FromSql for Hstore {
             let key = capture.name("key").unwrap().as_str().to_string();
             let value = if capture.name("null").is_some() {
                 None
-            }
-            else {
+            } else {
                 Some(capture.name("value").unwrap().as_str().to_string())
             };
             hstore.insert(key, value);
@@ -103,10 +98,7 @@ impl crate::FromSql for Hstore {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/contrib/hstore/hstore_io.c#L1226
      */
-    fn from_binary(
-        ty: &crate::pq::Type,
-        raw: Option<&[u8]>,
-    ) -> crate::Result<Self> {
+    fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         use byteorder::ReadBytesExt;
 
         let mut hstore = Self::new();
@@ -114,8 +106,7 @@ impl crate::FromSql for Hstore {
         let count = buf.read_i32::<byteorder::BigEndian>()?;
 
         for _ in 0..count {
-            let key = Self::read_string(&mut buf)?
-                .ok_or_else(|| Self::error(ty, "Hstore", raw))?;
+            let key = Self::read_string(&mut buf)?.ok_or_else(|| Self::error(ty, "Hstore", raw))?;
             let value = Self::read_string(&mut buf)?;
 
             hstore.insert(key, value);
@@ -127,12 +118,16 @@ impl crate::FromSql for Hstore {
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(hstore, crate::Hstore, [("'a=>1, b => 2, c=>null'", {
-        let mut hstore = crate::Hstore::new();
-        hstore.insert("a".to_string(), Some("1".to_string()));
-        hstore.insert("b".to_string(), Some("2".to_string()));
-        hstore.insert("c".to_string(), None);
+    crate::sql_test!(
+        hstore,
+        crate::Hstore,
+        [("'a=>1, b => 2, c=>null'", {
+            let mut hstore = crate::Hstore::new();
+            hstore.insert("a".to_string(), Some("1".to_string()));
+            hstore.insert("b".to_string(), Some("2".to_string()));
+            hstore.insert("c".to_string(), None);
 
-        hstore
-    })]);
+            hstore
+        })]
+    );
 }

@@ -2,12 +2,8 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
     let parameters: crate::Params = ast
         .attrs
         .iter()
-        .find(|a| {
-            a.path.segments.len() == 1 && a.path.segments[0].ident == "entity"
-        })
-        .map(|x| {
-            syn::parse2(x.tokens.clone()).expect("Invalid entity attribute!")
-        })
+        .find(|a| a.path.segments.len() == 1 && a.path.segments[0].ident == "entity")
+        .map(|x| syn::parse2(x.tokens.clone()).expect("Invalid entity attribute!"))
         .unwrap_or_default();
 
     let fields = match ast.data {
@@ -19,14 +15,8 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
         let field_params: crate::FieldParams = field
             .attrs
             .iter()
-            .find(|a| {
-                a.path.segments.len() == 1
-                    && a.path.segments[0].ident == "elephantry"
-            })
-            .map(|x| {
-                syn::parse2(x.tokens.clone())
-                    .expect("Invalid entity attribute!")
-            })
+            .find(|a| a.path.segments.len() == 1 && a.path.segments[0].ident == "elephantry")
+            .map(|x| syn::parse2(x.tokens.clone()).expect("Invalid entity attribute!"))
             .unwrap_or_default();
 
         let name = &field.ident;
@@ -37,13 +27,11 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
             quote::quote! {
                 #name: tuple.try_get(stringify!(#name)).unwrap_or_default()
             }
-        }
-        else if is_option(ty) {
+        } else if is_option(ty) {
             quote::quote! {
                 #name: tuple.try_get(stringify!(#name)).ok()
             }
-        }
-        else {
+        } else {
             quote::quote! {
                 #name: tuple.get(stringify!(#name))
             }
@@ -61,8 +49,7 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
                     None => None,
                 }
             }
-        }
-        else {
+        } else {
             quote::quote! {
                 stringify!(#name) => Some(&self.#name)
             }
@@ -74,15 +61,13 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
         quote::quote! {
             crate
         }
-    }
-    else {
+    } else {
         quote::quote! {
             elephantry
         }
     };
 
-    let (impl_generics, ty_generics, where_clause) =
-        ast.generics.split_for_impl();
+    let (impl_generics, ty_generics, where_clause) = ast.generics.split_for_impl();
 
     let gen = quote::quote! {
         #[automatically_derived]
@@ -115,5 +100,11 @@ fn is_option(ty: &syn::Type) -> bool {
 
     typepath.path.leading_colon.is_none()
         && typepath.path.segments.len() == 1
-        && typepath.path.segments.iter().next().map(|x| x.ident.to_string()) == Some("Option".to_string())
+        && typepath
+            .path
+            .segments
+            .iter()
+            .next()
+            .map(|x| x.ident.to_string())
+            == Some("Option".to_string())
 }

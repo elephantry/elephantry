@@ -23,10 +23,7 @@ pub fn database(connection: &elephantry::Connection) -> crate::Result {
     Ok(())
 }
 
-pub fn schema(
-    connection: &elephantry::Connection,
-    schema: &str,
-) -> crate::Result {
+pub fn schema(connection: &elephantry::Connection, schema: &str) -> crate::Result {
     let relations = elephantry::v2::inspect::schema(connection, schema)?;
     let mut table = term_table::Table::new();
     table.style = term_table::TableStyle::rounded();
@@ -43,9 +40,7 @@ pub fn schema(
             term_table::table_cell::TableCell::new(&relation.name),
             term_table::table_cell::TableCell::new(&relation.ty),
             term_table::table_cell::TableCell::new(&relation.oid),
-            term_table::table_cell::TableCell::new(
-                relation.comment.clone().unwrap_or_default(),
-            ),
+            term_table::table_cell::TableCell::new(relation.comment.clone().unwrap_or_default()),
         ]));
     }
 
@@ -76,20 +71,16 @@ pub fn relation(
         term_table::table_cell::TableCell::new("comment"),
     ]));
 
-    for column in
-        elephantry::v2::inspect::relation(connection, schema, relation)?
-    {
+    for column in elephantry::v2::inspect::relation(connection, schema, relation)? {
         let primary = if column.is_primary {
             "*".to_string()
-        }
-        else {
+        } else {
             String::new()
         };
 
         let not_null = if column.is_notnull {
             "yes".to_string()
-        }
-        else {
+        } else {
             "no".to_string()
         };
 
@@ -97,13 +88,9 @@ pub fn relation(
             term_table::table_cell::TableCell::new(primary),
             term_table::table_cell::TableCell::new(&column.name),
             term_table::table_cell::TableCell::new(&column_type(&column)),
-            term_table::table_cell::TableCell::new(
-                column.default.clone().unwrap_or_default(),
-            ),
+            term_table::table_cell::TableCell::new(column.default.clone().unwrap_or_default()),
             term_table::table_cell::TableCell::new(not_null),
-            term_table::table_cell::TableCell::new(
-                column.comment.clone().unwrap_or_default(),
-            ),
+            term_table::table_cell::TableCell::new(column.comment.clone().unwrap_or_default()),
         ]));
     }
 
@@ -120,21 +107,17 @@ fn column_type(column: &elephantry::inspect::Column) -> String {
         match ty.kind {
             elephantry::pq::types::Kind::Array(_) => {
                 format!("{}[]", ty.name.trim_start_matches('_'))
-            },
+            }
             _ => ty.name.to_string(),
         }
-    }
-    else {
+    } else {
         column.ty.clone()
     };
 
     ty
 }
 
-pub fn enums(
-    connection: &elephantry::Connection,
-    schema: &str,
-) -> crate::Result {
+pub fn enums(connection: &elephantry::Connection, schema: &str) -> crate::Result {
     let enumerations = elephantry::v2::inspect::enums(connection, schema)?;
 
     let mut table = term_table::Table::new();
@@ -149,10 +132,7 @@ pub fn enums(
     for enumeration in &enumerations {
         table.add_row(term_table::row::Row::new(vec![
             term_table::table_cell::TableCell::new(&enumeration.name),
-            term_table::table_cell::TableCell::new(&format!(
-                "{:?}",
-                enumeration.elements
-            )),
+            term_table::table_cell::TableCell::new(&format!("{:?}", enumeration.elements)),
             term_table::table_cell::TableCell::new(
                 &enumeration.description.clone().unwrap_or_default(),
             ),
@@ -169,10 +149,7 @@ pub fn enums(
     Ok(())
 }
 
-pub fn domains(
-    connection: &elephantry::Connection,
-    schema: &str,
-) -> crate::Result {
+pub fn domains(connection: &elephantry::Connection, schema: &str) -> crate::Result {
     let domains = elephantry::v2::inspect::domains(connection, schema)?;
 
     let mut table = term_table::Table::new();
@@ -186,9 +163,7 @@ pub fn domains(
     for domain in &domains {
         table.add_row(term_table::row::Row::new(vec![
             term_table::table_cell::TableCell::new(&domain.name),
-            term_table::table_cell::TableCell::new(
-                &domain.description.clone().unwrap_or_default(),
-            ),
+            term_table::table_cell::TableCell::new(&domain.description.clone().unwrap_or_default()),
         ]));
     }
 
@@ -202,10 +177,7 @@ pub fn domains(
     Ok(())
 }
 
-pub fn composites(
-    connection: &elephantry::Connection,
-    schema: &str,
-) -> crate::Result {
+pub fn composites(connection: &elephantry::Connection, schema: &str) -> crate::Result {
     let composites = elephantry::v2::inspect::composites(connection, schema)?;
 
     let mut table = term_table::Table::new();

@@ -9,10 +9,7 @@ impl crate::ToSql for uuid::Uuid {
 }
 
 impl crate::FromSql for uuid::Uuid {
-    fn from_text(
-        ty: &crate::pq::Type,
-        raw: Option<&str>,
-    ) -> crate::Result<Self> {
+    fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         match uuid::Uuid::parse_str(&crate::not_null(raw)?) {
             Ok(uuid) => Ok(uuid),
             _ => Err(Self::error(ty, "uuid", raw)),
@@ -22,10 +19,7 @@ impl crate::FromSql for uuid::Uuid {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/uuid.c#L152
      */
-    fn from_binary(
-        ty: &crate::pq::Type,
-        raw: Option<&[u8]>,
-    ) -> crate::Result<Self> {
+    fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         let buf = crate::not_null(raw)?;
 
         if buf.len() != 16 {
@@ -41,8 +35,12 @@ impl crate::FromSql for uuid::Uuid {
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(uuid, uuid::Uuid, [(
-        "'12edd47f-e2fc-44eb-9419-1995dfb6725d'",
-        uuid::Uuid::parse_str("12edd47f-e2fc-44eb-9419-1995dfb6725d").unwrap()
-    )]);
+    crate::sql_test!(
+        uuid,
+        uuid::Uuid,
+        [(
+            "'12edd47f-e2fc-44eb-9419-1995dfb6725d'",
+            uuid::Uuid::parse_str("12edd47f-e2fc-44eb-9419-1995dfb6725d").unwrap()
+        )]
+    );
 }

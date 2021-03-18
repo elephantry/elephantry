@@ -136,13 +136,7 @@ impl std::fmt::Display for Interval {
         write!(
             f,
             "{} years {} months {} days {}:{}:{}.{}",
-            self.years,
-            self.months,
-            self.days,
-            self.hours,
-            self.mins,
-            self.secs,
-            self.usecs,
+            self.years, self.months, self.days, self.hours, self.mins, self.secs, self.usecs,
         )
     }
 }
@@ -150,17 +144,9 @@ impl std::fmt::Display for Interval {
 macro_rules! caps {
     ($caps:ident, $part:ident, $ty:ident, $raw:ident) => {
         match $caps.name(stringify!($part)) {
-            Some(part) => {
-                match part.as_str().parse() {
-                    Ok(part) => part,
-                    Err(_) => {
-                        return Err(Self::error(
-                            $ty,
-                            "elephantry::Interval",
-                            $raw,
-                        ))
-                    },
-                }
+            Some(part) => match part.as_str().parse() {
+                Ok(part) => part,
+                Err(_) => return Err(Self::error($ty, "elephantry::Interval", $raw)),
             },
             None => 0,
         };
@@ -168,10 +154,7 @@ macro_rules! caps {
 }
 
 impl crate::FromSql for Interval {
-    fn from_text(
-        ty: &crate::pq::Type,
-        raw: Option<&str>,
-    ) -> crate::Result<Self> {
+    fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         lazy_static::lazy_static! {
             static ref REGEX: regex::Regex = regex::Regex::new(
                 r"((?P<years>\d+) years?)? ?((?P<months>\d+) (months?|mons?))? ?((?P<days>\d+) days?)? ?((?P<hours>\d+):(?P<mins>\d+):(?P<secs>\d+))?(\.(?P<usecs>\d+))?",
@@ -206,10 +189,7 @@ impl crate::FromSql for Interval {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/timestamp.c#L994
      */
-    fn from_binary(
-        _: &crate::pq::Type,
-        raw: Option<&[u8]>,
-    ) -> crate::Result<Self> {
+    fn from_binary(_: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         use byteorder::ReadBytesExt;
 
         let mut buf = crate::not_null(raw)?;
@@ -273,11 +253,7 @@ mod test {
 
         for (value, expected) in tests {
             assert_eq!(
-                crate::Interval::from_text(
-                    &crate::pq::types::INTERVAL,
-                    Some(&value)
-                )
-                .unwrap(),
+                crate::Interval::from_text(&crate::pq::types::INTERVAL, Some(&value)).unwrap(),
                 expected,
             );
         }
@@ -302,11 +278,7 @@ mod test {
 
         for (value, expected) in tests {
             assert_eq!(
-                crate::Interval::from_binary(
-                    &crate::pq::types::INTERVAL,
-                    Some(&value),
-                )
-                .unwrap(),
+                crate::Interval::from_binary(&crate::pq::types::INTERVAL, Some(&value),).unwrap(),
                 expected,
             );
         }

@@ -1,8 +1,8 @@
 const CHANNEL_NAME: &str = "channel_name";
 
 fn main() -> elephantry::Result {
-    let database_url = std::env::var("DATABASE_URL")
-        .unwrap_or_else(|_| "postgres://localhost".to_string());
+    let database_url =
+        std::env::var("DATABASE_URL").unwrap_or_else(|_| "postgres://localhost".to_string());
     let elephantry = elephantry::Pool::new(&database_url)?;
     elephantry.execute(include_str!("structure.sql"))?;
 

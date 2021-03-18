@@ -17,9 +17,7 @@ struct Event<T: elephantry::FromSql + elephantry::ToSql> {
     generic: Option<T>,
 }
 
-impl<T: elephantry::FromSql + elephantry::ToSql> elephantry::Entity
-    for Event<T>
-{
+impl<T: elephantry::FromSql + elephantry::ToSql> elephantry::Entity for Event<T> {
     fn from(tuple: &elephantry::Tuple) -> Self {
         Self {
             uuid: tuple.get("uuid"),
@@ -33,18 +31,14 @@ impl<T: elephantry::FromSql + elephantry::ToSql> elephantry::Entity
 
     fn get(&self, field: &str) -> Option<&dyn elephantry::ToSql> {
         match field {
-            "uuid" => {
-                match self.uuid {
-                    Some(ref uuid) => Some(uuid),
-                    None => None,
-                }
+            "uuid" => match self.uuid {
+                Some(ref uuid) => Some(uuid),
+                None => None,
             },
             "name" => Some(&self.name),
-            "visitor_id" => {
-                match self.visitor_id {
-                    Some(ref visitor_id) => Some(visitor_id),
-                    None => Default::default(),
-                }
+            "visitor_id" => match self.visitor_id {
+                Some(ref visitor_id) => Some(visitor_id),
+                None => Default::default(),
             },
             "properties" => Some(&self.properties),
             "browser" => Some(&self.browser),
@@ -63,9 +57,7 @@ impl<'a> elephantry::Model<'a> for EventModel<'a> {
     type Structure = EventStructure;
 
     fn new(connection: &'a elephantry::Connection) -> Self {
-        Self {
-            connection,
-        }
+        Self { connection }
     }
 }
 
@@ -115,26 +107,20 @@ impl<T: elephantry::Entity> elephantry::Entity for EventExtra<T> {
 
     fn get(&self, field: &str) -> Option<&dyn elephantry::ToSql> {
         match field {
-            "uuid" => {
-                match self.uuid {
-                    Some(ref uuid) => Some(uuid),
-                    None => None,
-                }
+            "uuid" => match self.uuid {
+                Some(ref uuid) => Some(uuid),
+                None => None,
             },
             "name" => Some(&self.name),
-            "visitor_id" => {
-                match self.visitor_id {
-                    Some(ref visitor_id) => Some(visitor_id),
-                    None => Default::default(),
-                }
+            "visitor_id" => match self.visitor_id {
+                Some(ref visitor_id) => Some(visitor_id),
+                None => Default::default(),
             },
             "properties" => Some(&self.properties),
             "browser" => Some(&self.browser),
-            "os" => {
-                match self.os {
-                    Some(ref os) => Some(os),
-                    None => None,
-                }
+            "os" => match self.os {
+                Some(ref os) => Some(os),
+                None => None,
             },
             _ => None,
         }

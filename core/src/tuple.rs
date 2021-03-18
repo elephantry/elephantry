@@ -9,10 +9,7 @@ pub struct Tuple<'a> {
 
 impl<'a> Tuple<'a> {
     pub(crate) fn from(result: &'a libpq::Result, index: usize) -> Self {
-        Self {
-            result,
-            index,
-        }
+        Self { result, index }
     }
 
     /**
@@ -26,9 +23,8 @@ impl<'a> Tuple<'a> {
     where
         T: crate::FromSql,
     {
-        self.try_get(name).unwrap_or_else(|err| {
-            panic!("Unable to retreive '{}' field: {}", name, err)
-        })
+        self.try_get(name)
+            .unwrap_or_else(|err| panic!("Unable to retreive '{}' field: {}", name, err))
     }
 
     /**
@@ -58,9 +54,8 @@ impl<'a> Tuple<'a> {
     where
         T: crate::FromSql,
     {
-        self.try_nth(n).unwrap_or_else(|err| {
-            panic!("Unable to retreive field {}: {}", n, err)
-        })
+        self.try_nth(n)
+            .unwrap_or_else(|err| panic!("Unable to retreive field {}: {}", n, err))
     }
 
     /**
@@ -107,13 +102,11 @@ impl<'a> Tuple<'a> {
 
         match crate::pq::Type::try_from(oid) {
             Ok(ty) => ty,
-            Err(_) => {
-                crate::pq::Type {
-                    oid,
-                    name: "composite",
-                    descr: "Composite type",
-                    kind: libpq::types::Kind::Composite,
-                }
+            Err(_) => crate::pq::Type {
+                oid,
+                name: "composite",
+                descr: "Composite type",
+                kind: libpq::types::Kind::Composite,
             },
         }
     }

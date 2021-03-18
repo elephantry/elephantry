@@ -9,21 +9,13 @@ impl<'a> Builder<'a> {
         self.0
     }
 
-    pub fn r#in(
-        mut self,
-        element: &str,
-        params: Vec<&'a dyn crate::ToSql>,
-    ) -> Self {
+    pub fn r#in(mut self, element: &str, params: Vec<&'a dyn crate::ToSql>) -> Self {
         self.0 = crate::Where::new_in(element, params);
 
         self
     }
 
-    pub fn not_in(
-        mut self,
-        element: &str,
-        params: Vec<&'a dyn crate::ToSql>,
-    ) -> Self {
+    pub fn not_in(mut self, element: &str, params: Vec<&'a dyn crate::ToSql>) -> Self {
         self.0 = crate::Where::new_not_in(element, params);
 
         self
@@ -40,21 +32,13 @@ impl<'a> Builder<'a> {
         self
     }
 
-    pub fn and_where(
-        mut self,
-        element: &str,
-        params: Vec<&'a dyn crate::ToSql>,
-    ) -> Self {
+    pub fn and_where(mut self, element: &str, params: Vec<&'a dyn crate::ToSql>) -> Self {
         self.0.and_where(element, params);
 
         self
     }
 
-    pub fn or_where(
-        mut self,
-        element: &str,
-        params: Vec<&'a dyn crate::ToSql>,
-    ) -> Self {
+    pub fn or_where(mut self, element: &str, params: Vec<&'a dyn crate::ToSql>) -> Self {
         self.0.or_where(element, params);
 
         self

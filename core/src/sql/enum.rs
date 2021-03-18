@@ -24,17 +24,11 @@ impl<E: Enum> crate::Composite for E {
         format!("{:?}", self).to_sql()
     }
 
-    fn from_text(
-        _: &crate::pq::Type,
-        raw: Option<&str>,
-    ) -> crate::Result<Box<Self>> {
+    fn from_text(_: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Box<Self>> {
         Self::from_text(crate::not_null(raw)?)
     }
 
-    fn from_binary(
-        ty: &crate::pq::Type,
-        raw: Option<&[u8]>,
-    ) -> crate::Result<Box<Self>> {
+    fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Box<Self>> {
         use crate::FromSql;
 
         Self::from_text(&String::from_binary(ty, raw)?)
@@ -44,10 +38,7 @@ impl<E: Enum> crate::Composite for E {
         unreachable!()
     }
 
-    fn from_text_values(
-        _: &crate::pq::Type,
-        _: &[Option<&str>],
-    ) -> crate::Result<Box<Self>> {
+    fn from_text_values(_: &crate::pq::Type, _: &[Option<&str>]) -> crate::Result<Box<Self>> {
         unreachable!();
     }
 
@@ -69,9 +60,13 @@ mod test {
         Happy,
     }
 
-    crate::sql_test!(mood, super::Mood, [
-        ("'Sad'", super::Mood::Sad),
-        ("'Ok'", super::Mood::Ok),
-        ("'Happy'", super::Mood::Happy),
-    ]);
+    crate::sql_test!(
+        mood,
+        super::Mood,
+        [
+            ("'Sad'", super::Mood::Sad),
+            ("'Ok'", super::Mood::Ok),
+            ("'Happy'", super::Mood::Happy),
+        ]
+    );
 }

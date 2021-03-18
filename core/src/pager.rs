@@ -17,12 +17,7 @@ impl<E: crate::Entity> Pager<E> {
      *
      * `page` starts at 1.
      */
-    pub fn new(
-        rows: crate::Rows<E>,
-        count: usize,
-        page: usize,
-        max_per_page: usize,
-    ) -> Self {
+    pub fn new(rows: crate::Rows<E>, count: usize, page: usize, max_per_page: usize) -> Self {
         Self {
             rows,
             count,
@@ -58,8 +53,7 @@ impl<E: crate::Entity> Pager<E> {
     pub fn last_page(&self) -> usize {
         if self.count == 0 {
             1
-        }
-        else {
+        } else {
             (self.count as f32 / self.max_per_page as f32).ceil() as usize
         }
     }
@@ -132,8 +126,7 @@ impl<E: crate::Entity + serde::Serialize> serde::Serialize for Pager<E> {
         state.serialize_field("last_page", &self.last_page())?;
         state.serialize_field("page", &self.page())?;
         state.serialize_field("has_next_page", &self.has_next_page())?;
-        state
-            .serialize_field("has_previous_page", &self.has_previous_page())?;
+        state.serialize_field("has_previous_page", &self.has_previous_page())?;
         state.serialize_field("count", &self.count())?;
         state.serialize_field("max_per_page", &self.max_per_page())?;
         state.serialize_field("iterator", &self.rows)?;

@@ -38,10 +38,7 @@ impl crate::ToSql for Point {
 }
 
 impl crate::FromSql for Point {
-    fn from_text(
-        ty: &crate::pq::Type,
-        raw: Option<&str>,
-    ) -> crate::Result<Self> {
+    fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let coordinates = crate::from_sql::not_null(raw)?
             .parse::<crate::Coordinates>()
             .map_err(|_| Self::error(ty, "elephantry::Point", raw))?;
@@ -56,10 +53,7 @@ impl crate::FromSql for Point {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L1826
      */
-    fn from_binary(
-        _: &crate::pq::Type,
-        raw: Option<&[u8]>,
-    ) -> crate::Result<Self> {
+    fn from_binary(_: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         use byteorder::ReadBytesExt;
 
         let mut buf = crate::from_sql::not_null(raw)?;
@@ -72,8 +66,12 @@ impl crate::FromSql for Point {
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(point, crate::Point, [
-        ("'(0,0)'", crate::Point::new(0., 0.)),
-        ("'(5.1, 10.12345)'", crate::Point::new(5.1, 10.12345)),
-    ]);
+    crate::sql_test!(
+        point,
+        crate::Point,
+        [
+            ("'(0,0)'", crate::Point::new(0., 0.)),
+            ("'(5.1, 10.12345)'", crate::Point::new(5.1, 10.12345)),
+        ]
+    );
 }

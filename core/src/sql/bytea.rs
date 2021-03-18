@@ -33,10 +33,7 @@ impl crate::ToSql for Bytea {
 }
 
 impl crate::FromSql for Bytea {
-    fn from_text(
-        _: &crate::pq::Type,
-        raw: Option<&str>,
-    ) -> crate::Result<Self> {
+    fn from_text(_: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let x: &[_] = &['\\', 'x'];
         let string = crate::not_null(raw)?.trim_start_matches(x);
         let mut pos = 0;
@@ -50,18 +47,16 @@ impl crate::FromSql for Bytea {
         Ok(v.into())
     }
 
-    fn from_binary(
-        _: &crate::pq::Type,
-        raw: Option<&[u8]>,
-    ) -> crate::Result<Self> {
+    fn from_binary(_: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         Ok(crate::not_null(raw)?.to_vec().into())
     }
 }
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(bytea, crate::Bytea, [(
-        "'abcd'",
-        crate::Bytea::from(Vec::from("abcd"))
-    )]);
+    crate::sql_test!(
+        bytea,
+        crate::Bytea,
+        [("'abcd'", crate::Bytea::from(Vec::from("abcd")))]
+    );
 }

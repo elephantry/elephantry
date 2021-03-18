@@ -17,18 +17,12 @@ enum Opt {
         about = "Show schemas in the current database"
     )]
     InspectDatabase {},
-    #[structopt(
-        name = "inspect:schema",
-        about = "Show relations in a given schema"
-    )]
+    #[structopt(name = "inspect:schema", about = "Show relations in a given schema")]
     InspectSchema {
         #[structopt(default_value = "public")]
         schema: String,
     },
-    #[structopt(
-        name = "inspect:relation",
-        about = "Display a relation information"
-    )]
+    #[structopt(name = "inspect:relation", about = "Display a relation information")]
     InspectRelation {
         relation: String,
         #[structopt(default_value = "public")]
@@ -98,33 +92,21 @@ fn main() -> Result {
     dotenv::dotenv().ok();
 
     let opt = Opt::from_args();
-    let dsn = std::env::var("DATABASE_URL")
-        .expect("Missing DATABASE_URL env variable");
-    let elephantry =
-        elephantry::Pool::new(&dsn).expect("Unable to connect to postgresql");
+    let dsn = std::env::var("DATABASE_URL").expect("Missing DATABASE_URL env variable");
+    let elephantry = elephantry::Pool::new(&dsn).expect("Unable to connect to postgresql");
 
     match opt {
         Opt::InspectDatabase {} => inspect::database(&elephantry),
-        Opt::InspectSchema {
-            schema,
-        } => inspect::schema(&elephantry, &schema),
-        Opt::InspectRelation {
-            schema,
-            relation,
-        } => inspect::relation(&elephantry, &schema, &relation),
-        Opt::InspectEnums {
-            schema,
-        } => inspect::enums(&elephantry, &schema),
-        Opt::InspectDomains {
-            schema,
-        } => inspect::domains(&elephantry, &schema),
-        Opt::InspectComposites {
-            schema,
-        } => inspect::composites(&elephantry, &schema),
-        Opt::GenerateSchema {
-            prefix_dir,
-            schema,
-        } => generate::schema(&elephantry, &prefix_dir, &schema),
+        Opt::InspectSchema { schema } => inspect::schema(&elephantry, &schema),
+        Opt::InspectRelation { schema, relation } => {
+            inspect::relation(&elephantry, &schema, &relation)
+        }
+        Opt::InspectEnums { schema } => inspect::enums(&elephantry, &schema),
+        Opt::InspectDomains { schema } => inspect::domains(&elephantry, &schema),
+        Opt::InspectComposites { schema } => inspect::composites(&elephantry, &schema),
+        Opt::GenerateSchema { prefix_dir, schema } => {
+            generate::schema(&elephantry, &prefix_dir, &schema)
+        }
         Opt::GenerateRelation {
             prefix_dir,
             schema,
@@ -135,13 +117,11 @@ fn main() -> Result {
             schema,
             relation,
         } => generate::entity(&elephantry, &prefix_dir, &schema, &relation),
-        Opt::GenerateEnums {
-            prefix_dir,
-            schema,
-        } => generate::enums(&elephantry, &prefix_dir, &schema),
-        Opt::GenerateComposites {
-            prefix_dir,
-            schema,
-        } => generate::composites(&elephantry, &prefix_dir, &schema),
+        Opt::GenerateEnums { prefix_dir, schema } => {
+            generate::enums(&elephantry, &prefix_dir, &schema)
+        }
+        Opt::GenerateComposites { prefix_dir, schema } => {
+            generate::composites(&elephantry, &prefix_dir, &schema)
+        }
     }
 }

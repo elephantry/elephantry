@@ -7,11 +7,7 @@ pub struct Circle {
 
 impl Circle {
     pub fn new(x: f64, y: f64, r: f64) -> Self {
-        Self {
-            x,
-            y,
-            r,
-        }
+        Self { x, y, r }
     }
 }
 
@@ -32,10 +28,7 @@ impl crate::ToSql for Circle {
 }
 
 impl crate::FromSql for Circle {
-    fn from_text(
-        ty: &crate::pq::Type,
-        raw: Option<&str>,
-    ) -> crate::Result<Self> {
+    fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         lazy_static::lazy_static! {
             static ref REGEX: regex::Regex = regex::Regex::new(r"([\d\.]+)").unwrap();
         }
@@ -54,10 +47,7 @@ impl crate::FromSql for Circle {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L4603
      */
-    fn from_binary(
-        _: &crate::pq::Type,
-        raw: Option<&[u8]>,
-    ) -> crate::Result<Self> {
+    fn from_binary(_: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         use byteorder::ReadBytesExt;
 
         let mut buf = crate::from_sql::not_null(raw)?;
@@ -71,8 +61,9 @@ impl crate::FromSql for Circle {
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(circle, crate::Circle, [(
-        "'0, 0, 5'",
-        crate::Circle::new(0., 0., 5.)
-    )]);
+    crate::sql_test!(
+        circle,
+        crate::Circle,
+        [("'0, 0, 5'", crate::Circle::new(0., 0., 5.))]
+    );
 }

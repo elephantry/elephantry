@@ -150,18 +150,14 @@ impl std::convert::TryFrom<libpq::Result> for Result {
         use libpq::Status::*;
 
         match inner.status() {
-            BadResponse | FatalError | NonFatalError => {
-                Err(crate::Error::Sql(Self {
-                    inner,
-                    current_tuple: std::cell::RefCell::new(0),
-                }))
-            },
-            _ => {
-                Ok(Self {
-                    inner,
-                    current_tuple: std::cell::RefCell::new(0),
-                })
-            },
+            BadResponse | FatalError | NonFatalError => Err(crate::Error::Sql(Self {
+                inner,
+                current_tuple: std::cell::RefCell::new(0),
+            })),
+            _ => Ok(Self {
+                inner,
+                current_tuple: std::cell::RefCell::new(0),
+            }),
         }
     }
 }

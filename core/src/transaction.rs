@@ -85,9 +85,7 @@ impl std::fmt::Display for AccessMode {
 
 impl<'c> Transaction<'c> {
     pub(crate) fn new(connection: &'c crate::Connection) -> Self {
-        Self {
-            connection,
-        }
+        Self { connection }
     }
 
     /**
@@ -139,7 +137,10 @@ impl<'c> Transaction<'c> {
     /**
      * Tell if a transaction is open or not.
      */
-    #[deprecated(note = "use v2::transaction::is_in_transaction instead", since = "1.7.0")]
+    #[deprecated(
+        note = "use v2::transaction::is_in_transaction instead",
+        since = "1.7.0"
+    )]
     pub fn is_in_transaction(&self) -> bool {
         crate::v2::transaction::is_in_transaction(self).unwrap()
     }
@@ -149,7 +150,10 @@ impl<'c> Transaction<'c> {
      * rollback the transaction on commit. This method returns the current
      * transaction's status. If no transactions are open, it returns `None`.
      */
-    #[deprecated(note = "use v2::transaction::is_transaction_ok instead", since = "1.7.0")]
+    #[deprecated(
+        note = "use v2::transaction::is_transaction_ok instead",
+        since = "1.7.0"
+    )]
     pub fn is_transaction_ok(&self) -> Option<bool> {
         crate::v2::transaction::is_transaction_ok(self).unwrap()
     }
@@ -171,8 +175,7 @@ impl<'c> Transaction<'c> {
                 .map(|key| self.escape_identifier(key))
                 .collect::<crate::Result<Vec<_>>>()?
                 .join(", ")
-        }
-        else {
+        } else {
             "ALL".to_string()
         };
 
@@ -194,10 +197,7 @@ impl<'c> Transaction<'c> {
      *
      * See <http://www.postgresql.org/docs/current/sql-set-transaction.html>
      */
-    pub fn set_isolation_level(
-        &self,
-        level: IsolationLevel,
-    ) -> crate::Result {
+    pub fn set_isolation_level(&self, level: IsolationLevel) -> crate::Result {
         let query = format!("set transaction isolation level {}", level);
 
         self.exec(&query)

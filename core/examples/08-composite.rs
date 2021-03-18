@@ -22,10 +22,7 @@ mod employee {
     }
 
     impl<'a> Model<'a> {
-        pub fn employee_with_department(
-            &self,
-            id: i32,
-        ) -> elephantry::Result<Entity> {
+        pub fn employee_with_department(&self, id: i32) -> elephantry::Result<Entity> {
             use elephantry::{Model, Structure};
 
             let query = r#"
@@ -62,9 +59,7 @@ select {employee_projection}
         type Structure = Structure;
 
         fn new(connection: &'a elephantry::Connection) -> Self {
-            Self {
-                connection,
-            }
+            Self { connection }
         }
     }
 
@@ -96,8 +91,8 @@ select {employee_projection}
 fn main() -> elephantry::Result {
     pretty_env_logger::init();
 
-    let database_url = std::env::var("DATABASE_URL")
-        .unwrap_or_else(|_| "postgres://localhost".to_string());
+    let database_url =
+        std::env::var("DATABASE_URL").unwrap_or_else(|_| "postgres://localhost".to_string());
     let elephantry = elephantry::Pool::new(&database_url)?;
     elephantry.execute(include_str!("structure.sql"))?;
 

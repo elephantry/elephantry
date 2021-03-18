@@ -36,14 +36,10 @@ impl crate::ToSql for Segment {
 }
 
 impl crate::FromSql for Segment {
-    fn from_text(
-        ty: &crate::pq::Type,
-        raw: Option<&str>,
-    ) -> crate::Result<Self> {
-        let coordinates =
-            crate::not_null(raw)?
-                .parse::<crate::Coordinates>()
-                .map_err(|_| Self::error(ty, "elephantry::Segment", raw))?;
+    fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
+        let coordinates = crate::not_null(raw)?
+            .parse::<crate::Coordinates>()
+            .map_err(|_| Self::error(ty, "elephantry::Segment", raw))?;
 
         if coordinates.len() != 2 {
             return Err(Self::error(ty, "elephantry::Segment", raw));
@@ -55,10 +51,7 @@ impl crate::FromSql for Segment {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L2064
      */
-    fn from_binary(
-        _: &crate::pq::Type,
-        raw: Option<&[u8]>,
-    ) -> crate::Result<Self> {
+    fn from_binary(_: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         use byteorder::ReadBytesExt;
 
         let mut buf = crate::from_sql::not_null(raw)?;
@@ -77,20 +70,24 @@ impl crate::FromSql for Segment {
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(lseg, crate::Segment, [
-        (
-            "'[(1, 2), (3, 4)]'",
-            crate::Segment::new(
-                crate::Coordinate::new(1., 2.),
-                crate::Coordinate::new(3., 4.)
-            )
-        ),
-        (
-            "'((10.3, 20.0), (0.5, 0.003))'",
-            crate::Segment::new(
-                crate::Coordinate::new(10.3, 20.),
-                crate::Coordinate::new(0.5, 0.003)
-            )
-        ),
-    ]);
+    crate::sql_test!(
+        lseg,
+        crate::Segment,
+        [
+            (
+                "'[(1, 2), (3, 4)]'",
+                crate::Segment::new(
+                    crate::Coordinate::new(1., 2.),
+                    crate::Coordinate::new(3., 4.)
+                )
+            ),
+            (
+                "'((10.3, 20.0), (0.5, 0.003))'",
+                crate::Segment::new(
+                    crate::Coordinate::new(10.3, 20.),
+                    crate::Coordinate::new(0.5, 0.003)
+                )
+            ),
+        ]
+    );
 }

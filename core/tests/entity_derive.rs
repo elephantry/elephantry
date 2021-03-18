@@ -29,9 +29,7 @@ impl<'a> elephantry::Model<'a> for EventModel<'a> {
     type Structure = EventStructure;
 
     fn new(connection: &'a elephantry::Connection) -> Self {
-        Self {
-            connection,
-        }
+        Self { connection }
     }
 }
 

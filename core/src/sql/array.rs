@@ -35,8 +35,7 @@ impl<T: crate::FromSql> Iterator for Array<T> {
         let value = if len == 0xFFFF_FFFF {
             len = 0;
             None
-        }
-        else {
+        } else {
             Some(&buf[..len])
         };
         self.data = buf[len..].to_vec();
@@ -52,17 +51,11 @@ impl<T: crate::FromSql> Iterator for Array<T> {
 }
 
 impl<T: crate::FromSql> crate::FromSql for Array<T> {
-    fn from_text(
-        _ty: &crate::pq::Type,
-        _raw: Option<&str>,
-    ) -> crate::Result<Self> {
+    fn from_text(_ty: &crate::pq::Type, _raw: Option<&str>) -> crate::Result<Self> {
         todo!()
     }
 
-    fn from_binary(
-        _: &crate::pq::Type,
-        raw: Option<&[u8]>,
-    ) -> crate::Result<Self> {
+    fn from_binary(_: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         let mut data = crate::not_null(raw)?;
 
         let ndim = data.read_i32::<byteorder::BigEndian>()?;
@@ -73,13 +66,12 @@ impl<T: crate::FromSql> crate::FromSql for Array<T> {
         let has_nulls = data.read_i32::<byteorder::BigEndian>()? != 0;
 
         let oid = data.read_u32::<byteorder::BigEndian>()?;
-        let elemtype: crate::pq::Type =
-            oid.try_into().unwrap_or(crate::pq::Type {
-                oid,
-                descr: "Custom type",
-                name: "custom",
-                kind: libpq::types::Kind::Composite,
-            });
+        let elemtype: crate::pq::Type = oid.try_into().unwrap_or(crate::pq::Type {
+            oid,
+            descr: "Custom type",
+            name: "custom",
+            kind: libpq::types::Kind::Composite,
+        });
 
         let mut dimensions = Vec::new();
         let mut lower_bounds = Vec::new();
@@ -124,8 +116,7 @@ mod test {
     #[test]
     fn bin_vec() -> crate::Result {
         let elephantry = crate::test::new_conn()?;
-        let results: Vec<i32> =
-            elephantry.query_one("SELECT '{1, 2}'::int4[]", &[])?;
+        let results: Vec<i32> = elephantry.query_one("SELECT '{1, 2}'::int4[]", &[])?;
 
         assert_eq!(results, vec![1, 2]);
 

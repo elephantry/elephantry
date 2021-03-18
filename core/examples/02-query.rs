@@ -12,22 +12,19 @@ mod employee {
 }
 
 fn main() -> elephantry::Result {
-    let database_url = std::env::var("DATABASE_URL")
-        .unwrap_or_else(|_| "postgres://localhost".to_string());
+    let database_url =
+        std::env::var("DATABASE_URL").unwrap_or_else(|_| "postgres://localhost".to_string());
     let elephantry = elephantry::Pool::new(&database_url)?;
     elephantry.execute(include_str!("structure.sql"))?;
 
-    let employees =
-        elephantry.query::<employee::Entity>("select * from employee", &[])?;
+    let employees = elephantry.query::<employee::Entity>("select * from employee", &[])?;
 
     for employee in employees {
         dbg!(employee);
     }
 
-    let total_salary = elephantry.query_one::<bigdecimal::BigDecimal>(
-        "select sum(day_salary) from employee",
-        &[],
-    )?;
+    let total_salary = elephantry
+        .query_one::<bigdecimal::BigDecimal>("select sum(day_salary) from employee", &[])?;
 
     dbg!(total_salary);
 

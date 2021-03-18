@@ -7,20 +7,15 @@ include!("entity.rs");
 fn main() -> elephantry::Result {
     let database_url = std::env::var("DATABASE_URL")
         .unwrap_or_else(|_| "postgres://localhost/elephantry".to_string());
-    let elephantry =
-        elephantry::Pool::default().add_default("elephantry", &database_url)?;
+    let elephantry = elephantry::Pool::default().add_default("elephantry", &database_url)?;
 
-    let count =
-        elephantry.count_where::<EventModel>("name = $1", &[&"pageview"])?;
+    let count = elephantry.count_where::<EventModel>("name = $1", &[&"pageview"])?;
     println!("Count events: {}", count);
     assert_eq!(count, 7);
     println!();
 
     println!("Find one event:\n");
-    find_by_pk::<EventModel>(
-        &elephantry,
-        "f186b680-237d-449d-ad66-ad91c4e53d3d",
-    )?;
+    find_by_pk::<EventModel>(&elephantry, "f186b680-237d-449d-ad66-ad91c4e53d3d")?;
     println!();
 
     println!("Find all events:\n");
@@ -52,11 +47,8 @@ fn main() -> elephantry::Result {
 
     println!("Update one row:\n");
     entity.name = "pageview".to_string();
-    let entity = update_one::<EventModel>(
-        &elephantry,
-        &elephantry::pk!(uuid => entity.uuid),
-        &entity,
-    )?;
+    let entity =
+        update_one::<EventModel>(&elephantry, &elephantry::pk!(uuid => entity.uuid), &entity)?;
     assert_eq!(&entity.name, "pageview");
     println!();
 
@@ -78,10 +70,7 @@ fn main() -> elephantry::Result {
     Ok(())
 }
 
-fn find_by_pk<'a, M>(
-    connection: &elephantry::Connection,
-    uuid: &str,
-) -> elephantry::Result
+fn find_by_pk<'a, M>(connection: &elephantry::Connection, uuid: &str) -> elephantry::Result
 where
     M: elephantry::Model<'a>,
     M::Entity: std::fmt::Debug,
@@ -98,9 +87,7 @@ where
     Ok(())
 }
 
-fn find_all<'a, M>(
-    connection: &elephantry::Connection,
-) -> elephantry::Result
+fn find_all<'a, M>(connection: &elephantry::Connection) -> elephantry::Result
 where
     M: elephantry::Model<'a>,
     M::Entity: std::fmt::Debug,
@@ -109,8 +96,7 @@ where
 
     if events.is_empty() {
         println!("No events in database.");
-    }
-    else {
+    } else {
         for event in events {
             println!("{:?}", event);
         }

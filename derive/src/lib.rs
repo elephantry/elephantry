@@ -11,9 +11,7 @@ struct Params {
 
 impl Default for Params {
     fn default() -> Self {
-        Self {
-            internal: false,
-        }
+        Self { internal: false }
     }
 }
 
@@ -27,9 +25,7 @@ impl syn::parse::Parse for Params {
             Err(_) => false,
         };
 
-        Ok(Params {
-            internal,
-        })
+        Ok(Params { internal })
     }
 }
 
@@ -40,9 +36,7 @@ struct FieldParams {
 
 impl Default for FieldParams {
     fn default() -> Self {
-        Self {
-            default: false,
-        }
+        Self { default: false }
     }
 }
 
@@ -56,9 +50,7 @@ impl syn::parse::Parse for FieldParams {
             Err(_) => false,
         };
 
-        Ok(FieldParams {
-            default,
-        })
+        Ok(FieldParams { default })
     }
 }
 
@@ -68,9 +60,7 @@ impl syn::parse::Parse for FieldParams {
  * [`Composite`]: trait.Composite.html
  */
 #[proc_macro_derive(Composite, attributes(composite))]
-pub fn composite_derive(
-    input: proc_macro::TokenStream,
-) -> proc_macro::TokenStream {
+pub fn composite_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let ast = syn::parse(input).unwrap();
 
     composite::impl_macro(&ast)
@@ -82,9 +72,7 @@ pub fn composite_derive(
  * [`Entity`]: trait.Entity.html
  */
 #[proc_macro_derive(Entity, attributes(entity, elephantry))]
-pub fn entity_derive(
-    input: proc_macro::TokenStream,
-) -> proc_macro::TokenStream {
+pub fn entity_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let ast = syn::parse(input).unwrap();
 
     entity::impl_macro(&ast)
@@ -150,9 +138,7 @@ pub(crate) fn check_type(ty: &syn::Type) {
     ];
 
     for (feature, feature_ty) in &types {
-        if !features.contains(feature)
-            && ty == &syn::parse_str(feature_ty).unwrap()
-        {
+        if !features.contains(feature) && ty == &syn::parse_str(feature_ty).unwrap() {
             panic!(
                 "Enable '{}' feature to use the type `{}` in this entity",
                 feature, feature_ty

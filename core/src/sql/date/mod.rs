@@ -15,20 +15,14 @@ impl crate::ToSql for chrono::NaiveDate {
 }
 
 impl crate::FromSql for chrono::NaiveDate {
-    fn from_text(
-        ty: &crate::pq::Type,
-        raw: Option<&str>,
-    ) -> crate::Result<Self> {
+    fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         match chrono::NaiveDate::parse_from_str(crate::not_null(raw)?, "%F") {
             Ok(date) => Ok(date),
             _ => Err(Self::error(ty, "date", raw)),
         }
     }
 
-    fn from_binary(
-        ty: &crate::pq::Type,
-        raw: Option<&[u8]>,
-    ) -> crate::Result<Self> {
+    fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         let t = i32::from_binary(ty, raw)?;
         let base = chrono::NaiveDate::from_ymd(2000, 1, 1);
 
@@ -38,9 +32,13 @@ impl crate::FromSql for chrono::NaiveDate {
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(date, chrono::NaiveDate, [
-        ("'1970-01-01'", chrono::NaiveDate::from_ymd(1970, 01, 01)),
-        ("'2010-01-01'", chrono::NaiveDate::from_ymd(2010, 01, 01)),
-        ("'2100-12-30'", chrono::NaiveDate::from_ymd(2100, 12, 30)),
-    ]);
+    crate::sql_test!(
+        date,
+        chrono::NaiveDate,
+        [
+            ("'1970-01-01'", chrono::NaiveDate::from_ymd(1970, 01, 01)),
+            ("'2010-01-01'", chrono::NaiveDate::from_ymd(2010, 01, 01)),
+            ("'2100-12-30'", chrono::NaiveDate::from_ymd(2100, 12, 30)),
+        ]
+    );
 }

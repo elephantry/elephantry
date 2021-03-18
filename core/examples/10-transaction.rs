@@ -31,11 +31,7 @@ mod employee {
             let mut employee = self.connection.insert_one::<Self>(employee)?;
             let department = self
                 .connection
-                .find_where::<super::department::Model>(
-                    "name = $*",
-                    &[&department],
-                    None,
-                )?
+                .find_where::<super::department::Model>("name = $*", &[&department], None)?
                 .nth(0)
                 .unwrap();
             employee.department_id = department.department_id;
@@ -59,9 +55,7 @@ mod employee {
         type Structure = Structure;
 
         fn new(connection: &'a elephantry::Connection) -> Self {
-            Self {
-                connection,
-            }
+            Self { connection }
         }
     }
 
@@ -129,8 +123,8 @@ mod department {
 fn main() -> elephantry::Result {
     pretty_env_logger::init();
 
-    let database_url = std::env::var("DATABASE_URL")
-        .unwrap_or_else(|_| "postgres://localhost".to_string());
+    let database_url =
+        std::env::var("DATABASE_URL").unwrap_or_else(|_| "postgres://localhost".to_string());
     let elephantry = elephantry::Pool::new(&database_url)?;
     elephantry.execute(include_str!("structure.sql"))?;
 

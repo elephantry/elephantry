@@ -11,10 +11,7 @@ impl crate::ToSql for bigdecimal::BigDecimal {
 }
 
 impl crate::FromSql for bigdecimal::BigDecimal {
-    fn from_text(
-        ty: &crate::pq::Type,
-        raw: Option<&str>,
-    ) -> crate::Result<Self> {
+    fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         crate::not_null(raw)?
             .parse()
             .map_err(|_| Self::error(ty, "numeric", raw))
@@ -23,10 +20,7 @@ impl crate::FromSql for bigdecimal::BigDecimal {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/numeric.c#L872
      */
-    fn from_binary(
-        ty: &crate::pq::Type,
-        raw: Option<&[u8]>,
-    ) -> crate::Result<Self> {
+    fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         use byteorder::ReadBytesExt;
 
         const NBASE: f64 = 10_000.;
@@ -45,10 +39,8 @@ impl crate::FromSql for bigdecimal::BigDecimal {
         }
 
         let first_digit = buf.read_i16::<byteorder::BigEndian>()?;
-        result += bigdecimal::BigDecimal::try_from(
-            first_digit as f64 * NBASE.powi(weight),
-        )
-        .map_err(|_| Self::error(ty, "numeric", raw))?;
+        result += bigdecimal::BigDecimal::try_from(first_digit as f64 * NBASE.powi(weight))
+            .map_err(|_| Self::error(ty, "numeric", raw))?;
 
         for x in 1..ndigits {
             let digit = buf.read_i16::<byteorder::BigEndian>()?;
@@ -58,8 +50,7 @@ impl crate::FromSql for bigdecimal::BigDecimal {
                     .map_err(|_| Self::error(ty, "numeric", raw))?;
                 result += bigdecimal::BigDecimal::try_from(digit)
                     .map_err(|_| Self::error(ty, "numeric", raw))?;
-            }
-            else {
+            } else {
                 assert_ne!(dscale, 0);
 
                 result += bigdecimal::BigDecimal::try_from(
@@ -82,20 +73,24 @@ impl crate::FromSql for bigdecimal::BigDecimal {
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(numeric, bigdecimal::BigDecimal, [
-        ("20000", bigdecimal::BigDecimal::from(20_000)),
-        (
-            "20000.000001",
-            bigdecimal::BigDecimal::try_from(20_000.000001).unwrap()
-        ),
-        ("3900", bigdecimal::BigDecimal::from(3_900)),
-        (
-            "3900.98",
-            bigdecimal::BigDecimal::try_from(3_900.98).unwrap()
-        ),
-        (
-            "-0.12345",
-            bigdecimal::BigDecimal::try_from(-0.12345).unwrap()
-        ),
-    ]);
+    crate::sql_test!(
+        numeric,
+        bigdecimal::BigDecimal,
+        [
+            ("20000", bigdecimal::BigDecimal::from(20_000)),
+            (
+                "20000.000001",
+                bigdecimal::BigDecimal::try_from(20_000.000001).unwrap()
+            ),
+            ("3900", bigdecimal::BigDecimal::from(3_900)),
+            (
+                "3900.98",
+                bigdecimal::BigDecimal::try_from(3_900.98).unwrap()
+            ),
+            (
+                "-0.12345",
+                bigdecimal::BigDecimal::try_from(-0.12345).unwrap()
+            ),
+        ]
+    );
 }

@@ -17,10 +17,7 @@ pub struct Connection {
     pub(crate) connection: std::sync::Arc<std::sync::Mutex<libpq::Connection>>,
 }
 
-extern "C" fn notice_processor(
-    _arg: *mut std::ffi::c_void,
-    message: *const i8,
-) {
+extern "C" fn notice_processor(_arg: *mut std::ffi::c_void, message: *const i8) {
     let message = unsafe { std::ffi::CStr::from_ptr(message) };
 
     log::info!("{}", message.to_str().unwrap().trim());
@@ -35,17 +32,14 @@ impl Connection {
                     dsn: dsn.to_string(),
                     message,
                 })
-            },
+            }
         };
 
         connection.set_error_verbosity(libpq::Verbosity::Terse);
         connection.set_client_encoding(libpq::Encoding::UTF8);
 
         unsafe {
-            connection.set_notice_processor(
-                Some(notice_processor),
-                std::ptr::null_mut(),
-            );
+            connection.set_notice_processor(Some(notice_processor), std::ptr::null_mut());
         }
 
         Ok(Self {
@@ -62,7 +56,9 @@ impl Connection {
     }
 
     pub(crate) fn transaction_status(&self) -> crate::Result<libpq::transaction::Status> {
-        let status = self.connection.lock()
+        let status = self
+            .connection
+            .lock()
             .map_err(|e| crate::Error::Mutex(e.to_string()))?
             .transaction_status();
 
@@ -97,9 +93,11 @@ impl Connection {
      * Executes a simple text query, without parameter.
      */
     pub fn execute(&self, query: &str) -> crate::Result<crate::pq::Result> {
-        self.connection.lock()
+        self.connection
+            .lock()
             .map_err(|e| crate::Error::Mutex(e.to_string()))?
-            .exec(&query).try_into()
+            .exec(&query)
+            .try_into()
     }
 
     /**
@@ -157,10 +155,7 @@ impl Connection {
             .try_into()
     }
 
-    fn order_parameters<'a>(
-        &self,
-        query: &'a str,
-    ) -> std::borrow::Cow<'a, str> {
+    fn order_parameters<'a>(&self, query: &'a str) -> std::borrow::Cow<'a, str> {
         lazy_static::lazy_static! {
             static ref REGEX: regex::Regex =
                 #[allow(clippy::trivial_regex)]
@@ -200,10 +195,7 @@ impl Connection {
      * NOTE: suffix is inserted as is with NO ESCAPING. DO NOT use it to place
      * "where" condition nor any untrusted params.
      */
-    pub fn find_all<'a, M>(
-        &self,
-        suffix: Option<&str>,
-    ) -> crate::Result<crate::Rows<M::Entity>>
+    pub fn find_all<'a, M>(&self, suffix: Option<&str>) -> crate::Result<crate::Rows<M::Entity>>
     where
         M: crate::Model<'a>,
     {
@@ -324,10 +316,7 @@ impl Connection {
      *
      * Returns the entity with values from database (ie: default values).
      */
-    pub fn insert_one<'a, M>(
-        &self,
-        entity: &M::Entity,
-    ) -> crate::Result<M::Entity>
+    pub fn insert_one<'a, M>(&self, entity: &M::Entity) -> crate::Result<M::Entity>
     where
         M: crate::Model<'a>,
     {
@@ -467,10 +456,7 @@ impl Connection {
      *
      * Returns the entity fetched from the deleted record.
      */
-    pub fn delete_one<'a, M>(
-        &self,
-        entity: &M::Entity,
-    ) -> crate::Result<Option<M::Entity>>
+    pub fn delete_one<'a, M>(&self, entity: &M::Entity) -> crate::Result<Option<M::Entity>>
     where
         M: crate::Model<'a>,
     {
@@ -531,17 +517,15 @@ impl Connection {
             return Err(crate::Error::PrimaryKey);
         }
 
-        let clause =
-            keys.iter().enumerate().fold(String::new(), |acc, (i, x)| {
-                let field = format!("\"{}\"", x.replace("\"", "\\\""));
+        let clause = keys.iter().enumerate().fold(String::new(), |acc, (i, x)| {
+            let field = format!("\"{}\"", x.replace("\"", "\\\""));
 
-                if acc.is_empty() {
-                    format!("{} = ${}", field, i + 1)
-                }
-                else {
-                    format!("{} AND {} = ${}", acc, field, i + 1)
-                }
-            });
+            if acc.is_empty() {
+                format!("{} = ${}", field, i + 1)
+            } else {
+                format!("{} AND {} = ${}", acc, field, i + 1)
+            }
+        });
 
         let params: Vec<_> = pk.values().copied().collect();
 
@@ -560,11 +544,7 @@ impl Connection {
      * Send a NOTIFY event to the database server. An optional data can be sent
      * with the notification.
      */
-    pub fn notify(
-        &self,
-        channel: &str,
-        data: Option<&str>,
-    ) -> crate::Result {
+    pub fn notify(&self, channel: &str, data: Option<&str>) -> crate::Result {
         let data = self.escape_literal(data.unwrap_or_default())?;
 
         let query = format!("notify {}, {}", channel, data);
@@ -614,7 +594,9 @@ impl Connection {
      * Reports the status of the server.
      */
     pub fn ping(&self) -> crate::Result<()> {
-        let connection = self.connection.lock()
+        let connection = self
+            .connection
+            .lock()
             .map_err(|e| crate::Error::Mutex(e.to_string()))?;
 
         let mut params = HashMap::new();
@@ -636,7 +618,9 @@ impl Connection {
      * Retreives connection configuration.
      */
     pub fn config(&self) -> crate::Result<crate::Config> {
-        let connection = self.connection.lock()
+        let connection = self
+            .connection
+            .lock()
             .map_err(|e| crate::Error::Mutex(e.to_string()))?;
         let info = libpq::v2::connection::info(&connection);
 

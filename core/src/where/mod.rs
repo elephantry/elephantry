@@ -43,10 +43,7 @@ impl<'a> Where<'a> {
     /**
      * Create an escaped NOT IN clause.
      */
-    pub fn new_not_in(
-        element: &str,
-        params: Vec<&'a dyn crate::ToSql>,
-    ) -> Self {
+    pub fn new_not_in(element: &str, params: Vec<&'a dyn crate::ToSql>) -> Self {
         Self::new_group_condition(element, "not in", params)
     }
 
@@ -76,31 +73,18 @@ impl<'a> Where<'a> {
         self.element.is_none() && self.stack.len() == 0
     }
 
-    pub fn and_where(
-        &mut self,
-        element: &str,
-        params: Vec<&'a dyn crate::ToSql>,
-    ) {
+    pub fn and_where(&mut self, element: &str, params: Vec<&'a dyn crate::ToSql>) {
         self.add_where(element, params, "and");
     }
 
-    pub fn or_where(
-        &mut self,
-        element: &str,
-        params: Vec<&'a dyn crate::ToSql>,
-    ) {
+    pub fn or_where(&mut self, element: &str, params: Vec<&'a dyn crate::ToSql>) {
         self.add_where(element, params, "or");
     }
 
     /**
      * You can add a new WHERE clause with your own operator.
      */
-    pub fn add_where(
-        &mut self,
-        element: &str,
-        params: Vec<&'a dyn crate::ToSql>,
-        operator: &str,
-    ) {
+    pub fn add_where(&mut self, element: &str, params: Vec<&'a dyn crate::ToSql>, operator: &str) {
         self.op(&Self::from(element, params), operator);
     }
 
@@ -115,15 +99,12 @@ impl<'a> Where<'a> {
         }
 
         if let Some(element) = &self.element {
-            self.stack =
-                vec![Self::from(&element, self.params.clone()), rhs.clone()];
+            self.stack = vec![Self::from(&element, self.params.clone()), rhs.clone()];
             self.element = None;
             self.params = Vec::new();
-        }
-        else if self.operator == operator {
+        } else if self.operator == operator {
             self.stack.push(rhs.clone());
-        }
-        else {
+        } else {
             let mut new = Self::new();
             new.stack = self.stack.clone();
             new.operator = self.operator.clone();

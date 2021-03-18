@@ -75,10 +75,7 @@ impl<T: crate::ToSql> crate::ToSql for std::ops::Range<T> {
 }
 
 impl<T: crate::FromSql> crate::FromSql for std::ops::Range<T> {
-    fn from_text(
-        ty: &crate::pq::Type,
-        raw: Option<&str>,
-    ) -> crate::Result<Self> {
+    fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         lazy_static::lazy_static! {
             static ref REGEX: regex::Regex =
                 regex::Regex::new(r"[\[\(](?P<start>.?*),(?P<end>.?*)[\]\)]")
@@ -88,8 +85,7 @@ impl<T: crate::FromSql> crate::FromSql for std::ops::Range<T> {
         let matches = REGEX.captures(crate::not_null(raw)?).unwrap();
 
         // tstzrange are quoted
-        let start =
-            matches.name("start").map(|x| x.as_str().trim_matches('\"'));
+        let start = matches.name("start").map(|x| x.as_str().trim_matches('\"'));
         let end = matches.name("end").map(|x| x.as_str().trim_matches('\"'));
 
         Ok(std::ops::Range {
@@ -101,10 +97,7 @@ impl<T: crate::FromSql> crate::FromSql for std::ops::Range<T> {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/rangetypes.c#L246
      */
-    fn from_binary(
-        ty: &crate::pq::Type,
-        raw: Option<&[u8]>,
-    ) -> crate::Result<Self> {
+    fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         use byteorder::ReadBytesExt;
 
         let mut buf = crate::from_sql::not_null(raw)?;
@@ -145,36 +138,40 @@ impl<T: crate::ToSql> crate::ToSql for std::ops::RangeInclusive<T> {
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(int4range, std::ops::Range<i32>, [(
-        "'[0, 10)'",
-        0_i32..10
-    )]);
+    crate::sql_test!(int4range, std::ops::Range<i32>, [("'[0, 10)'", 0_i32..10)]);
 
-    crate::sql_test!(int8range, std::ops::Range<i64>, [(
-        "'[0, 10)'",
-        0_i64..10
-    )]);
+    crate::sql_test!(int8range, std::ops::Range<i64>, [("'[0, 10)'", 0_i64..10)]);
 
     #[cfg(feature = "numeric")]
-    crate::sql_test!(numrange, std::ops::Range<bigdecimal::BigDecimal>, [(
-        "'[3900, 20000)'",
-        bigdecimal::BigDecimal::from(3_900)
-            ..bigdecimal::BigDecimal::from(20_000)
-    )]);
+    crate::sql_test!(
+        numrange,
+        std::ops::Range<bigdecimal::BigDecimal>,
+        [(
+            "'[3900, 20000)'",
+            bigdecimal::BigDecimal::from(3_900)..bigdecimal::BigDecimal::from(20_000)
+        )]
+    );
 
     #[cfg(feature = "date")]
-    crate::sql_test!(daterange, std::ops::Range<chrono::NaiveDate>, [(
-        "'[1970-01-01, 2010-01-01)'",
-        chrono::NaiveDate::from_ymd(1970, 01, 01)
-            ..chrono::NaiveDate::from_ymd(2010, 01, 01)
-    )]);
+    crate::sql_test!(
+        daterange,
+        std::ops::Range<chrono::NaiveDate>,
+        [(
+            "'[1970-01-01, 2010-01-01)'",
+            chrono::NaiveDate::from_ymd(1970, 01, 01)..chrono::NaiveDate::from_ymd(2010, 01, 01)
+        )]
+    );
 
     #[cfg(feature = "date")]
-    crate::sql_test!(tsrange, std::ops::Range<chrono::NaiveDateTime>, [(
-        "'[1970-01-01 00:00:00, 2010-01-01 00:00:00)'",
-        chrono::NaiveDate::from_ymd(1970, 01, 01).and_hms(0, 0, 0)
-            ..chrono::NaiveDate::from_ymd(2010, 01, 01).and_hms(0, 0, 0)
-    )]);
+    crate::sql_test!(
+        tsrange,
+        std::ops::Range<chrono::NaiveDateTime>,
+        [(
+            "'[1970-01-01 00:00:00, 2010-01-01 00:00:00)'",
+            chrono::NaiveDate::from_ymd(1970, 01, 01).and_hms(0, 0, 0)
+                ..chrono::NaiveDate::from_ymd(2010, 01, 01).and_hms(0, 0, 0)
+        )]
+    );
 
     #[cfg(feature = "date")]
     crate::sql_test!(

@@ -20,10 +20,7 @@ pub trait Composite {
     /**
      * Create a new struct from SQL result in text format.
      */
-    fn from_text_values(
-        ty: &crate::pq::Type,
-        values: &[Option<&str>],
-    ) -> crate::Result<Box<Self>>;
+    fn from_text_values(ty: &crate::pq::Type, values: &[Option<&str>]) -> crate::Result<Box<Self>>;
 
     /**
      * Create a new struct from SQL result in binary format.
@@ -33,19 +30,13 @@ pub trait Composite {
         values: &[Option<&[u8]>],
     ) -> crate::Result<Box<Self>>;
 
-    fn from_binary(
-        ty: &crate::pq::Type,
-        raw: Option<&[u8]>,
-    ) -> crate::Result<Box<Self>> {
+    fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Box<Self>> {
         let values = crate::sql::record::binary_to_vec(raw)?;
 
         Self::from_binary_values(ty, &values)
     }
 
-    fn from_text(
-        ty: &crate::pq::Type,
-        raw: Option<&str>,
-    ) -> crate::Result<Box<Self>> {
+    fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Box<Self>> {
         let values = crate::sql::record::text_to_vec(raw)?;
 
         Self::from_text_values(ty, &values)
@@ -68,17 +59,11 @@ impl<C: Composite> crate::ToSql for C {
 }
 
 impl<C: Composite> crate::FromSql for C {
-    fn from_text(
-        ty: &crate::pq::Type,
-        raw: Option<&str>,
-    ) -> crate::Result<Self> {
+    fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         Self::from_text(ty, raw).map(|x| *x)
     }
 
-    fn from_binary(
-        ty: &crate::pq::Type,
-        raw: Option<&[u8]>,
-    ) -> crate::Result<Self> {
+    fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         Self::from_binary(ty, raw).map(|x| *x)
     }
 }
@@ -92,11 +77,15 @@ mod test {
         f2: String,
     }
 
-    crate::sql_test!(compfoo, super::CompFoo, [(
-        "'(1,foo)'",
-        super::CompFoo {
-            f1: 1,
-            f2: "foo".to_string()
-        }
-    )]);
+    crate::sql_test!(
+        compfoo,
+        super::CompFoo,
+        [(
+            "'(1,foo)'",
+            super::CompFoo {
+                f1: 1,
+                f2: "foo".to_string()
+            }
+        )]
+    );
 }
