@@ -54,7 +54,7 @@ impl<'c> Async<'c> {
     ) -> crate::Result<crate::pq::Result> {
         self.connection
             .lock()
-            .unwrap()
+            .map_err(|e| crate::Error::Mutex(e.to_string()))?
             .send_query(&query)
             .map_err(crate::Error::Async)?;
 
@@ -107,7 +107,7 @@ impl<'c> Async<'c> {
 
         self.connection
             .lock()
-            .unwrap()
+            .map_err(|e| crate::Error::Mutex(e.to_string()))?
             .send_query_params(
                 query,
                 &param_types,

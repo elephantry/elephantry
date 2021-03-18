@@ -14,7 +14,7 @@ pub type PingStatus = libpq::ping::Status;
  */
 #[derive(Clone, Debug)]
 pub struct Connection {
-    connection: std::sync::Arc<std::sync::Mutex<libpq::Connection>>,
+    pub(crate) connection: std::sync::Arc<std::sync::Mutex<libpq::Connection>>,
 }
 
 extern "C" fn notice_processor(
@@ -61,14 +61,18 @@ impl Connection {
         crate::Transaction::new(&self)
     }
 
-    pub(crate) fn transaction_status(&self) -> libpq::transaction::Status {
-        self.connection.lock().unwrap().transaction_status()
+    pub(crate) fn transaction_status(&self) -> crate::Result<libpq::transaction::Status> {
+        let status = self.connection.lock()
+            .map_err(|e| crate::Error::Mutex(e.to_string()))?
+            .transaction_status();
+
+        Ok(status)
     }
 
     pub(crate) fn escape_identifier(&self, str: &str) -> crate::Result<String> {
         self.connection
             .lock()
-            .unwrap()
+            .map_err(|e| crate::Error::Mutex(e.to_string()))?
             .escape_identifier(str)
             .map_err(|e| crate::Error::Escape(str.to_string(), e))
     }
@@ -93,7 +97,9 @@ impl Connection {
      * Executes a simple text query, without parameter.
      */
     pub fn execute(&self, query: &str) -> crate::Result<crate::pq::Result> {
-        self.connection.lock().unwrap().exec(&query).try_into()
+        self.connection.lock()
+            .map_err(|e| crate::Error::Mutex(e.to_string()))?
+            .exec(&query).try_into()
     }
 
     /**
@@ -140,7 +146,7 @@ impl Connection {
 
         self.connection
             .lock()
-            .unwrap()
+            .map_err(|e| crate::Error::Mutex(e.to_string()))?
             .exec_params(
                 &self.order_parameters(query),
                 &param_types,
@@ -545,9 +551,9 @@ impl Connection {
     /**
      * Determines if the connection is no longer usable.
      */
+    #[deprecated(note = "use v2::connection::has_broken instead", since = "1.7.0")]
     pub fn has_broken(&self) -> bool {
-        self.connection.lock().unwrap().status()
-            == libpq::connection::Status::Bad
+        crate::v2::connection::has_broken(self).unwrap()
     }
 
     /**
@@ -591,17 +597,15 @@ impl Connection {
      * Check if a notification is pending. If so, the payload is returned.
      * Otherwise, `None` is returned.
      */
+    #[deprecated(note = "use v2::connection::notifies instead", since = "1.7.0")]
     pub fn notifies(&self) -> Option<crate::pq::Notify> {
-        let connection = self.connection.lock().unwrap();
-
-        connection.consume_input().ok();
-        connection.notifies()
+        crate::v2::connection::notifies(self).unwrap()
     }
 
     fn escape_literal(&self, str: &str) -> crate::Result<String> {
         self.connection
             .lock()
-            .unwrap()
+            .map_err(|e| crate::Error::Mutex(e.to_string()))?
             .escape_literal(str)
             .map_err(|e| crate::Error::Escape(str.to_string(), e))
     }
@@ -610,7 +614,8 @@ impl Connection {
      * Reports the status of the server.
      */
     pub fn ping(&self) -> crate::Result<()> {
-        let connection = self.connection.lock().unwrap();
+        let connection = self.connection.lock()
+            .map_err(|e| crate::Error::Mutex(e.to_string()))?;
 
         let mut params = HashMap::new();
         params.insert("dbname".to_string(), connection.db());
@@ -631,7 +636,8 @@ impl Connection {
      * Retreives connection configuration.
      */
     pub fn config(&self) -> crate::Result<crate::Config> {
-        let connection = self.connection.lock().unwrap();
+        let connection = self.connection.lock()
+            .map_err(|e| crate::Error::Mutex(e.to_string()))?;
         let info = libpq::v2::connection::info(&connection);
 
         let config = crate::Config {

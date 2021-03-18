@@ -4,7 +4,7 @@
  * [`Connection::transaction`]: crate::Connection::transaction
  */
 pub struct Transaction<'c> {
-    connection: &'c crate::Connection,
+    pub(crate) connection: &'c crate::Connection,
 }
 
 /**
@@ -139,12 +139,9 @@ impl<'c> Transaction<'c> {
     /**
      * Tell if a transaction is open or not.
      */
+    #[deprecated(note = "use v2::transaction::is_in_transaction instead", since = "1.7.0")]
     pub fn is_in_transaction(&self) -> bool {
-        let status = self.connection.transaction_status();
-
-        status == libpq::transaction::Status::Active
-            || status == libpq::transaction::Status::InTrans
-            || status == libpq::transaction::Status::InError
+        crate::v2::transaction::is_in_transaction(self).unwrap()
     }
 
     /**
@@ -152,14 +149,9 @@ impl<'c> Transaction<'c> {
      * rollback the transaction on commit. This method returns the current
      * transaction's status. If no transactions are open, it returns `None`.
      */
+    #[deprecated(note = "use v2::transaction::is_transaction_ok instead", since = "1.7.0")]
     pub fn is_transaction_ok(&self) -> Option<bool> {
-        if !self.is_in_transaction() {
-            return None;
-        }
-
-        let status = self.connection.transaction_status();
-
-        Some(status == libpq::transaction::Status::InTrans)
+        crate::v2::transaction::is_transaction_ok(self).unwrap()
     }
 
     /**

@@ -32,6 +32,9 @@ pub enum Error {
     /** Our result set require an extra field to build the entity */
     #[error("Missing field {0}")]
     MissingField(String),
+    /** Connection mutex poisoned */
+    #[error("Mutex error: {0}")]
+    Mutex(String),
     /** Fetch a null value in a non-option type */
     #[error("Try to retreive null field as non-option type")]
     NotNull,
