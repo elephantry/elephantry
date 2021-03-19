@@ -1,3 +1,8 @@
+# Version 2.0.0
+
+- Removes deprecated code;
+- `Config` supports all parameters.
+
 # Version 1.7.0
 
 - Adds `all-types` feature;
