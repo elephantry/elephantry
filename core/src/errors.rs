@@ -57,6 +57,7 @@ pub enum Error {
     #[error("{}", .0.error_message().unwrap_or_else(|| "Unknow SQL error".to_string()))]
     Sql(crate::pq::Result),
     /** Unable to transform a rust value to SQL */
+    #[deprecated(note = "ToSql::to_sql will not return error in 3.0", since = "2.1")]
     #[error("Invalid {rust_type} value: '{}'", message.clone().unwrap_or_else(|| "unknow".to_string()))]
     ToSql {
         pg_type: crate::pq::Type,
