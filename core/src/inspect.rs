@@ -112,12 +112,8 @@ select c.oid as oid
     "#,
             &[&schema, &relation],
         )
-        .map_err(|e| {
-            #[cfg(feature = "v2")]
+        .map_err(|_| {
             return crate::Error::Inspect(format!("Unknow relation {}.{}", schema, relation));
-
-            #[cfg(not(feature = "v2"))]
-            return e;
         })?;
 
     connection
@@ -281,11 +277,7 @@ where s.nspname = $*
     "#,
             &[&name],
         )
-        .map_err(|e| {
-            #[cfg(feature = "v2")]
+        .map_err(|_| {
             return crate::Error::Inspect(format!("Unknow schema {}", name));
-
-            #[cfg(not(feature = "v2"))]
-            return e;
         })
 }

@@ -23,7 +23,6 @@ pub enum Error {
         value: String,
     },
     /** Inspector error */
-    #[cfg(feature = "v2")]
     #[error("{0}")]
     Inspect(String),
     /** Input/Output error */
