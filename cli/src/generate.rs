@@ -211,7 +211,10 @@ where
     let fields = composite
         .fields
         .iter()
-        .map(|(name, ty)| format!("    {}: {},", name, crate::pq::sql_to_rust(ty)))
+        .map(|(name, ty)| {
+            let sql_ty = ty.parse().unwrap_or(elephantry::pq::types::TEXT);
+            format!("    {}: {},", name, elephantry::pq::sql_to_rust(&sql_ty))
+        })
         .collect::<Vec<_>>();
 
     write!(
@@ -229,16 +232,10 @@ pub struct {name} {{
 }
 
 fn ty_to_rust(column: &elephantry::inspect::Column) -> crate::Result<String> {
-    use crate::pq::ToRust;
     use std::convert::TryFrom;
 
     let ty = elephantry::pq::Type::try_from(column.oid).map_err(crate::Error::Libpq)?;
-
-    let mut rty = if matches!(ty.kind, elephantry::pq::types::Kind::Array(_)) {
-        format!("Vec<{}>", ty.to_rust())
-    } else {
-        ty.to_rust()
-    };
+    let mut rty = elephantry::pq::sql_to_rust(&ty);
 
     if !column.is_notnull {
         rty = format!("Option<{}>", rty);

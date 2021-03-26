@@ -1,12 +1,13 @@
 pub use libpq::state;
-
 pub use libpq::connection::Notify;
 pub use libpq::types;
+
 pub type Format = libpq::Format;
 pub type Oid = libpq::Oid;
 pub type State = libpq::State;
-
 pub type Type = libpq::Type;
+
+use std::collections::HashMap;
 
 impl crate::FromSql for Type {
     fn from_binary(ty: &Type, raw: Option<&[u8]>) -> crate::Result<Self> {
@@ -27,6 +28,215 @@ impl crate::ToSql for Type {
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
         self.name.to_sql()
+    }
+}
+
+lazy_static::lazy_static! {
+    static ref TYPES: HashMap<&'static str, &'static str> = {
+        use std::any::type_name as t;
+
+        let mut types = HashMap::new();
+        types.insert(types::BIT.name, t::<u8>());
+        types.insert(types::BOOL.name, t::<bool>());
+        types.insert(types::CHAR.name, t::<char>());
+        types.insert(types::FLOAT4.name, t::<f32>());
+        types.insert(types::FLOAT8.name, t::<f64>());
+        types.insert(types::INT2.name, t::<i16>());
+        types.insert(types::INT4.name, t::<i32>());
+        types.insert(types::INT8.name, t::<i64>());
+        types.insert(types::TEXT.name, t::<String>());
+        types.insert(types::VARCHAR.name, t::<String>());
+
+        types.insert(
+            types::BYTEA.name,
+            #[cfg(feature = "bit")]
+            t::<crate::Bytea>(),
+            #[cfg(not(feature = "bit"))]
+            "elephantry::Bytea",
+        );
+        types.insert(
+            types::VARBIT.name,
+            #[cfg(feature = "bit")]
+            t::<bit_vec::BitVec>(),
+            #[cfg(not(feature = "bit"))]
+            "bit_vec::BitVec",
+        );
+
+        types.insert(
+            types::DATE.name,
+            #[cfg(feature = "date")]
+            t::<chrono::NaiveDate>(),
+            #[cfg(not(feature = "date"))]
+            "chrono::NaiveDate",
+        );
+
+        types.insert(
+            types::BOX.name,
+            #[cfg(feature = "geo")]
+            t::<crate::Box>(),
+            #[cfg(not(feature = "geo"))]
+            "elephantry::Box",
+        );
+        types.insert(
+            types::CIRCLE.name,
+            #[cfg(feature = "geo")]
+            t::<crate::Circle>(),
+            #[cfg(not(feature = "geo"))]
+            "elephantry::Circle",
+        );
+        types.insert(
+            types::LINE.name,
+            #[cfg(feature = "geo")]
+            t::<crate::Line>(),
+            #[cfg(not(feature = "geo"))]
+            "elephantry::Line",
+        );
+        types.insert(
+            types::LSEG.name,
+            #[cfg(feature = "geo")]
+            t::<crate::Segment>(),
+            #[cfg(not(feature = "geo"))]
+            "elephantry::Segment",
+        );
+        types.insert(
+            types::PATH.name,
+            #[cfg(feature = "geo")]
+            t::<crate::Path>(),
+            #[cfg(not(feature = "geo"))]
+            "elephantry::Path",
+        );
+        types.insert(
+            types::POINT.name,
+            #[cfg(feature = "geo")]
+            t::<crate::Point>(),
+            #[cfg(not(feature = "geo"))]
+            "elephantry::Point",
+        );
+        types.insert(
+            types::POLYGON.name,
+            #[cfg(feature = "geo")]
+            t::<crate::Polygon>(),
+            #[cfg(not(feature = "geo"))]
+            "elephantry::Polygon",
+        );
+
+        types.insert(
+            types::CIDR.name,
+            #[cfg(feature = "net")]
+            t::<ipnetwork::IpNetwork>(),
+            #[cfg(not(feature = "net"))]
+            "ipnetwork::IpNetwork",
+        );
+        types.insert(
+            types::INET.name,
+            #[cfg(feature = "net")]
+            t::<std::net::IpAddr>(),
+            #[cfg(not(feature = "net"))]
+            "std::net::IpAddr",
+        );
+        types.insert(
+            types::MACADDR.name,
+            #[cfg(feature = "net")]
+            t::<macaddr::MacAddr6>(),
+            #[cfg(not(feature = "net"))]
+            "macaddr::MacAddr6",
+        );
+        types.insert(
+            types::MACADDR8.name,
+            #[cfg(feature = "net")]
+            t::<macaddr::MacAddr8>(),
+            #[cfg(not(feature = "net"))]
+            "macaddr::MacAddr8",
+        );
+
+        types.insert(
+            types::JSON.name,
+            #[cfg(feature = "json")]
+            t::<serde_json::Value>(),
+            #[cfg(not(feature = "json"))]
+            "serde_json::Value",
+        );
+        types.insert(
+            types::JSONB.name,
+            #[cfg(feature = "json")]
+            t::<serde_json::Value>(),
+            #[cfg(not(feature = "json"))]
+            "serde_json::Value",
+        );
+
+        types.insert(
+            types::MONEY.name,
+            #[cfg(feature = "money")]
+            t::<postgres_money::Money>(),
+            #[cfg(not(feature = "money"))]
+            "postgres_money::Money",
+        );
+
+        types.insert(
+            types::NUMERIC.name,
+            #[cfg(feature = "numeric")]
+            t::<bigdecimal::BigDecimal>(),
+            #[cfg(not(feature = "numeric"))]
+            "bigdecimal::BigDecimal",
+        );
+
+        types.insert(
+            types::TIME.name,
+            #[cfg(feature = "time")]
+            t::<chrono::NaiveTime>(),
+            #[cfg(not(feature = "time"))]
+            "chrono::NaiveTime",
+        );
+        types.insert(
+            types::TIMETZ.name,
+            #[cfg(feature = "time")]
+            t::<crate::TimeTz>(),
+            #[cfg(not(feature = "time"))]
+            "chrono::TimeTz",
+        );
+        types.insert(
+            types::TIMESTAMP.name,
+            #[cfg(feature = "time")]
+            t::<chrono::NaiveDateTime>(),
+            #[cfg(not(feature = "time"))]
+            "chrono::NaiveDateTime",
+        );
+        types.insert(
+            types::TIMESTAMPTZ.name,
+            #[cfg(feature = "time")]
+            t::<chrono::DateTime<chrono::FixedOffset>>(),
+            #[cfg(not(feature = "time"))]
+            "chrono::DateTime<chrono::FixedOffset>>",
+        );
+
+        types.insert(
+            types::UUID.name,
+            #[cfg(feature = "uuid")]
+            t::<uuid::Uuid>(),
+            #[cfg(not(feature = "uuid"))]
+            "uuid::Uuid",
+        );
+
+        types.insert(
+            types::XML.name,
+            #[cfg(feature = "xml")]
+            t::<xmltree::Element>(),
+            #[cfg(not(feature = "xml"))]
+            "xmltree::Element",
+        );
+
+        types
+    };
+}
+
+#[doc(hidden)]
+pub fn sql_to_rust(ty: &crate::pq::Type) -> String {
+    let rty = TYPES.get(ty.name).unwrap_or(&"String");
+
+    if matches!(ty.kind, crate::pq::types::Kind::Array(_)) {
+        format!("Vec<{}>", rty)
+    } else {
+        rty.to_string()
     }
 }
 

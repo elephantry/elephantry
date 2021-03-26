@@ -3,7 +3,6 @@
 mod error;
 mod generate;
 mod inspect;
-mod pq;
 
 use error::Error;
 use structopt::StructOpt;

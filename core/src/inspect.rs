@@ -206,7 +206,10 @@ pub fn composites(
         crate::inspect::types(connection, schema, 'c')?.collect::<Vec<crate::inspect::Composite>>();
 
     for composite in &mut composites {
-        composite.fields = crate::inspect::composite_fields(connection, &composite.name)?;
+        composite.fields = crate::inspect::composite_fields(connection, &composite.name)?
+            .iter()
+            .map(|(a, b)| (a.clone(), b.name.to_string()))
+            .collect();
     }
 
     Ok(composites)
@@ -215,7 +218,7 @@ pub fn composites(
 pub(crate) fn composite_fields(
     connection: &crate::Connection,
     composite: &str,
-) -> crate::Result<Vec<(String, String)>> {
+) -> crate::Result<Vec<(String, crate::pq::Type)>> {
     connection
         .query(
             r#"
