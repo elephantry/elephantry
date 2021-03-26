@@ -8,6 +8,28 @@ pub type State = libpq::State;
 
 pub type Type = libpq::Type;
 
+impl crate::FromSql for Type {
+    fn from_binary(ty: &Type, raw: Option<&[u8]>) -> crate::Result<Self> {
+        String::from_binary(ty, raw)?.parse()
+            .map_err(|_| Self::error(ty, "elephantry::pq::Type", raw))
+    }
+
+    fn from_text(ty: &Type, raw: Option<&str>) -> crate::Result<Self> {
+        crate::not_null(raw)?.parse()
+            .map_err(|_| Self::error(ty, "elephantry::pq::Type", raw))
+    }
+}
+
+impl crate::ToSql for Type {
+    fn ty(&self) -> Type {
+        types::TEXT
+    }
+
+    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
+        self.name.to_sql()
+    }
+}
+
 pub(crate) trait ToArray {
     fn to_array(&self) -> Self;
 }
