@@ -1,4 +1,4 @@
-impl crate::ToSql for serde_json::value::Value {
+impl crate::ToSql for serde_json::Value {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::JSON
     }
@@ -11,7 +11,7 @@ impl crate::ToSql for serde_json::value::Value {
     }
 }
 
-impl crate::FromSql for serde_json::value::Value {
+impl crate::FromSql for serde_json::Value {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         match serde_json::from_str(crate::not_null(raw)?) {
             Ok(json) => Ok(json),
@@ -33,7 +33,7 @@ impl crate::FromSql for serde_json::value::Value {
 mod test {
     crate::sql_test!(
         json,
-        serde_json::value::Value,
+        serde_json::Value,
         [("'{\"foo\": \"bar\"}'", serde_json::json!({"foo": "bar"}))]
     );
 }
