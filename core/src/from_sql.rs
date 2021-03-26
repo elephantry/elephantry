@@ -66,12 +66,12 @@ pub trait FromSql: Sized {
 
     fn error<T: std::fmt::Debug>(
         pg_type: &crate::pq::Type,
-        rust_type: &str,
+        _rust_type: &str,
         raw: T,
     ) -> crate::Error {
         crate::Error::FromSql {
             pg_type: pg_type.clone(),
-            rust_type: rust_type.to_string(),
+            rust_type: std::any::type_name::<Self>().to_string(),
             value: format!("{:?}", raw),
         }
     }

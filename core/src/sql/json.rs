@@ -4,10 +4,7 @@ impl crate::ToSql for serde_json::Value {
     }
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
-        match serde_json::to_string(self) {
-            Ok(s) => s.to_sql(),
-            Err(err) => Err(self.error("json", Some(&err.to_string()))),
-        }
+        self.to_string().to_sql()
     }
 }
 
