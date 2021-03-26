@@ -104,8 +104,8 @@ impl<'a> Tuple<'a> {
             Ok(ty) => ty,
             Err(_) => crate::pq::Type {
                 oid,
-                name: "composite",
-                descr: "Composite type",
+                name: "unknow",
+                descr: "Unknow type",
                 kind: libpq::types::Kind::Composite,
             },
         }
