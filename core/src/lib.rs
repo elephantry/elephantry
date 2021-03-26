@@ -10,7 +10,7 @@
  * | `boolean`                   | `bool`                   |         |
  * | `box`                       | `elephantry::Box`        | geo     |
  * | `bytea`                     | `elephantry::Bytea`      |         |
- * | `char`                      | `i8`                     |         |
+ * | `char`                      | `char`                   |         |
  * | `varchar`                   | `String`                 |         |
  * | `cidr`                      | `ipnetwork::IpNetwork`   | net     |
  * | `circle`                    | `elephantry::Circle`     | geo     |
