@@ -253,7 +253,7 @@ impl<T: crate::FromSql> crate::FromSql for Bounds<T> {
 
         if raw == "empty" {
             log::error!("Unsuported empty range");
-            return Err(Self::error(ty, "", raw));
+            return Err(Self::error(ty, raw));
         }
 
         lazy_static::lazy_static! {
@@ -313,7 +313,7 @@ impl<T: crate::FromSql> crate::FromSql for Bounds<T> {
         let flag = Flags::from_bits_truncate(crate::from_sql::read_u8(&mut buf)?);
         if flag.contains(Flags::EMPTY) {
             log::error!("Unsuported empty range");
-            return Err(Self::error(ty, "", raw));
+            return Err(Self::error(ty, raw));
         }
 
         let start_bound = if flag.contains(Flags::LB_INF) {

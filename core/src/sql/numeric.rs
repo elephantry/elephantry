@@ -40,7 +40,7 @@ impl crate::FromSql for bigdecimal::BigDecimal {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         crate::not_null(raw)?
             .parse()
-            .map_err(|_| Self::error(ty, "numeric", raw))
+            .map_err(|_| Self::error(ty, raw))
     }
 
     /*
@@ -67,7 +67,7 @@ impl crate::FromSql for bigdecimal::BigDecimal {
 
         numeric
             .try_into()
-            .map_err(|_| Self::error(ty, "numeric", raw))
+            .map_err(|_| Self::error(ty, raw))
     }
 }
 

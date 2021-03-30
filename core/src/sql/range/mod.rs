@@ -23,13 +23,13 @@ macro_rules! impl_range {
             fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
                 Bounds::from_text(ty, raw)?
                     .try_into()
-                    .map_err(|_| Self::error(ty, "", raw))
+                    .map_err(|_| Self::error(ty, raw))
             }
 
             fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
                 Bounds::from_binary(ty, raw)?
                     .try_into()
-                    .map_err(|_| Self::error(ty, "", raw))
+                    .map_err(|_| Self::error(ty, raw))
             }
         }
 

@@ -90,7 +90,7 @@ impl crate::FromSql for Path {
 
         let coordinates = raw
             .parse()
-            .map_err(|_| Self::error(ty, "elephantry::Path", raw))?;
+            .map_err(|_| Self::error(ty, raw))?;
 
         let mut path = Self::new(&coordinates);
 

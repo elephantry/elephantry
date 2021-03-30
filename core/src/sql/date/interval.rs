@@ -134,7 +134,7 @@ macro_rules! caps {
         match $caps.name(stringify!($part)) {
             Some(part) => match part.as_str().parse() {
                 Ok(part) => part,
-                Err(_) => return Err(Self::error($ty, "elephantry::Interval", $raw)),
+                Err(_) => return Err(Self::error($ty, $raw)),
             },
             None => 0,
         }
@@ -162,7 +162,7 @@ impl crate::FromSql for Interval {
 
         let caps = match REGEX.captures(&s) {
             Some(caps) => caps,
-            None => return Err(Self::error(ty, "elephantry::Interval", raw)),
+            None => return Err(Self::error(ty, raw)),
         };
 
         let years = caps!(caps, years, ty, raw);
