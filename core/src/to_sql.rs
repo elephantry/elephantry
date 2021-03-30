@@ -11,7 +11,7 @@ pub trait ToSql {
         crate::pq::Format::Text
     }
 
-    #[deprecated(note = "ToSql::to_sql will not return error in 3.0", since = "2.1.0")]
+    #[deprecated(note = "Error::ToSql will remove in 3.0", since = "2.1.0")]
     fn error(&self, rust_type: &str, message: Option<&String>) -> crate::Error {
         #[allow(deprecated)]
         crate::Error::ToSql {
