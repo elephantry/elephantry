@@ -6,7 +6,8 @@ impl crate::ToSql for xmltree::Element {
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
         let mut vec = Vec::new();
 
-        self.write(&mut vec)?;
+        self.write(&mut vec)
+            .map_err(|e| self.error("xmltree::Element", Some(&e.to_string())))?;
         vec.push(b'\0');
 
         Ok(Some(vec))

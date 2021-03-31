@@ -11,12 +11,10 @@ pub trait ToSql {
         crate::pq::Format::Text
     }
 
-    #[deprecated(note = "Error::ToSql will remove in 3.0", since = "2.1.0")]
-    fn error(&self, rust_type: &str, message: Option<&String>) -> crate::Error {
-        #[allow(deprecated)]
+    fn error(&self, _rust_type: &str, message: Option<&String>) -> crate::Error {
         crate::Error::ToSql {
             pg_type: self.ty(),
-            rust_type: rust_type.to_string(),
+            rust_type: std::any::type_name::<Self>().to_string(),
             message: message.cloned(),
         }
     }
