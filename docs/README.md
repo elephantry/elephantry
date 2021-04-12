@@ -9,7 +9,7 @@ When Rust meets PostgreSQL.
 
 ## Getting Started
 
-See [quickstart](docs/quickstart.md) and [examples](core/examples).
+See [quickstart](https://elephantry.github.io/documentation/quickstart/) and [examples](core/examples).
 
 ## Quick overview
 
