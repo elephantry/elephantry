@@ -165,9 +165,15 @@ impl<'a> std::ops::BitAnd for Where<'a> {
 
     fn bitand(self, rhs: Self) -> Self::Output {
         let mut result = self.clone();
-        result.op(&rhs, "and");
+        result &= rhs;
 
         result
+    }
+}
+
+impl<'a> std::ops::BitAndAssign for Where<'a> {
+    fn bitand_assign(&mut self, rhs: Self) {
+        self.op(&rhs, "and");
     }
 }
 
@@ -176,9 +182,15 @@ impl<'a> std::ops::BitOr for Where<'a> {
 
     fn bitor(self, rhs: Self) -> Self::Output {
         let mut result = self.clone();
-        result.op(&rhs, "or");
+        result |= rhs;
 
         result
+    }
+}
+
+impl<'a> std::ops::BitOrAssign for Where<'a> {
+    fn bitor_assign(&mut self, rhs: Self) {
+        self.op(&rhs, "or");
     }
 }
 
