@@ -28,8 +28,66 @@ impl Container {
 }
 
 #[derive(Clone, Default, Debug)]
+pub(crate) struct Entity {
+    pub internal: bool,
+    pub relation: Option<String>,
+    pub structure: Option<proc_macro2::TokenStream>,
+}
+
+impl Entity {
+    pub fn from_ast(ast: &syn::DeriveInput) -> Self {
+        let mut param = Self::default();
+
+        for item in ast.attrs.iter().flat_map(|attr| meta_items(attr)).flatten() {
+            match &item {
+                // Parse #[elephantry(internal)]
+                syn::NestedMeta::Meta(syn::Meta::Path(w)) if w == crate::symbol::INTERNAL => {
+                    param.internal = true;
+                }
+                // Parse #[elephantry(relation = "")]
+                syn::NestedMeta::Meta(syn::Meta::NameValue(m)) if m.path == crate::symbol::RELATION => {
+                    let relation = get_lit_str(crate::symbol::STRUCTURE, &m.lit);
+                    param.relation = Some(relation);
+                }
+                // Parse #[elephantry(structure = "")]
+                syn::NestedMeta::Meta(syn::Meta::NameValue(m)) if m.path == crate::symbol::STRUCTURE => {
+                    let structure = get_lit(crate::symbol::STRUCTURE, &m.lit).unwrap();
+                    param.structure = Some(structure);
+                }
+                syn::NestedMeta::Meta(meta) => {
+                    let ident = meta.path().get_ident().unwrap();
+                    panic!("Unknow elephantry container attribute: '{}'", ident);
+                }
+                syn::NestedMeta::Lit(_) => {
+                    panic!("Unexpected literal in elephantry container attribute");
+                }
+            }
+        }
+
+        param
+    }
+}
+
+fn get_lit(attr_name: crate::symbol::Symbol, lit: &syn::Lit) -> Result<proc_macro2::TokenStream, syn::Error> {
+    let lit = get_lit_str(attr_name, lit);
+    syn::parse_str(&lit)
+}
+
+fn get_lit_str(attr_name: crate::symbol::Symbol, lit: &syn::Lit) -> String {
+    if let syn::Lit::Str(lit) = lit {
+        lit.value()
+    } else {
+        panic!(
+            "expected elephantry {} attribute to be a string: `{} = \"...\"`",
+            attr_name, attr_name
+        );
+    }
+}
+
+#[derive(Clone, Default, Debug)]
 pub(crate) struct Field {
     pub default: bool,
+    pub pk: bool,
 }
 
 impl Field {
@@ -41,6 +99,10 @@ impl Field {
                 // Parse #[elephantry(default)]
                 syn::NestedMeta::Meta(syn::Meta::Path(w)) if w == crate::symbol::DEFAULT => {
                     param.default = true;
+                }
+                // Parse #[elephantry(pk)]
+                syn::NestedMeta::Meta(syn::Meta::Path(w)) if w == crate::symbol::PK => {
+                    param.pk = true;
                 }
                 syn::NestedMeta::Meta(meta) => {
                     let ident = meta.path().get_ident().unwrap();

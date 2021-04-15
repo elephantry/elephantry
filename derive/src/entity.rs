@@ -1,6 +1,18 @@
 pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
-    let parameters = crate::params::Container::from_ast(ast);
+    let params = crate::params::Entity::from_ast(ast);
 
+    let entity = entity_impl(ast, &params);
+    let structure = structure_impl(ast, &params);
+
+    let gen = quote::quote! {
+        #entity
+        #structure
+    };
+
+    gen.into()
+}
+
+fn entity_impl(ast: &syn::DeriveInput, params: &crate::params::Entity) -> proc_macro2::TokenStream {
     let fields = match ast.data {
         syn::Data::Struct(ref s) => &s.fields,
         _ => unimplemented!(),
@@ -47,7 +59,7 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
     });
 
     let name = &ast.ident;
-    let elephantry = if parameters.internal {
+    let elephantry = if params.internal {
         quote::quote! {
             crate
         }
@@ -59,7 +71,7 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
 
     let (impl_generics, ty_generics, where_clause) = ast.generics.split_for_impl();
 
-    let gen = quote::quote! {
+    quote::quote! {
         #[automatically_derived]
         impl #impl_generics #elephantry::Entity for #name #ty_generics #where_clause
         {
@@ -77,9 +89,66 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
                 }
             }
         }
+    }
+}
+
+fn structure_impl(ast: &syn::DeriveInput, params: &crate::params::Entity) -> proc_macro2::TokenStream {
+    let name = match &params.structure {
+        Some(name) => name,
+        None => return proc_macro2::TokenStream::new(),
     };
 
-    gen.into()
+    let fields = match ast.data {
+        syn::Data::Struct(ref s) => &s.fields,
+        _ => unimplemented!(),
+    };
+
+    let relation = params.relation.clone()
+        .unwrap_or(ast.ident.to_string().to_lowercase());
+
+    let primary_key = fields.iter()
+        .filter(|field| {
+            let field_params = crate::params::Field::from_ast(field);
+
+            field_params.pk
+        })
+        .map(|field| &field.ident);
+
+    let columns = fields.iter()
+        .map(|field| &field.ident);
+
+    let elephantry = if params.internal {
+        quote::quote! {
+            crate
+        }
+    } else {
+        quote::quote! {
+            elephantry
+        }
+    };
+
+    quote::quote! {
+        struct #name;
+
+        #[automatically_derived]
+        impl #elephantry::Structure for #name {
+            fn relation() -> &'static str {
+                #relation
+            }
+
+            fn primary_key() -> &'static [&'static str] {
+                &[
+                    #(#primary_key, )*
+                ]
+            }
+
+            fn columns() -> &'static [&'static str] {
+                &[
+                    #(stringify!(#columns), )*
+                ]
+            }
+        }
+    }
 }
 
 fn is_option(ty: &syn::Type) -> bool {
