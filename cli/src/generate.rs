@@ -29,64 +29,30 @@ pub fn relation(
     let filename = format!("{}/{}.rs", dir, relation);
     let mut file = std::io::BufWriter::new(std::fs::File::create(filename)?);
 
-    write_entity(&mut file, connection, schema, relation)?;
+    let columns = elephantry::inspect::relation(connection, schema, relation)?;
 
-    let mut pk = Vec::new();
-    let mut columns = Vec::new();
+    let mut fields = Vec::new();
 
-    for column in &elephantry::inspect::relation(connection, schema, relation)? {
-        let name = column.name.to_snake();
+    for column in &columns {
+        let name = name_to_rust(&column);
+        let ty = ty_to_rust(&column)?;
 
         if column.is_primary {
-            pk.push(format!("\"{}\"", name));
+            fields.push("    #[elephantry(pk)]".to_string());
         }
-
-        columns.push(format!("            \"{name}\",", name = name,));
+        fields.push(format!("    pub {}: {},", name, ty));
     }
 
     write!(
         file,
-        r"
-pub struct Model<'a> {{
-    connection: &'a elephantry::Connection,
-}}
-
-impl<'a> elephantry::Model<'a> for Model<'a> {{
-    type Entity = Entity;
-    type Structure = Structure;
-
-    fn new(connection: &'a elephantry::Connection) -> Self {{
-        Self {{ connection }}
-    }}
-}}
-
-"
-    )?;
-
-    write!(
-        file,
-        r#"pub struct Structure;
-
-impl elephantry::Structure for Structure {{
-    fn relation() -> &'static str {{
-        "{schema}.{relation}"
-    }}
-
-    fn primary_key() -> &'static [&'static str] {{
-        &[{pk}]
-    }}
-
-    fn columns() -> &'static [&'static str] {{
-        &[
-{columns}
-        ]
-    }}
+        r#"#[derive(elephantry::Entity)]
+#[elephantry(model = "Model", structure = "Structure", relation = "{relation}")]
+pub struct Entity {{
+{fields}
 }}
 "#,
-        pk = pk.join(","),
-        schema = schema,
         relation = relation,
-        columns = columns.join("\n")
+        fields = fields.join("\n")
     )?;
 
     Ok(())
