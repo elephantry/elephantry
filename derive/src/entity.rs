@@ -1,18 +1,30 @@
 pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
     let params = crate::params::Entity::from_ast(ast);
 
-    let entity = entity_impl(ast, &params);
-    let structure = structure_impl(ast, &params);
+    let elephantry = if params.internal {
+        quote::quote! {
+            crate
+        }
+    } else {
+        quote::quote! {
+            elephantry
+        }
+    };
+
+    let entity = entity_impl(ast, &elephantry);
+    let structure = structure_impl(ast, &params, &elephantry);
+    let model = model_impl(ast, &params, &elephantry);
 
     let gen = quote::quote! {
         #entity
         #structure
+        #model
     };
 
     gen.into()
 }
 
-fn entity_impl(ast: &syn::DeriveInput, params: &crate::params::Entity) -> proc_macro2::TokenStream {
+fn entity_impl(ast: &syn::DeriveInput, elephantry: &proc_macro2::TokenStream) -> proc_macro2::TokenStream {
     let fields = match ast.data {
         syn::Data::Struct(ref s) => &s.fields,
         _ => unimplemented!(),
@@ -63,16 +75,6 @@ fn entity_impl(ast: &syn::DeriveInput, params: &crate::params::Entity) -> proc_m
     });
 
     let name = &ast.ident;
-    let elephantry = if params.internal {
-        quote::quote! {
-            crate
-        }
-    } else {
-        quote::quote! {
-            elephantry
-        }
-    };
-
     let (impl_generics, ty_generics, where_clause) = ast.generics.split_for_impl();
 
     quote::quote! {
@@ -96,7 +98,7 @@ fn entity_impl(ast: &syn::DeriveInput, params: &crate::params::Entity) -> proc_m
     }
 }
 
-fn structure_impl(ast: &syn::DeriveInput, params: &crate::params::Entity) -> proc_macro2::TokenStream {
+fn structure_impl(ast: &syn::DeriveInput, params: &crate::params::Entity, elephantry: &proc_macro2::TokenStream) -> proc_macro2::TokenStream {
     let name = match &params.structure {
         Some(name) => name,
         None => return proc_macro2::TokenStream::new(),
@@ -129,16 +131,6 @@ fn structure_impl(ast: &syn::DeriveInput, params: &crate::params::Entity) -> pro
             field_params.column.unwrap_or(field.ident.as_ref().unwrap().to_string())
         });
 
-    let elephantry = if params.internal {
-        quote::quote! {
-            crate
-        }
-    } else {
-        quote::quote! {
-            elephantry
-        }
-    };
-
     quote::quote! {
         struct #name;
 
@@ -158,6 +150,38 @@ fn structure_impl(ast: &syn::DeriveInput, params: &crate::params::Entity) -> pro
                 &[
                     #(#columns, )*
                 ]
+            }
+        }
+    }
+}
+
+fn model_impl(ast: &syn::DeriveInput, params: &crate::params::Entity, elephantry: &proc_macro2::TokenStream) -> proc_macro2::TokenStream {
+    let name = match &params.model {
+        Some(name) => name,
+        None => return proc_macro2::TokenStream::new(),
+    };
+
+    let structure = match &params.structure {
+        Some(structure) => structure,
+        None => panic!("Model requires structure"),
+    };
+
+    let entity = &ast.ident;
+
+    quote::quote! {
+        struct #name<'a> {
+            connection: &'a #elephantry::Connection,
+        }
+
+        #[automatically_derived]
+        impl<'a> #elephantry::Model<'a> for Model<'a> {
+            type Entity = #entity;
+            type Structure = #structure;
+
+            fn new(connection: &'a #elephantry::Connection) -> Self {
+                Self {
+                    connection,
+                }
             }
         }
     }

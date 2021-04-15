@@ -30,6 +30,7 @@ impl Container {
 #[derive(Clone, Default, Debug)]
 pub(crate) struct Entity {
     pub internal: bool,
+    pub model: Option<proc_macro2::TokenStream>,
     pub relation: Option<String>,
     pub structure: Option<proc_macro2::TokenStream>,
 }
@@ -43,6 +44,11 @@ impl Entity {
                 // Parse #[elephantry(internal)]
                 syn::NestedMeta::Meta(syn::Meta::Path(w)) if w == crate::symbol::INTERNAL => {
                     param.internal = true;
+                }
+                // Parse #[elephantry(model = "")]
+                syn::NestedMeta::Meta(syn::Meta::NameValue(m)) if m.path == crate::symbol::MODEL => {
+                    let model = get_lit(crate::symbol::MODEL, &m.lit).unwrap();
+                    param.model = Some(model);
                 }
                 // Parse #[elephantry(relation = "")]
                 syn::NestedMeta::Meta(syn::Meta::NameValue(m)) if m.path == crate::symbol::RELATION => {
