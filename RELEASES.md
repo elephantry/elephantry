@@ -1,3 +1,8 @@
+# Version 2.1.0
+
+- Derive proc_macro can generates structure and model;
+- Impl bit asign for Where.
+
 # Version 2.0.0
 
 - Removes deprecated code;
