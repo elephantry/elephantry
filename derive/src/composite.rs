@@ -1,15 +1,5 @@
 pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
-    let attribute = ast
-        .attrs
-        .iter()
-        .find(|a| a.path.segments.len() == 1 && a.path.segments[0].ident == "elephantry");
-
-    let parameters = match attribute {
-        Some(attribute) => {
-            syn::parse2(attribute.tokens.clone()).expect("Invalid entity attribute!")
-        }
-        None => crate::params::Container::default(),
-    };
+    let parameters = crate::params::Container::from_ast(ast);
 
     let fields = match ast.data {
         syn::Data::Struct(ref s) => &s.fields,

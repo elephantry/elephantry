@@ -298,4 +298,13 @@ end$$;
         assert!(pk.contains_key("uuid"));
         assert!(pk.contains_key("name"));
     }
+
+    #[derive(elephantry_derive::Entity)]
+    #[elephantry(internal)]
+    pub struct Entity {
+        pub employee_id: i32,
+        pub first_name: String,
+        #[elephantry(default)]
+        pub last_name: String,
+    }
 }

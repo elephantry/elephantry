@@ -1,10 +1,5 @@
 pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
-    let parameters: crate::params::Container = ast
-        .attrs
-        .iter()
-        .find(|a| a.path.segments.len() == 1 && a.path.segments[0].ident == "elephantry")
-        .map(|x| syn::parse2(x.tokens.clone()).expect("Invalid entity attribute!"))
-        .unwrap_or_default();
+    let parameters = crate::params::Container::from_ast(ast);
 
     let fields = match ast.data {
         syn::Data::Struct(ref s) => &s.fields,
@@ -12,12 +7,7 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
     };
 
     let from_body = fields.iter().map(|field| {
-        let field_params: crate::params::Field = field
-            .attrs
-            .iter()
-            .find(|a| a.path.segments.len() == 1 && a.path.segments[0].ident == "elephantry")
-            .map(|x| syn::parse2(x.tokens.clone()).expect("Invalid entity attribute!"))
-            .unwrap_or_default();
+        let field_params = crate::params::Field::from_ast(field);
 
         let name = &field.ident;
         let ty = &field.ty;
@@ -25,15 +15,15 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
 
         if field_params.default {
             quote::quote! {
-                #name: tuple.try_get(stringify!(#name)).unwrap_or_default()
+                #name: tuple.try_get(#name).unwrap_or_default()
             }
         } else if is_option(ty) {
             quote::quote! {
-                #name: tuple.try_get(stringify!(#name)).ok()
+                #name: tuple.try_get(#name).ok()
             }
         } else {
             quote::quote! {
-                #name: tuple.get(stringify!(#name))
+                #name: tuple.get(#name)
             }
         }
     });
@@ -44,14 +34,14 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
 
         if is_option(ty) {
             quote::quote! {
-                stringify!(#name) => match self.#name {
+                #name => match self.#name {
                     Some(ref value) => Some(value),
                     None => None,
                 }
             }
         } else {
             quote::quote! {
-                stringify!(#name) => Some(&self.#name)
+                #name => Some(&self.#name)
             }
         }
     });
