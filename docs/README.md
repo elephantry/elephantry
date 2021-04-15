@@ -88,7 +88,9 @@ elephantry.delete_where("deleted = $1", &[&true])?;
 - [out of gafam](https://github.com/sanpii/out-of-gafam) — Generate RSS feed for
     GAFAM (youtube, facebook, instagram and twitter) using actix.
 - [captainstat](https://github.com/sanpii/captainstat) — Another simple
-    application builds with actix to display statitics.
+    application builds with actix to display statitics;
+- [oxfeed](https://github.com/sanpii/oxfeed) — A feed reader with an actix API
+    and yew front.
 
 If you want to add your project here, please [create a pull
 request](https://github.com/elephantry/elephantry/pulls).
