@@ -45,7 +45,7 @@ fn entity_impl(
         let name = &field.ident;
         let column = field_params
             .column
-            .unwrap_or(field.ident.as_ref().unwrap().to_string());
+            .unwrap_or_else(|| field.ident.as_ref().unwrap().to_string());
         let ty = &field.ty;
         crate::check_type(ty);
 
@@ -70,7 +70,7 @@ fn entity_impl(
         let name = &field.ident;
         let column = field_params
             .column
-            .unwrap_or(field.ident.as_ref().unwrap().to_string());
+            .unwrap_or_else(|| field.ident.as_ref().unwrap().to_string());
         let ty = &field.ty;
 
         if is_option(ty) {
@@ -130,7 +130,7 @@ fn structure_impl(
     let relation = params
         .relation
         .clone()
-        .unwrap_or(ast.ident.to_string().to_lowercase());
+        .unwrap_or_else(|| ast.ident.to_string().to_lowercase());
 
     let primary_key = fields
         .iter()
@@ -144,7 +144,7 @@ fn structure_impl(
 
             field_params
                 .column
-                .unwrap_or(field.ident.as_ref().unwrap().to_string())
+                .unwrap_or_else(|| field.ident.as_ref().unwrap().to_string())
         });
 
     let columns = fields
@@ -159,7 +159,7 @@ fn structure_impl(
 
             field_params
                 .column
-                .unwrap_or(field.ident.as_ref().unwrap().to_string())
+                .unwrap_or_else(|| field.ident.as_ref().unwrap().to_string())
         });
 
     quote::quote! {

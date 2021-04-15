@@ -7,7 +7,7 @@ impl Container {
     pub fn from_ast(ast: &syn::DeriveInput) -> Self {
         let mut param = Self::default();
 
-        for item in ast.attrs.iter().flat_map(|attr| meta_items(attr)).flatten() {
+        for item in ast.attrs.iter().flat_map(|attr| meta_items(attr)) {
             match &item {
                 // Parse #[elephantry(internal)]
                 syn::NestedMeta::Meta(syn::Meta::Path(w)) if w == crate::symbol::INTERNAL => {
@@ -39,7 +39,7 @@ impl Entity {
     pub fn from_ast(ast: &syn::DeriveInput) -> Self {
         let mut param = Self::default();
 
-        for item in ast.attrs.iter().flat_map(|attr| meta_items(attr)).flatten() {
+        for item in ast.attrs.iter().flat_map(|attr| meta_items(attr)) {
             match &item {
                 // Parse #[elephantry(internal)]
                 syn::NestedMeta::Meta(syn::Meta::Path(w)) if w == crate::symbol::INTERNAL => {
@@ -112,12 +112,7 @@ impl Field {
     pub fn from_ast(field: &syn::Field) -> Self {
         let mut param = Self::default();
 
-        for item in field
-            .attrs
-            .iter()
-            .flat_map(|attr| meta_items(attr))
-            .flatten()
-        {
+        for item in field.attrs.iter().flat_map(|attr| meta_items(attr)) {
             match &item {
                 // Parse #[elephantry(default)]
                 syn::NestedMeta::Meta(syn::Meta::Path(w)) if w == crate::symbol::DEFAULT => {
@@ -160,13 +155,13 @@ impl Field {
     }
 }
 
-fn meta_items(attr: &syn::Attribute) -> Result<Vec<syn::NestedMeta>, ()> {
+fn meta_items(attr: &syn::Attribute) -> Vec<syn::NestedMeta> {
     if attr.path != crate::symbol::ELEPHANTRY {
-        return Ok(Vec::new());
+        return Vec::new();
     }
 
     match attr.parse_meta() {
-        Ok(syn::Meta::List(meta)) => Ok(meta.nested.into_iter().collect()),
+        Ok(syn::Meta::List(meta)) => meta.nested.into_iter().collect(),
         Ok(_) => {
             panic!("expected #[elephantry(...)]");
         }
