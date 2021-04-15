@@ -95,6 +95,7 @@ pub(crate) struct Field {
     pub column: Option<String>,
     pub default: bool,
     pub pk: bool,
+    pub r#virtual: bool,
 }
 
 impl Field {
@@ -115,6 +116,10 @@ impl Field {
                 syn::NestedMeta::Meta(syn::Meta::NameValue(m)) if m.path == crate::symbol::COLUMN => {
                     let column = get_lit_str(crate::symbol::COLUMN, &m.lit);
                     param.column = Some(column);
+                }
+                // Parse #[elephantry(virtual)]
+                syn::NestedMeta::Meta(syn::Meta::Path(w)) if w == crate::symbol::VIRTUAL => {
+                    param.r#virtual = true;
                 }
                 syn::NestedMeta::Meta(meta) => {
                     let ident = meta.path().get_ident().unwrap();

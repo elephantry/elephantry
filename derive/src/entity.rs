@@ -131,6 +131,11 @@ fn structure_impl(ast: &syn::DeriveInput, params: &crate::params::Entity, elepha
         });
 
     let columns = fields.iter()
+        .filter(|field| {
+            let field_params = crate::params::Field::from_ast(field);
+
+            !field_params.r#virtual
+        })
         .map(|field| {
             let field_params = crate::params::Field::from_ast(field);
 

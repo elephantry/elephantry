@@ -10,6 +10,7 @@ mod employee {
         pub is_manager: bool,
         pub day_salary: bigdecimal::BigDecimal,
         pub department_id: i32,
+        #[elephantry(virtual)]
         pub age: elephantry::Interval,
     }
 

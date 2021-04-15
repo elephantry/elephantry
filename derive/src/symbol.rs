@@ -8,6 +8,7 @@ pub(crate) const MODEL: Symbol = Symbol("model");
 pub(crate) const PK: Symbol = Symbol("pk");
 pub(crate) const RELATION: Symbol = Symbol("relation");
 pub(crate) const STRUCTURE: Symbol = Symbol("structure");
+pub(crate) const VIRTUAL: Symbol = Symbol("virtual");
 
 impl PartialEq<Symbol> for syn::Path {
     fn eq(&self, word: &Symbol) -> bool {

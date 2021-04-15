@@ -16,6 +16,7 @@ mod employee {
         pub birth_date: chrono::NaiveDate,
         pub is_manager: bool,
         pub day_salary: bigdecimal::BigDecimal,
+        #[elephantry(virtual)]
         pub departments: Vec<super::Department>,
     }
 
