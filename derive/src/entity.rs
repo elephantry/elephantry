@@ -172,12 +172,44 @@ fn model_impl(ast: &syn::DeriveInput, params: &crate::params::Entity, elephantry
         None => return proc_macro2::TokenStream::new(),
     };
 
+    let fields = match ast.data {
+        syn::Data::Struct(ref s) => &s.fields,
+        _ => unimplemented!(),
+    };
+
     let structure = match &params.structure {
         Some(structure) => structure,
         None => panic!("Model requires structure"),
     };
 
     let entity = &ast.ident;
+
+    let projection = fields.iter()
+        .filter(|field| {
+            let field_params = crate::params::Field::from_ast(field);
+
+            field_params.projection.is_some()
+        })
+        .map(|field| {
+            let field_params = crate::params::Field::from_ast(field);
+            let name = &field.ident;
+            let projection = field_params.projection.unwrap();
+
+            quote::quote!(
+                .add_field(stringify!(#name), #projection)
+            )
+        }).collect::<Vec<_>>();
+
+    let create_projection = if projection.is_empty() {
+        proc_macro2::TokenStream::new()
+    } else {
+        quote::quote! {
+            fn create_projection() -> #elephantry::Projection {
+                Self::default_projection()
+                    #(#projection)*
+            }
+        }
+    };
 
     quote::quote! {
         #public struct #name<'a> {
@@ -194,6 +226,8 @@ fn model_impl(ast: &syn::DeriveInput, params: &crate::params::Entity, elephantry
                     connection,
                 }
             }
+
+            #create_projection
         }
     }
 }

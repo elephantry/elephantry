@@ -95,6 +95,7 @@ pub(crate) struct Field {
     pub column: Option<String>,
     pub default: bool,
     pub pk: bool,
+    pub projection: Option<String>,
     pub r#virtual: bool,
 }
 
@@ -120,6 +121,12 @@ impl Field {
                 // Parse #[elephantry(virtual)]
                 syn::NestedMeta::Meta(syn::Meta::Path(w)) if w == crate::symbol::VIRTUAL => {
                     param.r#virtual = true;
+                }
+                // Parse #[elephantry(virtual = "")]
+                syn::NestedMeta::Meta(syn::Meta::NameValue(m)) if m.path == crate::symbol::VIRTUAL => {
+                    let projection = get_lit_str(crate::symbol::VIRTUAL, &m.lit);
+                    param.r#virtual = true;
+                    param.projection = Some(projection);
                 }
                 syn::NestedMeta::Meta(meta) => {
                     let ident = meta.path().get_ident().unwrap();

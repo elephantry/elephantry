@@ -1,6 +1,6 @@
 mod employee {
     #[derive(Debug, elephantry::Entity)]
-    #[elephantry(structure = "Structure", relation = "employee")]
+    #[elephantry(model = "Model", structure = "Structure", relation = "employee")]
     pub struct Entity {
         #[elephantry(pk)]
         pub employee_id: i32,
@@ -10,23 +10,8 @@ mod employee {
         pub is_manager: bool,
         pub day_salary: bigdecimal::BigDecimal,
         pub department_id: i32,
-        #[elephantry(virtual)]
+        #[elephantry(virtual = "age(%:birth_date:%)")]
         pub age: elephantry::Interval,
-    }
-
-    pub struct Model;
-
-    impl<'a> elephantry::Model<'a> for Model {
-        type Entity = Entity;
-        type Structure = Structure;
-
-        fn new(_connection: &'a elephantry::Connection) -> Self {
-            Self
-        }
-
-        fn create_projection() -> elephantry::Projection {
-            Self::default_projection().add_field("age", "age(%:birth_date:%)")
-        }
     }
 }
 
