@@ -2,7 +2,7 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
     let attribute = ast
         .attrs
         .iter()
-        .find(|a| a.path.segments.len() == 1 && a.path.segments[0].ident == "r#enum");
+        .find(|a| a.path.segments.len() == 1 && a.path.segments[0].ident == "elephantry");
 
     let parameters = match attribute {
         Some(attribute) => {

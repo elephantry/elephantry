@@ -52,8 +52,8 @@ impl<E: Enum> crate::Composite for E {
 
 #[cfg(test)]
 mod test {
-    #[derive(crate::Enum, Debug, PartialEq)]
-    #[r#enum(internal)]
+    #[derive(elephantry_derive::Enum, Debug, PartialEq)]
+    #[elephantry(internal)]
     enum Mood {
         Sad,
         Ok,

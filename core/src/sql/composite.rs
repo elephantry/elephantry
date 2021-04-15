@@ -70,8 +70,8 @@ impl<C: Composite> crate::FromSql for C {
 
 #[cfg(test)]
 mod test {
-    #[derive(crate::Composite, Debug, PartialEq)]
-    #[composite(internal)]
+    #[derive(elephantry_derive::Composite, Debug, PartialEq)]
+    #[elephantry(internal)]
     struct CompFoo {
         f1: i32,
         f2: String,

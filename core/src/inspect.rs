@@ -1,7 +1,7 @@
 #![allow(unused_variables)]
 
 #[derive(Debug, elephantry_derive::Entity)]
-#[entity(internal)]
+#[elephantry(internal)]
 pub struct Schema {
     pub name: String,
     pub oid: crate::pq::Oid,
@@ -35,7 +35,7 @@ order by 1;
 }
 
 #[derive(Debug, elephantry_derive::Entity)]
-#[entity(internal)]
+#[elephantry(internal)]
 pub struct Relation {
     pub name: String,
     pub ty: String,
@@ -80,7 +80,7 @@ order by name asc;
 }
 
 #[derive(Debug, elephantry_derive::Entity)]
-#[entity(internal)]
+#[elephantry(internal)]
 pub struct Column {
     #[elephantry(default)]
     pub is_primary: bool,
@@ -152,7 +152,7 @@ order by
 }
 
 #[derive(Debug, elephantry_derive::Entity)]
-#[entity(internal)]
+#[elephantry(internal)]
 pub struct Enum {
     pub name: String,
     pub elements: Vec<String>,
@@ -170,7 +170,7 @@ pub fn enums(
 }
 
 #[derive(Debug, elephantry_derive::Entity)]
-#[entity(internal)]
+#[elephantry(internal)]
 pub struct Domain {
     pub name: String,
     pub description: Option<String>,
@@ -187,7 +187,7 @@ pub fn domains(
 }
 
 #[derive(Debug, elephantry_derive::Entity)]
-#[entity(internal)]
+#[elephantry(internal)]
 pub struct Composite {
     pub name: String,
     #[elephantry(default)]

@@ -2,7 +2,7 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
     let parameters: crate::Params = ast
         .attrs
         .iter()
-        .find(|a| a.path.segments.len() == 1 && a.path.segments[0].ident == "entity")
+        .find(|a| a.path.segments.len() == 1 && a.path.segments[0].ident == "elephantry")
         .map(|x| syn::parse2(x.tokens.clone()).expect("Invalid entity attribute!"))
         .unwrap_or_default();
 

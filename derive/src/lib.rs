@@ -4,15 +4,9 @@ mod composite;
 mod entity;
 mod r#enum;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Default, Debug)]
 struct Params {
     internal: bool,
-}
-
-impl Default for Params {
-    fn default() -> Self {
-        Self { internal: false }
-    }
 }
 
 impl syn::parse::Parse for Params {
@@ -29,15 +23,9 @@ impl syn::parse::Parse for Params {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Default, Debug)]
 struct FieldParams {
     default: bool,
-}
-
-impl Default for FieldParams {
-    fn default() -> Self {
-        Self { default: false }
-    }
 }
 
 impl syn::parse::Parse for FieldParams {
@@ -59,7 +47,7 @@ impl syn::parse::Parse for FieldParams {
  *
  * [`Composite`]: trait.Composite.html
  */
-#[proc_macro_derive(Composite, attributes(composite))]
+#[proc_macro_derive(Composite, attributes(elephantry))]
 pub fn composite_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let ast = syn::parse(input).unwrap();
 
@@ -71,7 +59,7 @@ pub fn composite_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStre
  *
  * [`Entity`]: trait.Entity.html
  */
-#[proc_macro_derive(Entity, attributes(entity, elephantry))]
+#[proc_macro_derive(Entity, attributes(elephantry))]
 pub fn entity_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let ast = syn::parse(input).unwrap();
 
@@ -83,7 +71,7 @@ pub fn entity_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream 
  *
  * [`Enum`]: trait.Enum.html
  */
-#[proc_macro_derive(Enum, attributes(r#enum))]
+#[proc_macro_derive(Enum, attributes(elephantry))]
 pub fn enum_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let ast = syn::parse(input).unwrap();
 
