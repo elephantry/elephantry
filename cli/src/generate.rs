@@ -200,8 +200,14 @@ pub struct {name} {{
 fn ty_to_rust(column: &elephantry::inspect::Column) -> crate::Result<String> {
     use std::convert::TryFrom;
 
-    let ty = elephantry::pq::Type::try_from(column.oid).map_err(crate::Error::Libpq)?;
-    let mut rty = elephantry::pq::sql_to_rust(&ty);
+    let mut rty = match elephantry::pq::Type::try_from(column.oid) {
+        Ok(ty) => elephantry::pq::sql_to_rust(&ty),
+        Err(err) => if column.ty == "public.hstore" {
+            "elephantry::Hstore".to_string()
+        } else {
+            return Err(crate::Error::Libpq(err));
+        }
+    };
 
     if !column.is_notnull {
         rty = format!("Option<{}>", rty);
