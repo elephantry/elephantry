@@ -1,6 +1,8 @@
 mod employee {
     #[derive(Debug, elephantry::Entity)]
+    #[elephantry(model = "Model", structure = "Structure", relation = "employee")]
     pub struct Entity {
+        #[elephantry(pk)]
         pub employee_id: i32,
         pub first_name: String,
         pub last_name: String,
@@ -10,10 +12,6 @@ mod employee {
         pub department_id: i32,
     }
 
-    pub struct Model<'a> {
-        connection: &'a elephantry::Connection,
-    }
-
     impl<'a> Model<'a> {
         pub fn managers_salary(&self) -> elephantry::Result<f32> {
             let query = "select sum(day_salary) from employee where is_manager";
@@ -21,39 +19,6 @@ mod employee {
             let result = self.connection.execute(query)?.get(0).get("sum");
 
             Ok(result)
-        }
-    }
-
-    impl<'a> elephantry::Model<'a> for Model<'a> {
-        type Entity = Entity;
-        type Structure = Structure;
-
-        fn new(connection: &'a elephantry::Connection) -> Self {
-            Self { connection }
-        }
-    }
-
-    pub struct Structure;
-
-    impl elephantry::Structure for Structure {
-        fn relation() -> &'static str {
-            "employee"
-        }
-
-        fn primary_key() -> &'static [&'static str] {
-            &["employee_id"]
-        }
-
-        fn columns() -> &'static [&'static str] {
-            &[
-                "employee_id",
-                "first_name",
-                "last_name",
-                "birth_date",
-                "is_manager",
-                "day_salary",
-                "department_id",
-            ]
         }
     }
 }

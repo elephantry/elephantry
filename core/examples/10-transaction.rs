@@ -1,6 +1,8 @@
 mod employee {
     #[derive(Debug, elephantry::Entity)]
+    #[elephantry(model = "Model", structure = "Structure", relation = "employee")]
     pub struct Entity {
+        #[elephantry(pk)]
         pub employee_id: Option<i32>,
         pub first_name: String,
         pub last_name: String,
@@ -8,10 +10,6 @@ mod employee {
         pub is_manager: bool,
         pub day_salary: bigdecimal::BigDecimal,
         pub department_id: i32,
-    }
-
-    pub struct Model<'a> {
-        connection: &'a elephantry::Connection,
     }
 
     impl<'a> Model<'a> {
@@ -49,74 +47,16 @@ mod employee {
             Ok(employee)
         }
     }
-
-    impl<'a> elephantry::Model<'a> for Model<'a> {
-        type Entity = Entity;
-        type Structure = Structure;
-
-        fn new(connection: &'a elephantry::Connection) -> Self {
-            Self { connection }
-        }
-    }
-
-    pub struct Structure;
-
-    impl elephantry::Structure for Structure {
-        fn relation() -> &'static str {
-            "employee"
-        }
-
-        fn primary_key() -> &'static [&'static str] {
-            &["employee_id"]
-        }
-
-        fn columns() -> &'static [&'static str] {
-            &[
-                "employee_id",
-                "first_name",
-                "last_name",
-                "birth_date",
-                "is_manager",
-                "day_salary",
-                "department_id",
-            ]
-        }
-    }
 }
 
 mod department {
     #[derive(Debug, elephantry::Entity)]
+    #[elephantry(model = "Model", structure = "Structure", relation = "department")]
     pub struct Entity {
+        #[elephantry(pk)]
         pub department_id: i32,
         pub name: String,
         pub parent_id: Option<i32>,
-    }
-
-    pub struct Model;
-
-    impl<'a> elephantry::Model<'a> for Model {
-        type Entity = Entity;
-        type Structure = Structure;
-
-        fn new(_: &'a elephantry::Connection) -> Self {
-            Self {}
-        }
-    }
-
-    pub struct Structure;
-
-    impl elephantry::Structure for Structure {
-        fn relation() -> &'static str {
-            "department"
-        }
-
-        fn primary_key() -> &'static [&'static str] {
-            &["department_id"]
-        }
-
-        fn columns() -> &'static [&'static str] {
-            &["department_id", "name", "parent_id"]
-        }
     }
 }
 

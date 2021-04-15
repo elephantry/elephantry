@@ -1,8 +1,11 @@
 #[derive(Debug, elephantry::Entity)]
+#[elephantry(structure = "EventStructure")]
 struct Event<T: elephantry::FromSql + elephantry::ToSql> {
     #[cfg(feature = "uuid")]
+    #[elephantry(pk)]
     uuid: Option<uuid::Uuid>,
     #[cfg(not(feature = "uuid"))]
+    #[elephantry(pk)]
     uuid: Option<String>,
     name: String,
     #[elephantry(default)]
@@ -74,21 +77,5 @@ impl<'a> elephantry::Model<'a> for EventExtraModel {
 
     fn create_projection() -> elephantry::Projection {
         Self::default_projection().add_field("os", "%:browser:% ->> 'os'")
-    }
-}
-
-struct EventStructure;
-
-impl elephantry::Structure for EventStructure {
-    fn relation() -> &'static str {
-        "public.event"
-    }
-
-    fn primary_key() -> &'static [&'static str] {
-        &["uuid"]
-    }
-
-    fn columns() -> &'static [&'static str] {
-        &["uuid", "name", "visitor_id", "properties", "browser"]
     }
 }

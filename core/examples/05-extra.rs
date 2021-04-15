@@ -1,6 +1,8 @@
 mod employee {
     #[derive(Debug, elephantry::Entity)]
+    #[elephantry(structure = "Structure", relation = "employee")]
     pub struct Entity {
+        #[elephantry(pk)]
         pub employee_id: i32,
         pub first_name: String,
         pub last_name: String,
@@ -18,35 +20,11 @@ mod employee {
         type Structure = Structure;
 
         fn new(_connection: &'a elephantry::Connection) -> Self {
-            Self {}
+            Self
         }
 
         fn create_projection() -> elephantry::Projection {
             Self::default_projection().add_field("age", "age(%:birth_date:%)")
-        }
-    }
-
-    pub struct Structure;
-
-    impl elephantry::Structure for Structure {
-        fn relation() -> &'static str {
-            "employee"
-        }
-
-        fn primary_key() -> &'static [&'static str] {
-            &["employee_id"]
-        }
-
-        fn columns() -> &'static [&'static str] {
-            &[
-                "employee_id",
-                "first_name",
-                "last_name",
-                "birth_date",
-                "is_manager",
-                "day_salary",
-                "department_id",
-            ]
         }
     }
 }
