@@ -1,5 +1,5 @@
 pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
-    let parameters: crate::Params = ast
+    let parameters: crate::params::Container = ast
         .attrs
         .iter()
         .find(|a| a.path.segments.len() == 1 && a.path.segments[0].ident == "elephantry")
@@ -12,7 +12,7 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
     };
 
     let from_body = fields.iter().map(|field| {
-        let field_params: crate::FieldParams = field
+        let field_params: crate::params::Field = field
             .attrs
             .iter()
             .find(|a| a.path.segments.len() == 1 && a.path.segments[0].ident == "elephantry")

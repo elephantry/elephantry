@@ -3,44 +3,7 @@
 mod composite;
 mod entity;
 mod r#enum;
-
-#[derive(Clone, Default, Debug)]
-struct Params {
-    internal: bool,
-}
-
-impl syn::parse::Parse for Params {
-    fn parse(input: syn::parse::ParseStream<'_>) -> syn::parse::Result<Self> {
-        let content;
-        syn::parenthesized!(content in input);
-
-        let internal = match content.parse::<syn::Ident>() {
-            Ok(internal) => internal == "internal",
-            Err(_) => false,
-        };
-
-        Ok(Params { internal })
-    }
-}
-
-#[derive(Clone, Default, Debug)]
-struct FieldParams {
-    default: bool,
-}
-
-impl syn::parse::Parse for FieldParams {
-    fn parse(input: syn::parse::ParseStream<'_>) -> syn::parse::Result<Self> {
-        let content;
-        syn::parenthesized!(content in input);
-
-        let default = match content.parse::<syn::Ident>() {
-            Ok(default) => default == "default",
-            Err(_) => false,
-        };
-
-        Ok(FieldParams { default })
-    }
-}
+mod params;
 
 /**
  * Impl [`Composite`] trait.

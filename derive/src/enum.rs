@@ -8,7 +8,7 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
         Some(attribute) => {
             syn::parse2(attribute.tokens.clone()).expect("Invalid entity attribute!")
         }
-        None => crate::Params::default(),
+        None => crate::params::Container::default(),
     };
 
     let variants = match ast.data {
