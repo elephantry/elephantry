@@ -202,10 +202,12 @@ fn ty_to_rust(column: &elephantry::inspect::Column) -> crate::Result<String> {
 
     let mut rty = match elephantry::pq::Type::try_from(column.oid) {
         Ok(ty) => elephantry::pq::sql_to_rust(&ty),
-        Err(err) => if column.ty == "public.hstore" {
-            "elephantry::Hstore".to_string()
-        } else {
-            return Err(crate::Error::Libpq(err));
+        Err(err) => {
+            if column.ty == "public.hstore" {
+                "elephantry::Hstore".to_string()
+            } else {
+                return Err(crate::Error::Libpq(err));
+            }
         }
     };
 

@@ -46,17 +46,23 @@ impl Entity {
                     param.internal = true;
                 }
                 // Parse #[elephantry(model = "")]
-                syn::NestedMeta::Meta(syn::Meta::NameValue(m)) if m.path == crate::symbol::MODEL => {
+                syn::NestedMeta::Meta(syn::Meta::NameValue(m))
+                    if m.path == crate::symbol::MODEL =>
+                {
                     let model = get_lit(crate::symbol::MODEL, &m.lit).unwrap();
                     param.model = Some(model);
                 }
                 // Parse #[elephantry(relation = "")]
-                syn::NestedMeta::Meta(syn::Meta::NameValue(m)) if m.path == crate::symbol::RELATION => {
+                syn::NestedMeta::Meta(syn::Meta::NameValue(m))
+                    if m.path == crate::symbol::RELATION =>
+                {
                     let relation = get_lit_str(crate::symbol::STRUCTURE, &m.lit);
                     param.relation = Some(relation);
                 }
                 // Parse #[elephantry(structure = "")]
-                syn::NestedMeta::Meta(syn::Meta::NameValue(m)) if m.path == crate::symbol::STRUCTURE => {
+                syn::NestedMeta::Meta(syn::Meta::NameValue(m))
+                    if m.path == crate::symbol::STRUCTURE =>
+                {
                     let structure = get_lit(crate::symbol::STRUCTURE, &m.lit).unwrap();
                     param.structure = Some(structure);
                 }
@@ -74,7 +80,10 @@ impl Entity {
     }
 }
 
-fn get_lit(attr_name: crate::symbol::Symbol, lit: &syn::Lit) -> Result<proc_macro2::TokenStream, syn::Error> {
+fn get_lit(
+    attr_name: crate::symbol::Symbol,
+    lit: &syn::Lit,
+) -> Result<proc_macro2::TokenStream, syn::Error> {
     let lit = get_lit_str(attr_name, lit);
     syn::parse_str(&lit)
 }
@@ -103,7 +112,12 @@ impl Field {
     pub fn from_ast(field: &syn::Field) -> Self {
         let mut param = Self::default();
 
-        for item in field.attrs.iter().flat_map(|attr| meta_items(attr)).flatten() {
+        for item in field
+            .attrs
+            .iter()
+            .flat_map(|attr| meta_items(attr))
+            .flatten()
+        {
             match &item {
                 // Parse #[elephantry(default)]
                 syn::NestedMeta::Meta(syn::Meta::Path(w)) if w == crate::symbol::DEFAULT => {
@@ -114,7 +128,9 @@ impl Field {
                     param.pk = true;
                 }
                 // Parse #[elephantry(column = "")]
-                syn::NestedMeta::Meta(syn::Meta::NameValue(m)) if m.path == crate::symbol::COLUMN => {
+                syn::NestedMeta::Meta(syn::Meta::NameValue(m))
+                    if m.path == crate::symbol::COLUMN =>
+                {
                     let column = get_lit_str(crate::symbol::COLUMN, &m.lit);
                     param.column = Some(column);
                 }
@@ -123,7 +139,9 @@ impl Field {
                     param.r#virtual = true;
                 }
                 // Parse #[elephantry(virtual = "")]
-                syn::NestedMeta::Meta(syn::Meta::NameValue(m)) if m.path == crate::symbol::VIRTUAL => {
+                syn::NestedMeta::Meta(syn::Meta::NameValue(m))
+                    if m.path == crate::symbol::VIRTUAL =>
+                {
                     let projection = get_lit_str(crate::symbol::VIRTUAL, &m.lit);
                     param.r#virtual = true;
                     param.projection = Some(projection);

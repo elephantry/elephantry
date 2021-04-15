@@ -30,7 +30,10 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
     gen.into()
 }
 
-fn entity_impl(ast: &syn::DeriveInput, elephantry: &proc_macro2::TokenStream) -> proc_macro2::TokenStream {
+fn entity_impl(
+    ast: &syn::DeriveInput,
+    elephantry: &proc_macro2::TokenStream,
+) -> proc_macro2::TokenStream {
     let fields = match ast.data {
         syn::Data::Struct(ref s) => &s.fields,
         _ => unimplemented!(),
@@ -40,7 +43,9 @@ fn entity_impl(ast: &syn::DeriveInput, elephantry: &proc_macro2::TokenStream) ->
         let field_params = crate::params::Field::from_ast(field);
 
         let name = &field.ident;
-        let column = field_params.column.unwrap_or(field.ident.as_ref().unwrap().to_string());
+        let column = field_params
+            .column
+            .unwrap_or(field.ident.as_ref().unwrap().to_string());
         let ty = &field.ty;
         crate::check_type(ty);
 
@@ -63,7 +68,9 @@ fn entity_impl(ast: &syn::DeriveInput, elephantry: &proc_macro2::TokenStream) ->
         let field_params = crate::params::Field::from_ast(field);
 
         let name = &field.ident;
-        let column = field_params.column.unwrap_or(field.ident.as_ref().unwrap().to_string());
+        let column = field_params
+            .column
+            .unwrap_or(field.ident.as_ref().unwrap().to_string());
         let ty = &field.ty;
 
         if is_option(ty) {
@@ -104,7 +111,12 @@ fn entity_impl(ast: &syn::DeriveInput, elephantry: &proc_macro2::TokenStream) ->
     }
 }
 
-fn structure_impl(ast: &syn::DeriveInput, params: &crate::params::Entity, elephantry: &proc_macro2::TokenStream, public: &proc_macro2::TokenStream) -> proc_macro2::TokenStream {
+fn structure_impl(
+    ast: &syn::DeriveInput,
+    params: &crate::params::Entity,
+    elephantry: &proc_macro2::TokenStream,
+    public: &proc_macro2::TokenStream,
+) -> proc_macro2::TokenStream {
     let name = match &params.structure {
         Some(name) => name,
         None => return proc_macro2::TokenStream::new(),
@@ -115,10 +127,13 @@ fn structure_impl(ast: &syn::DeriveInput, params: &crate::params::Entity, elepha
         _ => unimplemented!(),
     };
 
-    let relation = params.relation.clone()
+    let relation = params
+        .relation
+        .clone()
         .unwrap_or(ast.ident.to_string().to_lowercase());
 
-    let primary_key = fields.iter()
+    let primary_key = fields
+        .iter()
         .filter(|field| {
             let field_params = crate::params::Field::from_ast(field);
 
@@ -127,10 +142,13 @@ fn structure_impl(ast: &syn::DeriveInput, params: &crate::params::Entity, elepha
         .map(|field| {
             let field_params = crate::params::Field::from_ast(field);
 
-            field_params.column.unwrap_or(field.ident.as_ref().unwrap().to_string())
+            field_params
+                .column
+                .unwrap_or(field.ident.as_ref().unwrap().to_string())
         });
 
-    let columns = fields.iter()
+    let columns = fields
+        .iter()
         .filter(|field| {
             let field_params = crate::params::Field::from_ast(field);
 
@@ -139,7 +157,9 @@ fn structure_impl(ast: &syn::DeriveInput, params: &crate::params::Entity, elepha
         .map(|field| {
             let field_params = crate::params::Field::from_ast(field);
 
-            field_params.column.unwrap_or(field.ident.as_ref().unwrap().to_string())
+            field_params
+                .column
+                .unwrap_or(field.ident.as_ref().unwrap().to_string())
         });
 
     quote::quote! {
@@ -166,7 +186,12 @@ fn structure_impl(ast: &syn::DeriveInput, params: &crate::params::Entity, elepha
     }
 }
 
-fn model_impl(ast: &syn::DeriveInput, params: &crate::params::Entity, elephantry: &proc_macro2::TokenStream, public: &proc_macro2::TokenStream) -> proc_macro2::TokenStream {
+fn model_impl(
+    ast: &syn::DeriveInput,
+    params: &crate::params::Entity,
+    elephantry: &proc_macro2::TokenStream,
+    public: &proc_macro2::TokenStream,
+) -> proc_macro2::TokenStream {
     let name = match &params.model {
         Some(name) => name,
         None => return proc_macro2::TokenStream::new(),
@@ -184,7 +209,8 @@ fn model_impl(ast: &syn::DeriveInput, params: &crate::params::Entity, elephantry
 
     let entity = &ast.ident;
 
-    let projection = fields.iter()
+    let projection = fields
+        .iter()
         .filter(|field| {
             let field_params = crate::params::Field::from_ast(field);
 
@@ -198,7 +224,8 @@ fn model_impl(ast: &syn::DeriveInput, params: &crate::params::Entity, elephantry
             quote::quote!(
                 .add_field(stringify!(#name), #projection)
             )
-        }).collect::<Vec<_>>();
+        })
+        .collect::<Vec<_>>();
 
     let create_projection = if projection.is_empty() {
         proc_macro2::TokenStream::new()
