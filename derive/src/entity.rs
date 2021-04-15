@@ -22,38 +22,42 @@ fn entity_impl(ast: &syn::DeriveInput, params: &crate::params::Entity) -> proc_m
         let field_params = crate::params::Field::from_ast(field);
 
         let name = &field.ident;
+        let column = field_params.column.unwrap_or(field.ident.as_ref().unwrap().to_string());
         let ty = &field.ty;
         crate::check_type(ty);
 
         if field_params.default {
             quote::quote! {
-                #name: tuple.try_get(#name).unwrap_or_default()
+                #name: tuple.try_get(#column).unwrap_or_default()
             }
         } else if is_option(ty) {
             quote::quote! {
-                #name: tuple.try_get(#name).ok()
+                #name: tuple.try_get(#column).ok()
             }
         } else {
             quote::quote! {
-                #name: tuple.get(#name)
+                #name: tuple.get(#column)
             }
         }
     });
 
     let get_body = fields.iter().map(|field| {
+        let field_params = crate::params::Field::from_ast(field);
+
         let name = &field.ident;
+        let column = field_params.column.unwrap_or(field.ident.as_ref().unwrap().to_string());
         let ty = &field.ty;
 
         if is_option(ty) {
             quote::quote! {
-                #name => match self.#name {
+                #column => match self.#name {
                     Some(ref value) => Some(value),
                     None => None,
                 }
             }
         } else {
             quote::quote! {
-                #name => Some(&self.#name)
+                #column => Some(&self.#name)
             }
         }
     });
@@ -112,10 +116,18 @@ fn structure_impl(ast: &syn::DeriveInput, params: &crate::params::Entity) -> pro
 
             field_params.pk
         })
-        .map(|field| &field.ident);
+        .map(|field| {
+            let field_params = crate::params::Field::from_ast(field);
+
+            field_params.column.unwrap_or(field.ident.as_ref().unwrap().to_string())
+        });
 
     let columns = fields.iter()
-        .map(|field| &field.ident);
+        .map(|field| {
+            let field_params = crate::params::Field::from_ast(field);
+
+            field_params.column.unwrap_or(field.ident.as_ref().unwrap().to_string())
+        });
 
     let elephantry = if params.internal {
         quote::quote! {
@@ -144,7 +156,7 @@ fn structure_impl(ast: &syn::DeriveInput, params: &crate::params::Entity) -> pro
 
             fn columns() -> &'static [&'static str] {
                 &[
-                    #(stringify!(#columns), )*
+                    #(#columns, )*
                 ]
             }
         }

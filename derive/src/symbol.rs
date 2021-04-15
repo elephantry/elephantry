@@ -1,5 +1,6 @@
 pub(crate) struct Symbol(&'static str);
 
+pub(crate) const COLUMN: Symbol = Symbol("column");
 pub(crate) const DEFAULT: Symbol = Symbol("default");
 pub(crate) const ELEPHANTRY: Symbol = Symbol("elephantry");
 pub(crate) const INTERNAL: Symbol = Symbol("internal");

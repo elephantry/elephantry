@@ -86,6 +86,7 @@ fn get_lit_str(attr_name: crate::symbol::Symbol, lit: &syn::Lit) -> String {
 
 #[derive(Clone, Default, Debug)]
 pub(crate) struct Field {
+    pub column: Option<String>,
     pub default: bool,
     pub pk: bool,
 }
@@ -103,6 +104,11 @@ impl Field {
                 // Parse #[elephantry(pk)]
                 syn::NestedMeta::Meta(syn::Meta::Path(w)) if w == crate::symbol::PK => {
                     param.pk = true;
+                }
+                // Parse #[elephantry(column = "")]
+                syn::NestedMeta::Meta(syn::Meta::NameValue(m)) if m.path == crate::symbol::COLUMN => {
+                    let column = get_lit_str(crate::symbol::COLUMN, &m.lit);
+                    param.column = Some(column);
                 }
                 syn::NestedMeta::Meta(meta) => {
                     let ident = meta.path().get_ident().unwrap();
