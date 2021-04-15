@@ -11,9 +11,15 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
         }
     };
 
+    let public = if is_public(&ast) {
+        quote::quote!(pub)
+    } else {
+        proc_macro2::TokenStream::new()
+    };
+
     let entity = entity_impl(ast, &elephantry);
-    let structure = structure_impl(ast, &params, &elephantry);
-    let model = model_impl(ast, &params, &elephantry);
+    let structure = structure_impl(ast, &params, &elephantry, &public);
+    let model = model_impl(ast, &params, &elephantry, &public);
 
     let gen = quote::quote! {
         #entity
@@ -98,7 +104,7 @@ fn entity_impl(ast: &syn::DeriveInput, elephantry: &proc_macro2::TokenStream) ->
     }
 }
 
-fn structure_impl(ast: &syn::DeriveInput, params: &crate::params::Entity, elephantry: &proc_macro2::TokenStream) -> proc_macro2::TokenStream {
+fn structure_impl(ast: &syn::DeriveInput, params: &crate::params::Entity, elephantry: &proc_macro2::TokenStream, public: &proc_macro2::TokenStream) -> proc_macro2::TokenStream {
     let name = match &params.structure {
         Some(name) => name,
         None => return proc_macro2::TokenStream::new(),
@@ -132,7 +138,7 @@ fn structure_impl(ast: &syn::DeriveInput, params: &crate::params::Entity, elepha
         });
 
     quote::quote! {
-        struct #name;
+        #public struct #name;
 
         #[automatically_derived]
         impl #elephantry::Structure for #name {
@@ -155,7 +161,7 @@ fn structure_impl(ast: &syn::DeriveInput, params: &crate::params::Entity, elepha
     }
 }
 
-fn model_impl(ast: &syn::DeriveInput, params: &crate::params::Entity, elephantry: &proc_macro2::TokenStream) -> proc_macro2::TokenStream {
+fn model_impl(ast: &syn::DeriveInput, params: &crate::params::Entity, elephantry: &proc_macro2::TokenStream, public: &proc_macro2::TokenStream) -> proc_macro2::TokenStream {
     let name = match &params.model {
         Some(name) => name,
         None => return proc_macro2::TokenStream::new(),
@@ -169,7 +175,7 @@ fn model_impl(ast: &syn::DeriveInput, params: &crate::params::Entity, elephantry
     let entity = &ast.ident;
 
     quote::quote! {
-        struct #name<'a> {
+        #public struct #name<'a> {
             connection: &'a #elephantry::Connection,
         }
 
@@ -185,6 +191,10 @@ fn model_impl(ast: &syn::DeriveInput, params: &crate::params::Entity, elephantry
             }
         }
     }
+}
+
+fn is_public(ast: &syn::DeriveInput) -> bool {
+    matches!(ast.vis, syn::Visibility::Public(_))
 }
 
 fn is_option(ty: &syn::Type) -> bool {
