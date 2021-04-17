@@ -232,7 +232,7 @@ mod test {
 
     pub fn new_conn() -> crate::Result<crate::Pool> {
         INIT.call_once(|| {
-            pretty_env_logger::init();
+            env_logger::init();
         });
 
         let conn = crate::Pool::new(&dsn())?;

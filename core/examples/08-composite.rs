@@ -55,7 +55,7 @@ select {employee_projection}
 }
 
 fn main() -> elephantry::Result {
-    pretty_env_logger::init();
+    env_logger::init();
 
     let database_url =
         std::env::var("DATABASE_URL").unwrap_or_else(|_| "postgres://localhost".to_string());
