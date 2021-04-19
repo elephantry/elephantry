@@ -11,9 +11,12 @@ edition = "2021"
 [dependencies]
 case = "1.0"
 dotenv = "0.15"
-structopt = "0.3"
 term-table = "1.1"
 thiserror = "1.0"
+
+[dependencies.clap]
+version = "3.0"
+features = ["derive"]
 
 [dependencies.elephantry]
 version = "3.0.0-beta.2"

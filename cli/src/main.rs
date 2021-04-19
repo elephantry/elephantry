@@ -4,85 +4,85 @@ mod error;
 mod generate;
 mod inspect;
 
+use clap::Parser;
 use error::Error;
-use structopt::StructOpt;
 
 type Result<T = ()> = std::result::Result<T, crate::Error>;
 
-#[derive(Debug, StructOpt)]
+#[derive(Debug, Parser)]
 enum Opt {
-    #[structopt(
+    #[clap(
         name = "inspect:database",
         about = "Show schemas in the current database"
     )]
     InspectDatabase {},
-    #[structopt(name = "inspect:schema", about = "Show relations in a given schema")]
+    #[clap(name = "inspect:schema", about = "Show relations in a given schema")]
     InspectSchema {
-        #[structopt(default_value = "public")]
+        #[clap(default_value = "public")]
         schema: String,
     },
-    #[structopt(name = "inspect:relation", about = "Display a relation information")]
+    #[clap(name = "inspect:relation", about = "Display a relation information")]
     InspectRelation {
         relation: String,
-        #[structopt(default_value = "public")]
+        #[clap(default_value = "public")]
         schema: String,
     },
-    #[structopt(name = "inspect:enums", about = "List enums")]
+    #[clap(name = "inspect:enums", about = "List enums")]
     InspectEnums {
-        #[structopt(default_value = "public")]
+        #[clap(default_value = "public")]
         schema: String,
     },
-    #[structopt(name = "inspect:domains", about = "List domains")]
+    #[clap(name = "inspect:domains", about = "List domains")]
     InspectDomains {
-        #[structopt(default_value = "public")]
+        #[clap(default_value = "public")]
         schema: String,
     },
-    #[structopt(name = "inspect:composites", about = "List composites type")]
+    #[clap(name = "inspect:composites", about = "List composites type")]
     InspectComposites {
-        #[structopt(default_value = "public")]
+        #[clap(default_value = "public")]
         schema: String,
     },
-    #[structopt(
+    #[clap(
         name = "generate:schema-all",
         about = "Generate structure, model and entity file for all relations in a schema."
     )]
     GenerateSchema {
-        #[structopt(long, short = "d", default_value = "src")]
+        #[clap(long, short = 'd', default_value = "src")]
         prefix_dir: String,
-        #[structopt(default_value = "public")]
+        #[clap(default_value = "public")]
         schema: String,
     },
-    #[structopt(
+    #[clap(
         name = "generate:relation-all",
         about = "Generate structure, model and entity file for a given relation"
     )]
     GenerateRelation {
-        #[structopt(long, short = "d", default_value = "src")]
+        #[clap(long, short = 'd', default_value = "src")]
         prefix_dir: String,
         relation: String,
-        #[structopt(default_value = "public")]
+        #[clap(default_value = "public")]
         schema: String,
     },
-    #[structopt(name = "generate:entity", about = "Generate an Entity class")]
+    #[clap(name = "generate:entity", about = "Generate an Entity class")]
     GenerateEntity {
-        #[structopt(long, short = "d", default_value = "src")]
+        #[clap(long, short = 'd', default_value = "src")]
         prefix_dir: String,
         relation: String,
-        #[structopt(default_value = "public")]
+        #[clap(default_value = "public")]
         schema: String,
     },
-    #[structopt(name = "generate:enums", about = "Generate enums")]
+    #[clap(name = "generate:enums", about = "Generate enums")]
     GenerateEnums {
-        #[structopt(long, short = "d", default_value = "src")]
+        #[clap(long, short = 'd', default_value = "src")]
         prefix_dir: String,
-        #[structopt(default_value = "public")]
+        #[clap(default_value = "public")]
         schema: String,
     },
-    #[structopt(name = "generate:composites", about = "Generate composites")]
+    #[clap(name = "generate:composites", about = "Generate composites")]
     GenerateComposites {
-        #[structopt(long, short = "d", default_value = "src")]
+        #[clap(long, short = 'd', default_value = "src")]
         prefix_dir: String,
-        #[structopt(default_value = "public")]
+        #[clap(default_value = "public")]
         schema: String,
     },
 }
@@ -90,7 +90,7 @@ enum Opt {
 fn main() -> Result {
     dotenv::dotenv().ok();
 
-    let opt = Opt::from_args();
+    let opt = Opt::parse();
     let dsn = std::env::var("DATABASE_URL").expect("Missing DATABASE_URL env variable");
     let elephantry = elephantry::Pool::new(&dsn).expect("Unable to connect to postgresql");
 
