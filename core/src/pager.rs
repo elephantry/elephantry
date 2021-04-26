@@ -118,7 +118,7 @@ impl<E: crate::Entity + serde::Serialize> serde::Serialize for Pager<E> {
     {
         use serde::ser::SerializeStruct;
 
-        let mut state = serializer.serialize_struct("Pager", 3)?;
+        let mut state = serializer.serialize_struct("Pager", 10)?;
 
         state.serialize_field("result_count", &self.result_count())?;
         state.serialize_field("result_min", &self.result_min())?;
