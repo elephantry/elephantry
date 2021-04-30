@@ -1,3 +1,4 @@
+#[cfg_attr(docsrs, doc(cfg(feature = "net")))]
 impl crate::ToSql for macaddr::MacAddr6 {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::MACADDR
@@ -8,6 +9,7 @@ impl crate::ToSql for macaddr::MacAddr6 {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "net")))]
 impl crate::FromSql for macaddr::MacAddr6 {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         crate::not_null(raw)?

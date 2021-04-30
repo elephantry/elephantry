@@ -1,3 +1,4 @@
+#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 #[derive(Clone, Debug, PartialEq)]
 pub struct Path(geo_types::LineString<f64>);
 
@@ -29,6 +30,7 @@ impl std::fmt::Display for Path {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::ToSql for Path {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::PATH
@@ -39,6 +41,7 @@ impl crate::ToSql for Path {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::FromSql for Path {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let coordinates = crate::not_null(raw)?

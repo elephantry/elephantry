@@ -1,3 +1,4 @@
+#[cfg_attr(docsrs, doc(cfg(feature = "net")))]
 impl crate::ToSql for ipnetwork::IpNetwork {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::CIDR
@@ -8,6 +9,7 @@ impl crate::ToSql for ipnetwork::IpNetwork {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "net")))]
 impl crate::FromSql for ipnetwork::IpNetwork {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         crate::not_null(raw)?

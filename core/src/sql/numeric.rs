@@ -1,5 +1,6 @@
 use std::convert::TryFrom;
 
+#[cfg_attr(docsrs, doc(cfg(feature = "numeric")))]
 impl crate::ToSql for bigdecimal::BigDecimal {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::NUMERIC
@@ -10,6 +11,7 @@ impl crate::ToSql for bigdecimal::BigDecimal {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "numeric")))]
 impl crate::FromSql for bigdecimal::BigDecimal {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         crate::not_null(raw)?

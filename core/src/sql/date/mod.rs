@@ -4,6 +4,7 @@ mod timestamptz;
 
 pub use interval::*;
 
+#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::ToSql for chrono::NaiveDate {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::DATE
@@ -14,6 +15,7 @@ impl crate::ToSql for chrono::NaiveDate {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::FromSql for chrono::NaiveDate {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         match chrono::NaiveDate::parse_from_str(crate::not_null(raw)?, "%F") {

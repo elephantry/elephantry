@@ -1,3 +1,4 @@
+#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::ToSql for chrono::NaiveDateTime {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::TIMESTAMP
@@ -8,6 +9,7 @@ impl crate::ToSql for chrono::NaiveDateTime {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::FromSql for chrono::NaiveDateTime {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         if let Ok(date) = chrono::NaiveDateTime::parse_from_str(crate::not_null(raw)?, "%F %T") {

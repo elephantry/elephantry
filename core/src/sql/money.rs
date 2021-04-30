@@ -1,5 +1,7 @@
+#[cfg_attr(docsrs, doc(cfg(feature = "money")))]
 pub use postgres_money::Money;
 
+#[cfg_attr(docsrs, doc(cfg(feature = "money")))]
 impl crate::ToSql for Money {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::MONEY
@@ -10,6 +12,7 @@ impl crate::ToSql for Money {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "money")))]
 impl crate::FromSql for Money {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let s = String::from_text(ty, raw)?;

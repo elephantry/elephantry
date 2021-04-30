@@ -1,3 +1,4 @@
+#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::ToSql for chrono::DateTime<chrono::Utc> {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::TIMESTAMPTZ
@@ -8,6 +9,7 @@ impl crate::ToSql for chrono::DateTime<chrono::Utc> {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::FromSql for chrono::DateTime<chrono::Utc> {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let ts = chrono::DateTime::<chrono::offset::FixedOffset>::from_text(ty, raw)?;
@@ -21,6 +23,7 @@ impl crate::FromSql for chrono::DateTime<chrono::Utc> {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::ToSql for chrono::DateTime<chrono::offset::FixedOffset> {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::TIMESTAMPTZ
@@ -31,6 +34,7 @@ impl crate::ToSql for chrono::DateTime<chrono::offset::FixedOffset> {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::FromSql for chrono::DateTime<chrono::offset::FixedOffset> {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         chrono::DateTime::parse_from_str(crate::not_null(raw)?, "%F %T%#z")
@@ -43,6 +47,7 @@ impl crate::FromSql for chrono::DateTime<chrono::offset::FixedOffset> {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::ToSql for chrono::DateTime<chrono::offset::Local> {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::TIMESTAMPTZ
@@ -53,6 +58,7 @@ impl crate::ToSql for chrono::DateTime<chrono::offset::Local> {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::FromSql for chrono::DateTime<chrono::offset::Local> {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let utc = chrono::DateTime::<chrono::Utc>::from_text(ty, raw)?;

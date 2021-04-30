@@ -1,3 +1,4 @@
+#[cfg_attr(docsrs, doc(cfg(feature = "net")))]
 impl crate::ToSql for std::net::IpAddr {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::INET
@@ -8,6 +9,7 @@ impl crate::ToSql for std::net::IpAddr {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "net")))]
 impl crate::FromSql for std::net::IpAddr {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         crate::not_null(raw)?

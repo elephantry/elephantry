@@ -1,3 +1,4 @@
+#[cfg_attr(docsrs, doc(cfg(feature = "bit")))]
 impl crate::ToSql for u8 {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::BIT
@@ -14,6 +15,7 @@ impl crate::ToSql for u8 {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "bit")))]
 impl crate::FromSql for u8 {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let bytes = bit_vec::BitVec::from_text(ty, raw)?;
@@ -37,6 +39,7 @@ impl crate::FromSql for u8 {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "bit")))]
 impl crate::ToSql for bit_vec::BitVec {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::VARBIT
@@ -63,6 +66,7 @@ impl crate::ToSql for bit_vec::BitVec {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "bit")))]
 impl crate::FromSql for bit_vec::BitVec {
     fn from_text(_: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let s = crate::not_null(raw)?;

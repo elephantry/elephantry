@@ -1,5 +1,6 @@
 #![warn(rust_2018_idioms)]
 #![doc(html_logo_url = "https://elephantry.github.io/logo.png")]
+#![cfg_attr(docsrs, feature(doc_cfg))]
 
 /*!
  * | SQL type                    | Rust type                | Feature |
@@ -47,8 +48,10 @@ pub mod inspect;
 /** libpq abstraction layer. */
 pub mod pq;
 #[cfg(feature = "r2d2")]
+#[cfg_attr(docsrs, doc(cfg(feature = "r2d2")))]
 pub mod r2d2;
 #[cfg(feature = "rocket")]
+#[doc(hidden)]
 pub mod rocket;
 pub mod transaction;
 

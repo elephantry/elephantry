@@ -1,3 +1,4 @@
+#[cfg_attr(docsrs, doc(cfg(feature = "json")))]
 impl crate::ToSql for serde_json::Value {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::JSON
@@ -8,6 +9,7 @@ impl crate::ToSql for serde_json::Value {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "json")))]
 impl crate::FromSql for serde_json::Value {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         match serde_json::from_str(crate::not_null(raw)?) {

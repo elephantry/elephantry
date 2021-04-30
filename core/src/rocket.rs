@@ -1,5 +1,6 @@
 use rocket_contrib::databases::{r2d2, DatabaseConfig, Poolable};
 
+#[cfg_attr(docsrs, doc(cfg(feature = "rocket")))]
 impl Poolable for crate::Connection {
     type Error = r2d2::Error;
     type Manager = crate::r2d2::ConnectionManager;

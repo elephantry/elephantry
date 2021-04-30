@@ -1,3 +1,4 @@
+#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 #[derive(Clone, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Interval {
@@ -153,6 +154,7 @@ macro_rules! caps {
     };
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::FromSql for Interval {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         lazy_static::lazy_static! {
@@ -223,6 +225,7 @@ impl crate::FromSql for Interval {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::ToSql for Interval {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::INTERVAL

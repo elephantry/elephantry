@@ -1,3 +1,4 @@
+#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 #[derive(Clone, Debug, PartialEq)]
 pub struct Point(geo_types::Point<f64>);
 
@@ -27,6 +28,7 @@ impl From<geo_types::Coordinate<f64>> for Point {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::ToSql for Point {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::POINT
@@ -37,6 +39,7 @@ impl crate::ToSql for Point {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::FromSql for Point {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let coordinates = crate::from_sql::not_null(raw)?

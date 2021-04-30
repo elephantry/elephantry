@@ -1,3 +1,4 @@
+#[cfg_attr(docsrs, doc(cfg(feature = "xml")))]
 impl crate::ToSql for xmltree::Element {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::XML
@@ -14,6 +15,7 @@ impl crate::ToSql for xmltree::Element {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "xml")))]
 impl crate::FromSql for xmltree::Element {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         xmltree::Element::parse(crate::not_null(raw)?.as_bytes())

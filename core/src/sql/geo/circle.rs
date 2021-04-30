@@ -1,3 +1,4 @@
+#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 #[derive(Clone, Debug, PartialEq)]
 pub struct Circle {
     pub x: f64,
@@ -17,6 +18,7 @@ impl std::fmt::Display for Circle {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::ToSql for Circle {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::CIRCLE
@@ -27,6 +29,7 @@ impl crate::ToSql for Circle {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::FromSql for Circle {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         lazy_static::lazy_static! {

@@ -1,7 +1,11 @@
+#[cfg_attr(docsrs, doc(cfg(feature = "time")))]
 pub use time::Time;
+#[cfg_attr(docsrs, doc(cfg(feature = "time")))]
 pub use time::UtcOffset as Timezone;
+#[cfg_attr(docsrs, doc(cfg(feature = "time")))]
 pub type TimeTz = (Time, Timezone);
 
+#[cfg_attr(docsrs, doc(cfg(feature = "time")))]
 impl crate::ToSql for Time {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::TIME
@@ -12,6 +16,7 @@ impl crate::ToSql for Time {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "time")))]
 impl crate::FromSql for Time {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         Time::parse(crate::not_null(raw)?, "%T").map_err(|_| Self::error(ty, "time", raw))
@@ -27,6 +32,7 @@ impl crate::FromSql for Time {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "time")))]
 impl crate::ToSql for TimeTz {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::TIMETZ
@@ -37,6 +43,7 @@ impl crate::ToSql for TimeTz {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "time")))]
 impl crate::FromSql for TimeTz {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let value = crate::not_null(raw)?;

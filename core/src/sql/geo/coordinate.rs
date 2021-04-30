@@ -1,3 +1,4 @@
+#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 #[derive(Clone, Debug, PartialEq)]
 pub struct Coordinate(geo_types::Coordinate<f64>);
 
@@ -15,6 +16,7 @@ impl std::ops::Deref for Coordinate {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 pub struct Coordinates(Vec<Coordinate>);
 
 impl Coordinates {

@@ -1,3 +1,4 @@
+#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 #[derive(Clone, Debug, PartialEq)]
 pub struct Polygon(geo_types::Polygon<f64>);
 
@@ -29,6 +30,7 @@ impl std::fmt::Display for Polygon {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::ToSql for Polygon {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::POLYGON
@@ -39,6 +41,7 @@ impl crate::ToSql for Polygon {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::FromSql for Polygon {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let path = crate::Path::from_text(ty, raw)?;

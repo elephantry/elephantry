@@ -153,3 +153,7 @@ required-features = ["date", "numeric"]
 [[example]]
 name = "10-transaction"
 required-features = ["date", "numeric"]
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]

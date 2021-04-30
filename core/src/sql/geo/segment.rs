@@ -1,3 +1,4 @@
+#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 #[derive(Clone, Debug, PartialEq)]
 pub struct Segment(geo_types::Line<f64>);
 
@@ -25,6 +26,7 @@ impl std::fmt::Display for Segment {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::ToSql for Segment {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::LSEG
@@ -35,6 +37,7 @@ impl crate::ToSql for Segment {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::FromSql for Segment {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let coordinates = crate::not_null(raw)?
