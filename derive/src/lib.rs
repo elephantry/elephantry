@@ -16,6 +16,8 @@ pub fn composite_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStre
     let ast = syn::parse(input).unwrap();
 
     composite::impl_macro(&ast)
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
 }
 
 /**
@@ -28,6 +30,8 @@ pub fn entity_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream 
     let ast = syn::parse(input).unwrap();
 
     entity::impl_macro(&ast)
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
 }
 
 /**
@@ -40,9 +44,11 @@ pub fn enum_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let ast = syn::parse(input).unwrap();
 
     r#enum::impl_macro(&ast)
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
 }
 
-pub(crate) fn check_type(ty: &syn::Type) {
+pub(crate) fn check_type(ty: &syn::Type) -> syn::Result<()> {
     let features = vec![
         #[cfg(feature = "bit")]
         "bit",
@@ -91,10 +97,19 @@ pub(crate) fn check_type(ty: &syn::Type) {
 
     for (feature, feature_ty) in &types {
         if !features.contains(feature) && ty == &syn::parse_str(feature_ty).unwrap() {
-            panic!(
-                "Enable '{}' feature to use the type `{}` in this entity",
-                feature, feature_ty
+            return error(
+                ty,
+                &format!(
+                    "Enable '{}' feature to use the type `{}` in this entity",
+                    feature, feature_ty
+                ),
             );
         }
     }
+
+    Ok(())
+}
+
+pub(crate) fn error<R>(ast: &dyn quote::ToTokens, message: &str) -> syn::Result<R> {
+    Err(syn::Error::new_spanned(ast, message))
 }

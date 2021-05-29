@@ -4,26 +4,25 @@ pub(crate) struct Container {
 }
 
 impl Container {
-    pub fn from_ast(ast: &syn::DeriveInput) -> Self {
+    pub fn from_ast(ast: &syn::DeriveInput) -> syn::Result<Self> {
         let mut param = Self::default();
 
-        for item in ast.attrs.iter().flat_map(|attr| meta_items(attr)) {
+        for item in flat_map(&ast.attrs)? {
             match &item {
                 // Parse #[elephantry(internal)]
                 syn::NestedMeta::Meta(syn::Meta::Path(w)) if w == crate::symbol::INTERNAL => {
                     param.internal = true;
                 }
                 syn::NestedMeta::Meta(meta) => {
-                    let ident = meta.path().get_ident().unwrap();
-                    panic!("Unknow elephantry container attribute: '{}'", ident);
+                    return crate::error(meta.path(), "Unknow elephantry container attribute");
                 }
-                syn::NestedMeta::Lit(_) => {
-                    panic!("Unexpected literal in elephantry container attribute");
+                syn::NestedMeta::Lit(lit) => {
+                    return crate::error(lit, "Unexpected literal in elephantry field attribute");
                 }
             }
         }
 
-        param
+        Ok(param)
     }
 }
 
@@ -36,10 +35,10 @@ pub(crate) struct Entity {
 }
 
 impl Entity {
-    pub fn from_ast(ast: &syn::DeriveInput) -> Self {
+    pub fn from_ast(ast: &syn::DeriveInput) -> syn::Result<Self> {
         let mut param = Self::default();
 
-        for item in ast.attrs.iter().flat_map(|attr| meta_items(attr)) {
+        for item in flat_map(&ast.attrs)? {
             match &item {
                 // Parse #[elephantry(internal)]
                 syn::NestedMeta::Meta(syn::Meta::Path(w)) if w == crate::symbol::INTERNAL => {
@@ -56,7 +55,7 @@ impl Entity {
                 syn::NestedMeta::Meta(syn::Meta::NameValue(m))
                     if m.path == crate::symbol::RELATION =>
                 {
-                    let relation = get_lit_str(crate::symbol::STRUCTURE, &m.lit);
+                    let relation = get_lit_str(crate::symbol::STRUCTURE, &m.lit)?;
                     param.relation = Some(relation);
                 }
                 // Parse #[elephantry(structure = "")]
@@ -67,35 +66,37 @@ impl Entity {
                     param.structure = Some(structure);
                 }
                 syn::NestedMeta::Meta(meta) => {
-                    let ident = meta.path().get_ident().unwrap();
-                    panic!("Unknow elephantry container attribute: '{}'", ident);
+                    return crate::error(meta.path(), "Unknow elephantry container attribute");
                 }
-                syn::NestedMeta::Lit(_) => {
-                    panic!("Unexpected literal in elephantry container attribute");
+                syn::NestedMeta::Lit(lit) => {
+                    return crate::error(lit, "Unexpected literal in elephantry field attribute");
                 }
             }
         }
 
-        param
+        Ok(param)
     }
 }
 
 fn get_lit(
     attr_name: crate::symbol::Symbol,
     lit: &syn::Lit,
-) -> Result<proc_macro2::TokenStream, syn::Error> {
-    let lit = get_lit_str(attr_name, lit);
+) -> syn::Result<proc_macro2::TokenStream> {
+    let lit = get_lit_str(attr_name, lit)?;
     syn::parse_str(&lit)
 }
 
-fn get_lit_str(attr_name: crate::symbol::Symbol, lit: &syn::Lit) -> String {
+fn get_lit_str(attr_name: crate::symbol::Symbol, lit: &syn::Lit) -> syn::Result<String> {
     if let syn::Lit::Str(lit) = lit {
-        lit.value()
+        Ok(lit.value())
     } else {
-        panic!(
-            "expected elephantry {} attribute to be a string: `{} = \"...\"`",
-            attr_name, attr_name
-        );
+        crate::error(
+            lit,
+            &format!(
+                "expected elephantry {} attribute to be a string: `{} = \"...\"`",
+                attr_name, attr_name
+            ),
+        )
     }
 }
 
@@ -109,10 +110,10 @@ pub(crate) struct Field {
 }
 
 impl Field {
-    pub fn from_ast(field: &syn::Field) -> Self {
+    pub fn from_ast(field: &syn::Field) -> syn::Result<Self> {
         let mut param = Self::default();
 
-        for item in field.attrs.iter().flat_map(|attr| meta_items(attr)) {
+        for item in flat_map(&field.attrs)? {
             match &item {
                 // Parse #[elephantry(default)]
                 syn::NestedMeta::Meta(syn::Meta::Path(w)) if w == crate::symbol::DEFAULT => {
@@ -126,7 +127,7 @@ impl Field {
                 syn::NestedMeta::Meta(syn::Meta::NameValue(m))
                     if m.path == crate::symbol::COLUMN =>
                 {
-                    let column = get_lit_str(crate::symbol::COLUMN, &m.lit);
+                    let column = get_lit_str(crate::symbol::COLUMN, &m.lit)?;
                     param.column = Some(column);
                 }
                 // Parse #[elephantry(virtual)]
@@ -137,36 +138,40 @@ impl Field {
                 syn::NestedMeta::Meta(syn::Meta::NameValue(m))
                     if m.path == crate::symbol::VIRTUAL =>
                 {
-                    let projection = get_lit_str(crate::symbol::VIRTUAL, &m.lit);
+                    let projection = get_lit_str(crate::symbol::VIRTUAL, &m.lit)?;
                     param.r#virtual = true;
                     param.projection = Some(projection);
                 }
                 syn::NestedMeta::Meta(meta) => {
-                    let ident = meta.path().get_ident().unwrap();
-                    panic!("Unknow elephantry field attribute: '{}'", ident);
+                    return crate::error(meta.path(), "Unknow elephantry field attribute");
                 }
-                syn::NestedMeta::Lit(_) => {
-                    panic!("Unexpected literal in elephantry field attribute");
+                syn::NestedMeta::Lit(lit) => {
+                    return crate::error(lit, "Unexpected literal in elephantry field attribute");
                 }
             }
         }
 
-        param
+        Ok(param)
     }
 }
 
-fn meta_items(attr: &syn::Attribute) -> Vec<syn::NestedMeta> {
-    if attr.path != crate::symbol::ELEPHANTRY {
-        return Vec::new();
+fn flat_map(attrs: &[syn::Attribute]) -> syn::Result<Vec<syn::NestedMeta>> {
+    let mut items = Vec::new();
+
+    for attr in attrs {
+        items.extend_from_slice(&meta_items(attr)?);
     }
 
-    match attr.parse_meta() {
-        Ok(syn::Meta::List(meta)) => meta.nested.into_iter().collect(),
-        Ok(_) => {
-            panic!("expected #[elephantry(...)]");
-        }
-        Err(err) => {
-            panic!("{}", err);
-        }
+    Ok(items)
+}
+
+fn meta_items(attr: &syn::Attribute) -> syn::Result<Vec<syn::NestedMeta>> {
+    if attr.path != crate::symbol::ELEPHANTRY {
+        return Ok(Vec::new());
+    }
+
+    match attr.parse_meta()? {
+        syn::Meta::List(meta) => Ok(meta.nested.into_iter().collect()),
+        _ => crate::error(attr, "expected #[elephantry(...)]"),
     }
 }

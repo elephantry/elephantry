@@ -1,9 +1,9 @@
-pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
-    let parameters = crate::params::Container::from_ast(ast);
+pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> {
+    let parameters = crate::params::Container::from_ast(ast)?;
 
     let variants = match ast.data {
         syn::Data::Enum(ref e) => &e.variants,
-        _ => unimplemented!(),
+        _ => return crate::error(ast, "this derive macro only works on enum"),
     };
 
     let name = &ast.ident;
@@ -45,5 +45,5 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
         }
     };
 
-    gen.into()
+    Ok(gen)
 }

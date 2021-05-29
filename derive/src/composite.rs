@@ -1,5 +1,5 @@
-pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
-    let parameters = crate::params::Container::from_ast(ast);
+pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> {
+    let parameters = crate::params::Container::from_ast(ast)?;
 
     let fields = match ast.data {
         syn::Data::Struct(ref s) => &s.fields,
@@ -17,32 +17,31 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
         }
     };
 
-    let to_vec_body = fields.iter().map(|field| {
+    let mut to_vec_body = Vec::new();
+    let mut from_text_body = Vec::new();
+    let mut from_binary_body = Vec::new();
+
+    for (x, field) in fields.iter().enumerate() {
         let name = &field.ident;
 
-        quote::quote! {
+        let to_vec_part = quote::quote! {
             vec.push(&self.#name as &dyn #elephantry::ToSql)
-        }
-    });
+        };
+        to_vec_body.push(to_vec_part);
 
-    let from_text_body = fields.iter().enumerate().map(|(x, field)| {
-        let name = &field.ident;
         let ty = &field.ty;
-        crate::check_type(ty);
+        crate::check_type(ty)?;
 
-        quote::quote! {
+        let from_text_part = quote::quote! {
             #name: <#ty>::from_text(ty, values[#x])?
-        }
-    });
+        };
+        from_text_body.push(from_text_part);
 
-    let from_binary_body = fields.iter().enumerate().map(|(x, field)| {
-        let name = &field.ident;
-        let ty = &field.ty;
-
-        quote::quote! {
+        let from_binary_part = quote::quote! {
             #name: <#ty>::from_binary(ty, values[#x])?
-        }
-    });
+        };
+        from_binary_body.push(from_binary_part);
+    }
 
     let (impl_generics, ty_generics, where_clause) = ast.generics.split_for_impl();
 
@@ -83,5 +82,5 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
         }
     };
 
-    gen.into()
+    Ok(gen)
 }

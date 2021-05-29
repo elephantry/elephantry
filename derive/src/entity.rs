@@ -1,5 +1,5 @@
-pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
-    let params = crate::params::Entity::from_ast(ast);
+pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> {
+    let params = crate::params::Entity::from_ast(ast)?;
 
     let elephantry = if params.internal {
         quote::quote! {
@@ -17,9 +17,9 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
         proc_macro2::TokenStream::new()
     };
 
-    let entity = entity_impl(ast, &elephantry);
-    let structure = structure_impl(ast, &params, &elephantry, &public);
-    let model = model_impl(ast, &params, &elephantry, &public);
+    let entity = entity_impl(ast, &elephantry)?;
+    let structure = structure_impl(ast, &params, &elephantry, &public)?;
+    let model = model_impl(ast, &params, &elephantry, &public)?;
 
     let gen = quote::quote! {
         #entity
@@ -27,29 +27,37 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> proc_macro::TokenStream {
         #model
     };
 
-    gen.into()
+    Ok(gen)
 }
 
 fn entity_impl(
     ast: &syn::DeriveInput,
     elephantry: &proc_macro2::TokenStream,
-) -> proc_macro2::TokenStream {
+) -> syn::Result<proc_macro2::TokenStream> {
     let fields = match ast.data {
         syn::Data::Struct(ref s) => &s.fields,
-        _ => unimplemented!(),
+        _ => {
+            return crate::error(
+                ast,
+                "this derive macro only works on structs with named fields",
+            )
+        }
     };
 
-    let from_body = fields.iter().map(|field| {
-        let field_params = crate::params::Field::from_ast(field);
+    let mut from_body = Vec::new();
+    let mut get_body = Vec::new();
+
+    for field in fields {
+        let field_params = crate::params::Field::from_ast(field)?;
 
         let name = &field.ident;
         let column = field_params
             .column
             .unwrap_or_else(|| field.ident.as_ref().unwrap().to_string());
         let ty = &field.ty;
-        crate::check_type(ty);
+        crate::check_type(ty)?;
 
-        if field_params.default {
+        let from_part = if field_params.default {
             quote::quote! {
                 #name: tuple.try_get(#column).unwrap_or_default()
             }
@@ -61,19 +69,11 @@ fn entity_impl(
             quote::quote! {
                 #name: tuple.get(#column)
             }
-        }
-    });
+        };
 
-    let get_body = fields.iter().map(|field| {
-        let field_params = crate::params::Field::from_ast(field);
+        from_body.push(from_part);
 
-        let name = &field.ident;
-        let column = field_params
-            .column
-            .unwrap_or_else(|| field.ident.as_ref().unwrap().to_string());
-        let ty = &field.ty;
-
-        if is_option(ty) {
+        let get_part = if is_option(ty) {
             quote::quote! {
                 #column => match self.#name {
                     Some(ref value) => Some(value),
@@ -84,13 +84,15 @@ fn entity_impl(
             quote::quote! {
                 #column => Some(&self.#name)
             }
-        }
-    });
+        };
+
+        get_body.push(get_part);
+    }
 
     let name = &ast.ident;
     let (impl_generics, ty_generics, where_clause) = ast.generics.split_for_impl();
 
-    quote::quote! {
+    let entity = quote::quote! {
         #[automatically_derived]
         impl #impl_generics #elephantry::Entity for #name #ty_generics #where_clause
         {
@@ -108,7 +110,9 @@ fn entity_impl(
                 }
             }
         }
-    }
+    };
+
+    Ok(entity)
 }
 
 fn structure_impl(
@@ -116,15 +120,15 @@ fn structure_impl(
     params: &crate::params::Entity,
     elephantry: &proc_macro2::TokenStream,
     public: &proc_macro2::TokenStream,
-) -> proc_macro2::TokenStream {
+) -> syn::Result<proc_macro2::TokenStream> {
     let name = match &params.structure {
         Some(name) => name,
-        None => return proc_macro2::TokenStream::new(),
+        None => return Ok(proc_macro2::TokenStream::new()),
     };
 
     let fields = match ast.data {
         syn::Data::Struct(ref s) => &s.fields,
-        _ => unimplemented!(),
+        _ => unreachable!(),
     };
 
     let relation = params
@@ -132,37 +136,25 @@ fn structure_impl(
         .clone()
         .unwrap_or_else(|| ast.ident.to_string().to_lowercase());
 
-    let primary_key = fields
-        .iter()
-        .filter(|field| {
-            let field_params = crate::params::Field::from_ast(field);
+    let mut primary_key = Vec::new();
+    let mut columns = Vec::new();
 
-            field_params.pk
-        })
-        .map(|field| {
-            let field_params = crate::params::Field::from_ast(field);
+    for field in fields {
+        let field_params = crate::params::Field::from_ast(field)?;
+        let column = field_params
+            .column
+            .unwrap_or_else(|| field.ident.as_ref().unwrap().to_string());
 
-            field_params
-                .column
-                .unwrap_or_else(|| field.ident.as_ref().unwrap().to_string())
-        });
+        if field_params.pk {
+            primary_key.push(column.clone());
+        }
 
-    let columns = fields
-        .iter()
-        .filter(|field| {
-            let field_params = crate::params::Field::from_ast(field);
+        if !field_params.r#virtual {
+            columns.push(column);
+        }
+    }
 
-            !field_params.r#virtual
-        })
-        .map(|field| {
-            let field_params = crate::params::Field::from_ast(field);
-
-            field_params
-                .column
-                .unwrap_or_else(|| field.ident.as_ref().unwrap().to_string())
-        });
-
-    quote::quote! {
+    let structure_impl = quote::quote! {
         #public struct #name;
 
         #[automatically_derived]
@@ -183,7 +175,9 @@ fn structure_impl(
                 ]
             }
         }
-    }
+    };
+
+    Ok(structure_impl)
 }
 
 fn model_impl(
@@ -191,54 +185,51 @@ fn model_impl(
     params: &crate::params::Entity,
     elephantry: &proc_macro2::TokenStream,
     public: &proc_macro2::TokenStream,
-) -> proc_macro2::TokenStream {
+) -> syn::Result<proc_macro2::TokenStream> {
     let name = match &params.model {
         Some(name) => name,
-        None => return proc_macro2::TokenStream::new(),
+        None => return Ok(proc_macro2::TokenStream::new()),
     };
 
     let fields = match ast.data {
         syn::Data::Struct(ref s) => &s.fields,
-        _ => unimplemented!(),
+        _ => unreachable!(),
     };
 
     let structure = match &params.structure {
         Some(structure) => structure,
-        None => panic!("Model requires structure"),
+        None => return crate::error(ast, "Model requires structure attribute"),
     };
 
     let entity = &ast.ident;
 
-    let projection = fields
-        .iter()
-        .filter(|field| {
-            let field_params = crate::params::Field::from_ast(field);
+    let mut projection_body = Vec::new();
 
-            field_params.projection.is_some()
-        })
-        .map(|field| {
-            let field_params = crate::params::Field::from_ast(field);
+    for field in fields {
+        let field_params = crate::params::Field::from_ast(field)?;
+
+        if let Some(projection) = field_params.projection {
             let name = &field.ident;
-            let projection = field_params.projection.unwrap();
-
-            quote::quote!(
+            let projection_part = quote::quote!(
                 .add_field(stringify!(#name), #projection)
-            )
-        })
-        .collect::<Vec<_>>();
+            );
 
-    let create_projection = if projection.is_empty() {
+            projection_body.push(projection_part);
+        }
+    }
+
+    let create_projection = if projection_body.is_empty() {
         proc_macro2::TokenStream::new()
     } else {
         quote::quote! {
             fn create_projection() -> #elephantry::Projection {
                 Self::default_projection()
-                    #(#projection)*
+                    #(#projection_body)*
             }
         }
     };
 
-    quote::quote! {
+    let model_impl = quote::quote! {
         #public struct #name<'a> {
             connection: &'a #elephantry::Connection,
         }
@@ -256,7 +247,9 @@ fn model_impl(
 
             #create_projection
         }
-    }
+    };
+
+    Ok(model_impl)
 }
 
 fn is_public(ast: &syn::DeriveInput) -> bool {
