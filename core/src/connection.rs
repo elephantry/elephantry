@@ -603,7 +603,7 @@ impl Connection {
     /**
      * Reports the status of the server.
      */
-    pub fn ping(&self) -> crate::Result<()> {
+    pub fn ping(&self) -> crate::Result {
         let connection = self
             .connection
             .lock()
@@ -702,5 +702,65 @@ impl Connection {
         };
 
         Ok(r)
+    }
+
+    /**
+     * Bulk insert entities via COPY mode.
+     */
+    pub fn copy<'m, M, I>(&self, entities: I) -> crate::Result
+    where
+        I: Iterator<Item = M::Entity>,
+        M: crate::Model<'m>,
+    {
+        use crate::Entity;
+
+        let projection = M::default_projection();
+        let field_names = projection.field_names();
+
+        let query = format!(
+            "copy {} ({}) from stdin;",
+            M::Structure::relation(),
+            field_names.join(", "),
+        );
+        self.execute(&query)?;
+
+        let connection = self
+            .connection
+            .lock()
+            .map_err(|e| crate::Error::Mutex(e.to_string()))?;
+
+        let null = b"\\N\0".to_vec();
+        let mut data = Vec::new();
+
+        for entity in entities {
+            for field in &field_names {
+                let value = match entity.get(&field) {
+                    Some(value) => value.to_sql()?,
+                    None => None,
+                };
+
+                data.extend_from_slice(&value.unwrap_or_else(|| null.clone()));
+                data.pop();
+                data.push(b'\t');
+            }
+            data.pop();
+            data.push(b'\n');
+        }
+
+        connection
+            .put_copy_data(&String::from_utf8(data)?)
+            .map_err(crate::Error::Copy)?;
+
+        connection.put_copy_end(None).map_err(crate::Error::Copy)?;
+
+        if let Some(result) = connection.result() {
+            if result.status() == libpq::Status::FatalError {
+                return Err(crate::Error::Copy(
+                    result.error_message().unwrap_or_default(),
+                ));
+            }
+        }
+
+        Ok(())
     }
 }

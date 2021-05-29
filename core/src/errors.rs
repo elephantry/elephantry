@@ -12,6 +12,9 @@ pub enum Error {
     /** Connection error */
     #[error("{message}")]
     Connect { dsn: String, message: String },
+    /** Copy error */
+    #[error("Copy error: {0}")]
+    Copy(String),
     /** Escaping error */
     #[error("Unable to escape '{0}': {1}")]
     Escape(String, String),
