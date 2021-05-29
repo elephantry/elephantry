@@ -41,8 +41,8 @@ lazy_static::lazy_static! {
         types.insert(types::INT2.name, t::<i16>());
         types.insert(types::INT4.name, t::<i32>());
         types.insert(types::INT8.name, t::<i64>());
-        types.insert(types::TEXT.name, t::<String>());
-        types.insert(types::VARCHAR.name, t::<String>());
+        types.insert(types::TEXT.name, "String");
+        types.insert(types::VARCHAR.name, "String");
 
         types.insert(
             types::BYTEA.name,
