@@ -75,10 +75,9 @@ optional = true
 version = "0.8"
 optional = true
 
-[dependencies.rocket_contrib]
-version = "0.4"
+[dependencies.rocket_sync_db_pools]
+version = "0.1"
 optional = true
-features = ["databases"]
 
 [dependencies.serde]
 version = "1.0"
@@ -137,7 +136,7 @@ multirange = ["libpq/v14"]
 net = ["ipnetwork", "macaddr", "elephantry-derive/net"]
 numeric = ["bigdecimal", "num", "elephantry-derive/numeric"]
 pg14 = ["libpq/v14", "multirange"]
-rocket = ["r2d2", "rocket_contrib"]
+rocket = ["r2d2", "rocket_sync_db_pools"]
 serde = ["dep:serde", "time/serde"]
 time = ["dep:time", "elephantry-derive/time"]
 uuid = ["dep:uuid", "elephantry-derive/uuid"]
