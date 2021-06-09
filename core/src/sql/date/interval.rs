@@ -127,8 +127,9 @@ impl PartialEq for Interval {
 impl PartialOrd for Interval {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         let a: i64 = self.into();
+        let b: i64 = other.into();
 
-        a.partial_cmp(&other.into())
+        a.partial_cmp(&b)
     }
 }
 
