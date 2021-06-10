@@ -54,7 +54,7 @@ impl<'c> Async<'c> {
         self.connection
             .lock()
             .map_err(|e| crate::Error::Mutex(e.to_string()))?
-            .send_query(&query)
+            .send_query(query)
             .map_err(crate::Error::Async)?;
 
         self.await
@@ -70,7 +70,7 @@ impl<'c> Async<'c> {
         query: &str,
         params: &[&dyn crate::ToSql],
     ) -> crate::Result<crate::Rows<E>> {
-        Ok(self.send_query(&query, params).await?.into())
+        Ok(self.send_query(query, params).await?.into())
     }
 
     /**
@@ -83,7 +83,7 @@ impl<'c> Async<'c> {
         query: &str,
         params: &[&dyn crate::ToSql],
     ) -> crate::Result<E> {
-        match self.query(&query, params).await?.try_get(0) {
+        match self.query(query, params).await?.try_get(0) {
             Some(e) => Ok(e),
             None => Err(crate::Error::MissingField("0".to_string())),
         }

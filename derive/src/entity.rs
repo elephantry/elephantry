@@ -11,7 +11,7 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::Tok
         }
     };
 
-    let public = if is_public(&ast) {
+    let public = if is_public(ast) {
         quote::quote!(pub)
     } else {
         proc_macro2::TokenStream::new()

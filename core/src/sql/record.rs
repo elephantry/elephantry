@@ -1,7 +1,7 @@
 pub(crate) fn vec_to_sql(vec: &[&dyn crate::ToSql]) -> crate::Result<Option<Vec<u8>>> {
     let mut data = b"(".to_vec();
 
-    for ref field in vec {
+    for field in vec {
         if let Some(mut value) = field.to_sql()? {
             value.pop();
             data.append(&mut value);

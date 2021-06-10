@@ -12,7 +12,7 @@ impl crate::ToSql for uuid::Uuid {
 #[cfg_attr(docsrs, doc(cfg(feature = "uuid")))]
 impl crate::FromSql for uuid::Uuid {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        match uuid::Uuid::parse_str(&crate::not_null(raw)?) {
+        match uuid::Uuid::parse_str(crate::not_null(raw)?) {
             Ok(uuid) => Ok(uuid),
             _ => Err(Self::error(ty, "uuid", raw)),
         }

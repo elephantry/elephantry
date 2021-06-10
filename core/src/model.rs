@@ -22,7 +22,7 @@ pub trait Model<'a> {
     fn default_projection() -> crate::Projection {
         use crate::Structure;
 
-        crate::Projection::new(&Self::Structure::relation(), &Self::Structure::columns())
+        crate::Projection::new(Self::Structure::relation(), Self::Structure::columns())
     }
 
     /**
@@ -37,7 +37,7 @@ pub trait Model<'a> {
      * Create a new entity.
      */
     fn create_entity(tuple: &crate::Tuple<'_>) -> Self::Entity {
-        <Self::Entity as crate::Entity>::from(&tuple)
+        <Self::Entity as crate::Entity>::from(tuple)
     }
 
     fn primary_key(

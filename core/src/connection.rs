@@ -52,7 +52,7 @@ impl Connection {
     }
 
     pub fn transaction(&self) -> crate::Transaction<'_> {
-        crate::Transaction::new(&self)
+        crate::Transaction::new(self)
     }
 
     pub(crate) fn transaction_status(&self) -> crate::Result<libpq::transaction::Status> {
@@ -96,7 +96,7 @@ impl Connection {
         self.connection
             .lock()
             .map_err(|e| crate::Error::Mutex(e.to_string()))?
-            .exec(&query)
+            .exec(query)
             .try_into()
     }
 
@@ -108,7 +108,7 @@ impl Connection {
         query: &str,
         params: &[&dyn crate::ToSql],
     ) -> crate::Result<crate::Rows<E>> {
-        Ok(self.send_query(&query, params)?.into())
+        Ok(self.send_query(query, params)?.into())
     }
 
     /**
@@ -121,7 +121,7 @@ impl Connection {
         query: &str,
         params: &[&dyn crate::ToSql],
     ) -> crate::Result<E> {
-        match self.query(&query, params)?.try_get(0) {
+        match self.query(query, params)?.try_get(0) {
             Some(e) => Ok(e),
             None => Err(crate::Error::MissingField("0".to_string())),
         }
@@ -360,7 +360,7 @@ impl Connection {
         let mut x = 1;
 
         for field in M::Structure::columns() {
-            if let Some(value) = entity.get(&field) {
+            if let Some(value) = entity.get(field) {
                 tuple.push(value);
                 params.push(format!("${}", x));
                 fields.push(*field);
@@ -401,14 +401,14 @@ impl Connection {
         let mut data = HashMap::new();
 
         for field in M::Structure::columns() {
-            let value = match entity.get(&field) {
+            let value = match entity.get(field) {
                 Some(value) => value,
                 None => &Option::<&str>::None,
             };
             data.insert(field.to_string(), value);
         }
 
-        self.update_by_pk::<M>(&pk, &data)
+        self.update_by_pk::<M>(pk, &data)
     }
 
     /**
@@ -423,7 +423,7 @@ impl Connection {
     where
         M: crate::Model<'a>,
     {
-        let (clause, mut params) = self.pk_clause::<M>(&pk)?;
+        let (clause, mut params) = self.pk_clause::<M>(pk)?;
         let mut x = params.len() + 1;
         let mut set = Vec::new();
         let projection = M::default_projection();
@@ -465,7 +465,7 @@ impl Connection {
     where
         M: crate::Model<'a>,
     {
-        let pk = M::primary_key(&entity)?;
+        let pk = M::primary_key(entity)?;
 
         self.delete_by_pk::<M>(&pk)
     }
@@ -481,7 +481,7 @@ impl Connection {
     where
         M: crate::Model<'a>,
     {
-        let (clause, params) = self.pk_clause::<M>(&pk)?;
+        let (clause, params) = self.pk_clause::<M>(pk)?;
         let mut results = self.delete_where::<M>(&clause, &params)?;
 
         Ok(results.next())
@@ -506,7 +506,7 @@ impl Connection {
             M::create_projection(),
         );
 
-        self.query(&query, &params)
+        self.query(&query, params)
     }
 
     fn pk_clause<'a, 'b, M>(
@@ -739,7 +739,7 @@ impl Connection {
 
         for entity in entities {
             for field in &field_names {
-                let value = match entity.get(&field) {
+                let value = match entity.get(field) {
                     Some(value) => value.to_sql()?,
                     None => None,
                 };

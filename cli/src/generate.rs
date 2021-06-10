@@ -8,7 +8,7 @@ pub fn schema(
 ) -> crate::Result {
     let relations = elephantry::inspect::schema(connection, schema)?;
 
-    add_mod(&format!("{}/model", prefix_dir), &schema)?;
+    add_mod(&format!("{}/model", prefix_dir), schema)?;
 
     for r in relations {
         relation(connection, prefix_dir, schema, &r.name)?;
@@ -24,7 +24,7 @@ pub fn relation(
     relation: &str,
 ) -> crate::Result {
     let dir = format!("{}/model/{}", prefix_dir, schema);
-    add_mod(&dir, &relation)?;
+    add_mod(&dir, relation)?;
 
     let filename = format!("{}/{}.rs", dir, relation);
     let mut file = std::io::BufWriter::new(std::fs::File::create(filename)?);
@@ -34,8 +34,8 @@ pub fn relation(
     let mut fields = Vec::new();
 
     for column in &columns {
-        let name = name_to_rust(&column);
-        let ty = ty_to_rust(&column)?;
+        let name = name_to_rust(column);
+        let ty = ty_to_rust(column)?;
 
         if column.is_primary {
             fields.push("    #[elephantry(pk)]".to_string());
@@ -65,7 +65,7 @@ pub fn entity(
     relation: &str,
 ) -> crate::Result {
     let dir = format!("{}/model/{}", prefix_dir, schema);
-    add_mod(&dir, &relation)?;
+    add_mod(&dir, relation)?;
 
     let filename = format!("{}/{}.rs", dir, relation);
     let mut file = std::io::BufWriter::new(std::fs::File::create(filename)?);
@@ -89,8 +89,8 @@ where
     let mut fields = Vec::new();
 
     for column in &columns {
-        let name = name_to_rust(&column);
-        let ty = ty_to_rust(&column)?;
+        let name = name_to_rust(column);
+        let ty = ty_to_rust(column)?;
 
         fields.push(format!("    pub {}: {},", name, ty));
     }
@@ -116,7 +116,7 @@ pub fn enums(connection: &elephantry::Connection, prefix_dir: &str, schema: &str
     let mut file = std::io::BufWriter::new(std::fs::File::create(filename)?);
 
     for enumeration in &elephantry::inspect::enums(connection, schema)? {
-        write_enum(&mut file, &enumeration)?;
+        write_enum(&mut file, enumeration)?;
     }
 
     Ok(())
@@ -161,7 +161,7 @@ pub fn composites(
     let mut file = std::io::BufWriter::new(std::fs::File::create(filename)?);
 
     for composite in &elephantry::inspect::composites(connection, schema)? {
-        write_composite(&mut file, &composite)?;
+        write_composite(&mut file, composite)?;
     }
 
     Ok(())

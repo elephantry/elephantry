@@ -50,7 +50,7 @@ pub fn schema(
     connection: &crate::Connection,
     schema: &str,
 ) -> crate::Result<Vec<crate::inspect::Relation>> {
-    let oid = crate::inspect::schema_oid(connection, &schema)?;
+    let oid = crate::inspect::schema_oid(connection, schema)?;
 
     connection
         .query(
