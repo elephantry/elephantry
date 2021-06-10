@@ -436,6 +436,11 @@ impl Connection {
             }
         }
 
+        if set.is_empty() {
+            log::warn!("No field to update");
+            return Ok(None);
+        }
+
         let query = format!(
             "UPDATE {} SET {} WHERE {} RETURNING {};",
             M::Structure::relation(),
