@@ -1,7 +1,7 @@
 #[derive(Debug)]
 pub struct Result {
     pub(crate) inner: libpq::Result,
-    current_tuple: std::cell::RefCell<usize>,
+    current_tuple: std::sync::Mutex<std::cell::RefCell<usize>>,
 }
 
 impl Result {
@@ -38,8 +38,8 @@ impl<'a> std::iter::Iterator for &'a Result {
     type Item = crate::Tuple<'a>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let tuple = self.try_get(*self.current_tuple.borrow());
-        *self.current_tuple.borrow_mut() += 1;
+        let tuple = self.try_get(*self.current_tuple.lock().unwrap().borrow());
+        (*self.current_tuple.lock().unwrap().borrow_mut()) += 1;
 
         tuple
     }
@@ -62,11 +62,11 @@ impl std::convert::TryFrom<libpq::Result> for Result {
         match inner.status() {
             BadResponse | FatalError | NonFatalError => Err(crate::Error::Sql(Self {
                 inner,
-                current_tuple: std::cell::RefCell::new(0),
+                current_tuple: std::sync::Mutex::new(std::cell::RefCell::new(0)),
             })),
             _ => Ok(Self {
                 inner,
-                current_tuple: std::cell::RefCell::new(0),
+                current_tuple: std::sync::Mutex::new(std::cell::RefCell::new(0)),
             }),
         }
     }
