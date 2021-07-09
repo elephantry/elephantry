@@ -3,7 +3,7 @@
 [![Crates.io](https://img.shields.io/crates/v/elephantry)](https://crates.io/crates/elephantry)
 [![docs.rs](https://img.shields.io/badge/docs-latest-blue.svg)](https://docs.rs/elephantry)
 [![Github actions](https://github.com/elephantry/elephantry/workflows/.github/workflows/ci.yml/badge.svg)](https://github.com/elephantry/elephantry/actions?query=workflow%3A.github%2Fworkflows%2Fci.yml)
-[![Build Status](https://gitlab.com/elephantry/elephantry/badges/master/pipeline.svg)](https://gitlab.com/elephantry/elephantry/commits/master)
+[![Build Status](https://gitlab.com/elephantry/elephantry/badges/main/pipeline.svg)](https://gitlab.com/elephantry/elephantry/commits/main)
 
 When Rust meets PostgreSQL.
 
