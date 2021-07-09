@@ -1,3 +1,10 @@
+# Next
+
+- Makes pq::Result thread safe;
+- Fixes update query without field;
+- Adds Connection::copy;
+- Better derive error.
+
 # Version 2.1.0
 
 - Derive proc_macro can generates structure and model;
