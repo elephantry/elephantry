@@ -2,7 +2,10 @@
 #![doc(html_logo_url = "https://elephantry.github.io/logo.png")]
 #![cfg_attr(docsrs, feature(doc_cfg))]
 
+#![doc = include_str!("../../docs/README.md")]
+
 /*!
+ *
  * | SQL type                    | Rust type                | Feature |
  * |-----------------------------|--------------------------|---------|
  * | `bigint`                    | `i64`                    |         |
