@@ -1,3 +1,5 @@
+**This is a old default branch, it was renamed to *main*.**
+
 # Elephantry
 
 [![Crates.io](https://img.shields.io/crates/v/elephantry)](https://crates.io/crates/elephantry)
