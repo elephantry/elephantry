@@ -16,28 +16,45 @@ See [quickstart](https://elephantry.github.io/documentation/quickstart/) and [ex
 Elephantry is an OMM (object model manager) dedicated to PostgreSQL design to
 handle from simple to complex queries.
 
-```rust,ignore
+```rust
+let database_url = std::env::var("DATABASE_URL")
+    .unwrap_or_else(|_| "postgres://localhost".to_string());
+
 // Connect
-let elephantry = elephantry::Pool::new("postgres://localhost")?;
+let elephantry = elephantry::Pool::new(&database_url)?;
+# elephantry.execute("create temporary table entity(id serial primary key, deleted bool);")?;
 
 // Simple query
-let rows = elephantry.execute("select n from generate_series(1, 10) as n")?;
+let rows = elephantry.execute("select id from entity")?;
 
 for row in &rows {
-    let n: i32 = row.get("n");
-    println!("{}", n);
+    let id: i32 = row.get("id");
+    println!("{}", id);
 }
 
+// Define entity
+#[derive(elephantry::Entity)]
+#[elephantry(model = "Model", structure = "Structure")]
+struct Entity {
+    #[elephantry(pk)]
+    id: u32,
+    deleted: bool,
+}
+
+# let id = 1;
 // Read entities
 let entity = elephantry.find_by_pk::<Model>(&elephantry::pk!(id))?;
 let entities = elephantry.find_all::<Model>(None)?;
 let entities = elephantry.find_where::<Model>("deleted = $1", &[&false], None)?;
 
+# let entity = Entity { id: 1, deleted: false };
 // Write entities
 elephantry.insert_one::<Model>(&entity)?;
 elephantry.update_one::<Model>(&elephantry::pk!{id => entity.id}, &entity)?;
 elephantry.delete_one::<Model>(&entity)?;
 elephantry.delete_where::<Model>("deleted = $1", &[&true])?;
+
+# Ok::<(), elephantry::Error>(())
 ```
 
 ## Features
