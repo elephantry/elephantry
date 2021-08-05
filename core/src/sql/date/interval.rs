@@ -151,7 +151,7 @@ macro_rules! caps {
                 Err(_) => return Err(Self::error($ty, "elephantry::Interval", $raw)),
             },
             None => 0,
-        };
+        }
     };
 }
 
