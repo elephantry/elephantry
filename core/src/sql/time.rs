@@ -19,7 +19,8 @@ impl crate::ToSql for Time {
 #[cfg_attr(docsrs, doc(cfg(feature = "time")))]
 impl crate::FromSql for Time {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        Time::parse(crate::not_null(raw)?, "%T").map_err(|_| Self::error(ty, "time", raw))
+        let format = time::macros::format_description!("[hour]:[minute]:[second]");
+        Time::parse(crate::not_null(raw)?, &format).map_err(|_| Self::error(ty, "time", raw))
     }
 
     /*
@@ -28,7 +29,7 @@ impl crate::FromSql for Time {
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         let usec = i64::from_binary(ty, raw)?;
 
-        Ok(Time::midnight() + time::Duration::microseconds(usec))
+        Ok(Time::MIDNIGHT + time::Duration::microseconds(usec))
     }
 }
 
@@ -54,10 +55,9 @@ impl crate::FromSql for TimeTz {
             None => return Err(Self::error(ty, "timetz", raw)),
         };
 
-        let time = Time::parse(&value[0..x], "%T").map_err(|err| {
-            dbg!(err);
-            Self::error(ty, "timetz", raw)
-        })?;
+        let format = time::macros::format_description!("[hour]:[minute]:[second]");
+        let time =
+            Time::parse(&value[0..x], &format).map_err(|_| Self::error(ty, "timetz", raw))?;
 
         let mut tz = value[x..].replace(':', "");
 
@@ -65,10 +65,8 @@ impl crate::FromSql for TimeTz {
             tz.push_str("00");
         }
 
-        let timezone = Timezone::parse(&tz, "%z").map_err(|err| {
-            dbg!(err);
-            Self::error(ty, "timetz", raw)
-        })?;
+        let format = time::macros::format_description!("[offset_hour][offset_minute]");
+        let timezone = Timezone::parse(&tz, &format).map_err(|_| Self::error(ty, "timetz", raw))?;
 
         Ok((time, timezone))
     }
@@ -76,7 +74,7 @@ impl crate::FromSql for TimeTz {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/date.c#L2063
      */
-    fn from_binary(_: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
+    fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         use byteorder::ReadBytesExt;
 
         let mut buf = crate::from_sql::not_null(raw)?;
@@ -84,8 +82,8 @@ impl crate::FromSql for TimeTz {
         let zone = buf.read_i32::<byteorder::BigEndian>()?;
 
         Ok((
-            Time::midnight() + time::Duration::microseconds(time),
-            Timezone::seconds(-zone),
+            Time::MIDNIGHT + time::Duration::microseconds(time),
+            Timezone::from_whole_seconds(-zone).map_err(|_| Self::error(ty, "timetz", raw))?,
         ))
     }
 }
@@ -96,8 +94,8 @@ mod test {
         time,
         crate::Time,
         [
-            ("'00:00:00'", crate::Time::midnight()),
-            ("'01:02:03'", time::time!(01:02:03)),
+            ("'00:00:00'", crate::Time::MIDNIGHT),
+            ("'01:02:03'", time::macros::time!(01:02:03)),
         ]
     );
 
@@ -107,11 +105,11 @@ mod test {
         [
             (
                 "'00:00:00+0000'",
-                (crate::Time::midnight(), crate::Timezone::UTC)
+                (crate::Time::MIDNIGHT, crate::Timezone::UTC)
             ),
             (
                 "'01:02:03+0200'",
-                (time::time!(01:02:03), time::offset!(+2))
+                (time::macros::time!(01:02:03), time::macros::offset!(+2))
             ),
         ]
     );
