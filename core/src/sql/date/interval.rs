@@ -1,5 +1,5 @@
 #[cfg_attr(docsrs, doc(cfg(feature = "date")))]
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Interval {
     pub years: i32,
@@ -86,20 +86,6 @@ impl Interval {
 
     pub fn microseconds(n: i32) -> Self {
         Self::new(0, 0, 0, 0, 0, 0, n)
-    }
-}
-
-impl Default for Interval {
-    fn default() -> Self {
-        Self {
-            years: 0,
-            months: 0,
-            days: 0,
-            hours: 0,
-            mins: 0,
-            secs: 0,
-            usecs: 0,
-        }
     }
 }
 

@@ -3,7 +3,7 @@ use std::collections::HashMap;
 /**
  * Connections pool.
  */
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct Pool {
     default: String,
     connections: HashMap<String, crate::Connection>,
@@ -89,15 +89,6 @@ impl Pool {
      */
     pub fn remove(&mut self, name: &str) {
         self.connections.remove(&name.to_string());
-    }
-}
-
-impl Default for Pool {
-    fn default() -> Self {
-        Self {
-            default: String::new(),
-            connections: HashMap::new(),
-        }
     }
 }
 

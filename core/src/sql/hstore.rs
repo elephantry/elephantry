@@ -3,12 +3,12 @@ use std::collections::HashMap;
 /**
  * Rust type for [hstore](https://www.postgresql.org/docs/current/hstore.html).
  */
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct Hstore(HashMap<String, Option<String>>);
 
 impl Hstore {
     pub fn new() -> Self {
-        Self(HashMap::new())
+        Self::default()
     }
 
     fn read_string(buf: &mut &[u8]) -> crate::Result<Option<String>> {
@@ -28,12 +28,6 @@ impl Hstore {
         };
 
         Ok(s)
-    }
-}
-
-impl Default for Hstore {
-    fn default() -> Self {
-        Self::new()
     }
 }
 
