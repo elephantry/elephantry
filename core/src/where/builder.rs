@@ -1,8 +1,9 @@
+#[derive(Default)]
 pub struct Builder<'a>(crate::Where<'a>);
 
 impl<'a> Builder<'a> {
     pub fn new() -> Self {
-        Self(crate::Where::new())
+        Self::default()
     }
 
     pub fn build(self) -> crate::Where<'a> {
@@ -53,12 +54,6 @@ impl<'a> Builder<'a> {
         self.0.add_where(element, params, operator);
 
         self
-    }
-}
-
-impl<'a> Default for Builder<'a> {
-    fn default() -> Self {
-        Self::new()
     }
 }
 
