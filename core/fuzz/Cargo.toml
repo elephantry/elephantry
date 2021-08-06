@@ -23,3 +23,9 @@ name = "fuzz_exec"
 path = "fuzz_targets/fuzz_exec.rs"
 test = false
 doc = false
+
+[[bin]]
+name = "fuzz_query"
+path = "fuzz_targets/fuzz_query.rs"
+test = false
+doc = false
