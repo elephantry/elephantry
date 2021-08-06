@@ -3,6 +3,7 @@ image: "rustlang/rust:nightly"
 stages:
     - lint
     - test
+    - fuzz
 
 variables:
     CARGO_HOME: $CI_PROJECT_DIR/cargo
@@ -34,8 +35,8 @@ lint:clippy:
         - sudo -u postgres pg_ctlcluster 11 main start
         - sudo -u postgres psql --command "create role root WITH LOGIN ENCRYPTED PASSWORD '1234' SUPERUSER;";
         - sudo -u postgres psql --command "create database root with owner root;";
-    script:
         - export DATABASE_URL='host=localhost password=1234'
+    script:
         - cargo +nightly test --all-features $CARGO_FLAGS
 
 test:debug:
@@ -43,6 +44,21 @@ test:debug:
 
 test:release:
     <<: *test
+
+.fuzz: &fuzz
+    <<: *test
+    stage: fuzz
+    script:
+        - cargo install cargo-fuzz
+        - TARGET=$(echo "$CI_JOB_NAME" | cut -d ':' -f 2)
+        - cd core
+        - cargo fuzz run fuzz_$TARGET -- -max_total_time=10
+
+fuzz:exec:
+    <<: *fuzz
+
+fuzz:query:
+    <<: *fuzz
 
 cache:
     paths:
