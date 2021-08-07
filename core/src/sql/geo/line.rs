@@ -1,5 +1,6 @@
 #[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 #[derive(Clone, Debug, PartialEq)]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 pub struct Line {
     pub a: f64,
     pub b: f64,

@@ -1,5 +1,6 @@
 # Next
 
+- Adds arbitrary crate support;
 - Updates time to 0.3;
 - Makes pq::Result thread safe;
 - Fixes update query without field;

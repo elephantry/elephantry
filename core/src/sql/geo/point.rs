@@ -28,6 +28,15 @@ impl From<geo_types::Coordinate<f64>> for Point {
     }
 }
 
+#[cfg(feature = "arbitrary")]
+impl<'a> arbitrary::Arbitrary<'a> for Point {
+    fn arbitrary(u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
+        let point = Self::new(f64::arbitrary(u)?, f64::arbitrary(u)?);
+
+        Ok(point)
+    }
+}
+
 #[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::ToSql for Point {
     fn ty(&self) -> crate::pq::Type {

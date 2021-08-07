@@ -2,6 +2,7 @@
  * Rust type for [bytea](https://www.postgresql.org/docs/current/datatype-binary.html).
  */
 #[derive(Clone, Debug, PartialEq)]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 pub struct Bytea(Vec<u8>);
 
 impl From<Vec<u8>> for Bytea {

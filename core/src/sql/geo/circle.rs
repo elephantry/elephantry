@@ -1,5 +1,6 @@
 #[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 #[derive(Clone, Debug, PartialEq)]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 pub struct Circle {
     pub x: f64,
     pub y: f64,

@@ -60,6 +60,8 @@ elephantry.delete_where::<Model>("deleted = $1", &[&true])?;
 ## Features
 
 - `all-types` — enables all type features (see below);
+- `arbitrary` — add support for [arbitrary
+    crate](https://crates.io/crates/arbitrary);
 - `config-support` — adds support for [config](https://crates.io/crates/config)
     layered configuration system;
 - `r2d2` — adds support for [r2d2](https://crates.io/crates/r2d2) generic

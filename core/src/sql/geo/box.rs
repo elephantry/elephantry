@@ -31,6 +31,15 @@ impl std::fmt::Display for Box {
     }
 }
 
+#[cfg(feature = "arbitrary")]
+impl<'a> arbitrary::Arbitrary<'a> for Box {
+    fn arbitrary(u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
+        let b = Self::new(crate::Point::arbitrary(u)?, crate::Point::arbitrary(u)?);
+
+        Ok(b)
+    }
+}
+
 #[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::ToSql for Box {
     fn ty(&self) -> crate::pq::Type {

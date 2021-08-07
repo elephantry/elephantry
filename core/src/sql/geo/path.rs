@@ -30,6 +30,15 @@ impl std::fmt::Display for Path {
     }
 }
 
+#[cfg(feature = "arbitrary")]
+impl<'a> arbitrary::Arbitrary<'a> for Path {
+    fn arbitrary(u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
+        let path = Self::new(&crate::Coordinates::arbitrary(u)?);
+
+        Ok(path)
+    }
+}
+
 #[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::ToSql for Path {
     fn ty(&self) -> crate::pq::Type {

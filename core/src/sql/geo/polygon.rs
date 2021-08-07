@@ -30,6 +30,15 @@ impl std::fmt::Display for Polygon {
     }
 }
 
+#[cfg(feature = "arbitrary")]
+impl<'a> arbitrary::Arbitrary<'a> for Polygon {
+    fn arbitrary(u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
+        let polygon = Self::new(&crate::Path::arbitrary(u)?);
+
+        Ok(polygon)
+    }
+}
+
 #[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::ToSql for Polygon {
     fn ty(&self) -> crate::pq::Type {

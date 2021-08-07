@@ -16,7 +16,17 @@ impl std::ops::Deref for Coordinate {
     }
 }
 
+#[cfg(feature = "arbitrary")]
+impl<'a> arbitrary::Arbitrary<'a> for Coordinate {
+    fn arbitrary(u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
+        let coordinate = Self::new(f64::arbitrary(u)?, f64::arbitrary(u)?);
+
+        Ok(coordinate)
+    }
+}
+
 #[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
+#[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 pub struct Coordinates(Vec<Coordinate>);
 
 impl Coordinates {

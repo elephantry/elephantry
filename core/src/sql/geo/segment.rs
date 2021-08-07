@@ -26,6 +26,18 @@ impl std::fmt::Display for Segment {
     }
 }
 
+#[cfg(feature = "arbitrary")]
+impl<'a> arbitrary::Arbitrary<'a> for Segment {
+    fn arbitrary(u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
+        let segment = Self::new(
+            crate::Coordinate::arbitrary(u)?,
+            crate::Coordinate::arbitrary(u)?,
+        );
+
+        Ok(segment)
+    }
+}
+
 #[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::ToSql for Segment {
     fn ty(&self) -> crate::pq::Type {
