@@ -96,12 +96,10 @@ impl<'c> Async<'c> {
     ) -> crate::Result<crate::pq::Result> {
         let mut param_types = Vec::new();
         let mut param_values = Vec::new();
-        let mut param_formats = Vec::new();
 
         for param in params.iter() {
             param_types.push(param.ty().oid);
-            param_values.push(param.to_sql()?);
-            param_formats.push(param.format());
+            param_values.push(param.to_text()?);
         }
 
         self.connection
@@ -111,7 +109,7 @@ impl<'c> Async<'c> {
                 query,
                 &param_types,
                 &param_values,
-                &param_formats,
+                &[],
                 crate::pq::Format::Binary,
             )
             .map_err(crate::Error::Async)?;

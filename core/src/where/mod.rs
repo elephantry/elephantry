@@ -255,7 +255,7 @@ mod test {
         assert_eq!(
             b.params()
                 .iter()
-                .map(|x| x.to_sql().unwrap())
+                .map(|x| x.to_text().unwrap())
                 .collect::<Vec<_>>(),
             vec![
                 Some(vec![b'1', 0]),
@@ -277,7 +277,7 @@ mod test {
         assert_eq!(
             w.params()
                 .iter()
-                .map(|x| x.to_sql().unwrap())
+                .map(|x| x.to_text().unwrap())
                 .collect::<Vec<_>>(),
             vec![
                 Some(vec![b'1', 0]),

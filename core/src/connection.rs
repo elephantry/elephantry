@@ -134,12 +134,10 @@ impl Connection {
     ) -> crate::Result<crate::pq::Result> {
         let mut param_types = Vec::new();
         let mut param_values = Vec::new();
-        let mut param_formats = Vec::new();
 
         for param in params.iter() {
             param_types.push(param.ty().oid);
-            param_values.push(param.to_sql()?);
-            param_formats.push(param.format());
+            param_values.push(param.to_text()?);
         }
 
         self.connection
@@ -149,7 +147,7 @@ impl Connection {
                 &self.order_parameters(query),
                 &param_types,
                 &param_values,
-                &param_formats,
+                &[],
                 crate::pq::Format::Binary,
             )
             .try_into()

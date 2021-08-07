@@ -203,7 +203,7 @@ mod test {
     macro_rules! sql_test_to {
         ($sql_type:ident, $rust_type:ty, $tests:expr) => {
             #[test]
-            fn to() -> crate::Result {
+            fn to_text() -> crate::Result {
                 use std::collections::HashMap;
                 let conn = crate::test::new_conn()?;
 
