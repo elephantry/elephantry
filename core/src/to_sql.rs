@@ -4,12 +4,29 @@
 pub trait ToSql {
     /** The corresponding SQL type */
     fn ty(&self) -> crate::pq::Type;
+
+    /** Convert the value to the prefered format specified by `ToSql::format()` */
+    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
+        if self.format() == crate::pq::Format::Text {
+            self.to_text()
+        } else {
+            self.to_binary()
+        }
+    }
+
     /** Convert the value to text format */
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>>;
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+        unimplemented!()
+    }
 
     /** Convert the value to binary format */
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
         unimplemented!()
+    }
+
+    /** Prefered default format */
+    fn format(&self) -> crate::pq::Format {
+        crate::pq::Format::Text
     }
 
     fn error(&self, _rust_type: &str, message: Option<&String>) -> crate::Error {
