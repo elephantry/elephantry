@@ -73,7 +73,7 @@ jobs:
     name: Fuzz
     strategy:
       matrix:
-        target: ["exec", "query"]
+        target: ["copy", "exec", "query"]
     runs-on: ubuntu-latest
 
     steps:

@@ -11,8 +11,13 @@ cargo-fuzz = true
 [dependencies]
 libfuzzer-sys = "0.4"
 
+[dependencies.arbitrary]
+version = "1.0"
+features = ["derive"]
+
 [dependencies.elephantry]
 path = ".."
+features = ["all-types", "arbitrary"]
 
 # Prevent this from interfering with workspaces
 [workspace]
@@ -27,5 +32,11 @@ doc = false
 [[bin]]
 name = "fuzz_query"
 path = "fuzz_targets/fuzz_query.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "fuzz_copy"
+path = "fuzz_targets/fuzz_copy.rs"
 test = false
 doc = false

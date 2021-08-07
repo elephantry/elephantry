@@ -54,6 +54,9 @@ test:release:
         - cd core
         - cargo fuzz run fuzz_$TARGET -- -max_total_time=10
 
+fuzz:copy:
+    <<: *fuzz
+
 fuzz:exec:
     <<: *fuzz
 
