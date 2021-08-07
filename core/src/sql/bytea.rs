@@ -28,7 +28,7 @@ impl crate::ToSql for Bytea {
         crate::pq::Format::Binary
     }
 
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
         Ok(Some(self.to_vec()))
     }
 }

@@ -10,8 +10,8 @@ impl crate::ToSql for chrono::NaiveDate {
         crate::pq::types::DATE
     }
 
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
-        self.format("%F").to_string().to_sql()
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+        self.format("%F").to_string().to_text()
     }
 }
 

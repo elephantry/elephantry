@@ -740,7 +740,7 @@ impl Connection {
         for entity in entities {
             for field in &field_names {
                 let value = match entity.get(field) {
-                    Some(value) => value.to_sql()?,
+                    Some(value) => value.to_text()?,
                     None => None,
                 };
 

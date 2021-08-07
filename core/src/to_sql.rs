@@ -4,9 +4,27 @@
 pub trait ToSql {
     /** The corresponding SQL type */
     fn ty(&self) -> crate::pq::Type;
-    /** Convert the value */
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>>;
 
+    /** Convert the value to the prefered format specified by `ToSql::format()` */
+    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
+        if self.format() == crate::pq::Format::Text {
+            self.to_text()
+        } else {
+            self.to_binary()
+        }
+    }
+
+    /** Convert the value to text format */
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+        unimplemented!()
+    }
+
+    /** Convert the value to binary format */
+    fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
+        unimplemented!()
+    }
+
+    /** Prefered default format */
     fn format(&self) -> crate::pq::Format {
         crate::pq::Format::Text
     }
@@ -25,7 +43,7 @@ impl ToSql for bool {
         crate::pq::types::BOOL
     }
 
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
         let v = if *self { b"t\0" } else { b"f\0" };
 
         Ok(Some(v.to_vec()))
@@ -37,8 +55,8 @@ impl ToSql for f32 {
         crate::pq::types::FLOAT4
     }
 
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
-        self.to_string().to_sql()
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+        self.to_string().to_text()
     }
 }
 
@@ -47,8 +65,8 @@ impl ToSql for f64 {
         crate::pq::types::FLOAT8
     }
 
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
-        self.to_string().to_sql()
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+        self.to_string().to_text()
     }
 }
 
@@ -57,7 +75,7 @@ impl ToSql for &str {
         crate::pq::types::VARCHAR
     }
 
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
         let mut v = self.as_bytes().to_vec();
         v.push(0);
 
@@ -70,8 +88,8 @@ impl ToSql for char {
         crate::pq::types::BPCHAR
     }
 
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
-        self.to_string().to_sql()
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+        self.to_string().to_text()
     }
 }
 
@@ -80,8 +98,8 @@ impl ToSql for String {
         crate::pq::types::VARCHAR
     }
 
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
-        self.as_str().to_sql()
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+        self.as_str().to_text()
     }
 }
 
@@ -90,8 +108,8 @@ impl ToSql for i16 {
         crate::pq::types::INT2
     }
 
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
-        self.to_string().to_sql()
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+        self.to_string().to_text()
     }
 }
 
@@ -100,8 +118,8 @@ impl ToSql for i32 {
         crate::pq::types::INT4
     }
 
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
-        self.to_string().to_sql()
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+        self.to_string().to_text()
     }
 }
 
@@ -110,8 +128,8 @@ impl ToSql for i64 {
         crate::pq::types::INT8
     }
 
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
-        self.to_string().to_sql()
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+        self.to_string().to_text()
     }
 }
 
@@ -120,8 +138,8 @@ impl ToSql for u32 {
         crate::pq::types::INT8
     }
 
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
-        self.to_string().to_sql()
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+        self.to_string().to_text()
     }
 }
 
@@ -133,9 +151,9 @@ impl<T: ToSql> ToSql for Option<T> {
         }
     }
 
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
         match self {
-            Some(data) => T::to_sql(data),
+            Some(data) => T::to_text(data),
             None => Ok(None),
         }
     }
@@ -146,7 +164,7 @@ impl ToSql for () {
         crate::pq::types::UNKNOWN
     }
 
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
         Ok(None)
     }
 }

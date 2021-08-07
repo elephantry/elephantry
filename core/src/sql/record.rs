@@ -1,8 +1,8 @@
-pub(crate) fn vec_to_sql(vec: &[&dyn crate::ToSql]) -> crate::Result<Option<Vec<u8>>> {
+pub(crate) fn vec_to_text(vec: &[&dyn crate::ToSql]) -> crate::Result<Option<Vec<u8>>> {
     let mut data = b"(".to_vec();
 
     for field in vec {
-        if let Some(mut value) = field.to_sql()? {
+        if let Some(mut value) = field.to_text()? {
             value.pop();
             data.append(&mut value);
         }
@@ -77,10 +77,10 @@ macro_rules! tuple_impls {
                     crate::pq::types::RECORD
                 }
 
-                fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
+                fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
                     let vec = vec![$(&self.$idx as &dyn crate::ToSql),+];
 
-                    vec_to_sql(&vec)
+                    vec_to_text(&vec)
                 }
             }
 

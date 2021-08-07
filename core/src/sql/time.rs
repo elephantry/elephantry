@@ -11,8 +11,8 @@ impl crate::ToSql for Time {
         crate::pq::types::TIME
     }
 
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
-        self.to_string().to_sql()
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+        self.to_string().to_text()
     }
 }
 
@@ -39,8 +39,8 @@ impl crate::ToSql for TimeTz {
         crate::pq::types::TIMETZ
     }
 
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
-        format!("{}{}", self.0, self.1).to_sql()
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+        format!("{}{}", self.0, self.1).to_text()
     }
 }
 

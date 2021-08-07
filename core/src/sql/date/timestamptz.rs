@@ -4,8 +4,8 @@ impl crate::ToSql for chrono::DateTime<chrono::Utc> {
         crate::pq::types::TIMESTAMPTZ
     }
 
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
-        self.format("%F %T%z").to_string().to_sql()
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+        self.format("%F %T%z").to_string().to_text()
     }
 }
 
@@ -29,8 +29,8 @@ impl crate::ToSql for chrono::DateTime<chrono::offset::FixedOffset> {
         crate::pq::types::TIMESTAMPTZ
     }
 
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
-        self.format("%F %T%z").to_string().to_sql()
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+        self.format("%F %T%z").to_string().to_text()
     }
 }
 
@@ -53,8 +53,8 @@ impl crate::ToSql for chrono::DateTime<chrono::offset::Local> {
         crate::pq::types::TIMESTAMPTZ
     }
 
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
-        self.format("%F %T").to_string().to_sql()
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+        self.format("%F %T").to_string().to_text()
     }
 }
 

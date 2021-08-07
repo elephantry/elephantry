@@ -6,8 +6,8 @@ impl crate::ToSql for bigdecimal::BigDecimal {
         crate::pq::types::NUMERIC
     }
 
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
-        self.to_string().to_sql()
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+        self.to_string().to_text()
     }
 }
 

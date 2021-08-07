@@ -8,10 +8,10 @@ impl crate::ToSql for u8 {
         crate::pq::Format::Binary
     }
 
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
         let bytes = bit_vec::BitVec::from_bytes(&[*self]);
 
-        bytes.to_sql()
+        bytes.to_binary()
     }
 }
 
@@ -52,7 +52,7 @@ impl crate::ToSql for bit_vec::BitVec {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L680
      */
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
         use bytes::BufMut;
 
         let mut buf = bytes::BytesMut::new();

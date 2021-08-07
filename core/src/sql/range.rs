@@ -23,7 +23,7 @@ where
     }
 }
 
-fn to_sql<R, T>(range: &R) -> crate::Result<Option<Vec<u8>>>
+fn to_text<R, T>(range: &R) -> crate::Result<Option<Vec<u8>>>
 where
     R: std::ops::RangeBounds<T>,
     T: crate::ToSql,
@@ -36,7 +36,7 @@ where
         Unbounded => panic!("Unsupported unbounded range"),
     };
 
-    let mut start = match start.to_sql()? {
+    let mut start = match start.to_text()? {
         Some(start) => start,
         None => return Ok(None),
     };
@@ -48,7 +48,7 @@ where
         Unbounded => panic!("Unsupported unbounded range"),
     };
 
-    let mut end = match end.to_sql()? {
+    let mut end = match end.to_text()? {
         Some(end) => end,
         None => return Ok(None),
     };
@@ -69,8 +69,8 @@ impl<T: crate::ToSql> crate::ToSql for std::ops::Range<T> {
         ty(self)
     }
 
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
-        to_sql(self)
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+        to_text(self)
     }
 }
 
@@ -131,8 +131,8 @@ impl<T: crate::ToSql> crate::ToSql for std::ops::RangeInclusive<T> {
         ty(self)
     }
 
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
-        to_sql(self)
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+        to_text(self)
     }
 }
 

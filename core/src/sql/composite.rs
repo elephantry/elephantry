@@ -13,8 +13,8 @@ pub trait Composite {
      */
     fn to_vec(&self) -> Vec<&dyn crate::ToSql>;
 
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
-        crate::sql::record::vec_to_sql(&self.to_vec())
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+        crate::sql::record::vec_to_text(&self.to_vec())
     }
 
     /**
@@ -53,8 +53,8 @@ impl<C: Composite> crate::ToSql for C {
         }
     }
 
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
-        self.to_sql()
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+        self.to_text()
     }
 }
 

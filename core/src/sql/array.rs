@@ -234,7 +234,7 @@ impl<T: crate::ToSql> crate::ToSql for Array<T> {
         self.elemtype.to_array()
     }
 
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
         if self.data.is_empty() {
             return Ok(Some(b"{}\0".to_vec()));
         }
@@ -263,7 +263,7 @@ impl<T: crate::ToSql> crate::ToSql for Array<T> {
         'outer: loop {
             data.resize(data.len() + self.ndim - 1 - j as usize, b'{');
 
-            let element = self.data[k].to_sql()?.unwrap_or_else(|| b"null\0".to_vec());
+            let element = self.data[k].to_text()?.unwrap_or_else(|| b"null\0".to_vec());
 
             data.extend_from_slice(&element[..element.len() - 1]);
             k += 1;
@@ -328,8 +328,8 @@ impl<T: crate::ToSql + Clone> crate::ToSql for Vec<T> {
         }
     }
 
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
-        crate::sql::Array::from(self).to_sql()
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+        crate::sql::Array::from(self).to_text()
     }
 }
 
@@ -359,14 +359,14 @@ mod test {
     fn vec_to_text() {
         let vec = vec![1, 2, 3];
 
-        assert_eq!(vec.to_sql().unwrap(), Some(b"{1,2,3}\0".to_vec()));
+        assert_eq!(vec.to_text().unwrap(), Some(b"{1,2,3}\0".to_vec()));
     }
 
     #[test]
     fn empty_vec() {
         let vec = Vec::<String>::new();
 
-        assert_eq!(vec.to_sql().unwrap(), Some(b"{}\0".to_vec()));
+        assert_eq!(vec.to_text().unwrap(), Some(b"{}\0".to_vec()));
     }
 
     #[test]

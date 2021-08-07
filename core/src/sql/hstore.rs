@@ -51,7 +51,7 @@ impl crate::ToSql for crate::Hstore {
         crate::pq::types::TEXT
     }
 
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
         let mut vec = Vec::new();
 
         for (key, value) in self.iter() {
@@ -63,7 +63,7 @@ impl crate::ToSql for crate::Hstore {
             vec.push(format!("\"{}\"=>{}", key, v));
         }
 
-        vec.join(", ").to_sql()
+        vec.join(", ").to_text()
     }
 }
 

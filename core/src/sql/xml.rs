@@ -4,7 +4,7 @@ impl crate::ToSql for xmltree::Element {
         crate::pq::types::XML
     }
 
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
         let mut vec = Vec::new();
 
         self.write(&mut vec)

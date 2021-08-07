@@ -4,8 +4,8 @@ impl crate::ToSql for chrono::NaiveDateTime {
         crate::pq::types::TIMESTAMP
     }
 
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
-        self.format("%F %T").to_string().to_sql()
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+        self.format("%F %T").to_string().to_text()
     }
 }
 

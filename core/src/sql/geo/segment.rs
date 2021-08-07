@@ -44,8 +44,8 @@ impl crate::ToSql for Segment {
         crate::pq::types::LSEG
     }
 
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
-        self.to_string().to_sql()
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+        self.to_string().to_text()
     }
 }
 

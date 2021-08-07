@@ -18,10 +18,10 @@ impl<E: Enum> crate::Composite for E {
         E::name()
     }
 
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
         use crate::ToSql;
 
-        format!("{:?}", self).to_sql()
+        format!("{:?}", self).to_text()
     }
 
     fn from_text(_: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Box<Self>> {
