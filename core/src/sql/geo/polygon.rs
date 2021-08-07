@@ -45,13 +45,39 @@ impl crate::ToSql for Polygon {
         crate::pq::types::POLYGON
     }
 
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L3389
+     */
     fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
         self.to_string().to_text()
+    }
+
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L3440
+     */
+    fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
+        use byteorder::WriteBytesExt;
+
+        let points = &self.0.exterior().0;
+
+        let mut buf = Vec::new();
+
+        buf.write_i32::<byteorder::BigEndian>(points.len() as i32)?;
+
+        for point in points {
+            buf.write_f64::<byteorder::BigEndian>(point.x)?;
+            buf.write_f64::<byteorder::BigEndian>(point.y)?;
+        }
+
+        Ok(Some(buf))
     }
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::FromSql for Polygon {
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L3348
+     */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let path = crate::Path::from_text(ty, raw)?;
 
@@ -59,7 +85,7 @@ impl crate::FromSql for Polygon {
     }
 
     /*
-     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L3440
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L3405
      */
     fn from_binary(_: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         use byteorder::ReadBytesExt;

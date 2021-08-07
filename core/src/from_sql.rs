@@ -37,12 +37,16 @@ pub trait FromSql: Sized {
      *
      * See the postgresql
      * [adt](https://github.com/postgres/postgres/tree/REL_12_0/src/backend/utils/adt)
-     * module source code, mainly `*_send` functions.
+     * module source code, mainly `*_recv` functions.
      */
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self>;
 
     /**
      * Create a new struct from the text representation.
+     *
+     * See the postgresql
+     * [adt](https://github.com/postgres/postgres/tree/REL_12_0/src/backend/utils/adt)
+     * module source code, mainly `*_in` functions.
      */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self>;
 
@@ -195,7 +199,7 @@ mod test {
         ]
     );
 
-    crate::sql_test!(char, char, [("'f'", 'f'), ("'à'", 'à')]);
+    crate::sql_test!(char, char, [("'f'", 'f'), ("'('", '(')]);
 
     crate::sql_test!(varchar, Option<String>, [("null", None::<String>)]);
 

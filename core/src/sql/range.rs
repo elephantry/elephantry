@@ -1,3 +1,27 @@
+#[repr(u8)]
+enum Flags {
+    //Empty = 0x01,
+    LbInc = 0x02,
+    //UbInc = 0x04,
+    //LbInf = 0x08,
+    //UbInf = 0x10,
+}
+
+macro_rules! bound {
+    ($range:ident, $bound:ident, $op:ident) => {{
+        let bound = match $range.$bound() {
+            Included(bound) => bound,
+            Excluded(bound) => bound,
+            Unbounded => panic!("Unsupported unbounded range"),
+        };
+
+        match bound.$op()? {
+            Some(bound) => bound,
+            None => return Ok(None),
+        }
+    }};
+}
+
 fn ty<R, T>(range: &R) -> crate::pq::Type
 where
     R: std::ops::RangeBounds<T>,
@@ -30,28 +54,22 @@ where
 {
     use std::ops::Bound::*;
 
-    let (start_char, start) = match range.start_bound() {
-        Included(start) => (b'[', start),
-        Excluded(start) => (b'(', start),
+    let start_char = match range.start_bound() {
+        Included(_) => b'[',
+        Excluded(_) => b'(',
         Unbounded => panic!("Unsupported unbounded range"),
     };
 
-    let mut start = match start.to_text()? {
-        Some(start) => start,
-        None => return Ok(None),
-    };
+    let mut start = bound!(range, start_bound, to_text);
     start.pop(); // removes \0
 
-    let (end_char, end) = match range.end_bound() {
-        Included(end) => (b']', end),
-        Excluded(end) => (b')', end),
+    let end_char = match range.end_bound() {
+        Included(_) => b']',
+        Excluded(_) => b')',
         Unbounded => panic!("Unsupported unbounded range"),
     };
 
-    let mut end = match end.to_text()? {
-        Some(end) => end,
-        None => return Ok(None),
-    };
+    let mut end = bound!(range, end_bound, to_text);
     end.pop(); // removes \0
 
     let mut vec = vec![start_char];
@@ -64,17 +82,51 @@ where
     Ok(Some(vec))
 }
 
+fn to_binary<R, T>(range: &R) -> crate::Result<Option<Vec<u8>>>
+where
+    R: std::ops::RangeBounds<T>,
+    T: crate::ToSql,
+{
+    use byteorder::WriteBytesExt;
+    use std::ops::Bound::*;
+
+    let mut buf = vec![Flags::LbInc as u8];
+
+    let mut start = bound!(range, start_bound, to_binary);
+    buf.write_i32::<byteorder::BigEndian>(start.len() as i32)?;
+    buf.append(&mut start);
+
+    let mut end = bound!(range, end_bound, to_binary);
+    buf.write_i32::<byteorder::BigEndian>(end.len() as i32)?;
+    buf.append(&mut end);
+
+    Ok(Some(buf))
+}
+
 impl<T: crate::ToSql> crate::ToSql for std::ops::Range<T> {
     fn ty(&self) -> crate::pq::Type {
         ty(self)
     }
 
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/rangetypes.c#L123
+     */
     fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
         to_text(self)
+    }
+
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/rangetypes.c#L246
+     */
+    fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
+        to_binary(self)
     }
 }
 
 impl<T: crate::FromSql> crate::FromSql for std::ops::Range<T> {
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/rangetypes.c#L81
+     */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         lazy_static::lazy_static! {
             static ref REGEX: regex::Regex =
@@ -95,7 +147,7 @@ impl<T: crate::FromSql> crate::FromSql for std::ops::Range<T> {
     }
 
     /*
-     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/rangetypes.c#L246
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/rangetypes.c#L163
      */
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         use byteorder::ReadBytesExt;
@@ -132,6 +184,10 @@ impl<T: crate::ToSql> crate::ToSql for std::ops::RangeInclusive<T> {
     }
 
     fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+        to_text(self)
+    }
+
+    fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
         to_text(self)
     }
 }

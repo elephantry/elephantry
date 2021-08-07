@@ -1,3 +1,6 @@
+/*
+ * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/rowtypes.c#L74
+ */
 pub(crate) fn vec_to_text(vec: &[&dyn crate::ToSql]) -> crate::Result<Option<Vec<u8>>> {
     let mut data = b"(".to_vec();
 
@@ -16,6 +19,35 @@ pub(crate) fn vec_to_text(vec: &[&dyn crate::ToSql]) -> crate::Result<Option<Vec
     Ok(Some(data))
 }
 
+/*
+ * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/rowtypes.c#L649
+ */
+pub(crate) fn vec_to_binary(vec: &[&dyn crate::ToSql]) -> crate::Result<Option<Vec<u8>>> {
+    use crate::ToSql;
+    use byteorder::WriteBytesExt;
+
+    let mut buf = Vec::new();
+
+    buf.write_i32::<byteorder::BigEndian>(vec.len() as i32)?;
+
+    for elem in vec {
+        let column_type = elem.ty().to_binary()?.unwrap();
+        buf.extend_from_slice(&column_type);
+
+        if let Some(raw) = elem.to_binary()? {
+            buf.write_i32::<byteorder::BigEndian>(raw.len() as i32)?;
+            buf.extend_from_slice(&raw);
+        } else {
+            buf.write_i32::<byteorder::BigEndian>(-1)?;
+        }
+    }
+
+    Ok(Some(buf))
+}
+
+/*
+ * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/rowtypes.c#L302
+ */
 pub(crate) fn text_to_vec(raw: Option<&str>) -> crate::Result<Vec<Option<&str>>> {
     let s = crate::not_null(raw)?;
 
@@ -38,7 +70,7 @@ pub(crate) fn text_to_vec(raw: Option<&str>) -> crate::Result<Vec<Option<&str>>>
 }
 
 /*
- * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/rowtypes.c#L649
+ * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/rowtypes.c#L453
  */
 pub(crate) fn binary_to_vec(raw: Option<&[u8]>) -> crate::Result<Vec<Option<&[u8]>>> {
     use byteorder::ReadBytesExt;
@@ -81,6 +113,12 @@ macro_rules! tuple_impls {
                     let vec = vec![$(&self.$idx as &dyn crate::ToSql),+];
 
                     vec_to_text(&vec)
+                }
+
+                fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
+                    let vec = vec![$(&self.$idx as &dyn crate::ToSql),+];
+
+                    vec_to_binary(&vec)
                 }
             }
 

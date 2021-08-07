@@ -7,13 +7,26 @@ impl crate::ToSql for Money {
         crate::pq::types::MONEY
     }
 
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/cash.c#L310
+     */
     fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
         self.to_string().to_text()
+    }
+
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/cash.c#L524
+     */
+    fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
+        self.inner().to_binary()
     }
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "money")))]
 impl crate::FromSql for Money {
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/cash.c#L97
+     */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let s = String::from_text(ty, raw)?;
 
@@ -21,7 +34,7 @@ impl crate::FromSql for Money {
     }
 
     /*
-     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/cash.c#L524
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/cash.c#L513
      */
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         let cents = i64::from_binary(ty, raw)?;

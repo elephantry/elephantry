@@ -25,13 +25,28 @@ impl crate::ToSql for Line {
         crate::pq::types::LINE
     }
 
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L996
+     */
     fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
         self.to_string().to_text()
+    }
+
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L1034
+     */
+    fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
+        let circle = crate::Circle::new(self.a, self.b, self.c);
+
+        circle.to_binary()
     }
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::FromSql for Line {
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L958
+     */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let circle = crate::Circle::from_text(ty, raw)?;
 
@@ -39,7 +54,7 @@ impl crate::FromSql for Line {
     }
 
     /*
-     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L1034
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L1011
      */
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         let circle = crate::Circle::from_binary(ty, raw)?;

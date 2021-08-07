@@ -25,13 +25,34 @@ impl crate::ToSql for Circle {
         crate::pq::types::CIRCLE
     }
 
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L4557
+     */
     fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
         self.to_string().to_text()
+    }
+
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L4603
+     */
+    fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
+        use byteorder::WriteBytesExt;
+
+        let mut buf = Vec::new();
+
+        buf.write_f64::<byteorder::BigEndian>(self.x)?;
+        buf.write_f64::<byteorder::BigEndian>(self.y)?;
+        buf.write_f64::<byteorder::BigEndian>(self.r)?;
+
+        Ok(Some(buf))
     }
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::FromSql for Circle {
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L4495
+     */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         lazy_static::lazy_static! {
             static ref REGEX: regex::Regex = regex::Regex::new(r"([\d\.]+)").unwrap();
@@ -49,7 +70,7 @@ impl crate::FromSql for Circle {
     }
 
     /*
-     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L4603
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L4579
      */
     fn from_binary(_: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         use byteorder::ReadBytesExt;

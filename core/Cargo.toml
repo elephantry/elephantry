@@ -34,6 +34,10 @@ optional = true
 version = "0.3"
 optional = true
 
+[dependencies.num]
+version = "0.4"
+optional = true
+
 [dependencies.chrono]
 version = "0.4"
 default-features = false
@@ -125,7 +129,7 @@ geo = ["geo-types", "elephantry-derive/geo"]
 json = ["serde_json", "elephantry-derive/json"]
 money = ["postgres_money", "elephantry-derive/money"]
 net = ["ipnetwork", "macaddr", "elephantry-derive/net"]
-numeric = ["bigdecimal", "elephantry-derive/numeric"]
+numeric = ["bigdecimal", "num", "elephantry-derive/numeric"]
 rocket = ["r2d2", "rocket_contrib"]
 # @see https://github.com/rust-lang/cargo/issues/5565
 #uuid = ["dep:uuid", "elephantry-derive/uuid"]

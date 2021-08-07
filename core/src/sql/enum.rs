@@ -1,3 +1,5 @@
+use crate::ToSql;
+
 /**
  * Trait to convert rust enum to [postgresql
  * enum](https://www.postgresql.org/docs/current/datatype-enum.html).
@@ -18,16 +20,30 @@ impl<E: Enum> crate::Composite for E {
         E::name()
     }
 
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/enum.c#L216
+     */
     fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
-        use crate::ToSql;
-
         format!("{:?}", self).to_text()
     }
 
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/enum.c#L110
+     */
+    fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
+        format!("{:?}", self).to_binary()
+    }
+
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/enum.c#L150
+     */
     fn from_text(_: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Box<Self>> {
         Self::from_text(crate::not_null(raw)?)
     }
 
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/enum.c#L17
+     */
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Box<Self>> {
         use crate::FromSql;
 

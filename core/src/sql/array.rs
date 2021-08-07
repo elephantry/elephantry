@@ -1,5 +1,5 @@
 use crate::pq::ToArray;
-use byteorder::ReadBytesExt;
+use byteorder::{ReadBytesExt, WriteBytesExt};
 use std::convert::TryInto;
 
 /**
@@ -102,6 +102,9 @@ impl<T: crate::FromSql> std::ops::Index<i32> for Array<T> {
 }
 
 impl<T: crate::FromSql> crate::FromSql for Array<T> {
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/arrayfuncs.c#L1012
+     */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let raw = crate::not_null(raw)?;
 
@@ -166,6 +169,9 @@ impl<T: crate::FromSql> crate::FromSql for Array<T> {
         Ok(array)
     }
 
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/arrayfuncs.c#L1547
+     */
     fn from_binary(_: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         use std::io::Read;
 
@@ -234,6 +240,9 @@ impl<T: crate::ToSql> crate::ToSql for Array<T> {
         self.elemtype.to_array()
     }
 
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/arrayfuncs.c#L172
+     */
     fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
         if self.data.is_empty() {
             return Ok(Some(b"{}\0".to_vec()));
@@ -263,7 +272,9 @@ impl<T: crate::ToSql> crate::ToSql for Array<T> {
         'outer: loop {
             data.resize(data.len() + self.ndim - 1 - j as usize, b'{');
 
-            let element = self.data[k].to_text()?.unwrap_or_else(|| b"null\0".to_vec());
+            let element = self.data[k]
+                .to_text()?
+                .unwrap_or_else(|| b"null\0".to_vec());
 
             data.extend_from_slice(&element[..element.len() - 1]);
             k += 1;
@@ -289,6 +300,33 @@ impl<T: crate::ToSql> crate::ToSql for Array<T> {
         data.push(b'\0');
 
         Ok(Some(data))
+    }
+
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/arrayfuncs.c#L1267
+     */
+    fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
+        let mut buf = Vec::new();
+
+        buf.write_i32::<byteorder::BigEndian>(self.ndim as i32)?;
+        buf.write_i32::<byteorder::BigEndian>(self.has_nulls as i32)?;
+        buf.write_i32::<byteorder::BigEndian>(self.ty().elementype().oid as i32)?;
+
+        for x in 0..self.ndim {
+            buf.write_i32::<byteorder::BigEndian>(self.dimensions[x])?;
+            buf.write_i32::<byteorder::BigEndian>(self.lower_bounds[x])?;
+        }
+
+        for d in &self.data {
+            if let Some(raw) = d.to_binary()? {
+                buf.write_i32::<byteorder::BigEndian>(raw.len() as i32)?;
+                buf.extend(&raw);
+            } else {
+                buf.write_i32::<byteorder::BigEndian>(-1)?;
+            }
+        }
+
+        Ok(Some(buf))
     }
 }
 
@@ -330,6 +368,10 @@ impl<T: crate::ToSql + Clone> crate::ToSql for Vec<T> {
 
     fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
         crate::sql::Array::from(self).to_text()
+    }
+
+    fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
+        crate::sql::Array::from(self).to_binary()
     }
 }
 

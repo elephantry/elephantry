@@ -17,6 +17,10 @@ pub trait Composite {
         crate::sql::record::vec_to_text(&self.to_vec())
     }
 
+    fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
+        crate::sql::record::vec_to_binary(&self.to_vec())
+    }
+
     /**
      * Create a new struct from SQL result in text format.
      */
@@ -55,6 +59,10 @@ impl<C: Composite> crate::ToSql for C {
 
     fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
         self.to_text()
+    }
+
+    fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
+        self.to_binary()
     }
 }
 

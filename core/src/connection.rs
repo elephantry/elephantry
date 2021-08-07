@@ -14,7 +14,7 @@ pub type PingStatus = libpq::ping::Status;
  */
 #[derive(Clone, Debug)]
 pub struct Connection {
-    connection: std::sync::Arc<std::sync::Mutex<libpq::Connection>>,
+    pub(crate) connection: std::sync::Arc<std::sync::Mutex<libpq::Connection>>,
 }
 
 extern "C" fn notice_processor(_arg: *mut std::ffi::c_void, message: *const i8) {
@@ -721,7 +721,7 @@ impl Connection {
         let field_names = projection.field_names();
 
         let query = format!(
-            "copy {} ({}) from stdin;",
+            "copy {} ({}) from stdin (format binary);",
             M::Structure::relation(),
             field_names.join(", "),
         );
@@ -750,9 +750,7 @@ impl Connection {
             data.push(b'\n');
         }
 
-        connection
-            .put_copy_data(&String::from_utf8(data)?)
-            .map_err(crate::Error::Copy)?;
+        libpq::v2::connection::put_copy_data(&connection, &data).map_err(crate::Error::Copy)?;
 
         connection.put_copy_end(None).map_err(crate::Error::Copy)?;
 

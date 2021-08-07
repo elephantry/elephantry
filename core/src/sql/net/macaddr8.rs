@@ -4,13 +4,26 @@ impl crate::ToSql for macaddr::MacAddr8 {
         crate::pq::types::MACADDR8
     }
 
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/mac8.c#L242
+     */
     fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
         self.to_string().to_text()
+    }
+
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/mac8.c#L295
+     */
+    fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
+        Ok(Some(self.into_array().to_vec()))
     }
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "net")))]
 impl crate::FromSql for macaddr::MacAddr8 {
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/mac8.c#L104
+     */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         crate::not_null(raw)?
             .parse()
@@ -18,7 +31,7 @@ impl crate::FromSql for macaddr::MacAddr8 {
     }
 
     /*
-     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/mac8.c#L295
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/mac8.c#L262
      */
     fn from_binary(_: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         use byteorder::ReadBytesExt;

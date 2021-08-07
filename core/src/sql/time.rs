@@ -11,20 +11,44 @@ impl crate::ToSql for Time {
         crate::pq::types::TIME
     }
 
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/date.c#L1235
+     */
     fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
         self.to_string().to_text()
+    }
+
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/date.c#L1281
+     */
+    fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
+        use byteorder::WriteBytesExt;
+
+        let usecs = self.hour() as i64 * 60 * 60 * 1_000_000
+            + self.minute() as i64 * 60 * 1_000_000
+            + self.second() as i64 * 1_000_000
+            + self.millisecond() as i64 * 1_000
+            + self.microsecond() as i64;
+
+        let mut buf = Vec::new();
+        buf.write_i64::<byteorder::BigEndian>(usecs)?;
+
+        Ok(Some(buf))
     }
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "time")))]
 impl crate::FromSql for Time {
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/date.c#L1170
+     */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let format = time::macros::format_description!("[hour]:[minute]:[second]");
         Time::parse(crate::not_null(raw)?, &format).map_err(|_| Self::error(ty, "time", raw))
     }
 
     /*
-     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/date.c#L1281
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/date.c#L1255
      */
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         let usec = i64::from_binary(ty, raw)?;
@@ -39,13 +63,32 @@ impl crate::ToSql for TimeTz {
         crate::pq::types::TIMETZ
     }
 
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/date.c#L2006
+     */
     fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
         format!("{}{}", self.0, self.1).to_text()
+    }
+
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/date.c#L2063
+     */
+    fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
+        use byteorder::WriteBytesExt;
+
+        let mut buf = self.0.to_binary()?.unwrap();
+
+        buf.write_i32::<byteorder::BigEndian>(-self.1.whole_seconds() as i32)?;
+
+        Ok(Some(buf))
     }
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "time")))]
 impl crate::FromSql for TimeTz {
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/date.c#L1971
+     */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let value = crate::not_null(raw)?;
 
@@ -71,7 +114,7 @@ impl crate::FromSql for TimeTz {
     }
 
     /*
-     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/date.c#L2063
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/date.c#L2027
      */
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         use byteorder::ReadBytesExt;

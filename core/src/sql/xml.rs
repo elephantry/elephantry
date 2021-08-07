@@ -4,6 +4,9 @@ impl crate::ToSql for xmltree::Element {
         crate::pq::types::XML
     }
 
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/xml.c#L336
+     */
     fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
         let mut vec = Vec::new();
 
@@ -13,17 +16,32 @@ impl crate::ToSql for xmltree::Element {
 
         Ok(Some(vec))
     }
+
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/xml.c#L418
+     */
+    fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
+        let mut buf = Vec::new();
+
+        self.write(&mut buf)
+            .map_err(|e| self.error("xmltree::Element", Some(&e.to_string())))?;
+
+        Ok(Some(buf))
+    }
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "xml")))]
 impl crate::FromSql for xmltree::Element {
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/xml.c#L258
+     */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         xmltree::Element::parse(crate::not_null(raw)?.as_bytes())
-            .map_err(|_| Self::error(ty, "sxd_document::Package", raw))
+            .map_err(|_| Self::error(ty, "xmltree::Element", raw))
     }
 
     /*
-     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/xml.c#L418
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/xml.c#L351
      */
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         let s = String::from_binary(ty, raw)?;

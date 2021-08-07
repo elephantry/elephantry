@@ -43,13 +43,33 @@ impl crate::ToSql for Point {
         crate::pq::types::POINT
     }
 
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L1800
+     */
     fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
         self.to_string().to_text()
+    }
+
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L1826
+     */
+    fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
+        use byteorder::WriteBytesExt;
+
+        let mut buf = Vec::new();
+
+        buf.write_f64::<byteorder::BigEndian>(self.0.x())?;
+        buf.write_f64::<byteorder::BigEndian>(self.0.y())?;
+
+        Ok(Some(buf))
     }
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::FromSql for Point {
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L1790
+     */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let coordinates = crate::from_sql::not_null(raw)?
             .parse::<crate::Coordinates>()
@@ -63,7 +83,7 @@ impl crate::FromSql for Point {
     }
 
     /*
-     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L1826
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L1811
      */
     fn from_binary(_: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         use byteorder::ReadBytesExt;

@@ -217,6 +217,34 @@ mod test {
 
                 Ok(())
             }
+
+            #[test]
+            fn to_binary() -> crate::Result {
+                let conn = crate::test::new_conn()?;
+
+                for (_, value) in &$tests {
+                    use crate::ToSql;
+                    use std::convert::TryInto;
+
+                    let result: crate::pq::Result = conn
+                        .connection
+                        .lock()
+                        .map_err(|e| crate::Error::Mutex(e.to_string()))?
+                        .exec_params(
+                            &format!("select $1::{}", stringify!($sql_type)),
+                            &[value.ty().oid],
+                            &[value.to_binary()?],
+                            &[crate::pq::Format::Binary],
+                            crate::pq::Format::Binary,
+                        )
+                        .try_into()?;
+                    let rows: crate::Rows<$rust_type> = result.into();
+
+                    assert_eq!(&rows.get(0), value);
+                }
+
+                Ok(())
+            }
         };
     }
 

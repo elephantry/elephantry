@@ -46,13 +46,35 @@ impl crate::ToSql for Box {
         crate::pq::types::BOX
     }
 
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L443
+     */
     fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
         self.to_string().to_text()
+    }
+
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L489
+     */
+    fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
+        use byteorder::WriteBytesExt;
+
+        let mut buf = Vec::new();
+
+        buf.write_f64::<byteorder::BigEndian>(self.0.max().x)?;
+        buf.write_f64::<byteorder::BigEndian>(self.0.max().y)?;
+        buf.write_f64::<byteorder::BigEndian>(self.0.min().x)?;
+        buf.write_f64::<byteorder::BigEndian>(self.0.min().y)?;
+
+        Ok(Some(buf))
     }
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::FromSql for Box {
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L413
+     */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let segment = crate::Segment::from_text(ty, raw)?;
 
@@ -60,7 +82,7 @@ impl crate::FromSql for Box {
     }
 
     /*
-     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L489
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L454
      */
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         let segment = crate::Segment::from_binary(ty, raw)?;

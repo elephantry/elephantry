@@ -55,13 +55,40 @@ impl crate::ToSql for Path {
         crate::pq::types::PATH
     }
 
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L1433
+     */
     fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
         self.to_string().to_text()
+    }
+
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L1485
+     */
+    fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
+        use byteorder::WriteBytesExt;
+
+        let mut buf = Vec::new();
+
+        buf.push(self.0.is_closed() as u8);
+
+        let points = self.0.clone().into_points();
+        buf.write_i32::<byteorder::BigEndian>(points.len() as i32)?;
+
+        for point in points {
+            buf.write_f64::<byteorder::BigEndian>(point.x())?;
+            buf.write_f64::<byteorder::BigEndian>(point.y())?;
+        }
+
+        Ok(Some(buf))
     }
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::FromSql for Path {
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L1364
+     */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let raw = crate::not_null(raw)?;
 
@@ -79,7 +106,7 @@ impl crate::FromSql for Path {
     }
 
     /*
-     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L1485
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L1447
      */
     fn from_binary(_: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         use byteorder::ReadBytesExt;

@@ -4,13 +4,26 @@ impl crate::ToSql for uuid::Uuid {
         crate::pq::types::UUID
     }
 
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/uuid.c#L42
+     */
     fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
         self.to_string().to_text()
+    }
+
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/uuid.c#L141
+     */
+    fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
+        Ok(Some(self.as_bytes().to_vec()))
     }
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "uuid")))]
 impl crate::FromSql for uuid::Uuid {
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/uuid.c#L53
+     */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         match uuid::Uuid::parse_str(crate::not_null(raw)?) {
             Ok(uuid) => Ok(uuid),

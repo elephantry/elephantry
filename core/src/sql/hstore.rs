@@ -48,9 +48,12 @@ impl std::ops::Deref for Hstore {
 
 impl crate::ToSql for crate::Hstore {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::types::TEXT
+        crate::pq::types::UNKNOWN
     }
 
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/contrib/hstore/hstore_io.c#L407
+     */
     fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
         let mut vec = Vec::new();
 
@@ -65,9 +68,40 @@ impl crate::ToSql for crate::Hstore {
 
         vec.join(", ").to_text()
     }
+
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/contrib/hstore/hstore_io.c#L1226
+     */
+    fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
+        use byteorder::WriteBytesExt;
+
+        let mut buf = Vec::new();
+
+        buf.write_i32::<byteorder::BigEndian>(self.len() as i32)?;
+
+        for (key, value) in self.iter() {
+            let mut k = key.to_text()?.unwrap();
+            k.pop();
+            buf.write_i32::<byteorder::BigEndian>(k.len() as i32)?;
+            buf.append(&mut k);
+
+            if let Some(mut v) = value.to_text()? {
+                v.pop();
+                buf.write_i32::<byteorder::BigEndian>(v.len() as i32)?;
+                buf.append(&mut v);
+            } else {
+                buf.write_i32::<byteorder::BigEndian>(-1)?;
+            }
+        }
+
+        Ok(Some(buf))
+    }
 }
 
 impl crate::FromSql for Hstore {
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/contrib/hstore/hstore_io.c#L1155
+     */
     fn from_text(_: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         lazy_static::lazy_static! {
             static ref REGEX: regex::Regex = regex::Regex::new(
@@ -91,7 +125,7 @@ impl crate::FromSql for Hstore {
     }
 
     /*
-     * https://github.com/postgres/postgres/blob/REL_12_0/contrib/hstore/hstore_io.c#L1226
+     * https://github.com/postgres/postgres/blob/REL_12_0/contrib/hstore/hstore_io.c#L427
      */
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         use byteorder::ReadBytesExt;

@@ -26,6 +26,10 @@ impl crate::ToSql for Type {
     fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
         self.name.to_text()
     }
+
+    fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
+        Ok(Some(self.oid.to_be_bytes().to_vec()))
+    }
 }
 
 lazy_static::lazy_static! {

@@ -143,6 +143,9 @@ macro_rules! caps {
 
 #[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::FromSql for Interval {
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/timestamp.c#L871
+     */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         lazy_static::lazy_static! {
             static ref REGEX: regex::Regex = regex::Regex::new(
@@ -176,7 +179,7 @@ impl crate::FromSql for Interval {
     }
 
     /*
-     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/timestamp.c#L994
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/timestamp.c#L969
      */
     fn from_binary(_: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         use byteorder::ReadBytesExt;
@@ -218,8 +221,34 @@ impl crate::ToSql for Interval {
         crate::pq::types::INTERVAL
     }
 
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/timestamp.c#L947
+     */
     fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
         self.to_string().to_text()
+    }
+
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/timestamp.c#L994
+     */
+    fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
+        use byteorder::WriteBytesExt;
+
+        let mut buf = Vec::new();
+
+        let usecs = self.hours as i64 * 60 * 60 * 1_000_000
+            + self.mins as i64 * 60 * 1_000_000
+            + self.secs as i64 * 1_000_000
+            + self.usecs as i64;
+        buf.write_i64::<byteorder::BigEndian>(usecs)?;
+
+        let days = self.days;
+        buf.write_i32::<byteorder::BigEndian>(days)?;
+
+        let months = self.months + self.years * 12;
+        buf.write_i32::<byteorder::BigEndian>(months)?;
+
+        Ok(Some(buf))
     }
 }
 

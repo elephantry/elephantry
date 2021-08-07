@@ -24,6 +24,9 @@ impl crate::ToSql for Bytea {
         crate::pq::types::BYTEA
     }
 
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varlena.c#L277
+     */
     fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
         let mut v = self.0.clone();
         v.push(0);
@@ -31,12 +34,18 @@ impl crate::ToSql for Bytea {
         Ok(Some(v))
     }
 
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varlena.c#L445
+     */
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
         Ok(Some(self.to_vec()))
     }
 }
 
 impl crate::FromSql for Bytea {
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varlena.c#L373
+     */
     fn from_text(_: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let x: &[_] = &['\\', 'x'];
         let string = crate::not_null(raw)?.trim_start_matches(x);
@@ -51,6 +60,9 @@ impl crate::FromSql for Bytea {
         Ok(v.into())
     }
 
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varlena.c#L464
+     */
     fn from_binary(_: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         Ok(crate::not_null(raw)?.to_vec().into())
     }
