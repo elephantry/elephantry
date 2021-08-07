@@ -259,7 +259,7 @@ fn is_public(ast: &syn::DeriveInput) -> bool {
 fn is_option(ty: &syn::Type) -> bool {
     let typepath = match ty {
         syn::Type::Path(typepath) => typepath,
-        _ => unimplemented!(),
+        _ => return false,
     };
 
     typepath.path.leading_colon.is_none()
