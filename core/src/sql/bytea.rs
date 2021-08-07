@@ -24,8 +24,11 @@ impl crate::ToSql for Bytea {
         crate::pq::types::BYTEA
     }
 
-    fn format(&self) -> crate::pq::Format {
-        crate::pq::Format::Binary
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+        let mut v = self.0.clone();
+        v.push(0);
+
+        Ok(Some(v))
     }
 
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {

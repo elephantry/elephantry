@@ -4,8 +4,8 @@ impl crate::ToSql for u8 {
         crate::pq::types::BIT
     }
 
-    fn format(&self) -> crate::pq::Format {
-        crate::pq::Format::Binary
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+        format!("{}", self).to_text()
     }
 
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
@@ -45,12 +45,15 @@ impl crate::ToSql for bit_vec::BitVec {
         crate::pq::types::VARBIT
     }
 
-    fn format(&self) -> crate::pq::Format {
-        crate::pq::Format::Binary
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L451
+     */
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+        format!("b{:?}", self).to_text()
     }
 
     /*
-     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L680
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L635
      */
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
         use bytes::BufMut;
@@ -81,6 +84,9 @@ impl crate::FromSql for bit_vec::BitVec {
         Ok(bits)
     }
 
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L680
+     */
     fn from_binary(_: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         use byteorder::ReadBytesExt;
 

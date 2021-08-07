@@ -4,6 +4,8 @@
 pub trait ToSql {
     /** The corresponding SQL type */
     fn ty(&self) -> crate::pq::Type;
+    /** Convert the value to text format */
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>>;
 
     /** Convert the value to the prefered format specified by `ToSql::format()` */
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
@@ -12,11 +14,6 @@ pub trait ToSql {
         } else {
             self.to_binary()
         }
-    }
-
-    /** Convert the value to text format */
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
-        unimplemented!()
     }
 
     /** Convert the value to binary format */

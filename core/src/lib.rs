@@ -204,15 +204,15 @@ mod test {
         ($sql_type:ident, $rust_type:ty, $tests:expr) => {
             #[test]
             fn to_text() -> crate::Result {
-                use std::collections::HashMap;
                 let conn = crate::test::new_conn()?;
 
                 for (_, value) in &$tests {
-                    let result = conn.query::<HashMap<String, String>>(
+                    let result = conn.query::<$rust_type>(
                         &format!("select $1::{}", stringify!($sql_type)),
                         &[value],
                     );
                     assert!(result.is_ok());
+                    assert_eq!(&result.unwrap().get(0), value);
                 }
 
                 Ok(())
