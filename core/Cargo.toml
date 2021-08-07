@@ -172,6 +172,10 @@ required-features = ["date", "numeric"]
 name = "10-transaction"
 required-features = ["date", "numeric"]
 
+[[example]]
+name = "12-copy"
+required-features = ["date", "numeric"]
+
 [package.metadata.docs.rs]
 all-features = true
 rustdoc-args = ["--cfg", "docsrs"]
