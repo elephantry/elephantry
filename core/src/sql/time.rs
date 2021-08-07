@@ -48,7 +48,6 @@ impl crate::ToSql for TimeTz {
 impl crate::FromSql for TimeTz {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let value = crate::not_null(raw)?;
-        dbg!(&value);
 
         let x = match value.find(|c| c == '+' || c == '-') {
             Some(x) => x,
