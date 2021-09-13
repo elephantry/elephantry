@@ -26,7 +26,17 @@ impl std::fmt::Display for Path {
             s.push_str(&format!("({}, {}),", coordinate.x(), coordinate.y()));
         }
 
-        write!(f, "{}", s.trim_end_matches(','))
+        if !self.is_closed() {
+            write!(f, "[")?;
+        }
+
+        write!(f, "{}", s.trim_end_matches(','))?;
+
+        if !self.is_closed() {
+            write!(f, "]")?;
+        }
+
+        Ok(())
     }
 }
 
@@ -53,11 +63,19 @@ impl crate::ToSql for Path {
 #[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::FromSql for Path {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        let coordinates = crate::not_null(raw)?
+        let raw = crate::not_null(raw)?;
+
+        let coordinates = raw
             .parse()
             .map_err(|_| Self::error(ty, "elephantry::Path", raw))?;
 
-        Ok(Self::new(&coordinates))
+        let mut path = Self::new(&coordinates);
+
+        if raw.chars().next() == Some('(') {
+            path.0.close();
+        }
+
+        Ok(path)
     }
 
     /*
@@ -67,7 +85,7 @@ impl crate::FromSql for Path {
         use byteorder::ReadBytesExt;
 
         let mut buf = crate::not_null(raw)?;
-        let _closed = buf.read_u8()?;
+        let closed = buf.read_u8()? == 1;
         let npts = buf.read_i32::<byteorder::BigEndian>()?;
         let mut coordinates = Vec::new();
 
@@ -79,7 +97,13 @@ impl crate::FromSql for Path {
             coordinates.push(coordinate);
         }
 
-        Ok(Self::new(&coordinates.into()))
+        let mut path = Self::new(&coordinates.into());
+
+        if closed {
+            path.0.close();
+        }
+
+        Ok(path)
     }
 }
 
@@ -90,7 +114,7 @@ mod test {
         crate::Path,
         [
             (
-                "'((0, 0), (10, 10), (10, 0), (0, 0))'",
+                "'[(0, 0), (10, 10), (10, 0), (0, 0)]'",
                 crate::Path::new(
                     &vec![
                         crate::Coordinate::new(0., 0.),
@@ -108,6 +132,18 @@ mod test {
                         crate::Coordinate::new(0., 0.),
                         crate::Coordinate::new(10., 10.),
                         crate::Coordinate::new(10., 0.),
+                    ]
+                    .into()
+                )
+            ),
+            (
+                "'((0, 0), (10, 10), (10, 0))'",
+                crate::Path::new(
+                    &vec![
+                        crate::Coordinate::new(0., 0.),
+                        crate::Coordinate::new(10., 10.),
+                        crate::Coordinate::new(10., 0.),
+                        crate::Coordinate::new(0., 0.),
                     ]
                     .into()
                 )
