@@ -123,7 +123,7 @@ impl std::fmt::Display for Interval {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "{} years {} months {} days {}:{}:{}.{}",
+            "{} years {} months {} days {}:{}:{}.{:06}",
             self.years, self.months, self.days, self.hours, self.mins, self.secs, self.usecs,
         )
     }
@@ -225,52 +225,22 @@ impl crate::ToSql for Interval {
 
 #[cfg(test)]
 mod test {
-    use crate::FromSql;
-
-    #[test]
-    fn from_text() {
-        let tests = vec![
-            ("00:00:00", crate::Interval::new(0, 0, 0, 0, 0, 0, 0)),
-            ("1 year", crate::Interval::new(0, 12, 0, 0, 0, 0, 0)),
-            ("1 years", crate::Interval::new(1, 0, 0, 0, 0, 0, 0)),
-            ("1 month", crate::Interval::new(0, 1, 0, 0, 0, 0, 0)),
-            ("1 year 10 days", crate::Interval::new(1, 0, 10, 0, 0, 0, 0)),
+    crate::sql_test!(
+        interval,
+        crate::Interval,
+        [
+            ("'00:00:00'", crate::Interval::new(0, 0, 0, 0, 0, 0, 0)),
+            ("'1 year'", crate::Interval::new(0, 12, 0, 0, 0, 0, 0)),
+            ("'1 years'", crate::Interval::new(1, 0, 0, 0, 0, 0, 0)),
+            ("'1 month'", crate::Interval::new(0, 1, 0, 0, 0, 0, 0)),
             (
-                "1 year 2 months 3 days 04:05:06.000007",
+                "'1 year 10 days'",
+                crate::Interval::new(1, 0, 10, 0, 0, 0, 0)
+            ),
+            (
+                "'1 year 2 months 3 days 04:05:06.000007'",
                 crate::Interval::new(1, 2, 3, 4, 5, 6, 7),
             ),
-        ];
-
-        for (value, expected) in tests {
-            assert_eq!(
-                crate::Interval::from_text(&crate::pq::types::INTERVAL, Some(&value)).unwrap(),
-                expected,
-            );
-        }
-    }
-
-    #[test]
-    fn from_binary() {
-        let tests = vec![
-            (
-                [0, 0, 0, 3, 48, 151, 149, 151, 0, 0, 0, 0, 0, 0, 0, 0],
-                crate::Interval::new(0, 0, 0, 3, 48, 20, 142487),
-            ),
-            (
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 3, 50],
-                crate::Interval::new(68, 2, 4, 0, 0, 0, 0),
-            ),
-            (
-                [0, 0, 0, 3, 108, 139, 192, 128, 0, 0, 0, 3, 0, 0, 0, 14],
-                crate::Interval::new(1, 2, 3, 4, 5, 6, 0),
-            ),
-        ];
-
-        for (value, expected) in tests {
-            assert_eq!(
-                crate::Interval::from_binary(&crate::pq::types::INTERVAL, Some(&value),).unwrap(),
-                expected,
-            );
-        }
-    }
+        ]
+    );
 }
