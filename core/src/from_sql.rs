@@ -162,16 +162,6 @@ impl FromSql for String {
     }
 }
 
-impl<T: FromSql> FromSql for Vec<T> {
-    fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        Ok(crate::Array::from_text(ty, raw)?.into())
-    }
-
-    fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
-        Ok(crate::Array::from_binary(ty, raw)?.into())
-    }
-}
-
 impl FromSql for () {
     fn from_text(_: &crate::pq::Type, _: Option<&str>) -> crate::Result<Self> {
         Ok(())

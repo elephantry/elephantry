@@ -239,6 +239,7 @@ pub fn sql_to_rust(ty: &crate::pq::Type) -> String {
 
 pub(crate) trait ToArray {
     fn to_array(&self) -> Self;
+    fn elementype(&self) -> Self;
 }
 
 impl ToArray for Type {
@@ -314,6 +315,17 @@ impl ToArray for Type {
             types::XID => types::XID_ARRAY,
             types::XML => types::XML_ARRAY,
             _ => self.clone(),
+        }
+    }
+
+    fn elementype(&self) -> Self {
+        use std::convert::TryFrom;
+
+        match self.kind {
+            crate::pq::types::Kind::Array(oid) => {
+                crate::pq::Type::try_from(oid).unwrap_or(crate::pq::types::UNKNOWN)
+            }
+            _ => crate::pq::types::UNKNOWN,
         }
     }
 }

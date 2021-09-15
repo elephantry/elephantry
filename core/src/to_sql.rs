@@ -141,39 +141,6 @@ impl<T: ToSql> ToSql for Option<T> {
     }
 }
 
-impl<T: ToSql> ToSql for Vec<T> {
-    fn ty(&self) -> crate::pq::Type {
-        use crate::pq::ToArray;
-
-        match self.get(0) {
-            Some(data) => data.ty().to_array(),
-            None => crate::pq::types::UNKNOWN,
-        }
-    }
-
-    fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
-        let mut data = vec![b'{'];
-
-        for x in self {
-            let element = match x.to_sql()? {
-                Some(element) => element,
-                None => b"null\0".to_vec(),
-            };
-
-            data.extend_from_slice(&element[..element.len() - 1]);
-            data.push(b',');
-        }
-
-        if data.last() == Some(&b',') {
-            data.pop();
-        }
-
-        data.extend_from_slice(b"}\0");
-
-        Ok(Some(data))
-    }
-}
-
 impl ToSql for () {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::UNKNOWN
@@ -181,24 +148,5 @@ impl ToSql for () {
 
     fn to_sql(&self) -> crate::Result<Option<Vec<u8>>> {
         Ok(None)
-    }
-}
-
-#[cfg(test)]
-mod test {
-    use crate::ToSql;
-
-    #[test]
-    fn vec_to_sql() {
-        let vec = vec![1, 2, 3];
-
-        assert_eq!(vec.to_sql().unwrap(), Some(b"{1,2,3}\0".to_vec()));
-    }
-
-    #[test]
-    fn empty_vec() {
-        let vec = Vec::<String>::new();
-
-        assert_eq!(vec.to_sql().unwrap(), Some(b"{}\0".to_vec()));
     }
 }
