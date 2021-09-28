@@ -7,7 +7,7 @@ pub enum Error {
     Async(String),
     /** Configuration error */
     #[cfg(feature = "config-support")]
-    #[error("Config error: {0}")]
+    #[error(transparent)]
     Config(#[from] config::ConfigError),
     /** Connection error */
     #[error("{message}")]
@@ -29,7 +29,7 @@ pub enum Error {
     #[error("{0}")]
     Inspect(String),
     /** Input/Output error */
-    #[error("I/O error: {0}")]
+    #[error(transparent)]
     Io(#[from] std::io::Error),
     /** Our result set require an extra field to build the entity */
     #[error("Missing field {0}")]
@@ -44,10 +44,10 @@ pub enum Error {
     #[error("{0}")]
     Parse(String),
     /** Parse bool error */
-    #[error("{0}")]
+    #[error(transparent)]
     ParseBoolError(#[from] std::str::ParseBoolError),
     /** Parse int error */
-    #[error("{0}")]
+    #[error(transparent)]
     ParseIntError(#[from] std::num::ParseIntError),
     /** Ping error */
     #[error("Ping error: {0:?}")]
@@ -66,10 +66,10 @@ pub enum Error {
         message: Option<String>,
     },
     /** UTF8 error */
-    #[error("Invalid utf8 value: {0}")]
+    #[error(transparent)]
     Utf8(#[from] std::string::FromUtf8Error),
     /** XML error */
     #[cfg(feature = "xml")]
-    #[error("Xml error: {0}")]
+    #[error(transparent)]
     Xml(#[from] xmltree::Error),
 }
