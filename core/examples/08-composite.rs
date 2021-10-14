@@ -1,4 +1,4 @@
-#[derive(Debug, elephantry::Composite)]
+#[derive(Clone, Debug, elephantry::Composite)]
 pub struct Department {
     department_id: i32,
     name: String,
