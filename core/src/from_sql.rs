@@ -87,6 +87,16 @@ number!(i16, read_i16);
 number!(i32, read_i32);
 number!(i64, read_i64);
 
+impl FromSql for u16 {
+    fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
+        i32::from_text(ty, raw).map(|x| x as u16)
+    }
+
+    fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
+        i32::from_binary(ty, raw).map(|x| x as u16)
+    }
+}
+
 impl FromSql for u32 {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         i64::from_text(ty, raw).map(|x| x as u32)
@@ -192,6 +202,8 @@ mod test {
     crate::sql_test!(float8, f64, [(1., 1.), (-1., -1.), (2.1, 2.1)]);
 
     crate::sql_test!(int2, i16, [(i16::MAX, i16::MAX), (1, 1), (0, 0), (-1, -1),]);
+
+    crate::sql_test!(int, u16, [(u16::MAX, u16::MAX), (1, 1), (0, 0)]);
 
     crate::sql_test!(int4, i32, [(i32::MAX, i32::MAX), (1, 1), (0, 0), (-1, -1),]);
 

@@ -37,7 +37,7 @@ for row in &rows {
 #[elephantry(model = "Model", structure = "Structure")]
 struct Entity {
     #[elephantry(pk)]
-    id: u32,
+    id: u16,
     deleted: bool,
 }
 
