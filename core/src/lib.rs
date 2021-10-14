@@ -5,50 +5,51 @@
 
 /*!
  *
- * | SQL type                    | Rust type                | Feature |
- * |-----------------------------|--------------------------|---------|
- * | `bigint`/`int8`             | `i64`                    |         |
- * | `bit`                       | `u8`                     | bit     |
- * | `bit varying`               | `bit_vec::BitVec`        | bit     |
- * | `boolean`                   | `bool`                   |         |
- * | `box`                       | `elephantry::Box`        | geo     |
- * | `bytea`                     | `elephantry::Bytea`      |         |
- * | `char`                      | `char`                   |         |
- * | `varchar`                   | `String`                 |         |
- * | `cidr`                      | `ipnetwork::IpNetwork`   | net     |
- * | `circle`                    | `elephantry::Circle`     | geo     |
- * | `date`                      | `chrono::NaiveDate`      | date    |
- * | `double precision`/`float8` | `f64`                    |         |
- * | `hstore`                    | `elephantry::Hstore`     |         |
- * | `inet`                      | `std::net::IpAddr`       | net     |
- * | `integer`/`int4`            | `i32`                    |         |
- * | `interval`                  | `elephantry::Interval`   | date    |
- * | `json`                      | `serde_json::Value`      | json    |
- * | `jsonb`                     | `elephantry::Jsonb`      | json    |
- * | `line`                      | `elephantry::Line`       | geo     |
- * | `lseg`                      | `elephantry::Segment`    | geo     |
- * | `null`                      | `()`                     |         |
- * | `macaddr`                   | `macaddr::MacAddr6`      | net     |
- * | `macaddr8`                  | `macaddr::MacAddr8`      | net     |
- * | `money`                     | `f32`                    |         |
- * | `numeric`                   | `bigdecimal::BigDecimal` | numeric |
- * | `path`                      | `elephantry::Path`       | geo     |
- * | `point`                     | `elephantry::Point`      | geo     |
- * | `polygon`                   | `elephantry::Polygon`    | geo     |
- * | `real`/`float4`             | `f32`                    |         |
- * | `record`                    | `tuple`                  |         |
- * | `smallint`/`int2`           | `i16`                    |         |
- * | `text`                      | `String`                 |         |
- * | `time`                      | `elephantry::Time`       | time    |
- * | `timetz`                    | `elephantry::TimeTz`     | time    |
- * | `timestamp`                 | `chrono::NaiveDateTime`  | date    |
- * | `timestamptz`               | `chrono::DateTime`       | date    |
- * | `uuid`                      | `uuid::Uuid`             | uuid    |
- * | `xml`                       | `xmltree::Element`       | xml     |
- * | `[x, y)`                    | `std::ops::Range`        |         |
- * | `[x,)`                      | `std::ops::RangeFrom`    |         |
- * | `[,y)`                      | `std::ops::RangeTo`      |         |
- * | `(,)`                       | `std::ops::RangeFull`    |         |
+ * | SQL type                    | Rust type                | Feature    |
+ * |-----------------------------|--------------------------|------------|
+ * | `bigint`/`int8`             | `i64`                    |            |
+ * | `bit`                       | `u8`                     | bit        |
+ * | `bit varying`               | `bit_vec::BitVec`        | bit        |
+ * | `boolean`                   | `bool`                   |            |
+ * | `box`                       | `elephantry::Box`        | geo        |
+ * | `bytea`                     | `elephantry::Bytea`      |            |
+ * | `char`                      | `char`                   |            |
+ * | `varchar`                   | `String`                 |            |
+ * | `cidr`                      | `ipnetwork::IpNetwork`   | net        |
+ * | `circle`                    | `elephantry::Circle`     | geo        |
+ * | `date`                      | `chrono::NaiveDate`      | date       |
+ * | `double precision`/`float8` | `f64`                    |            |
+ * | `hstore`                    | `elephantry::Hstore`     |            |
+ * | `inet`                      | `std::net::IpAddr`       | net        |
+ * | `integer`/`int4`            | `i32`                    |            |
+ * | `interval`                  | `elephantry::Interval`   | date       |
+ * | `json`                      | `serde_json::Value`      | json       |
+ * | `jsonb`                     | `elephantry::Jsonb`      | json       |
+ * | `line`                      | `elephantry::Line`       | geo        |
+ * | `lseg`                      | `elephantry::Segment`    | geo        |
+ * | `null`                      | `()`                     |            |
+ * | `macaddr`                   | `macaddr::MacAddr6`      | net        |
+ * | `macaddr8`                  | `macaddr::MacAddr8`      | net        |
+ * | `money`                     | `f32`                    |            |
+ * | `multirange`                | `elephantry::Multirange` | multirange |
+ * | `numeric`                   | `bigdecimal::BigDecimal` | numeric    |
+ * | `path`                      | `elephantry::Path`       | geo        |
+ * | `point`                     | `elephantry::Point`      | geo        |
+ * | `polygon`                   | `elephantry::Polygon`    | geo        |
+ * | `real`/`float4`             | `f32`                    |            |
+ * | `record`                    | `tuple`                  |            |
+ * | `smallint`/`int2`           | `i16`                    |            |
+ * | `text`                      | `String`                 |            |
+ * | `time`                      | `elephantry::Time`       | time       |
+ * | `timetz`                    | `elephantry::TimeTz`     | time       |
+ * | `timestamp`                 | `chrono::NaiveDateTime`  | date       |
+ * | `timestamptz`               | `chrono::DateTime`       | date       |
+ * | `uuid`                      | `uuid::Uuid`             | uuid       |
+ * | `xml`                       | `xmltree::Element`       | xml        |
+ * | `[x, y)`                    | `std::ops::Range`        |            |
+ * | `[x,)`                      | `std::ops::RangeFrom`    |            |
+ * | `[,y)`                      | `std::ops::RangeTo`      |            |
+ * | `(,)`                       | `std::ops::RangeFull`    |            |
  */
 
 pub mod config;

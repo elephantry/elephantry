@@ -130,6 +130,7 @@ geo = ["geo-types", "elephantry-derive/geo"]
 json = ["serde_json", "elephantry-derive/json"]
 money = ["postgres_money", "elephantry-derive/money"]
 net = ["ipnetwork", "macaddr", "elephantry-derive/net"]
+multirange = ["libpq/v14"]
 numeric = ["bigdecimal", "num", "elephantry-derive/numeric"]
 rocket = ["r2d2", "rocket_contrib"]
 # @see https://github.com/rust-lang/cargo/issues/5565

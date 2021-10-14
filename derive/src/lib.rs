@@ -62,6 +62,8 @@ pub(crate) fn check_type(ty: &syn::Type) -> syn::Result<()> {
         "geo",
         #[cfg(feature = "json")]
         "json",
+        #[cfg(feature = "multirange")]
+        "multirange",
         #[cfg(feature = "net")]
         "net",
         #[cfg(feature = "numeric")]
@@ -89,6 +91,7 @@ pub(crate) fn check_type(ty: &syn::Type) -> syn::Result<()> {
         ("geo", "elephantry::Polygon"),
         ("geo", "elephantry::Segment"),
         ("json", "serde_json::value::Value"),
+        ("multirange", "elephantry::Multirange"),
         ("net", "ipnetwork::IpNetwork"),
         ("net", "macaddr::MacAddr6"),
         ("net", "macaddr::MacAddr8"),

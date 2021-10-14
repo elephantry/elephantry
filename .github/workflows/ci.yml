@@ -56,8 +56,10 @@ jobs:
       - name: Install postgreSQL (Linux)
         if: runner.os == 'Linux'
         run: |
+          sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt focal-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+          curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
           sudo apt-get update
-          sudo apt-get install -y libpq-dev postgresql
+          sudo apt-get install -y libpq-dev postgresql-14
           sudo service postgresql start && sleep 3
           sudo -u postgres psql --command "ALTER USER postgres PASSWORD 'root';"
 

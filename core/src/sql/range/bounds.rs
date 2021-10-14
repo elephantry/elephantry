@@ -277,7 +277,7 @@ impl<T: crate::FromSql> crate::FromSql for Bounds<T> {
             match raw.chars().next() {
                 Some('[') => Bound::Included(start),
                 Some('(') => Bound::Excluded(start),
-                _ => panic!(),
+                _ => return Err(Self::error(ty, raw)),
             }
         };
 
@@ -294,7 +294,7 @@ impl<T: crate::FromSql> crate::FromSql for Bounds<T> {
             match raw.chars().last() {
                 Some(']') => Bound::Included(end),
                 Some(')') => Bound::Excluded(end),
-                _ => panic!(),
+                _ => return Err(Self::error(ty, raw)),
             }
         };
 

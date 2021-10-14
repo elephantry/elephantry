@@ -1,5 +1,6 @@
 # Next
 
+- Adds multirange support;
 - `Entity` trait is no longer automatically impl for type impl `FromSql` +
     `ToSql`. You need to impl the `entity::Simple` empty trait. As a
     counterpart, you can use nested entity, see the `07-relation` example;

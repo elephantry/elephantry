@@ -81,6 +81,9 @@ elephantry.delete_where::<Model>("deleted = $1", &[&true])?;
     type;
 - `json` — adds support for
     [json](https://www.postgresql.org/docs/current/datatype-json.html) type;
+- `multirange` — adds support for
+    [multirange](https://www.postgresql.org/docs/14/rangetypes.html) type
+    (postgresql >= 14);
 - `money` — adds support for
     [money](https://www.postgresql.org/docs/current/datatype-money.html) type;
 - `net` — adds support for

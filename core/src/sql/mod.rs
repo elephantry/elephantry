@@ -16,6 +16,8 @@ mod json;
 mod jsonb;
 #[cfg(feature = "money")]
 mod money;
+#[cfg(feature = "multirange")]
+mod multirange;
 #[cfg(feature = "net")]
 mod net;
 #[cfg(feature = "numeric")]
@@ -45,5 +47,7 @@ pub use hstore::*;
 pub use jsonb::*;
 #[cfg(feature = "money")]
 pub use money::*;
+#[cfg(feature = "multirange")]
+pub use multirange::*;
 #[cfg(feature = "net")]
 pub use net::*;
