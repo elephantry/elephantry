@@ -716,6 +716,7 @@ impl Connection {
         M: crate::Model<'m>,
     {
         use crate::Entity;
+        use byteorder::WriteBytesExt;
 
         let projection = M::default_projection();
         let field_names = projection.field_names();
@@ -732,23 +733,33 @@ impl Connection {
             .lock()
             .map_err(|e| crate::Error::Mutex(e.to_string()))?;
 
-        let null = b"\\N\0".to_vec();
-        let mut data = Vec::new();
+        // Signature
+        let mut data = vec![
+            b'P', b'G', b'C', b'O', b'P', b'Y', b'\n', 255, b'\r', b'\n', b'\0',
+        ];
+        // Flags field
+        data.write_i32::<byteorder::BigEndian>(0)?;
+        // Header extension area length
+        data.write_i32::<byteorder::BigEndian>(0)?;
 
         for entity in entities {
+            data.write_i16::<byteorder::BigEndian>(field_names.len() as i16)?;
+
             for field in &field_names {
                 let value = match entity.get(field) {
-                    Some(value) => value.to_text()?,
+                    Some(value) => value.to_binary()?,
                     None => None,
                 };
 
-                data.extend_from_slice(&value.unwrap_or_else(|| null.clone()));
-                data.pop();
-                data.push(b'\t');
+                if let Some(value) = value {
+                    data.write_i32::<byteorder::BigEndian>(value.len() as i32)?;
+                    data.extend_from_slice(&value);
+                } else {
+                    data.write_i32::<byteorder::BigEndian>(-1)?;
+                }
             }
-            data.pop();
-            data.push(b'\n');
         }
+        data.write_i16::<byteorder::BigEndian>(-1)?;
 
         libpq::v2::connection::put_copy_data(&connection, &data).map_err(crate::Error::Copy)?;
 
