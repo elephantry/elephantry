@@ -74,7 +74,20 @@ number!(FLOAT8, f64, write_f64);
 number!(INT2, i16, write_i16);
 number!(INT4, i32, write_i32);
 number!(INT8, i64, write_i64);
-number!(INT8, u32, write_u32);
+
+impl ToSql for u32 {
+    fn ty(&self) -> crate::pq::Type {
+        crate::pq::types::INT8
+    }
+
+    fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
+        (*self as i64).to_binary()
+    }
+
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+        (*self as i64).to_text()
+    }
+}
 
 impl ToSql for bool {
     fn ty(&self) -> crate::pq::Type {
