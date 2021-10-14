@@ -68,9 +68,7 @@ impl crate::ToSql for Path {
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
         use byteorder::WriteBytesExt;
 
-        let mut buf = Vec::new();
-
-        buf.push(self.0.is_closed() as u8);
+        let mut buf = vec![self.0.is_closed() as u8];
 
         let points = self.0.clone().into_points();
         buf.write_i32::<byteorder::BigEndian>(points.len() as i32)?;
@@ -98,7 +96,7 @@ impl crate::FromSql for Path {
 
         let mut path = Self::new(&coordinates);
 
-        if raw.chars().next() == Some('(') {
+        if raw.starts_with('(') {
             path.0.close();
         }
 
