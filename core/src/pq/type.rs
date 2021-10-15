@@ -243,10 +243,24 @@ pub fn sql_to_rust(ty: &crate::pq::Type) -> String {
 
 pub(crate) trait ToArray {
     fn to_array(&self) -> Self;
+    fn to_range(&self) -> Self;
     fn elementype(&self) -> Self;
 }
 
 impl ToArray for Type {
+    fn to_range(&self) -> Self {
+        match *self {
+            types::ANY => types::ANY_RANGE,
+            types::INT4 => types::INT4_RANGE,
+            types::INT8 => types::INT8_RANGE,
+            types::NUMERIC => types::NUM_RANGE,
+            types::TIMESTAMP => types::TS_RANGE,
+            types::TIMESTAMPTZ => types::TSTZ_RANGE,
+            types::DATE => types::DATE_RANGE,
+            _ => self.clone(),
+        }
+    }
+
     fn to_array(&self) -> Self {
         match *self {
             types::ACLITEM => types::ACLITEM_ARRAY,
