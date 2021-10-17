@@ -31,12 +31,12 @@ pub(crate) fn vec_to_binary(vec: &[&dyn crate::ToSql]) -> crate::Result<Option<V
     buf.write_i32::<byteorder::BigEndian>(vec.len() as i32)?;
 
     for elem in vec {
-        let column_type = elem.ty().to_binary()?.unwrap();
-        buf.extend_from_slice(&column_type);
+        let mut column_type = elem.ty().to_binary()?.unwrap();
+        buf.append(&mut column_type);
 
-        if let Some(raw) = elem.to_binary()? {
+        if let Some(mut raw) = elem.to_binary()? {
             buf.write_i32::<byteorder::BigEndian>(raw.len() as i32)?;
-            buf.extend_from_slice(&raw);
+            buf.append(&mut raw);
         } else {
             buf.write_i32::<byteorder::BigEndian>(-1)?;
         }

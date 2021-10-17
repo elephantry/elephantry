@@ -272,11 +272,12 @@ impl<T: crate::ToSql> crate::ToSql for Array<T> {
         'outer: loop {
             data.resize(data.len() + self.ndim - 1 - j as usize, b'{');
 
-            let element = self.data[k]
+            let mut element = self.data[k]
                 .to_text()?
                 .unwrap_or_else(|| b"null\0".to_vec());
+            element.pop(); // removes \0
 
-            data.extend_from_slice(&element[..element.len() - 1]);
+            data.append(&mut element);
             k += 1;
 
             for i in (0..self.ndim).rev() {
@@ -446,6 +447,6 @@ mod test {
     crate::sql_test!(
         _varchar,
         Vec<Option<String>>,
-        [("'{str, null}'", vec![Some("str".to_string()), None])]
+        [("'{str, null, \'\'null\'\'}'", vec![Some("str".to_string()), None, Some("null".to_string())])]
     );
 }

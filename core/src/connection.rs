@@ -751,9 +751,9 @@ impl Connection {
                     None => None,
                 };
 
-                if let Some(value) = value {
+                if let Some(mut value) = value {
                     data.write_i32::<byteorder::BigEndian>(value.len() as i32)?;
-                    data.extend_from_slice(&value);
+                    data.append(&mut value);
                 } else {
                     data.write_i32::<byteorder::BigEndian>(-1)?;
                 }

@@ -159,7 +159,7 @@ fn flat_map(attrs: &[syn::Attribute]) -> syn::Result<Vec<syn::NestedMeta>> {
     let mut items = Vec::new();
 
     for attr in attrs {
-        items.extend_from_slice(&meta_items(attr)?);
+        items.append(&mut meta_items(attr)?);
     }
 
     Ok(items)
