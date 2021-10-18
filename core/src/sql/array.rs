@@ -147,7 +147,7 @@ impl<T: crate::FromSql> crate::FromSql for Array<T> {
                             has_nulls = true;
                             None
                         } else {
-                            Some(current.as_str())
+                            Some(current.trim_matches('\''))
                         };
                         data.push(T::from_text(&elemtype, value)?);
                         current = String::new();
@@ -214,11 +214,15 @@ impl<T: crate::FromSql> crate::FromSql for Array<T> {
                 let mut buf = vec![0; len];
                 raw.read_exact(buf.as_mut_slice())?;
 
+                if buf.get(0) == Some(&b'\'') || buf.last() == Some(&b'\'') {
+                    buf.remove(0);
+                    buf.pop();
+                }
+
                 Some(buf)
             };
 
             let element = T::from_sql(&elemtype, crate::pq::Format::Binary, value.as_deref())?;
-
             data.push(element);
         }
 
@@ -272,12 +276,22 @@ impl<T: crate::ToSql> crate::ToSql for Array<T> {
         'outer: loop {
             data.resize(data.len() + self.ndim - 1 - j as usize, b'{');
 
-            let mut element = self.data[k]
-                .to_text()?
-                .unwrap_or_else(|| b"null\0".to_vec());
-            element.pop(); // removes \0
+            let element = &self.data[k];
 
-            data.append(&mut element);
+            let mut raw = element.to_text()?
+                .map(|mut x| {
+                    x.pop(); // removes \0
+
+                    if element.ty().is_text() {
+                        x.insert(0, b'\'');
+                        x.push(b'\'');
+                    }
+
+                    x
+                })
+                .unwrap_or_else(|| b"null".to_vec());
+
+            data.append(&mut raw);
             k += 1;
 
             for i in (0..self.ndim).rev() {
@@ -447,6 +461,6 @@ mod test {
     crate::sql_test!(
         _varchar,
         Vec<Option<String>>,
-        [("'{str, null, \'\'null\'\'}'", vec![Some("str".to_string()), None, Some("null".to_string())])]
+        [("'{str, null, \'\'null\'\', \'\'abcd\'\'}'", vec![Some("str".to_string()), None, Some("null".to_string()), Some("abcd".to_string())])]
     );
 }

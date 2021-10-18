@@ -245,6 +245,7 @@ pub(crate) trait ToArray {
     fn to_array(&self) -> Self;
     fn to_range(&self) -> Self;
     fn elementype(&self) -> Self;
+    fn is_text(&self) -> bool;
 }
 
 impl ToArray for Type {
@@ -345,5 +346,9 @@ impl ToArray for Type {
             }
             _ => crate::pq::types::UNKNOWN,
         }
+    }
+
+    fn is_text(&self) -> bool {
+        self == &types::TEXT || self == &types::VARCHAR
     }
 }
