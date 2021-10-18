@@ -53,7 +53,7 @@ impl std::ops::Deref for Result {
     }
 }
 
-impl std::convert::TryFrom<libpq::Result> for Result {
+impl TryFrom<libpq::Result> for Result {
     type Error = crate::Error;
 
     fn try_from(inner: libpq::Result) -> crate::Result<Self> {

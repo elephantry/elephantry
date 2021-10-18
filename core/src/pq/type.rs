@@ -338,8 +338,6 @@ impl ToArray for Type {
     }
 
     fn elementype(&self) -> Self {
-        use std::convert::TryFrom;
-
         match self.kind {
             crate::pq::types::Kind::Array(oid) => {
                 crate::pq::Type::try_from(oid).unwrap_or(crate::pq::types::UNKNOWN)

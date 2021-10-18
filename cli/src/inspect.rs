@@ -101,8 +101,6 @@ pub fn relation(
 }
 
 fn column_type(column: &elephantry::inspect::Column) -> String {
-    use std::convert::TryFrom;
-
     let ty = if let Ok(ty) = elephantry::pq::types::Type::try_from(column.oid) {
         match ty.kind {
             elephantry::pq::types::Kind::Array(_) => {

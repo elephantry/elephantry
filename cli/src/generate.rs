@@ -198,8 +198,6 @@ pub struct {name} {{
 }
 
 fn ty_to_rust(column: &elephantry::inspect::Column) -> crate::Result<String> {
-    use std::convert::TryFrom;
-
     let mut rty = match elephantry::pq::Type::try_from(column.oid) {
         Ok(ty) => elephantry::pq::sql_to_rust(&ty),
         Err(err) => {

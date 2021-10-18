@@ -96,8 +96,6 @@ impl<'a> Tuple<'a> {
     }
 
     fn field_type(&self, n: usize) -> crate::pq::Type {
-        use std::convert::TryFrom;
-
         let oid = self.result.field_type(n);
 
         match crate::pq::Type::try_from(oid) {

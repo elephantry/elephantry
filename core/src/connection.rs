@@ -1,6 +1,5 @@
 use crate::Structure;
 use std::collections::HashMap;
-use std::convert::TryInto;
 
 /**
  * Result type of [`ping`] function.

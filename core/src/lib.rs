@@ -163,8 +163,6 @@ mod test {
     macro_rules! sql_test_from {
         ($sql_type:ident, $rust_type:ty, $tests:expr) => {
             use std::collections::HashMap;
-            #[allow(unused_imports)]
-            use std::convert::TryFrom;
 
             #[test]
             fn from_text() -> crate::Result {
@@ -224,7 +222,6 @@ mod test {
 
                 for (_, value) in &$tests {
                     use crate::ToSql;
-                    use std::convert::TryInto;
 
                     let result: crate::pq::Result = conn
                         .connection

@@ -1,6 +1,5 @@
 use crate::pq::ToArray;
 use byteorder::{ReadBytesExt, WriteBytesExt};
-use std::convert::TryInto;
 
 /**
  * Rust type for [array](https://www.postgresql.org/docs/current/arrays.html).

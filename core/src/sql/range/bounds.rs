@@ -14,7 +14,7 @@ impl<'a, T> From<&'a std::ops::Range<T>> for Bounds<&'a T> {
     }
 }
 
-impl<T> std::convert::TryFrom<Bounds<T>> for std::ops::Range<T> {
+impl<T> TryFrom<Bounds<T>> for std::ops::Range<T> {
     type Error = ();
 
     fn try_from(value: Bounds<T>) -> Result<Self, Self::Error> {
@@ -40,7 +40,7 @@ impl<'a, T> From<&'a std::ops::RangeFrom<T>> for Bounds<&'a T> {
     }
 }
 
-impl<T> std::convert::TryFrom<Bounds<T>> for std::ops::RangeFrom<T> {
+impl<T> TryFrom<Bounds<T>> for std::ops::RangeFrom<T> {
     type Error = ();
 
     fn try_from(value: Bounds<T>) -> Result<Self, Self::Error> {
@@ -66,7 +66,7 @@ impl<'a, T> From<&'a std::ops::RangeTo<T>> for Bounds<&'a T> {
     }
 }
 
-impl<T> std::convert::TryFrom<Bounds<T>> for std::ops::RangeTo<T> {
+impl<T> TryFrom<Bounds<T>> for std::ops::RangeTo<T> {
     type Error = ();
 
     fn try_from(value: Bounds<T>) -> Result<Self, Self::Error> {

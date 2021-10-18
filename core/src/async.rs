@@ -22,7 +22,6 @@ impl<'c> std::future::Future for Async<'c> {
         };
 
         if let Some(result) = connection.result() {
-            use std::convert::TryInto;
             self.last_result = Some(result.try_into());
         } else {
             let last_result = std::mem::replace(&mut self.last_result, None);

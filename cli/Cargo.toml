@@ -6,7 +6,7 @@ repository = "https://github.com/elephantry/elephantry/tree/main/cli"
 homepage = "https://elephantry.github.io"
 license = "MIT"
 authors = ["Sanpi <sanpi@homecomputing.fr>"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]
 case = "1.0"

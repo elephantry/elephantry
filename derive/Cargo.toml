@@ -6,7 +6,7 @@ homepage = "https://elephantry.github.io"
 license = "MIT"
 version = "2.1.0"
 authors = ["Sanpi <sanpi@homecomputing.fr>"]
-edition = "2018"
+edition = "2021"
 
 [lib]
 proc-macro = true

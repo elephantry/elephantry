@@ -55,8 +55,6 @@ impl crate::FromSql for ipnetwork::IpNetwork {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/network.c#L233
      */
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
-        use std::convert::TryFrom;
-
         let network = super::Network::try_from(crate::from_sql::not_null(raw)?)?;
 
         if !network.is_cidr {

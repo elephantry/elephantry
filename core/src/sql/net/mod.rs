@@ -16,7 +16,7 @@ struct Network {
     ip: u128,
 }
 
-impl std::convert::TryFrom<&[u8]> for Network {
+impl TryFrom<&[u8]> for Network {
     type Error = crate::Error;
 
     fn try_from(raw: &[u8]) -> crate::Result<Self> {
