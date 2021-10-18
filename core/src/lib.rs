@@ -211,7 +211,7 @@ mod test {
                         &format!("select $1::{}", stringify!($sql_type)),
                         &[value],
                     );
-                    assert!(result.is_ok());
+                    assert!(dbg!(&result).is_ok());
                     assert_eq!(&result.unwrap().get(0), value);
                 }
 

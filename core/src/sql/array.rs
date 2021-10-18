@@ -375,10 +375,15 @@ impl<T: crate::ToSql + Clone> From<&Vec<T>> for Array<T> {
 
 impl<T: crate::ToSql + Clone> crate::ToSql for Vec<T> {
     fn ty(&self) -> crate::pq::Type {
-        match self.get(0) {
-            Some(data) => data.ty().to_array(),
-            None => crate::pq::types::UNKNOWN,
+        for data in self {
+            let ty = data.ty().to_array();
+
+            if ty != crate::pq::types::UNKNOWN {
+                return ty;
+            }
         }
+
+        crate::pq::types::UNKNOWN
     }
 
     fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
@@ -457,6 +462,8 @@ mod test {
             }
         )]
     );
+
+    crate::sql_test!(_float4, Vec<Option<f32>>, [("'{null, 2.}'", vec![None, Some(2.)]),]);
 
     crate::sql_test!(
         _varchar,
