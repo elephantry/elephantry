@@ -7,7 +7,7 @@
  *
  * | SQL type                    | Rust type                | Feature |
  * |-----------------------------|--------------------------|---------|
- * | `bigint`                    | `i64`                    |         |
+ * | `bigint`/`int8`             | `i64`                    |         |
  * | `bit`                       | `u8`                     | bit     |
  * | `bit varying`               | `bit_vec::BitVec`        | bit     |
  * | `boolean`                   | `bool`                   |         |
@@ -21,7 +21,7 @@
  * | `double precision`/`float8` | `f64`                    |         |
  * | `hstore`                    | `elephantry::Hstore`     |         |
  * | `inet`                      | `std::net::IpAddr`       | net     |
- * | `integer`                   | `i32`                    |         |
+ * | `integer`/`int4`            | `i32`                    |         |
  * | `json`                      | `serde_json::Value`      | json    |
  * | `jsonb`                     | `elephantry::Jsonb`      | json    |
  * | `line`                      | `elephantry::Line`       | geo     |
@@ -36,7 +36,7 @@
  * | `polygon`                   | `elephantry::Polygon`    | geo     |
  * | `real`/`float4`             | `f32`                    |         |
  * | `record`                    | `tuple`                  |         |
- * | `smallint`                  | `i16`                    |         |
+ * | `smallint`/`int2`           | `i16`                    |         |
  * | `text`                      | `String`                 |         |
  * | `time`                      | `elephantry::Time`       | time    |
  * | `timetz`                    | `elephantry::TimeTz`     | time    |
