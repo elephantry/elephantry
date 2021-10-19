@@ -11,6 +11,8 @@ mod geo;
 mod hstore;
 #[cfg(feature = "json")]
 mod json;
+#[cfg(feature = "json")]
+mod jsonb;
 #[cfg(feature = "money")]
 mod money;
 #[cfg(feature = "net")]
@@ -40,6 +42,8 @@ pub use date::*;
 #[cfg(feature = "geo")]
 pub use geo::*;
 pub use hstore::*;
+#[cfg(feature = "json")]
+pub use jsonb::*;
 #[cfg(feature = "money")]
 pub use money::*;
 #[cfg(feature = "net")]

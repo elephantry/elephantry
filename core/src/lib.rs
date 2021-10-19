@@ -22,7 +22,8 @@
  * | `hstore`                    | `elephantry::Hstore`     |         |
  * | `inet`                      | `std::net::IpAddr`       | net     |
  * | `integer`                   | `i32`                    |         |
- * | `json`/`jsonb`              | `serde_json::Value`      | json    |
+ * | `json`                      | `serde_json::Value`      | json    |
+ * | `jsonb`                     | `elephantry::Jsonb`      | json    |
  * | `line`                      | `elephantry::Line`       | geo     |
  * | `lseg`                      | `elephantry::Segment`    | geo     |
  * | `null`                      | `()`                     |         |
