@@ -20,24 +20,22 @@ impl TryFrom<&[u8]> for Network {
     type Error = crate::Error;
 
     fn try_from(raw: &[u8]) -> crate::Result<Self> {
-        use byteorder::ReadBytesExt;
-
         const AF_INET: u8 = 2;
         const AF_INET6: u8 = 3;
 
         let mut buf = raw;
-        let ip_familly = match buf.read_u8()? {
+        let ip_familly = match crate::from_sql::read_u8(&mut buf)? {
             AF_INET => IpFamilly::Inet,
             AF_INET6 => IpFamilly::Inet6,
             _ => unreachable!(),
         };
-        let netmask_bits = buf.read_u8()?;
-        let is_cidr = buf.read_u8()? == 1;
-        let _nb = buf.read_u8()? as usize;
+        let netmask_bits = crate::from_sql::read_u8(&mut buf)?;
+        let is_cidr = crate::from_sql::read_u8(&mut buf)? == 1;
+        let _nb = crate::from_sql::read_u8(&mut buf)? as usize;
 
         let ip = match ip_familly {
-            IpFamilly::Inet => buf.read_u32::<byteorder::BigEndian>()? as u128,
-            IpFamilly::Inet6 => buf.read_u128::<byteorder::BigEndian>()?,
+            IpFamilly::Inet => crate::from_sql::read_u32(&mut buf)? as u128,
+            IpFamilly::Inet6 => crate::from_sql::read_u128(&mut buf)?,
         };
 
         let network = Network {

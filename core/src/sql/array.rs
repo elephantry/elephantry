@@ -1,5 +1,4 @@
 use crate::pq::ToArray;
-use byteorder::{ReadBytesExt, WriteBytesExt};
 
 /**
  * Rust type for [array](https://www.postgresql.org/docs/current/arrays.html).
@@ -174,16 +173,16 @@ impl<T: crate::FromSql> crate::FromSql for Array<T> {
     fn from_binary(_: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         use std::io::Read;
 
-        let mut raw = crate::not_null(raw)?;
+        let mut buf = crate::not_null(raw)?;
 
-        let ndim = raw.read_i32::<byteorder::BigEndian>()?;
+        let ndim = crate::from_sql::read_i32(&mut buf)?;
         if ndim < 0 {
             panic!("Invalid array");
         }
 
-        let has_nulls = raw.read_i32::<byteorder::BigEndian>()? != 0;
+        let has_nulls = crate::from_sql::read_i32(&mut buf)? != 0;
 
-        let oid = raw.read_u32::<byteorder::BigEndian>()?;
+        let oid = crate::from_sql::read_u32(&mut buf)?;
         let elemtype: crate::pq::Type = oid.try_into().unwrap_or(crate::pq::Type {
             oid,
             descr: "Custom type",
@@ -195,30 +194,30 @@ impl<T: crate::FromSql> crate::FromSql for Array<T> {
         let mut lower_bounds = Vec::new();
 
         for _ in 0..ndim {
-            let dimension = raw.read_i32::<byteorder::BigEndian>()?;
+            let dimension = crate::from_sql::read_i32(&mut buf)?;
             dimensions.push(dimension);
 
-            let lower_bound = raw.read_i32::<byteorder::BigEndian>()?;
+            let lower_bound = crate::from_sql::read_i32(&mut buf)?;
             lower_bounds.push(lower_bound);
         }
 
         let mut data = Vec::new();
 
-        while !raw.is_empty() {
-            let len = raw.read_u32::<byteorder::BigEndian>()? as usize;
+        while !buf.is_empty() {
+            let len = crate::from_sql::read_u32(&mut buf)? as usize;
 
             let value = if len == 0xFFFF_FFFF {
                 None
             } else {
-                let mut buf = vec![0; len];
-                raw.read_exact(buf.as_mut_slice())?;
+                let mut data = vec![0; len];
+                buf.read_exact(data.as_mut_slice())?;
 
-                if buf.get(0) == Some(&b'\'') || buf.last() == Some(&b'\'') {
-                    buf.remove(0);
-                    buf.pop();
+                if data.get(0) == Some(&b'\'') || data.last() == Some(&b'\'') {
+                    data.remove(0);
+                    data.pop();
                 }
 
-                Some(buf)
+                Some(data)
             };
 
             let element = T::from_sql(&elemtype, crate::pq::Format::Binary, value.as_deref())?;
@@ -322,21 +321,21 @@ impl<T: crate::ToSql> crate::ToSql for Array<T> {
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
         let mut buf = Vec::new();
 
-        buf.write_i32::<byteorder::BigEndian>(self.ndim as i32)?;
-        buf.write_i32::<byteorder::BigEndian>(self.has_nulls as i32)?;
-        buf.write_i32::<byteorder::BigEndian>(self.ty().elementype().oid as i32)?;
+        crate::to_sql::write_i32(&mut buf, self.ndim as i32)?;
+        crate::to_sql::write_i32(&mut buf, self.has_nulls as i32)?;
+        crate::to_sql::write_i32(&mut buf, self.ty().elementype().oid as i32)?;
 
         for x in 0..self.ndim {
-            buf.write_i32::<byteorder::BigEndian>(self.dimensions[x])?;
-            buf.write_i32::<byteorder::BigEndian>(self.lower_bounds[x])?;
+            crate::to_sql::write_i32(&mut buf, self.dimensions[x])?;
+            crate::to_sql::write_i32(&mut buf, self.lower_bounds[x])?;
         }
 
         for d in &self.data {
             if let Some(raw) = d.to_binary()? {
-                buf.write_i32::<byteorder::BigEndian>(raw.len() as i32)?;
+                crate::to_sql::write_i32(&mut buf, raw.len() as i32)?;
                 buf.extend(&raw);
             } else {
-                buf.write_i32::<byteorder::BigEndian>(-1)?;
+                crate::to_sql::write_i32(&mut buf, -1)?;
             }
         }
 

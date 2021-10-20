@@ -34,12 +34,11 @@ impl crate::FromSql for macaddr::MacAddr8 {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/mac8.c#L262
      */
     fn from_binary(_: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
-        use byteorder::ReadBytesExt;
-
         let mut buf = crate::from_sql::not_null(raw)?;
+
         let mut parts = [0; 8];
         for part in &mut parts {
-            *part = buf.read_u8()?;
+            *part = crate::from_sql::read_u8(&mut buf)?;
         }
 
         Ok(parts.into())

@@ -15,13 +15,11 @@ impl crate::ToSql for chrono::NaiveDateTime {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/timestamp.c#L265
      */
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
-        use byteorder::WriteBytesExt;
-
         let base = chrono::NaiveDate::from_ymd(2000, 1, 1).and_hms(0, 0, 0);
         let t: chrono::Duration = *self - base;
 
         let mut buf = Vec::new();
-        buf.write_i64::<byteorder::BigEndian>(t.num_microseconds().unwrap())?;
+        crate::to_sql::write_i64(&mut buf, t.num_microseconds().unwrap())?;
 
         Ok(Some(buf))
     }

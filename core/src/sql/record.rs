@@ -24,21 +24,20 @@ pub(crate) fn vec_to_text(vec: &[&dyn crate::ToSql]) -> crate::Result<Option<Vec
  */
 pub(crate) fn vec_to_binary(vec: &[&dyn crate::ToSql]) -> crate::Result<Option<Vec<u8>>> {
     use crate::ToSql;
-    use byteorder::WriteBytesExt;
 
     let mut buf = Vec::new();
 
-    buf.write_i32::<byteorder::BigEndian>(vec.len() as i32)?;
+    crate::to_sql::write_i32(&mut buf, vec.len() as i32)?;
 
     for elem in vec {
         let mut column_type = elem.ty().to_binary()?.unwrap();
         buf.append(&mut column_type);
 
         if let Some(mut raw) = elem.to_binary()? {
-            buf.write_i32::<byteorder::BigEndian>(raw.len() as i32)?;
+            crate::to_sql::write_i32(&mut buf, raw.len() as i32)?;
             buf.append(&mut raw);
         } else {
-            buf.write_i32::<byteorder::BigEndian>(-1)?;
+            crate::to_sql::write_i32(&mut buf, -1)?;
         }
     }
 
@@ -73,25 +72,24 @@ pub(crate) fn text_to_vec(raw: Option<&str>) -> crate::Result<Vec<Option<&str>>>
  * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/rowtypes.c#L453
  */
 pub(crate) fn binary_to_vec(raw: Option<&[u8]>) -> crate::Result<Vec<Option<&[u8]>>> {
-    use byteorder::ReadBytesExt;
+    let mut buf = crate::not_null(raw)?;
 
-    let mut data = crate::not_null(raw)?;
     let mut values: Vec<Option<&[u8]>> = Vec::new();
 
-    let validcols = data.read_i32::<byteorder::BigEndian>()?;
+    let validcols = crate::from_sql::read_i32(&mut buf)?;
 
     for _ in 0..validcols {
-        let _column_type = data.read_i32::<byteorder::BigEndian>()?;
-        let length = data.read_i32::<byteorder::BigEndian>()?;
+        let _column_type = crate::from_sql::read_i32(&mut buf)?;
+        let length = crate::from_sql::read_i32(&mut buf)?;
 
         if length < 0 {
             values.push(None);
             continue;
         }
 
-        let value = &data[..length as usize];
+        let value = &buf[..length as usize];
         values.push(Some(value));
-        data = &data[length as usize..];
+        buf = &buf[length as usize..];
     }
 
     Ok(values)

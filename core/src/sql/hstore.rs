@@ -13,16 +13,14 @@ impl Hstore {
     }
 
     fn read_string(buf: &mut &[u8]) -> crate::Result<Option<String>> {
-        use byteorder::ReadBytesExt;
-
-        let len = buf.read_i32::<byteorder::BigEndian>()?;
+        let len = crate::from_sql::read_i32(buf)?;
 
         let s = if len < 0 {
             None
         } else {
             let mut vec = Vec::new();
             for _ in 0..len {
-                vec.push(buf.read_u8()?);
+                vec.push(crate::from_sql::read_u8(buf)?);
             }
 
             Some(String::from_utf8(vec)?)
@@ -73,24 +71,22 @@ impl crate::ToSql for crate::Hstore {
      * https://github.com/postgres/postgres/blob/REL_12_0/contrib/hstore/hstore_io.c#L1226
      */
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
-        use byteorder::WriteBytesExt;
-
         let mut buf = Vec::new();
 
-        buf.write_i32::<byteorder::BigEndian>(self.len() as i32)?;
+        crate::to_sql::write_i32(&mut buf, self.len() as i32)?;
 
         for (key, value) in self.iter() {
             let mut k = key.to_text()?.unwrap();
             k.pop();
-            buf.write_i32::<byteorder::BigEndian>(k.len() as i32)?;
+            crate::to_sql::write_i32(&mut buf, k.len() as i32)?;
             buf.append(&mut k);
 
             if let Some(mut v) = value.to_text()? {
                 v.pop();
-                buf.write_i32::<byteorder::BigEndian>(v.len() as i32)?;
+                crate::to_sql::write_i32(&mut buf, v.len() as i32)?;
                 buf.append(&mut v);
             } else {
-                buf.write_i32::<byteorder::BigEndian>(-1)?;
+                crate::to_sql::write_i32(&mut buf, -1)?;
             }
         }
 
@@ -128,11 +124,9 @@ impl crate::FromSql for Hstore {
      * https://github.com/postgres/postgres/blob/REL_12_0/contrib/hstore/hstore_io.c#L427
      */
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
-        use byteorder::ReadBytesExt;
-
         let mut hstore = Self::new();
         let mut buf = crate::from_sql::not_null(raw)?;
-        let count = buf.read_i32::<byteorder::BigEndian>()?;
+        let count = crate::from_sql::read_i32(&mut buf)?;
 
         for _ in 0..count {
             let key = Self::read_string(&mut buf)?.ok_or_else(|| Self::error(ty, "Hstore", raw))?;

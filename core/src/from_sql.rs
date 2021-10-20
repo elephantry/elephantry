@@ -5,12 +5,45 @@ pub(crate) fn not_null<T>(raw: Option<T>) -> crate::Result<T> {
     raw.ok_or(crate::Error::NotNull)
 }
 
+macro_rules! read {
+    ($fn:ident, $ty:ty) => {
+        #[inline]
+        pub(crate) fn $fn(buf: &mut &[u8]) -> crate::Result<$ty> {
+            let n = buf.$fn::<byteorder::BigEndian>()?;
+
+            Ok(n)
+        }
+    }
+}
+
+read!(read_i16, i16);
+read!(read_i32, i32);
+read!(read_i64, i64);
+read!(read_f32, f32);
+read!(read_f64, f64);
+read!(read_u32, u32);
+read!(read_u128, u128);
+
+#[inline]
+pub(crate) fn read_i8(buf: &mut &[u8]) -> crate::Result<i8> {
+    let n = buf.read_i8()?;
+
+    Ok(n)
+}
+
+#[inline]
+pub(crate) fn read_u8(buf: &mut &[u8]) -> crate::Result<u8> {
+    let n = buf.read_u8()?;
+
+    Ok(n)
+}
+
 macro_rules! number {
     ($type:ty, $read:ident) => {
         impl FromSql for $type {
             fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
                 let mut buf = crate::not_null(raw)?;
-                let v = buf.$read::<byteorder::BigEndian>()?;
+                let v = $read(&mut buf)?;
 
                 if !buf.is_empty() {
                     return Err(Self::error(ty, stringify!($type), raw));

@@ -17,17 +17,15 @@ impl crate::ToSql for bigdecimal::BigDecimal {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/numeric.c#L872
      */
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
-        use byteorder::WriteBytesExt;
-
         let numeric = PgNumeric::try_from(self)?;
 
         let mut buf = Vec::new();
-        buf.write_i16::<byteorder::BigEndian>(numeric.ndigits())?;
-        buf.write_i16::<byteorder::BigEndian>(numeric.weight)?;
-        buf.write_i16::<byteorder::BigEndian>(numeric.sign)?;
-        buf.write_i16::<byteorder::BigEndian>(numeric.dscale)?;
+        crate::to_sql::write_i16(&mut buf, numeric.ndigits())?;
+        crate::to_sql::write_i16(&mut buf, numeric.weight)?;
+        crate::to_sql::write_i16(&mut buf, numeric.sign)?;
+        crate::to_sql::write_i16(&mut buf, numeric.dscale)?;
         for digit in numeric.digits {
-            buf.write_i16::<byteorder::BigEndian>(digit)?;
+            crate::to_sql::write_i16(&mut buf, digit)?;
         }
 
         Ok(Some(buf))
@@ -49,17 +47,15 @@ impl crate::FromSql for bigdecimal::BigDecimal {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/numeric.c#L805
      */
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
-        use byteorder::ReadBytesExt;
-
         let mut buf = crate::not_null(raw)?;
-        let ndigits = buf.read_i16::<byteorder::BigEndian>()?;
-        let weight = buf.read_i16::<byteorder::BigEndian>()?;
-        let sign = buf.read_i16::<byteorder::BigEndian>()?;
-        let dscale = buf.read_i16::<byteorder::BigEndian>()?;
+        let ndigits = crate::from_sql::read_i16(&mut buf)?;
+        let weight = crate::from_sql::read_i16(&mut buf)?;
+        let sign = crate::from_sql::read_i16(&mut buf)?;
+        let dscale = crate::from_sql::read_i16(&mut buf)?;
 
         let mut digits = Vec::new();
         for _ in 0..ndigits {
-            digits.push(buf.read_i16::<byteorder::BigEndian>()?);
+            digits.push(crate::from_sql::read_i16(&mut buf)?);
         }
 
         let numeric = PgNumeric {

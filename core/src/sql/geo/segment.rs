@@ -55,14 +55,12 @@ impl crate::ToSql for Segment {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L2064
      */
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
-        use byteorder::WriteBytesExt;
-
         let mut buf = Vec::new();
 
-        buf.write_f64::<byteorder::BigEndian>(self.0.start.x)?;
-        buf.write_f64::<byteorder::BigEndian>(self.0.start.y)?;
-        buf.write_f64::<byteorder::BigEndian>(self.0.end.x)?;
-        buf.write_f64::<byteorder::BigEndian>(self.0.end.y)?;
+        crate::to_sql::write_f64(&mut buf, self.0.start.x)?;
+        crate::to_sql::write_f64(&mut buf, self.0.start.y)?;
+        crate::to_sql::write_f64(&mut buf, self.0.end.x)?;
+        crate::to_sql::write_f64(&mut buf, self.0.end.y)?;
 
         Ok(Some(buf))
     }
@@ -89,16 +87,15 @@ impl crate::FromSql for Segment {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L2045
      */
     fn from_binary(_: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
-        use byteorder::ReadBytesExt;
-
         let mut buf = crate::from_sql::not_null(raw)?;
+
         let start = crate::Coordinate::new(
-            buf.read_f64::<byteorder::BigEndian>()?,
-            buf.read_f64::<byteorder::BigEndian>()?,
+            crate::from_sql::read_f64(&mut buf)?,
+            crate::from_sql::read_f64(&mut buf)?,
         );
         let end = crate::Coordinate::new(
-            buf.read_f64::<byteorder::BigEndian>()?,
-            buf.read_f64::<byteorder::BigEndian>()?,
+            crate::from_sql::read_f64(&mut buf)?,
+            crate::from_sql::read_f64(&mut buf)?,
         );
 
         Ok(Self::new(start, end))

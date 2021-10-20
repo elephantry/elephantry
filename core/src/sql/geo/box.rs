@@ -57,14 +57,12 @@ impl crate::ToSql for Box {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L489
      */
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
-        use byteorder::WriteBytesExt;
-
         let mut buf = Vec::new();
 
-        buf.write_f64::<byteorder::BigEndian>(self.0.max().x)?;
-        buf.write_f64::<byteorder::BigEndian>(self.0.max().y)?;
-        buf.write_f64::<byteorder::BigEndian>(self.0.min().x)?;
-        buf.write_f64::<byteorder::BigEndian>(self.0.min().y)?;
+        crate::to_sql::write_f64(&mut buf, self.0.max().x)?;
+        crate::to_sql::write_f64(&mut buf, self.0.max().y)?;
+        crate::to_sql::write_f64(&mut buf, self.0.min().x)?;
+        crate::to_sql::write_f64(&mut buf, self.0.min().y)?;
 
         Ok(Some(buf))
     }

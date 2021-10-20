@@ -21,13 +21,11 @@ impl crate::ToSql for chrono::NaiveDate {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/date.c#L226
      */
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
-        use byteorder::WriteBytesExt;
-
         let base = chrono::NaiveDate::from_ymd(2000, 1, 1);
         let t: chrono::Duration = *self - base;
 
         let mut buf = Vec::new();
-        buf.write_i32::<byteorder::BigEndian>(t.num_days() as i32)?;
+        crate::to_sql::write_i32(&mut buf, t.num_days() as i32)?;
 
         Ok(Some(buf))
     }

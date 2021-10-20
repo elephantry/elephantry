@@ -1,5 +1,30 @@
 use byteorder::WriteBytesExt;
 
+macro_rules! write {
+    ($fn:ident, $ty: ty) => {
+        #[inline]
+        pub(crate) fn $fn(buf: &mut Vec<u8>, data: $ty) -> crate::Result<()> {
+            buf.$fn::<byteorder::BigEndian>(data)?;
+
+            Ok(())
+        }
+
+    }
+}
+
+write!(write_i16, i16);
+write!(write_i32, i32);
+write!(write_i64, i64);
+write!(write_f32, f32);
+write!(write_f64, f64);
+
+#[inline]
+pub(crate) fn write_i8(buf: &mut Vec<u8>, data: i8) -> crate::Result<()> {
+    buf.write_i8(data)?;
+
+    Ok(())
+}
+
 /**
  * Trait to allow a rust type to be translated to a SQL value.
  */
@@ -57,7 +82,7 @@ macro_rules! number {
 
             fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
                 let mut buf = Vec::new();
-                buf.$write::<byteorder::BigEndian>(*self)?;
+                $write(&mut buf, *self)?;
 
                 Ok(Some(buf))
             }

@@ -715,7 +715,6 @@ impl Connection {
         M: crate::Model<'m>,
     {
         use crate::Entity;
-        use byteorder::WriteBytesExt;
 
         let projection = M::default_projection();
         let field_names = projection.field_names();
@@ -733,16 +732,16 @@ impl Connection {
             .map_err(|e| crate::Error::Mutex(e.to_string()))?;
 
         // Signature
-        let mut data = vec![
+        let mut buf = vec![
             b'P', b'G', b'C', b'O', b'P', b'Y', b'\n', 255, b'\r', b'\n', b'\0',
         ];
         // Flags field
-        data.write_i32::<byteorder::BigEndian>(0)?;
+        crate::to_sql::write_i32(&mut buf, 0)?;
         // Header extension area length
-        data.write_i32::<byteorder::BigEndian>(0)?;
+        crate::to_sql::write_i32(&mut buf, 0)?;
 
         for entity in entities {
-            data.write_i16::<byteorder::BigEndian>(field_names.len() as i16)?;
+            crate::to_sql::write_i16(&mut buf, field_names.len() as i16)?;
 
             for field in &field_names {
                 let value = match entity.get(field) {
@@ -751,16 +750,16 @@ impl Connection {
                 };
 
                 if let Some(mut value) = value {
-                    data.write_i32::<byteorder::BigEndian>(value.len() as i32)?;
-                    data.append(&mut value);
+                    crate::to_sql::write_i32(&mut buf, value.len() as i32)?;
+                    buf.append(&mut value);
                 } else {
-                    data.write_i32::<byteorder::BigEndian>(-1)?;
+                    crate::to_sql::write_i32(&mut buf, -1)?;
                 }
             }
         }
-        data.write_i16::<byteorder::BigEndian>(-1)?;
+        crate::to_sql::write_i16(&mut buf, -1)?;
 
-        libpq::v2::connection::put_copy_data(&connection, &data).map_err(crate::Error::Copy)?;
+        libpq::v2::connection::put_copy_data(&connection, &buf).map_err(crate::Error::Copy)?;
 
         connection.put_copy_end(None).map_err(crate::Error::Copy)?;
 

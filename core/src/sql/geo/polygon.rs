@@ -56,17 +56,15 @@ impl crate::ToSql for Polygon {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L3440
      */
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
-        use byteorder::WriteBytesExt;
-
         let points = &self.0.exterior().0;
 
         let mut buf = Vec::new();
 
-        buf.write_i32::<byteorder::BigEndian>(points.len() as i32)?;
+        crate::to_sql::write_i32(&mut buf, points.len() as i32)?;
 
         for point in points {
-            buf.write_f64::<byteorder::BigEndian>(point.x)?;
-            buf.write_f64::<byteorder::BigEndian>(point.y)?;
+            crate::to_sql::write_f64(&mut buf, point.x)?;
+            crate::to_sql::write_f64(&mut buf, point.y)?;
         }
 
         Ok(Some(buf))
@@ -88,15 +86,13 @@ impl crate::FromSql for Polygon {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L3405
      */
     fn from_binary(_: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
-        use byteorder::ReadBytesExt;
-
         let mut buf = crate::from_sql::not_null(raw)?;
-        let npts = buf.read_i32::<byteorder::BigEndian>()?;
+        let npts = crate::from_sql::read_i32(&mut buf)?;
         let mut coordinates = Vec::new();
 
         for _ in 0..npts {
-            let x = buf.read_f64::<byteorder::BigEndian>()?;
-            let y = buf.read_f64::<byteorder::BigEndian>()?;
+            let x = crate::from_sql::read_f64(&mut buf)?;
+            let y = crate::from_sql::read_f64(&mut buf)?;
 
             let coordinate = crate::Coordinate::new(x, y);
             coordinates.push(coordinate);

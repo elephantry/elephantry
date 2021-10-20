@@ -65,11 +65,9 @@ impl crate::ToSql for bit_vec::BitVec {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L635
      */
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
-        use byteorder::WriteBytesExt;
-
         let mut buf = Vec::new();
 
-        buf.write_i32::<byteorder::BigEndian>(self.len() as i32)?;
+        crate::to_sql::write_i32(&mut buf, self.len() as i32)?;
 
         for byte in self.to_bytes() {
             buf.push(byte);
@@ -101,10 +99,9 @@ impl crate::FromSql for bit_vec::BitVec {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L680
      */
     fn from_binary(_: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
-        use byteorder::ReadBytesExt;
-
         let mut buf = crate::not_null(raw)?;
-        let _size = buf.read_i32::<byteorder::BigEndian>()?;
+
+        let _size = crate::from_sql::read_i32(&mut buf)?;
 
         Ok(bit_vec::BitVec::from_bytes(buf))
     }

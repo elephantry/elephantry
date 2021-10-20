@@ -38,10 +38,9 @@ impl crate::ToSql for Jsonb {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/jsonb.c#L148
      */
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
-        use byteorder::WriteBytesExt;
-
         let mut buf = Vec::new();
-        buf.write_i8(1)?;
+
+        crate::to_sql::write_i8(&mut buf, 1)?;
         buf.append(&mut self.0.to_binary()?.unwrap());
 
         Ok(Some(buf))
@@ -63,11 +62,9 @@ impl crate::FromSql for Jsonb {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/jsonb.c#L113
      */
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
-        use byteorder::ReadBytesExt;
-
         let mut buf = crate::not_null(raw)?;
-        let _version = buf.read_i8()?;
 
+        let _version = crate::from_sql::read_i8(&mut buf)?;
         let value = serde_json::Value::from_binary(ty, Some(buf))?;
 
         Ok(Self::from(value))

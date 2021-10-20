@@ -182,12 +182,11 @@ impl crate::FromSql for Interval {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/timestamp.c#L969
      */
     fn from_binary(_: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
-        use byteorder::ReadBytesExt;
-
         let mut buf = crate::not_null(raw)?;
-        let mut usecs = buf.read_i64::<byteorder::BigEndian>()?;
-        let days = buf.read_i32::<byteorder::BigEndian>()?;
-        let mut months = buf.read_i32::<byteorder::BigEndian>()?;
+
+        let mut usecs = crate::from_sql::read_i64(&mut buf)?;
+        let days = crate::from_sql::read_i32(&mut buf)?;
+        let mut months = crate::from_sql::read_i32(&mut buf)?;
 
         let years = months / 12;
         months %= 12;
@@ -232,21 +231,19 @@ impl crate::ToSql for Interval {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/timestamp.c#L994
      */
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
-        use byteorder::WriteBytesExt;
-
         let mut buf = Vec::new();
 
         let usecs = self.hours as i64 * 60 * 60 * 1_000_000
             + self.mins as i64 * 60 * 1_000_000
             + self.secs as i64 * 1_000_000
             + self.usecs as i64;
-        buf.write_i64::<byteorder::BigEndian>(usecs)?;
+        crate::to_sql::write_i64(&mut buf, usecs)?;
 
         let days = self.days;
-        buf.write_i32::<byteorder::BigEndian>(days)?;
+        crate::to_sql::write_i32(&mut buf, days)?;
 
         let months = self.months + self.years * 12;
-        buf.write_i32::<byteorder::BigEndian>(months)?;
+        crate::to_sql::write_i32(&mut buf, months)?;
 
         Ok(Some(buf))
     }

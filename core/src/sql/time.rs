@@ -22,8 +22,6 @@ impl crate::ToSql for Time {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/date.c#L1281
      */
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
-        use byteorder::WriteBytesExt;
-
         let usecs = self.hour() as i64 * 60 * 60 * 1_000_000
             + self.minute() as i64 * 60 * 1_000_000
             + self.second() as i64 * 1_000_000
@@ -31,7 +29,7 @@ impl crate::ToSql for Time {
             + self.microsecond() as i64;
 
         let mut buf = Vec::new();
-        buf.write_i64::<byteorder::BigEndian>(usecs)?;
+        crate::to_sql::write_i64(&mut buf, usecs)?;
 
         Ok(Some(buf))
     }
@@ -74,11 +72,9 @@ impl crate::ToSql for TimeTz {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/date.c#L2063
      */
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
-        use byteorder::WriteBytesExt;
-
         let mut buf = self.0.to_binary()?.unwrap();
 
-        buf.write_i32::<byteorder::BigEndian>(-self.1.whole_seconds() as i32)?;
+        crate::to_sql::write_i32(&mut buf, -self.1.whole_seconds() as i32)?;
 
         Ok(Some(buf))
     }
@@ -117,11 +113,9 @@ impl crate::FromSql for TimeTz {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/date.c#L2027
      */
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
-        use byteorder::ReadBytesExt;
-
         let mut buf = crate::from_sql::not_null(raw)?;
-        let time = buf.read_i64::<byteorder::BigEndian>()?;
-        let zone = buf.read_i32::<byteorder::BigEndian>()?;
+        let time = crate::from_sql::read_i64(&mut buf)?;
+        let zone = crate::from_sql::read_i32(&mut buf)?;
 
         Ok((
             Time::MIDNIGHT + time::Duration::microseconds(time),

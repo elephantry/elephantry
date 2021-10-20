@@ -36,13 +36,11 @@ impl crate::ToSql for Circle {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L4603
      */
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
-        use byteorder::WriteBytesExt;
-
         let mut buf = Vec::new();
 
-        buf.write_f64::<byteorder::BigEndian>(self.x)?;
-        buf.write_f64::<byteorder::BigEndian>(self.y)?;
-        buf.write_f64::<byteorder::BigEndian>(self.r)?;
+        crate::to_sql::write_f64(&mut buf, self.x)?;
+        crate::to_sql::write_f64(&mut buf, self.y)?;
+        crate::to_sql::write_f64(&mut buf, self.r)?;
 
         Ok(Some(buf))
     }
@@ -73,12 +71,11 @@ impl crate::FromSql for Circle {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L4579
      */
     fn from_binary(_: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
-        use byteorder::ReadBytesExt;
-
         let mut buf = crate::from_sql::not_null(raw)?;
-        let x = buf.read_f64::<byteorder::BigEndian>()?;
-        let y = buf.read_f64::<byteorder::BigEndian>()?;
-        let r = buf.read_f64::<byteorder::BigEndian>()?;
+
+        let x = crate::from_sql::read_f64(&mut buf)?;
+        let y = crate::from_sql::read_f64(&mut buf)?;
+        let r = crate::from_sql::read_f64(&mut buf)?;
 
         Ok(Self::new(x, y, r))
     }

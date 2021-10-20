@@ -235,11 +235,9 @@ fn bound_to_text<T: crate::ToSql>(buf: &mut Vec<u8>, bound: &Bound<&T>) -> crate
 }
 
 fn bound_to_binary<T: crate::ToSql>(buf: &mut Vec<u8>, bound: &Bound<&T>) -> crate::Result<()> {
-    use byteorder::WriteBytesExt;
-
     if !matches!(bound, Unbounded) {
         let mut b = bound!(bound, to_binary);
-        buf.write_i32::<byteorder::BigEndian>(b.len() as i32)?;
+        crate::to_sql::write_i32(buf, b.len() as i32)?;
         buf.append(&mut b);
     }
 
@@ -310,11 +308,9 @@ impl<T: crate::FromSql> crate::FromSql for Bounds<T> {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/rangetypes.c#L163
      */
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
-        use byteorder::ReadBytesExt;
-
         let mut buf = crate::from_sql::not_null(raw)?;
-        let flag = Flags::from_bits_truncate(buf.read_u8()?);
 
+        let flag = Flags::from_bits_truncate(crate::from_sql::read_u8(&mut buf)?);
         if flag.contains(Flags::EMPTY) {
             log::error!("Unsuported empty range");
             return Err(Self::error(ty, "", raw));
@@ -323,10 +319,10 @@ impl<T: crate::FromSql> crate::FromSql for Bounds<T> {
         let start_bound = if flag.contains(Flags::LB_INF) {
             Bound::Unbounded
         } else {
-            let start_bound_len = buf.read_i32::<byteorder::BigEndian>()?;
+            let start_bound_len = crate::from_sql::read_i32(&mut buf)?;
             let mut start = Vec::new();
             for _ in 0..start_bound_len {
-                let b = buf.read_u8()?;
+                let b = crate::from_sql::read_u8(&mut buf)?;
 
                 start.push(b);
             }
@@ -341,10 +337,10 @@ impl<T: crate::FromSql> crate::FromSql for Bounds<T> {
         let end_bound = if flag.contains(Flags::UB_INF) {
             Bound::Unbounded
         } else {
-            let end_bound_len = buf.read_i32::<byteorder::BigEndian>()?;
+            let end_bound_len = crate::from_sql::read_i32(&mut buf)?;
             let mut end = Vec::new();
             for _ in 0..end_bound_len {
-                let b = buf.read_u8()?;
+                let b = crate::from_sql::read_u8(&mut buf)?;
 
                 end.push(b);
             }
