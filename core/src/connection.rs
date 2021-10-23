@@ -634,7 +634,7 @@ impl Connection {
             .connection
             .lock()
             .map_err(|e| crate::Error::Mutex(e.to_string()))?;
-        let info = libpq::v2::connection::info(&connection);
+        let info = connection.info();
 
         let config = crate::Config {
             application_name: info
@@ -759,7 +759,7 @@ impl Connection {
         }
         crate::to_sql::write_i16(&mut buf, -1)?;
 
-        libpq::v2::connection::put_copy_data(&connection, &buf).map_err(crate::Error::Copy)?;
+        connection.put_copy_data(&buf).map_err(crate::Error::Copy)?;
 
         connection.put_copy_end(None).map_err(crate::Error::Copy)?;
 
