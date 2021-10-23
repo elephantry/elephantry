@@ -32,8 +32,7 @@ macro_rules! impl_range {
                     .map_err(|_| Self::error(ty, "", raw))
             }
         }
-
-    }
+    };
 }
 
 impl_range!(std::ops::Range<T>);
@@ -65,7 +64,9 @@ impl crate::ToSql for std::ops::RangeFull {
     }
 
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
-        Ok(Some(vec![(bounds::Flags::LB_INF | bounds::Flags::UB_INF).bits()]))
+        Ok(Some(vec![
+            (bounds::Flags::LB_INF | bounds::Flags::UB_INF).bits()
+        ]))
     }
 }
 

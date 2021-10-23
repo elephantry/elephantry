@@ -76,6 +76,9 @@ mod test {
     crate::sql_test!(
         jsonb,
         crate::Jsonb,
-        [("'{\"foo\": \"bar\"}'", crate::Jsonb::from(serde_json::json!({"foo": "bar"})))]
+        [(
+            "'{\"foo\": \"bar\"}'",
+            crate::Jsonb::from(serde_json::json!({"foo": "bar"}))
+        )]
     );
 }

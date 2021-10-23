@@ -13,7 +13,7 @@ macro_rules! read {
 
             Ok(n)
         }
-    }
+    };
 }
 
 read!(read_i16, i16);

@@ -276,7 +276,8 @@ impl<T: crate::ToSql> crate::ToSql for Array<T> {
 
             let element = &self.data[k];
 
-            let mut raw = element.to_text()?
+            let mut raw = element
+                .to_text()?
                 .map(|mut x| {
                     x.pop(); // removes \0
 
@@ -461,11 +462,23 @@ mod test {
         )]
     );
 
-    crate::sql_test!(_float4, Vec<Option<f32>>, [("'{null, 2.}'", vec![None, Some(2.)]),]);
+    crate::sql_test!(
+        _float4,
+        Vec<Option<f32>>,
+        [("'{null, 2.}'", vec![None, Some(2.)]),]
+    );
 
     crate::sql_test!(
         _varchar,
         Vec<Option<String>>,
-        [("'{str, null, \'\'null\'\', \'\'abcd\'\'}'", vec![Some("str".to_string()), None, Some("null".to_string()), Some("abcd".to_string())])]
+        [(
+            "'{str, null, \'\'null\'\', \'\'abcd\'\'}'",
+            vec![
+                Some("str".to_string()),
+                None,
+                Some("null".to_string()),
+                Some("abcd".to_string())
+            ]
+        )]
     );
 }

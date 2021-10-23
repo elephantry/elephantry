@@ -8,8 +8,7 @@ macro_rules! write {
 
             Ok(())
         }
-
-    }
+    };
 }
 
 write!(write_i16, i16);
