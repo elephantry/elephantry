@@ -19,7 +19,7 @@ mod employee {
 
             let query = r#"
 with recursive
-    depts (name, parent_id, department_id) as (
+    depts (department_id, name, parent_id) as (
         select {department_projection} from {department} d join {employee} e using(department_id) where e.employee_id = $1
         union all
         select {department_projection} from depts parent join {department} d on parent.parent_id = d.department_id
@@ -43,12 +43,9 @@ select {employee_projection}
                 )
                 .replace(
                     "{department_projection}",
-                    "d.name, d.parent_id, d.department_id",
-                    /* @FIXME
                     &super::department::Model::create_projection()
                         .alias("d")
                         .to_string(),
-                    */
                 )
                 .replace("{department}", super::department::Structure::relation());
 

@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 /**
  * Define the content of SELECT or RETURNING (projection) statements.
@@ -7,7 +7,7 @@ use std::collections::HashMap;
 pub struct Projection {
     relation: String,
     alias: Option<String>,
-    fields: HashMap<String, String>,
+    fields: BTreeMap<String, String>,
 }
 
 impl Projection {
@@ -15,7 +15,7 @@ impl Projection {
      * Create a new projection with `fields`.
      */
     pub fn new(relation: &str, fields: &[&str]) -> Self {
-        let mut map = HashMap::new();
+        let mut map = BTreeMap::new();
         for field in fields {
             map.insert((*field).to_string(), format!("%:{}:%", field));
         }
@@ -57,7 +57,7 @@ impl Projection {
     /**
      * Return the list of fields.
      */
-    pub fn fields(&self) -> &HashMap<String, String> {
+    pub fn fields(&self) -> &BTreeMap<String, String> {
         &self.fields
     }
 
