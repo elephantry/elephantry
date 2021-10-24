@@ -8,6 +8,7 @@ pub(crate) fn not_null<T>(raw: Option<T>) -> crate::Result<T> {
 macro_rules! read {
     ($fn:ident, $ty:ty) => {
         #[inline]
+        #[allow(dead_code)]
         pub(crate) fn $fn(buf: &mut &[u8]) -> crate::Result<$ty> {
             let n = buf.$fn::<byteorder::BigEndian>()?;
 
@@ -25,6 +26,7 @@ read!(read_u32, u32);
 read!(read_u128, u128);
 
 #[inline]
+#[allow(dead_code)]
 pub(crate) fn read_i8(buf: &mut &[u8]) -> crate::Result<i8> {
     let n = buf.read_i8()?;
 

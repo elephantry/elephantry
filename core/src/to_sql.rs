@@ -18,6 +18,7 @@ write!(write_f32, f32);
 write!(write_f64, f64);
 
 #[inline]
+#[allow(dead_code)]
 pub(crate) fn write_i8(buf: &mut Vec<u8>, data: i8) -> crate::Result<()> {
     buf.write_i8(data)?;
 
