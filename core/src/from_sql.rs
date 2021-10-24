@@ -284,4 +284,23 @@ mod test {
             ("'Happy'", super::Mood::Happy),
         ]
     );
+
+    #[derive(elephantry_derive::Composite, Debug, PartialEq)]
+    #[elephantry(internal)]
+    struct CompFoo {
+        f1: i32,
+        f2: String,
+    }
+
+    crate::sql_test!(
+        compfoo,
+        super::CompFoo,
+        [(
+            "'(1,foo)'",
+            super::CompFoo {
+                f1: 1,
+                f2: "foo".to_string()
+            }
+        )]
+    );
 }

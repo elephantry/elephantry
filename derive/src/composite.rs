@@ -47,37 +47,54 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::Tok
 
     let gen = quote::quote! {
         #[automatically_derived]
-        impl #impl_generics #elephantry::Composite for #name #ty_generics #where_clause {
-            fn name() -> &'static str {
-                stringify!(#name)
-            }
-
-            fn to_vec(&self) -> Vec<&dyn #elephantry::ToSql> {
-                let mut vec = Vec::new();
-
-                #(#to_vec_body; )*
-
-                vec
-            }
-
-            fn from_text_values(ty: &#elephantry::pq::Type, values: &[Option<&str>]) -> #elephantry::Result<Box<Self>> {
-                use #elephantry::FromSql;
+        impl #impl_generics #elephantry::FromSql for #name #ty_generics #where_clause {
+            fn from_text(ty: &#elephantry::pq::Type, raw: Option<&str>) -> #elephantry::Result<Self> {
+                let values = #elephantry::record::text_to_vec(raw)?;
 
                 let s = Self {
                     #(#from_text_body, )*
                 };
 
-                Ok(Box::new(s))
+                Ok(s)
             }
 
-            fn from_binary_values(ty: &#elephantry::pq::Type, values: &[Option<&[u8]>]) -> #elephantry::Result<Box<Self>> {
-                use #elephantry::FromSql;
+            fn from_binary(ty: &#elephantry::pq::Type, raw: Option<&[u8]>) -> #elephantry::Result<Self> {
+                let values = #elephantry::record::binary_to_vec(raw)?;
 
                 let s = Self {
                     #(#from_binary_body, )*
                 };
 
-                Ok(Box::new(s))
+                Ok(s)
+            }
+        }
+
+        #[automatically_derived]
+        impl #impl_generics #elephantry::ToSql for #name #ty_generics #where_clause {
+            fn ty(&self) -> #elephantry::pq::Type {
+                #elephantry::pq::types::Type {
+                    oid: 0,
+                    descr: "",
+                    name: stringify!(#name),
+                    kind: #elephantry::pq::types::Kind::Composite,
+
+                }
+            }
+
+            fn to_text(&self) -> #elephantry::Result<Option<Vec<u8>>> {
+                let mut vec = Vec::new();
+
+                #(#to_vec_body; )*
+
+                #elephantry::record::vec_to_text(&vec)
+            }
+
+            fn to_binary(&self) -> #elephantry::Result<Option<Vec<u8>>> {
+                let mut vec = Vec::new();
+
+                #(#to_vec_body; )*
+
+                #elephantry::record::vec_to_binary(&vec)
             }
         }
     };

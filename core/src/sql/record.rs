@@ -1,7 +1,8 @@
 /*
  * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/rowtypes.c#L74
  */
-pub(crate) fn vec_to_text(vec: &[&dyn crate::ToSql]) -> crate::Result<Option<Vec<u8>>> {
+#[doc(hidden)]
+pub fn vec_to_text(vec: &[&dyn crate::ToSql]) -> crate::Result<Option<Vec<u8>>> {
     let mut data = b"(".to_vec();
 
     for field in vec {
@@ -22,7 +23,8 @@ pub(crate) fn vec_to_text(vec: &[&dyn crate::ToSql]) -> crate::Result<Option<Vec
 /*
  * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/rowtypes.c#L649
  */
-pub(crate) fn vec_to_binary(vec: &[&dyn crate::ToSql]) -> crate::Result<Option<Vec<u8>>> {
+#[doc(hidden)]
+pub fn vec_to_binary(vec: &[&dyn crate::ToSql]) -> crate::Result<Option<Vec<u8>>> {
     use crate::ToSql;
 
     let mut buf = Vec::new();
@@ -47,7 +49,8 @@ pub(crate) fn vec_to_binary(vec: &[&dyn crate::ToSql]) -> crate::Result<Option<V
 /*
  * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/rowtypes.c#L302
  */
-pub(crate) fn text_to_vec(raw: Option<&str>) -> crate::Result<Vec<Option<&str>>> {
+#[doc(hidden)]
+pub fn text_to_vec(raw: Option<&str>) -> crate::Result<Vec<Option<&str>>> {
     let s = crate::not_null(raw)?;
 
     if !s.starts_with('(') && !s.ends_with(')') {
@@ -71,7 +74,8 @@ pub(crate) fn text_to_vec(raw: Option<&str>) -> crate::Result<Vec<Option<&str>>>
 /*
  * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/rowtypes.c#L453
  */
-pub(crate) fn binary_to_vec(raw: Option<&[u8]>) -> crate::Result<Vec<Option<&[u8]>>> {
+#[doc(hidden)]
+pub fn binary_to_vec(raw: Option<&[u8]>) -> crate::Result<Vec<Option<&[u8]>>> {
     let mut buf = crate::not_null(raw)?;
 
     let mut values: Vec<Option<&[u8]>> = Vec::new();

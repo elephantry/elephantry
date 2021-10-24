@@ -1,8 +1,9 @@
+pub mod record;
+
 mod array;
 #[cfg(feature = "bit")]
 mod bit;
 mod bytea;
-mod composite;
 #[cfg(feature = "date")]
 mod date;
 #[cfg(feature = "geo")]
@@ -19,7 +20,6 @@ mod net;
 #[cfg(feature = "numeric")]
 mod numeric;
 mod range;
-mod record;
 #[cfg(feature = "time")]
 mod time;
 #[cfg(feature = "uuid")]
@@ -35,7 +35,6 @@ pub use array::*;
 #[cfg(feature = "bit")]
 pub use bit::*;
 pub use bytea::*;
-pub use composite::*;
 #[cfg(feature = "date")]
 pub use date::*;
 #[cfg(feature = "geo")]

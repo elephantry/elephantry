@@ -7,9 +7,11 @@ mod params;
 mod symbol;
 
 /**
- * Impl [`Composite`] trait.
+ * Impl [`FromSql`]/[`ToSql`] traits for [composite
+ * type](https://www.postgresql.org/docs/current/rowtypes.html).
  *
- * [`Composite`]: trait.Composite.html
+ * [`FromSql`]: trait.FromSql.html
+ * [`ToSql`]: trait.ToSql.html
  */
 #[proc_macro_derive(Composite, attributes(elephantry))]
 pub fn composite_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
