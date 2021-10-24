@@ -5,7 +5,6 @@ mod bytea;
 mod composite;
 #[cfg(feature = "date")]
 mod date;
-mod r#enum;
 #[cfg(feature = "geo")]
 mod geo;
 mod hstore;
@@ -48,4 +47,3 @@ pub use jsonb::*;
 pub use money::*;
 #[cfg(feature = "net")]
 pub use net::*;
-pub use r#enum::*;

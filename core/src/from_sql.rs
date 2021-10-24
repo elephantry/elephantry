@@ -266,4 +266,22 @@ mod test {
     crate::sql_test!(us_postal_code, String, [("'12345'", "12345".to_string()),]);
 
     crate::sql_test!(unknown, (), [("null", ())]);
+
+    #[derive(elephantry_derive::Enum, Debug, PartialEq)]
+    #[elephantry(internal)]
+    enum Mood {
+        Sad,
+        Ok,
+        Happy,
+    }
+
+    crate::sql_test!(
+        mood,
+        super::Mood,
+        [
+            ("'Sad'", super::Mood::Sad),
+            ("'Ok'", super::Mood::Ok),
+            ("'Happy'", super::Mood::Happy),
+        ]
+    );
 }

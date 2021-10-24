@@ -1,5 +1,7 @@
 # Next
 
+- Removes `Enum` trait, in flavor of implementing `FromSql`/`ToSql` traits
+    directly;
 - Adds arbitrary crate support;
 - Updates time to 0.3;
 - Makes pq::Result thread safe;

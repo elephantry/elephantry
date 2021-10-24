@@ -29,18 +29,55 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::Tok
 
     let gen = quote::quote! {
         #[automatically_derived]
-        impl #impl_generics #elephantry::Enum for #name #ty_generics #where_clause {
-            fn name() -> &'static str {
-                stringify!(#name)
-            }
+        impl #impl_generics #elephantry::FromSql for #name #ty_generics #where_clause {
+            /*
+             * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/enum.c#L150
+             */
+            fn from_text(ty: &#elephantry::pq::Type, raw: Option<&str>) -> #elephantry::Result<Self> {
+                let buf = #elephantry::not_null(raw)?;
 
-            fn from_text(value: &str) -> #elephantry::Result<Box<Self>> {
-                let v = match value {
+                let value = match buf {
                     #(#from_text_body, )*
                     _ => unreachable!(),
                 };
 
-                Ok(Box::new(v))
+                Ok(value)
+            }
+
+            /*
+             * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/enum.c#L174
+             */
+            fn from_binary(ty: &#elephantry::pq::Type, raw: Option<&[u8]>) -> #elephantry::Result<Self> {
+                let buf = #elephantry::not_null(raw)?;
+                let s = String::from_utf8(buf.to_vec())?;
+
+                Self::from_text(ty, Some(&s))
+            }
+        }
+
+        #[automatically_derived]
+        impl #impl_generics #elephantry::ToSql for #name #ty_generics #where_clause {
+            fn ty(&self) -> #elephantry::pq::Type {
+                #elephantry::pq::types::Type {
+                    oid: 0,
+                    descr: stringify!(#name),
+                    name: stringify!(#name),
+                    kind: libpq::types::Kind::Enum,
+                }
+            }
+
+            /*
+             * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/enum.c#L216
+             */
+            fn to_text(&self) -> #elephantry::Result<Option<Vec<u8>>> {
+                format!("{:?}", self).to_text()
+            }
+
+            /*
+             * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/enum.c#L110
+             */
+            fn to_binary(&self) -> #elephantry::Result<Option<Vec<u8>>> {
+                format!("{:?}", self).to_binary()
             }
         }
     };
