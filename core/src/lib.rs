@@ -22,6 +22,7 @@
  * | `hstore`                    | `elephantry::Hstore`     |         |
  * | `inet`                      | `std::net::IpAddr`       | net     |
  * | `integer`/`int4`            | `i32`                    |         |
+ * | `interval`                  | `elephantry::Interval`   | date    |
  * | `json`                      | `serde_json::Value`      | json    |
  * | `jsonb`                     | `elephantry::Jsonb`      | json    |
  * | `line`                      | `elephantry::Line`       | geo     |

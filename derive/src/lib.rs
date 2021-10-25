@@ -80,6 +80,7 @@ pub(crate) fn check_type(ty: &syn::Type) -> syn::Result<()> {
         ("date", "chrono::DateTime"),
         ("date", "chrono::NaiveDate"),
         ("date", "chrono::NaiveDateTime"),
+        ("date", "elephantry::Interval"),
         ("geo", "elephantry::Box"),
         ("geo", "elephantry::Circle"),
         ("geo", "elephantry::Line"),
