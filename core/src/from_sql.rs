@@ -292,6 +292,9 @@ mod test {
         f2: String,
     }
 
+    impl crate::entity::Simple for CompFoo {
+    }
+
     crate::sql_test!(
         compfoo,
         super::CompFoo,

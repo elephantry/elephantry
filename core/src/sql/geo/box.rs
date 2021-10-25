@@ -89,6 +89,10 @@ impl crate::FromSql for Box {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
+impl crate::entity::Simple for Box {
+}
+
 #[cfg(test)]
 mod test {
     #![allow(non_snake_case)]

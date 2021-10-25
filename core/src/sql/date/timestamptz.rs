@@ -40,6 +40,10 @@ impl crate::FromSql for chrono::DateTime<chrono::Utc> {
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "date")))]
+impl crate::entity::Simple for chrono::DateTime<chrono::Utc> {
+}
+
+#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::ToSql for chrono::DateTime<chrono::offset::FixedOffset> {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::TIMESTAMPTZ
@@ -68,6 +72,10 @@ impl crate::FromSql for chrono::DateTime<chrono::offset::FixedOffset> {
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "date")))]
+impl crate::entity::Simple for chrono::DateTime<chrono::offset::FixedOffset> {
+}
+
+#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::ToSql for chrono::DateTime<chrono::offset::Local> {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::TIMESTAMPTZ
@@ -93,6 +101,10 @@ impl crate::FromSql for chrono::DateTime<chrono::offset::Local> {
         let utc = chrono::DateTime::<chrono::Utc>::from_binary(ty, raw)?;
         Ok(utc.with_timezone(&chrono::offset::Local))
     }
+}
+
+#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
+impl crate::entity::Simple for chrono::DateTime<chrono::offset::Local> {
 }
 
 #[cfg(test)]

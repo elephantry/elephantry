@@ -43,6 +43,10 @@ impl crate::FromSql for Money {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "money")))]
+impl crate::entity::Simple for Money {
+}
+
 #[cfg(test)]
 mod test {
     crate::sql_test!(money, crate::Money, [("1.00", crate::Money::from(100))]);

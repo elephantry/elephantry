@@ -56,6 +56,10 @@ impl crate::FromSql for Time {
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "time")))]
+impl crate::entity::Simple for Time {
+}
+
+#[cfg_attr(docsrs, doc(cfg(feature = "time")))]
 impl crate::ToSql for TimeTz {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::TIMETZ
@@ -122,6 +126,10 @@ impl crate::FromSql for TimeTz {
             Timezone::from_whole_seconds(-zone).map_err(|_| Self::error(ty, "timetz", raw))?,
         ))
     }
+}
+
+#[cfg_attr(docsrs, doc(cfg(feature = "time")))]
+impl crate::entity::Simple for TimeTz {
 }
 
 #[cfg(test)]

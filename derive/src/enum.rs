@@ -80,6 +80,10 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::Tok
                 format!("{:?}", self).to_binary()
             }
         }
+
+        #[automatically_derived]
+        impl #impl_generics #elephantry::entity::Simple for #name #ty_generics #where_clause {
+        }
     };
 
     Ok(gen)

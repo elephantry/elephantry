@@ -71,6 +71,10 @@ impl crate::FromSql for Jsonb {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "json")))]
+impl crate::entity::Simple for Jsonb {
+}
+
 #[cfg(test)]
 mod test {
     crate::sql_test!(

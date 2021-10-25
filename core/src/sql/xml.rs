@@ -50,6 +50,10 @@ impl crate::FromSql for xmltree::Element {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "xml")))]
+impl crate::entity::Simple for xmltree::Element {
+}
+
 #[cfg(test)]
 mod test {
     static XML: &'static str = r#"<?xml version="1.0"?>

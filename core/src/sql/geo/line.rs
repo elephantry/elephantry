@@ -63,6 +63,10 @@ impl crate::FromSql for Line {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
+impl crate::entity::Simple for Line {
+}
+
 #[cfg(test)]
 mod test {
     crate::sql_test!(

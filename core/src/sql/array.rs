@@ -344,6 +344,9 @@ impl<T: crate::ToSql> crate::ToSql for Array<T> {
     }
 }
 
+impl<T: crate::FromSql + crate::ToSql> crate::entity::Simple for Array<T> {
+}
+
 impl<T: crate::FromSql> From<Array<T>> for Vec<T> {
     fn from(array: Array<T>) -> Self {
         if array.ndim > 1 {

@@ -10,7 +10,7 @@ mod employee {
         pub is_manager: bool,
         pub day_salary: bigdecimal::BigDecimal,
         #[elephantry(virtual)]
-        pub departments: Vec<String>,
+        pub departments: Vec<crate::department::Entity>,
     }
 
     impl<'a> Model<'a> {
@@ -32,7 +32,7 @@ select {employee_projection}
 
             let projection = Self::create_projection()
                 .unset_field("department_id")
-                .add_field("departments", "array_agg(depts.name)")
+                .add_field("departments", "array_agg(depts)")
                 .alias("e");
 
             let sql = query
@@ -45,6 +45,7 @@ select {employee_projection}
                     "{department_projection}",
                     &super::department::Model::create_projection()
                         .alias("d")
+                        .unset_field("parent")
                         .to_string(),
                 )
                 .replace("{department}", super::department::Structure::relation());
@@ -55,7 +56,7 @@ select {employee_projection}
 }
 
 mod department {
-    #[derive(Debug, elephantry::Entity)]
+    #[derive(Clone, Debug, elephantry::Entity, elephantry::Composite)]
     #[elephantry(model = "Model", structure = "Structure", relation = "department")]
     pub struct Entity {
         #[elephantry(pk)]

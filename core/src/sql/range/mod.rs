@@ -32,6 +32,9 @@ macro_rules! impl_range {
                     .map_err(|_| Self::error(ty, "", raw))
             }
         }
+
+        impl<T: crate::FromSql + crate::ToSql> crate::entity::Simple for $ty {
+        }
     };
 }
 
@@ -78,6 +81,9 @@ impl crate::FromSql for std::ops::RangeFull {
     fn from_binary(_: &crate::pq::Type, _: Option<&[u8]>) -> crate::Result<Self> {
         Ok(Self)
     }
+}
+
+impl crate::entity::Simple for std::ops::RangeFull {
 }
 
 impl<T: crate::ToSql> crate::ToSql for std::ops::RangeInclusive<T> {

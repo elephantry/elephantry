@@ -71,6 +71,9 @@ impl crate::FromSql for bigdecimal::BigDecimal {
     }
 }
 
+impl crate::entity::Simple for bigdecimal::BigDecimal {
+}
+
 /*
  * Credits: [Diesel](https://diesel.rs/).
  */

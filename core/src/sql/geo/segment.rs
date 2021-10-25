@@ -102,6 +102,10 @@ impl crate::FromSql for Segment {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
+impl crate::entity::Simple for Segment {
+}
+
 #[cfg(test)]
 mod test {
     crate::sql_test!(

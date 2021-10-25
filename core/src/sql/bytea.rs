@@ -68,6 +68,9 @@ impl crate::FromSql for Bytea {
     }
 }
 
+impl crate::entity::Simple for Bytea {
+}
+
 #[cfg(test)]
 mod test {
     crate::sql_test!(

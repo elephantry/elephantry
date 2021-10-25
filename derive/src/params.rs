@@ -13,9 +13,7 @@ impl Container {
                 syn::NestedMeta::Meta(syn::Meta::Path(w)) if w == crate::symbol::INTERNAL => {
                     param.internal = true;
                 }
-                syn::NestedMeta::Meta(meta) => {
-                    return crate::error(meta.path(), "Unknow elephantry container attribute");
-                }
+                syn::NestedMeta::Meta(_) => (),
                 syn::NestedMeta::Lit(lit) => {
                     return crate::error(lit, "Unexpected literal in elephantry field attribute");
                 }

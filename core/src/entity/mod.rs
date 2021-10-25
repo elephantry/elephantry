@@ -1,3 +1,7 @@
+mod simple;
+
+pub use simple::Simple;
+
 use std::collections::HashMap;
 
 /**
@@ -13,16 +17,6 @@ pub trait Entity {
     fn from(tuple: &crate::Tuple<'_>) -> Self;
     /** Get the value of the field named `field`. */
     fn get(&self, field: &str) -> Option<&dyn crate::ToSql>;
-}
-
-impl<T: crate::ToSql + crate::FromSql> Entity for T {
-    fn from(tuple: &crate::Tuple<'_>) -> T {
-        tuple.nth(0)
-    }
-
-    fn get(&self, _: &str) -> Option<&dyn crate::ToSql> {
-        Some(self)
-    }
 }
 
 impl<T: crate::FromSql + crate::ToSql, S: std::hash::BuildHasher + Default> Entity
@@ -72,6 +66,16 @@ impl<T: crate::FromSql + crate::ToSql, S: std::hash::BuildHasher + Default> Enti
         };
 
         self.get(&x).map(|x| x as &dyn crate::ToSql)
+    }
+}
+
+impl<T: Simple> Entity for T {
+    fn from(tuple: &crate::Tuple<'_>) -> T {
+        tuple.nth(0)
+    }
+
+    fn get(&self, _: &str) -> Option<&dyn crate::ToSql> {
+        Some(self)
     }
 }
 

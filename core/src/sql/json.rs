@@ -44,6 +44,10 @@ impl crate::FromSql for serde_json::Value {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "json")))]
+impl crate::entity::Simple for serde_json::Value {
+}
+
 #[cfg(test)]
 mod test {
     crate::sql_test!(

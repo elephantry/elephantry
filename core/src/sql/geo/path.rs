@@ -128,6 +128,10 @@ impl crate::FromSql for Path {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
+impl crate::entity::Simple for Path {
+}
+
 #[cfg(test)]
 mod test {
     crate::sql_test!(

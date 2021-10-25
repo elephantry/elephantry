@@ -49,6 +49,10 @@ impl crate::FromSql for u8 {
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "bit")))]
+impl crate::entity::Simple for u8 {
+}
+
+#[cfg_attr(docsrs, doc(cfg(feature = "bit")))]
 impl crate::ToSql for bit_vec::BitVec {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::VARBIT
@@ -105,6 +109,10 @@ impl crate::FromSql for bit_vec::BitVec {
 
         Ok(bit_vec::BitVec::from_bytes(buf))
     }
+}
+
+#[cfg_attr(docsrs, doc(cfg(feature = "bit")))]
+impl crate::entity::Simple for bit_vec::BitVec {
 }
 
 #[cfg(test)]

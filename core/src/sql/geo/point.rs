@@ -93,6 +93,10 @@ impl crate::FromSql for Point {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
+impl crate::entity::Simple for Point {
+}
+
 #[cfg(test)]
 mod test {
     crate::sql_test!(

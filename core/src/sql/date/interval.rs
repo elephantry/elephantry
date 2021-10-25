@@ -249,6 +249,10 @@ impl crate::ToSql for Interval {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
+impl crate::entity::Simple for Interval {
+}
+
 #[cfg(test)]
 mod test {
     crate::sql_test!(

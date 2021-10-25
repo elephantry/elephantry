@@ -139,6 +139,9 @@ impl crate::FromSql for Hstore {
     }
 }
 
+impl crate::entity::Simple for Hstore {
+}
+
 #[cfg(test)]
 mod test {
     crate::sql_test!(

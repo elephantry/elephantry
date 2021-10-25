@@ -45,6 +45,10 @@ impl crate::FromSql for macaddr::MacAddr8 {
     }
 }
 
+#[cfg_attr(docsrs, doc(cfg(feature = "net")))]
+impl crate::entity::Simple for macaddr::MacAddr8 {
+}
+
 #[cfg(test)]
 mod test {
     #![allow(non_snake_case)]

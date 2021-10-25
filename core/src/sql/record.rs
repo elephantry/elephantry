@@ -171,6 +171,9 @@ macro_rules! tuple_impls {
                     Ok(tuple)
                 }
             }
+
+            impl<$($T: crate::FromSql + crate::ToSql,)+> crate::entity::Simple for ($($T,)+) {
+            }
         )+
     }
 }
