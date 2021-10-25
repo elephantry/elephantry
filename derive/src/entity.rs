@@ -39,10 +39,17 @@ fn entity_impl(
         _ => {
             return crate::error(
                 ast,
-                "this derive macro only works on structs with named fields",
+                "this derive macro only works on structs",
             )
         }
     };
+
+    if matches!(fields, syn::Fields::Unnamed(_)) {
+        return crate::error(
+            ast,
+            "this derive macro only works on structs with named field",
+        )
+    }
 
     let mut from_body = Vec::new();
     let mut get_body = Vec::new();
