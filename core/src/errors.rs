@@ -51,7 +51,7 @@ pub enum Error {
     ParseIntError(#[from] std::num::ParseIntError),
     /** Ping error */
     #[error("Ping error: {0:?}")]
-    Ping(crate::PingStatus),
+    Ping(crate::connection::PingStatus),
     /** Incomplete primary key */
     #[error("Invalid primary key")]
     PrimaryKey,

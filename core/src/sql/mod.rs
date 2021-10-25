@@ -1,3 +1,4 @@
+#[doc(hidden)]
 pub mod record;
 
 mod array;

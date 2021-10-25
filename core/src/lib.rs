@@ -47,6 +47,8 @@
  * | `xml`                       | `xmltree::Element`       | xml     |
  */
 
+pub mod config;
+pub mod connection;
 /** database inspection module. */
 pub mod inspect;
 /** libpq abstraction layer. */
@@ -60,8 +62,6 @@ pub mod rocket;
 pub mod transaction;
 
 mod r#async;
-mod config;
-mod connection;
 mod entity;
 mod errors;
 mod from_sql;
@@ -76,10 +76,10 @@ mod to_sql;
 mod tuple;
 mod r#where;
 
-pub use crate::config::*;
-pub use connection::*;
+pub use crate::config::Config;
+pub use connection::Connection;
 pub use elephantry_derive::*;
-pub use entity::*;
+pub use entity::Entity;
 pub use errors::*;
 pub use from_sql::*;
 pub use model::*;
@@ -87,7 +87,7 @@ pub use pager::*;
 pub use pool::*;
 pub use projection::*;
 pub use r#async::*;
-pub use r#where::*;
+pub use r#where::Where;
 pub use rows::*;
 pub use sql::*;
 pub use structure::*;
