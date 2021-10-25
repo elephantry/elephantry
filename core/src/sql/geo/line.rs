@@ -1,3 +1,7 @@
+/**
+ * Rust type for
+ * [line](https://www.postgresql.org/docs/current/datatype-geometric.html#DATATYPE-LINE).
+ */
 #[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 #[derive(Clone, Debug, PartialEq)]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]

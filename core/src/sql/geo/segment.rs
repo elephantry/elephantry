@@ -1,3 +1,7 @@
+/**
+ * Rust type for
+ * [segment](https://www.postgresql.org/docs/current/datatype-geometric.html#DATATYPE-LSEG).
+ */
 #[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 #[derive(Clone, Debug, PartialEq)]
 pub struct Segment(geo_types::Line<f64>);

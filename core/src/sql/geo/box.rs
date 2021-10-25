@@ -1,3 +1,7 @@
+/**
+ * Rust type for
+ * [box](https://www.postgresql.org/docs/current/datatype-geometric.html#id-1.5.7.16.8).
+ */
 #[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 #[derive(Clone, Debug, PartialEq)]
 pub struct Box(geo_types::Rect<f64>);

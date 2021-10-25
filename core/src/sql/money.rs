@@ -1,3 +1,7 @@
+/**
+ * Rust type for
+ * [money](https://www.postgresql.org/docs/current/datatype-money.html).
+ */
 #[cfg_attr(docsrs, doc(cfg(feature = "money")))]
 pub use postgres_money::Money;
 

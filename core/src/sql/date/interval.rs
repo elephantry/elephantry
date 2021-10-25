@@ -1,3 +1,7 @@
+/**
+ * Rust type for
+ * [interval](https://www.postgresql.org/docs/current/datatype-datetime.html).
+ */
 #[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 #[derive(Clone, Debug, Default)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]

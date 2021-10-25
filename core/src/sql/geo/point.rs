@@ -1,3 +1,7 @@
+/**
+ * Rust type for
+ * [point](https://www.postgresql.org/docs/current/datatype-geometric.html#id-1.5.7.16.5).
+ */
 #[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 #[derive(Clone, Debug, PartialEq)]
 pub struct Point(geo_types::Point<f64>);

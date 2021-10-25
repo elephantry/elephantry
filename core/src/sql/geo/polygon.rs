@@ -1,3 +1,7 @@
+/**
+ * Rust type for
+ * [polygon](https://www.postgresql.org/docs/current/datatype-geometric.html#DATATYPE-POLYGON).
+ */
 #[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 #[derive(Clone, Debug, PartialEq)]
 pub struct Polygon(geo_types::Polygon<f64>);

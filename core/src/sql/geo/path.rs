@@ -1,3 +1,7 @@
+/**
+ * Rust type for
+ * [path](https://www.postgresql.org/docs/current/datatype-geometric.html#id-1.5.7.16.9).
+ */
 #[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 #[derive(Clone, Debug, PartialEq)]
 pub struct Path(geo_types::LineString<f64>);

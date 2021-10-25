@@ -1,3 +1,6 @@
+/**
+ * Rust type for jsonb.
+ */
 #[derive(Clone, Debug, PartialEq)]
 pub struct Jsonb(serde_json::Value);
 
