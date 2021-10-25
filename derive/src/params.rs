@@ -48,7 +48,7 @@ impl Entity {
                 syn::NestedMeta::Meta(syn::Meta::NameValue(m))
                     if m.path == crate::symbol::MODEL =>
                 {
-                    let model = get_lit(crate::symbol::MODEL, &m.lit).unwrap();
+                    let model = get_lit(crate::symbol::MODEL, &m.lit)?;
                     param.model = Some(model);
                 }
                 // Parse #[elephantry(relation = "")]
@@ -62,7 +62,7 @@ impl Entity {
                 syn::NestedMeta::Meta(syn::Meta::NameValue(m))
                     if m.path == crate::symbol::STRUCTURE =>
                 {
-                    let structure = get_lit(crate::symbol::STRUCTURE, &m.lit).unwrap();
+                    let structure = get_lit(crate::symbol::STRUCTURE, &m.lit)?;
                     param.structure = Some(structure);
                 }
                 syn::NestedMeta::Meta(meta) => {
