@@ -86,8 +86,7 @@ impl crate::FromSql for Circle {
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
-impl crate::entity::Simple for Circle {
-}
+impl crate::entity::Simple for Circle {}
 
 #[cfg(test)]
 mod test {

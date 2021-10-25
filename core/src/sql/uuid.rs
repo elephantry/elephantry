@@ -49,8 +49,7 @@ impl crate::FromSql for uuid::Uuid {
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "uuid")))]
-impl crate::entity::Simple for uuid::Uuid {
-}
+impl crate::entity::Simple for uuid::Uuid {}
 
 #[cfg(test)]
 mod test {

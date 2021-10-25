@@ -49,8 +49,7 @@ impl crate::FromSql for u8 {
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "bit")))]
-impl crate::entity::Simple for u8 {
-}
+impl crate::entity::Simple for u8 {}
 
 #[cfg_attr(docsrs, doc(cfg(feature = "bit")))]
 impl crate::ToSql for bit_vec::BitVec {
@@ -112,8 +111,7 @@ impl crate::FromSql for bit_vec::BitVec {
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "bit")))]
-impl crate::entity::Simple for bit_vec::BitVec {
-}
+impl crate::entity::Simple for bit_vec::BitVec {}
 
 #[cfg(test)]
 mod test {

@@ -40,8 +40,7 @@ impl crate::FromSql for chrono::DateTime<chrono::Utc> {
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "date")))]
-impl crate::entity::Simple for chrono::DateTime<chrono::Utc> {
-}
+impl crate::entity::Simple for chrono::DateTime<chrono::Utc> {}
 
 #[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::ToSql for chrono::DateTime<chrono::offset::FixedOffset> {
@@ -72,8 +71,7 @@ impl crate::FromSql for chrono::DateTime<chrono::offset::FixedOffset> {
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "date")))]
-impl crate::entity::Simple for chrono::DateTime<chrono::offset::FixedOffset> {
-}
+impl crate::entity::Simple for chrono::DateTime<chrono::offset::FixedOffset> {}
 
 #[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::ToSql for chrono::DateTime<chrono::offset::Local> {
@@ -104,8 +102,7 @@ impl crate::FromSql for chrono::DateTime<chrono::offset::Local> {
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "date")))]
-impl crate::entity::Simple for chrono::DateTime<chrono::offset::Local> {
-}
+impl crate::entity::Simple for chrono::DateTime<chrono::offset::Local> {}
 
 #[cfg(test)]
 mod test {

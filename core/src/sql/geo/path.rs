@@ -92,9 +92,7 @@ impl crate::FromSql for Path {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let raw = crate::not_null(raw)?;
 
-        let coordinates = raw
-            .parse()
-            .map_err(|_| Self::error(ty, raw))?;
+        let coordinates = raw.parse().map_err(|_| Self::error(ty, raw))?;
 
         let mut path = Self::new(&coordinates);
 
@@ -133,8 +131,7 @@ impl crate::FromSql for Path {
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
-impl crate::entity::Simple for Path {
-}
+impl crate::entity::Simple for Path {}
 
 #[cfg(test)]
 mod test {

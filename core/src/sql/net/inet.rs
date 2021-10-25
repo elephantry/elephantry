@@ -76,8 +76,7 @@ impl crate::FromSql for std::net::IpAddr {
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "net")))]
-impl crate::entity::Simple for std::net::IpAddr {
-}
+impl crate::entity::Simple for std::net::IpAddr {}
 
 #[cfg(test)]
 mod test {

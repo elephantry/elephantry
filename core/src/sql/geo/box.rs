@@ -94,8 +94,7 @@ impl crate::FromSql for Box {
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
-impl crate::entity::Simple for Box {
-}
+impl crate::entity::Simple for Box {}
 
 #[cfg(test)]
 mod test {

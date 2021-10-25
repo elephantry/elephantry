@@ -53,8 +53,7 @@ impl crate::FromSql for chrono::NaiveDateTime {
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "date")))]
-impl crate::entity::Simple for chrono::NaiveDateTime {
-}
+impl crate::entity::Simple for chrono::NaiveDateTime {}
 
 #[cfg(test)]
 mod test {

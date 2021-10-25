@@ -80,8 +80,7 @@ impl crate::FromSql for ipnetwork::IpNetwork {
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "net")))]
-impl crate::entity::Simple for ipnetwork::IpNetwork {
-}
+impl crate::entity::Simple for ipnetwork::IpNetwork {}
 
 #[cfg(test)]
 mod test {

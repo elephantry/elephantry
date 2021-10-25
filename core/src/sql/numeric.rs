@@ -65,14 +65,11 @@ impl crate::FromSql for bigdecimal::BigDecimal {
             digits,
         };
 
-        numeric
-            .try_into()
-            .map_err(|_| Self::error(ty, raw))
+        numeric.try_into().map_err(|_| Self::error(ty, raw))
     }
 }
 
-impl crate::entity::Simple for bigdecimal::BigDecimal {
-}
+impl crate::entity::Simple for bigdecimal::BigDecimal {}
 
 /*
  * Credits: [Diesel](https://diesel.rs/).

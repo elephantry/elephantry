@@ -1,10 +1,8 @@
-pub trait Simple: crate::ToSql + crate::FromSql {
-}
+pub trait Simple: crate::ToSql + crate::FromSql {}
 
 macro_rules! simple_entity {
     ($ty:ty) => {
-        impl Simple for $ty {
-        }
+        impl Simple for $ty {}
     };
 }
 
@@ -20,8 +18,6 @@ simple_entity!(u16);
 simple_entity!(u32);
 simple_entity!(String);
 
-impl<T: Simple> Simple for Option<T> {
-}
+impl<T: Simple> Simple for Option<T> {}
 
-impl<T: Simple + Clone> Simple for Vec<T> {
-}
+impl<T: Simple + Clone> Simple for Vec<T> {}

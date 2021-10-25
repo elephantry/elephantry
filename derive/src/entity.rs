@@ -36,19 +36,14 @@ fn entity_impl(
 ) -> syn::Result<proc_macro2::TokenStream> {
     let fields = match ast.data {
         syn::Data::Struct(ref s) => &s.fields,
-        _ => {
-            return crate::error(
-                ast,
-                "this derive macro only works on structs",
-            )
-        }
+        _ => return crate::error(ast, "this derive macro only works on structs"),
     };
 
     if matches!(fields, syn::Fields::Unnamed(_)) {
         return crate::error(
             ast,
             "this derive macro only works on structs with named field",
-        )
+        );
     }
 
     let mut from_body = Vec::new();

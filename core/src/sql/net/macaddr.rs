@@ -46,8 +46,7 @@ impl crate::FromSql for macaddr::MacAddr6 {
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "net")))]
-impl crate::entity::Simple for macaddr::MacAddr6 {
-}
+impl crate::entity::Simple for macaddr::MacAddr6 {}
 
 #[cfg(test)]
 mod test {

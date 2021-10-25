@@ -107,8 +107,7 @@ impl crate::FromSql for Polygon {
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
-impl crate::entity::Simple for Polygon {
-}
+impl crate::entity::Simple for Polygon {}
 
 #[cfg(test)]
 mod test {

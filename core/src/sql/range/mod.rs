@@ -33,8 +33,7 @@ macro_rules! impl_range {
             }
         }
 
-        impl<T: crate::FromSql + crate::ToSql> crate::entity::Simple for $ty {
-        }
+        impl<T: crate::FromSql + crate::ToSql> crate::entity::Simple for $ty {}
     };
 }
 
@@ -83,8 +82,7 @@ impl crate::FromSql for std::ops::RangeFull {
     }
 }
 
-impl crate::entity::Simple for std::ops::RangeFull {
-}
+impl crate::entity::Simple for std::ops::RangeFull {}
 
 impl<T: crate::ToSql> crate::ToSql for std::ops::RangeInclusive<T> {
     fn ty(&self) -> crate::pq::Type {

@@ -64,8 +64,7 @@ impl crate::FromSql for Time {
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "time")))]
-impl crate::entity::Simple for Time {
-}
+impl crate::entity::Simple for Time {}
 
 #[cfg_attr(docsrs, doc(cfg(feature = "time")))]
 impl crate::ToSql for TimeTz {
@@ -106,8 +105,7 @@ impl crate::FromSql for TimeTz {
         };
 
         let format = time::macros::format_description!("[hour]:[minute]:[second]");
-        let time =
-            Time::parse(&value[0..x], &format).map_err(|_| Self::error(ty, raw))?;
+        let time = Time::parse(&value[0..x], &format).map_err(|_| Self::error(ty, raw))?;
 
         let mut tz = value[x..].replace(':', "");
 
@@ -137,8 +135,7 @@ impl crate::FromSql for TimeTz {
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "time")))]
-impl crate::entity::Simple for TimeTz {
-}
+impl crate::entity::Simple for TimeTz {}
 
 #[cfg(test)]
 mod test {
