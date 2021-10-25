@@ -45,6 +45,10 @@
  * | `timestamptz`               | `chrono::DateTime`       | date    |
  * | `uuid`                      | `uuid::Uuid`             | uuid    |
  * | `xml`                       | `xmltree::Element`       | xml     |
+ * | `[x, y)`                    | `std::ops::Range`        |         |
+ * | `[x,)`                      | `std::ops::RangeFrom`    |         |
+ * | `[,y)`                      | `std::ops::RangeTo`      |         |
+ * | `(,)`                       | `std::ops::RangeFull`    |         |
  */
 
 pub mod config;
