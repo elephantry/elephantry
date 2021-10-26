@@ -1,4 +1,4 @@
-# Next
+# Version 3.0.0
 
 - Adds multirange support;
 - `Entity` trait is no longer automatically impl for type impl `FromSql` +
