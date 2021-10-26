@@ -22,7 +22,6 @@ let database_url = std::env::var("DATABASE_URL")
 
 // Connect
 let elephantry = elephantry::Pool::new(&database_url)?;
-# elephantry.execute("create temporary table entity(id serial primary key, deleted bool);")?;
 
 // Simple query
 let rows = elephantry.execute("select id from entity")?;
@@ -41,20 +40,16 @@ struct Entity {
     deleted: bool,
 }
 
-# let id = 1;
 // Read entities
 let entity = elephantry.find_by_pk::<Model>(&elephantry::pk!(id))?;
 let entities = elephantry.find_all::<Model>(None)?;
 let entities = elephantry.find_where::<Model>("deleted = $1", &[&false], None)?;
 
-# let entity = Entity { id: 1, deleted: false };
 // Write entities
 elephantry.insert_one::<Model>(&entity)?;
 elephantry.update_one::<Model>(&elephantry::pk!{id => entity.id}, &entity)?;
 elephantry.delete_one::<Model>(&entity)?;
 elephantry.delete_where::<Model>("deleted = $1", &[&true])?;
-
-# Ok::<(), elephantry::Error>(())
 ```
 
 ## Features
