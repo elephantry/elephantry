@@ -64,11 +64,11 @@ pub trait ToSql {
         crate::pq::Format::Text
     }
 
-    fn error(&self, message: Option<&String>) -> crate::Error {
+    fn error(&self, message: &str) -> crate::Error {
         crate::Error::ToSql {
             pg_type: self.ty(),
             rust_type: std::any::type_name::<Self>().to_string(),
-            message: message.cloned(),
+            message: message.to_string(),
         }
     }
 }

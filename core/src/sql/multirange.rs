@@ -117,7 +117,7 @@ where
                 crate::to_sql::write_i32(&mut buf, raw.len() as i32)?;
                 buf.extend(&raw);
             } else {
-                return Err(self.error(Some(&"range element could not be null".to_string())));
+                return Err(self.error("range element could not be null"));
             }
         }
 

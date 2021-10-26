@@ -59,11 +59,11 @@ pub enum Error {
     #[error("{}", .0.error_message().unwrap_or_else(|| "Unknow SQL error".to_string()))]
     Sql(crate::pq::Result),
     /** Unable to transform a rust value to SQL */
-    #[error("Invalid {rust_type} value: '{}'", message.clone().unwrap_or_else(|| "unknow".to_string()))]
+    #[error("Invalid convertion from {} to {rust_type}: {message}", .pg_type.name)]
     ToSql {
         pg_type: crate::pq::Type,
         rust_type: String,
-        message: Option<String>,
+        message: String,
     },
     /** UTF8 error */
     #[error(transparent)]

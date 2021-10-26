@@ -11,7 +11,7 @@ impl crate::ToSql for xmltree::Element {
         let mut vec = Vec::new();
 
         self.write(&mut vec)
-            .map_err(|e| self.error(Some(&e.to_string())))?;
+            .map_err(|e| self.error(&e.to_string()))?;
         vec.push(b'\0');
 
         Ok(Some(vec))
@@ -24,7 +24,7 @@ impl crate::ToSql for xmltree::Element {
         let mut buf = Vec::new();
 
         self.write(&mut buf)
-            .map_err(|e| self.error(Some(&e.to_string())))?;
+            .map_err(|e| self.error(&e.to_string()))?;
 
         Ok(Some(buf))
     }
