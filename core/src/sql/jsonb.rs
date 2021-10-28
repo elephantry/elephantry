@@ -2,6 +2,7 @@
  * Rust type for jsonb.
  */
 #[derive(Clone, Debug, PartialEq)]
+#[cfg_attr(docsrs, doc(cfg(feature = "json")))]
 pub struct Jsonb(serde_json::Value);
 
 impl From<serde_json::Value> for Jsonb {
