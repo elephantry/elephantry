@@ -53,6 +53,7 @@
 
 pub mod config;
 pub mod connection;
+pub mod entity;
 /** database inspection module. */
 pub mod inspect;
 /** libpq abstraction layer. */
@@ -66,7 +67,6 @@ pub mod rocket;
 pub mod transaction;
 
 mod r#async;
-mod entity;
 mod errors;
 mod from_sql;
 mod model;

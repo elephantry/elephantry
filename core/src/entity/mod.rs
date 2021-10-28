@@ -69,16 +69,6 @@ impl<T: crate::FromSql + crate::ToSql, S: std::hash::BuildHasher + Default> Enti
     }
 }
 
-impl<T: Simple> Entity for T {
-    fn from(tuple: &crate::Tuple<'_>) -> T {
-        tuple.nth(0)
-    }
-
-    fn get(&self, _: &str) -> Option<&dyn crate::ToSql> {
-        Some(self)
-    }
-}
-
 #[cfg(test)]
 mod test {
     use std::collections::HashMap;
