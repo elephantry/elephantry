@@ -1,4 +1,4 @@
-#![warn(rust_2018_idioms)]
+#![warn(warnings)]
 #![doc(html_logo_url = "https://elephantry.github.io/logo.png")]
 #![cfg_attr(docsrs, feature(doc_cfg))]
 
