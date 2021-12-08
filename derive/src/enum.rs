@@ -69,14 +69,14 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::Tok
             /*
              * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/enum.c#L216
              */
-            fn to_text(&self) -> #elephantry::Result<Option<Vec<u8>>> {
+            fn to_text(&self) -> #elephantry::Result<::std::option::Option<Vec<u8>>> {
                 format!("{:?}", self).to_text()
             }
 
             /*
              * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/enum.c#L110
              */
-            fn to_binary(&self) -> #elephantry::Result<Option<Vec<u8>>> {
+            fn to_binary(&self) -> #elephantry::Result<::std::option::Option<Vec<u8>>> {
                 format!("{:?}", self).to_binary()
             }
         }

@@ -105,7 +105,7 @@ fn entity_impl(
                 }
             }
 
-            fn get(&self, field: &str) -> Option<&dyn #elephantry::ToSql> {
+            fn get(&self, field: &str) -> ::std::option::Option<&dyn #elephantry::ToSql> {
                 match field {
                     #(#get_body, )*
                     _ => None,

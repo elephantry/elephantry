@@ -48,7 +48,7 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::Tok
     let gen = quote::quote! {
         #[automatically_derived]
         impl #impl_generics #elephantry::FromSql for #name #ty_generics #where_clause {
-            fn from_text(ty: &#elephantry::pq::Type, raw: Option<&str>) -> #elephantry::Result<Self> {
+            fn from_text(ty: &#elephantry::pq::Type, raw: ::std::option::Option<&str>) -> #elephantry::Result<Self> {
                 let values = #elephantry::record::text_to_vec(raw)?;
 
                 let s = Self {
@@ -58,7 +58,7 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::Tok
                 Ok(s)
             }
 
-            fn from_binary(ty: &#elephantry::pq::Type, raw: Option<&[u8]>) -> #elephantry::Result<Self> {
+            fn from_binary(ty: &#elephantry::pq::Type, raw: ::std::option::Option<&[u8]>) -> #elephantry::Result<Self> {
                 let values = #elephantry::record::binary_to_vec(raw)?;
 
                 let s = Self {
@@ -81,7 +81,7 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::Tok
                 }
             }
 
-            fn to_text(&self) -> #elephantry::Result<Option<Vec<u8>>> {
+            fn to_text(&self) -> #elephantry::Result<::std::option::Option<Vec<u8>>> {
                 let mut vec = Vec::new();
 
                 #(#to_vec_body; )*
@@ -89,7 +89,7 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::Tok
                 #elephantry::record::vec_to_text(&vec)
             }
 
-            fn to_binary(&self) -> #elephantry::Result<Option<Vec<u8>>> {
+            fn to_binary(&self) -> #elephantry::Result<::std::option::Option<Vec<u8>>> {
                 let mut vec = Vec::new();
 
                 #(#to_vec_body; )*
