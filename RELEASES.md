@@ -1,3 +1,7 @@
+# Next
+
+- `pg14` feature
+
 # Version 3.0.0
 
 - Adds multirange support (pg >= 14);
