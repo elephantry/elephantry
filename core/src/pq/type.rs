@@ -65,9 +65,6 @@ lazy_static::lazy_static! {
 
         types.insert(
             types::DATE.name,
-            #[cfg(feature = "date")]
-            t::<chrono::NaiveDate>(),
-            #[cfg(not(feature = "date"))]
             "chrono::NaiveDate",
         );
 
@@ -130,23 +127,14 @@ lazy_static::lazy_static! {
         );
         types.insert(
             types::INET.name,
-            #[cfg(feature = "net")]
-            t::<std::net::IpAddr>(),
-            #[cfg(not(feature = "net"))]
             "std::net::IpAddr",
         );
         types.insert(
             types::MACADDR.name,
-            #[cfg(feature = "net")]
-            t::<macaddr::MacAddr6>(),
-            #[cfg(not(feature = "net"))]
             "macaddr::MacAddr6",
         );
         types.insert(
             types::MACADDR8.name,
-            #[cfg(feature = "net")]
-            t::<macaddr::MacAddr8>(),
-            #[cfg(not(feature = "net"))]
             "macaddr::MacAddr8",
         );
 
@@ -159,9 +147,6 @@ lazy_static::lazy_static! {
         );
         types.insert(
             types::JSONB.name,
-            #[cfg(feature = "json")]
-            t::<serde_json::Value>(),
-            #[cfg(not(feature = "json"))]
             "serde_json::Value",
         );
 
@@ -183,30 +168,18 @@ lazy_static::lazy_static! {
 
         types.insert(
             types::TIME.name,
-            #[cfg(feature = "time")]
-            t::<chrono::NaiveTime>(),
-            #[cfg(not(feature = "time"))]
             "chrono::NaiveTime",
         );
         types.insert(
             types::TIMETZ.name,
-            #[cfg(feature = "time")]
-            t::<crate::TimeTz>(),
-            #[cfg(not(feature = "time"))]
             "chrono::TimeTz",
         );
         types.insert(
             types::TIMESTAMP.name,
-            #[cfg(feature = "time")]
-            t::<chrono::NaiveDateTime>(),
-            #[cfg(not(feature = "time"))]
             "chrono::NaiveDateTime",
         );
         types.insert(
             types::TIMESTAMPTZ.name,
-            #[cfg(feature = "time")]
-            t::<chrono::DateTime<chrono::FixedOffset>>(),
-            #[cfg(not(feature = "time"))]
             "chrono::DateTime<chrono::FixedOffset>>",
         );
 
