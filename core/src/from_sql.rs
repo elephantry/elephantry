@@ -124,7 +124,13 @@ impl FromSql for u16 {
     }
 
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
-        i32::from_binary(ty, raw).map(|x| x as u16)
+        let raw = raw.map(|x| {
+            let mut vec = vec![0; 4 - x.len()];
+            vec.extend_from_slice(x);
+            vec
+        });
+
+        i32::from_binary(ty, raw.as_deref()).map(|x| x as u16)
     }
 }
 
@@ -134,7 +140,13 @@ impl FromSql for u32 {
     }
 
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
-        i64::from_binary(ty, raw).map(|x| x as u32)
+        let raw = raw.map(|x| {
+            let mut vec = vec![0; 8 - x.len()];
+            vec.extend_from_slice(x);
+            vec
+        });
+
+        i64::from_binary(ty, raw.as_deref()).map(|x| x as u32)
     }
 }
 
@@ -239,6 +251,8 @@ mod test {
     crate::sql_test!(bigint, u32, [(u32::MAX, u32::MAX), (1, 1), (0, 0)]);
 
     crate::sql_test!(int8, i64, [(i64::MAX, i64::MAX), (1, 1), (0, 0), (-1, -1),]);
+
+    crate::sql_test!(oid, crate::pq::Oid, [(1, 1)]);
 
     crate::sql_test!(
         bool,
