@@ -3,11 +3,11 @@ use std::collections::HashMap;
 /**
  * Impl this trait to create a link between an entity and a structure.
  */
-pub trait Model<'a> {
+pub trait Model {
     type Entity: crate::Entity;
     type Structure: crate::Structure;
 
-    fn new(connection: &'a crate::Connection) -> Self;
+    fn new(connection: &crate::Connection) -> Self;
 
     /**
      * This method creates a projection based on the structure definition of

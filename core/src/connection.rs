@@ -81,9 +81,9 @@ impl Connection {
         Self::new(&config.to_string())
     }
 
-    pub fn model<'a, M>(&'a self) -> M
+    pub fn model<M>(&self) -> M
     where
-        M: crate::Model<'a>,
+        M: crate::Model,
     {
         M::new(self)
     }
@@ -172,12 +172,12 @@ impl Connection {
      * Return an entity upon its primary key. If no entities are found, `None`
      * is returned.
      */
-    pub fn find_by_pk<'a, M>(
+    pub fn find_by_pk<M>(
         &self,
         pk: &HashMap<&str, &dyn crate::ToSql>,
     ) -> crate::Result<Option<M::Entity>>
     where
-        M: crate::Model<'a>,
+        M: crate::Model,
     {
         let (clause, params) = self.pk_clause::<M>(pk)?;
         let mut tuples = self.find_where::<M>(&clause, &params, None)?;
@@ -192,9 +192,9 @@ impl Connection {
      * NOTE: suffix is inserted as is with NO ESCAPING. DO NOT use it to place
      * "where" condition nor any untrusted params.
      */
-    pub fn find_all<'a, M>(&self, suffix: Option<&str>) -> crate::Result<crate::Rows<M::Entity>>
+    pub fn find_all<M>(&self, suffix: Option<&str>) -> crate::Result<crate::Rows<M::Entity>>
     where
-        M: crate::Model<'a>,
+        M: crate::Model,
     {
         let query = format!(
             "SELECT {} FROM {} {};",
@@ -212,14 +212,14 @@ impl Connection {
      * NOTE: suffix is inserted as is with NO ESCAPING. DO NOT use it to place
      * "where" condition nor any untrusted params.
      */
-    pub fn find_where<'a, M>(
+    pub fn find_where<M>(
         &self,
         clause: &str,
         params: &[&dyn crate::ToSql],
         suffix: Option<&str>,
     ) -> crate::Result<crate::Rows<M::Entity>>
     where
-        M: crate::Model<'a>,
+        M: crate::Model,
     {
         let query = format!(
             "SELECT {} FROM {} WHERE {} {};",
@@ -238,7 +238,7 @@ impl Connection {
      * This is done with limit/offset, read why it’s probably not a good idea to
      * use it: <https://use-the-index-luke.com/no-offset>.
      */
-    pub fn paginate_find_where<'a, M>(
+    pub fn paginate_find_where<M>(
         &self,
         clause: &str,
         params: &[&dyn crate::ToSql],
@@ -247,7 +247,7 @@ impl Connection {
         suffix: Option<&str>,
     ) -> crate::Result<crate::Pager<M::Entity>>
     where
-        M: crate::Model<'a>,
+        M: crate::Model,
     {
         let suffix = format!(
             "{} offset {} fetch first {} rows only",
@@ -267,13 +267,13 @@ impl Connection {
     /**
      * Return the number of records matching a condition.
      */
-    pub fn count_where<'a, M>(
+    pub fn count_where<M>(
         &self,
         clause: &str,
         params: &[&dyn crate::ToSql],
     ) -> crate::Result<usize>
     where
-        M: crate::Model<'a>,
+        M: crate::Model,
     {
         let query = format!(
             "SELECT COUNT(*) FROM {} WHERE {};",
@@ -289,13 +289,13 @@ impl Connection {
     /**
      * Check if rows matching the given condition do exist or not.
      */
-    pub fn exist_where<'a, M>(
+    pub fn exist_where<M>(
         &self,
         clause: &str,
         params: &[&dyn crate::ToSql],
     ) -> crate::Result<bool>
     where
-        M: crate::Model<'a>,
+        M: crate::Model,
     {
         let query = format!(
             "SELECT EXISTS (SELECT true FROM {} WHERE {}) AS result;",
@@ -313,9 +313,9 @@ impl Connection {
      *
      * Returns the entity with values from database (ie: default values).
      */
-    pub fn insert_one<'a, M>(&self, entity: &M::Entity) -> crate::Result<M::Entity>
+    pub fn insert_one<M>(&self, entity: &M::Entity) -> crate::Result<M::Entity>
     where
-        M: crate::Model<'a>,
+        M: crate::Model,
     {
         self.insert::<M>(entity, None).map(|x| x.unwrap())
     }
@@ -328,26 +328,26 @@ impl Connection {
      *
      * Returns the entity with values from database (ie: default values).
      */
-    pub fn upsert_one<'a, M>(
+    pub fn upsert_one<M>(
         &self,
         entity: &M::Entity,
         target: &str,
         action: &str,
     ) -> crate::Result<Option<M::Entity>>
     where
-        M: crate::Model<'a>,
+        M: crate::Model,
     {
         let suffix = format!("on conflict {} do {}", target, action);
         self.insert::<M>(entity, Some(suffix.as_str()))
     }
 
-    fn insert<'a, M>(
+    fn insert<M>(
         &self,
         entity: &M::Entity,
         suffix: Option<&str>,
     ) -> crate::Result<Option<M::Entity>>
     where
-        M: crate::Model<'a>,
+        M: crate::Model,
     {
         use crate::Entity;
 
@@ -385,13 +385,13 @@ impl Connection {
      *
      * Returns the entity with values from database.
      */
-    pub fn update_one<'a, M>(
+    pub fn update_one<M>(
         &self,
         pk: &HashMap<&str, &dyn crate::ToSql>,
         entity: &M::Entity,
     ) -> crate::Result<Option<M::Entity>>
     where
-        M: crate::Model<'a>,
+        M: crate::Model,
     {
         use crate::Entity;
 
@@ -412,13 +412,13 @@ impl Connection {
      * Update a record and fetch it with its new values. If no records match
      * the given key, `None` is returned.
      */
-    pub fn update_by_pk<'a, M>(
+    pub fn update_by_pk<M>(
         &self,
         pk: &HashMap<&str, &dyn crate::ToSql>,
         data: &HashMap<String, &dyn crate::ToSql>,
     ) -> crate::Result<Option<M::Entity>>
     where
-        M: crate::Model<'a>,
+        M: crate::Model,
     {
         let (clause, mut params) = self.pk_clause::<M>(pk)?;
         let mut x = params.len() + 1;
@@ -458,9 +458,9 @@ impl Connection {
      *
      * Returns the entity fetched from the deleted record.
      */
-    pub fn delete_one<'a, M>(&self, entity: &M::Entity) -> crate::Result<Option<M::Entity>>
+    pub fn delete_one<M>(&self, entity: &M::Entity) -> crate::Result<Option<M::Entity>>
     where
-        M: crate::Model<'a>,
+        M: crate::Model,
     {
         let pk = M::primary_key(entity)?;
 
@@ -471,12 +471,12 @@ impl Connection {
      * Delete a record from its primary key. The deleted entity is returned or
      * `None` if not found.
      */
-    pub fn delete_by_pk<'a, M>(
+    pub fn delete_by_pk<M>(
         &self,
         pk: &HashMap<&str, &dyn crate::ToSql>,
     ) -> crate::Result<Option<M::Entity>>
     where
-        M: crate::Model<'a>,
+        M: crate::Model,
     {
         let (clause, params) = self.pk_clause::<M>(pk)?;
         let mut results = self.delete_where::<M>(&clause, &params)?;
@@ -488,13 +488,13 @@ impl Connection {
      * Delete records by a given condition. A collection of all deleted entries
      * is returned.
      */
-    pub fn delete_where<'a, M>(
+    pub fn delete_where<M>(
         &self,
         clause: &str,
         params: &[&dyn crate::ToSql],
     ) -> crate::Result<crate::Rows<M::Entity>>
     where
-        M: crate::Model<'a>,
+        M: crate::Model,
     {
         let query = format!(
             "DELETE FROM {} WHERE {} RETURNING {};",
@@ -506,12 +506,12 @@ impl Connection {
         self.query(&query, params)
     }
 
-    fn pk_clause<'a, 'b, M>(
+    fn pk_clause<'a, M>(
         &self,
-        pk: &HashMap<&str, &'b dyn crate::ToSql>,
-    ) -> crate::Result<(String, Vec<&'b dyn crate::ToSql>)>
+        pk: &HashMap<&str, &'a dyn crate::ToSql>,
+    ) -> crate::Result<(String, Vec<&'a dyn crate::ToSql>)>
     where
-        M: crate::Model<'a>,
+        M: crate::Model,
     {
         let keys: Vec<_> = pk.keys().copied().collect();
 
@@ -709,10 +709,10 @@ impl Connection {
     /**
      * Bulk insert entities via COPY mode.
      */
-    pub fn copy<'m, M, I>(&self, entities: I) -> crate::Result
+    pub fn copy<M, I>(&self, entities: I) -> crate::Result
     where
         I: Iterator<Item = M::Entity>,
-        M: crate::Model<'m>,
+        M: crate::Model,
     {
         use crate::Entity;
 

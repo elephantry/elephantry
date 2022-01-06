@@ -47,21 +47,21 @@ impl<T: elephantry::FromSql + elephantry::ToSql> elephantry::Entity for Event<T>
     }
 }
 
-struct EventModel<'a> {
+struct EventModel {
     #[allow(dead_code)]
-    connection: &'a elephantry::Connection,
+    connection: elephantry::Connection,
 }
 
-impl<'a> elephantry::Model<'a> for EventModel<'a> {
+impl elephantry::Model for EventModel {
     type Entity = Event<String>;
     type Structure = EventStructure;
 
-    fn new(connection: &'a elephantry::Connection) -> Self {
-        Self { connection }
+    fn new(connection: &elephantry::Connection) -> Self {
+        Self { connection: connection.clone() }
     }
 }
 
-impl<'a> EventModel<'a> {
+impl EventModel {
     #[allow(dead_code)]
     fn count_uniq_visitor(&self) -> elephantry::Result<u32> {
         self.connection
@@ -129,12 +129,12 @@ impl<T: elephantry::Entity> elephantry::Entity for EventExtra<T> {
 
 struct EventExtraModel;
 
-impl<'a> elephantry::Model<'a> for EventExtraModel {
+impl elephantry::Model for EventExtraModel {
     type Entity = EventExtra<String>;
     type Structure = EventStructure;
 
-    fn new(_: &'a elephantry::Connection) -> Self {
-        Self {}
+    fn new(_: &elephantry::Connection) -> Self {
+        Self
     }
 
     fn create_projection() -> elephantry::Projection {

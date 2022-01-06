@@ -12,7 +12,7 @@ mod employee {
         pub department_id: i32,
     }
 
-    impl<'a> Model<'a> {
+    impl Model {
         pub fn managers_salary(&self) -> elephantry::Result<f32> {
             let query = "select sum(day_salary) from employee where is_manager";
 

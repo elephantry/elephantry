@@ -12,7 +12,7 @@ mod employee {
         pub department_id: i32,
     }
 
-    impl<'a> Model<'a> {
+    impl Model {
         pub fn new_employee(
             &self,
             employee: &Entity,

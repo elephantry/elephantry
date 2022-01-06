@@ -232,18 +232,18 @@ fn model_impl(
     };
 
     let model_impl = quote::quote! {
-        #public struct #name<'a> {
-            connection: &'a #elephantry::Connection,
+        #public struct #name {
+            connection: #elephantry::Connection,
         }
 
         #[automatically_derived]
-        impl<'a> #elephantry::Model<'a> for Model<'a> {
+        impl #elephantry::Model for Model {
             type Entity = #entity;
             type Structure = #structure;
 
-            fn new(connection: &'a #elephantry::Connection) -> Self {
+            fn new(connection: &#elephantry::Connection) -> Self {
                 Self {
-                    connection,
+                    connection: connection.clone(),
                 }
             }
 

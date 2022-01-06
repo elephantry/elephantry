@@ -70,9 +70,9 @@ fn main() -> elephantry::Result {
     Ok(())
 }
 
-fn find_by_pk<'a, M>(connection: &elephantry::Connection, uuid: &str) -> elephantry::Result
+fn find_by_pk<M>(connection: &elephantry::Connection, uuid: &str) -> elephantry::Result
 where
-    M: elephantry::Model<'a>,
+    M: elephantry::Model,
     M::Entity: std::fmt::Debug,
 {
     #[cfg(feature = "uuid")]
@@ -87,9 +87,9 @@ where
     Ok(())
 }
 
-fn find_all<'a, M>(connection: &elephantry::Connection) -> elephantry::Result
+fn find_all<M>(connection: &elephantry::Connection) -> elephantry::Result
 where
-    M: elephantry::Model<'a>,
+    M: elephantry::Model,
     M::Entity: std::fmt::Debug,
 {
     let events = connection.find_all::<M>(None)?;
@@ -105,12 +105,12 @@ where
     Ok(())
 }
 
-fn insert_one<'a, M>(
+fn insert_one<M>(
     connection: &elephantry::Connection,
     entity: &M::Entity,
 ) -> elephantry::Result<M::Entity>
 where
-    M: elephantry::Model<'a>,
+    M: elephantry::Model,
     M::Entity: std::fmt::Debug,
 {
     let new_entity = connection.insert_one::<M>(&entity)?;
@@ -120,13 +120,13 @@ where
     Ok(new_entity)
 }
 
-fn update_one<'a, M>(
+fn update_one<M>(
     connection: &elephantry::Connection,
     pk: &std::collections::HashMap<&str, &dyn elephantry::ToSql>,
     entity: &M::Entity,
 ) -> elephantry::Result<M::Entity>
 where
-    M: elephantry::Model<'a>,
+    M: elephantry::Model,
     M::Entity: std::fmt::Debug,
 {
     let new_entity = connection.update_one::<M>(pk, entity)?;

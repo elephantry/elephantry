@@ -20,7 +20,7 @@ mod employee {
         pub departments: Vec<super::Department>,
     }
 
-    impl<'a> Model<'a> {
+    impl Model {
         pub fn employee_with_department(&self, id: i32) -> elephantry::Result<Entity> {
             use elephantry::{Model, Structure};
 
