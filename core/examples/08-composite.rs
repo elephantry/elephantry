@@ -24,7 +24,15 @@ mod employee {
         pub fn employee_with_department(&self, id: i32) -> elephantry::Result<Entity> {
             use elephantry::{Model, Structure};
 
-            let query = r#"
+            let employee_projection = Self::create_projection()
+                .unset_field("department_id")
+                .add_field("departments", "array_agg(depts)")
+                .alias("e")
+                .to_string();
+
+            let employee = <Self as elephantry::Model>::Structure::relation();
+
+            let sql = format!(r#"
 with recursive
     depts (department_id, name, parent_id) as (
         select d.department_id, d.name, d.parent_id from department d join {employee} e using(department_id) where e.employee_id = $1
@@ -35,19 +43,7 @@ select {employee_projection}
     from {employee} e, depts
     where e.employee_id = $1
     group by e.employee_id
-"#;
-
-            let projection = Self::create_projection()
-                .unset_field("department_id")
-                .add_field("departments", "array_agg(depts)")
-                .alias("e");
-
-            let sql = query
-                .replace("{employee_projection}", &projection.to_string())
-                .replace(
-                    "{employee}",
-                    <Self as elephantry::Model>::Structure::relation(),
-                );
+"#);
 
             Ok(self.connection.query::<Entity>(&sql, &[&id])?.get(0))
         }
