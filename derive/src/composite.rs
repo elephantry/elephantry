@@ -59,7 +59,7 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::Tok
             }
 
             fn from_binary(ty: &#elephantry::pq::Type, raw: ::std::option::Option<&[u8]>) -> #elephantry::Result<Self> {
-                let values = #elephantry::record::binary_to_vec(raw)?;
+                let values = #elephantry::record::binary_to_vec(stringify!(#name), ty, raw)?;
 
                 let s = Self {
                     #(#from_binary_body, )*
