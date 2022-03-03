@@ -4,20 +4,20 @@ pub type Result<T = ()> = std::result::Result<T, crate::Error>;
 pub enum Error {
     /** An error in async context. */
     #[error("Async error: {0}")]
-    Async(String),
+    Async(libpq::errors::Error),
     /** Configuration error */
     #[cfg(feature = "config-support")]
     #[error(transparent)]
     Config(#[from] config::ConfigError),
     /** Connection error */
-    #[error("{message}")]
-    Connect { dsn: String, message: String },
+    #[error("{error}")]
+    Connect { dsn: String, error: libpq::errors::Error },
     /** Copy error */
     #[error("Copy error: {0}")]
-    Copy(String),
+    Copy(libpq::errors::Error),
     /** Escaping error */
     #[error("Unable to escape '{0}': {1}")]
-    Escape(String, String),
+    Escape(String, libpq::errors::Error),
     /** Unable to transform a SQL field in rust value */
     #[error("Unable to convert from SQL {} (oid={}) to {rust_type}: {value}. Try {}", pg_type.name, pg_type.oid, crate::pq::sql_to_rust(pg_type))]
     FromSql {
@@ -31,6 +31,8 @@ pub enum Error {
     /** Input/Output error */
     #[error(transparent)]
     Io(#[from] std::io::Error),
+    #[error("{0}")]
+    Libpq(#[from] libpq::errors::Error),
     /** Our result set require an extra field to build the entity */
     #[error("Missing field {0}")]
     MissingField(String),
@@ -56,7 +58,7 @@ pub enum Error {
     #[error("Invalid primary key")]
     PrimaryKey,
     /** SQL error */
-    #[error("{}", .0.error_message().unwrap_or_else(|| "Unknow SQL error".to_string()))]
+    #[error("{}", .0.error_message().unwrap().unwrap_or_else(|| "Unknow SQL error".to_string()))]
     Sql(crate::pq::Result),
     /** Unable to transform a rust value to SQL */
     #[error("Invalid convertion from {} to {rust_type}: {message}", .pg_type.name)]

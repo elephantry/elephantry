@@ -91,8 +91,8 @@ impl<'a> Tuple<'a> {
      * Retreive the name of field at position `n`, or `None` if `n` is greater
      * than or equal to the length of the tuple.
      */
-    pub fn field_name(&self, n: usize) -> Option<String> {
-        self.result.field_name(n)
+    pub fn field_name(&self, n: usize) -> crate::Result<Option<String>> {
+        Ok(self.result.field_name(n)?)
     }
 
     fn field_type(&self, n: usize) -> crate::pq::Type {

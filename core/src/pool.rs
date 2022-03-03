@@ -65,10 +65,10 @@ impl Pool {
         if !self.connections.contains_key(name) {
             return Err(crate::Error::Connect {
                 dsn: name.to_string(),
-                message: format!(
+                error: libpq::errors::Error::Backend(format!(
                     "Unable to set {} connection as default, unknow connection",
                     name
-                ),
+                )),
             });
         }
 

@@ -26,10 +26,10 @@ impl Connection {
     pub fn new(dsn: &str) -> crate::Result<Self> {
         let connection = match libpq::Connection::new(dsn) {
             Ok(connection) => connection,
-            Err(message) => {
+            Err(error) => {
                 return Err(crate::Error::Connect {
                     dsn: dsn.to_string(),
-                    message,
+                    error,
                 })
             }
         };
@@ -70,6 +70,7 @@ impl Connection {
             .map_err(|e| crate::Error::Mutex(e.to_string()))?
             .escape_identifier(str)
             .map_err(|e| crate::Error::Escape(str.to_string(), e))
+            .map(|x| String::from_utf8_lossy(x.as_ref()).to_string())
     }
 
     /**
@@ -600,6 +601,7 @@ impl Connection {
             .map_err(|e| crate::Error::Mutex(e.to_string()))?
             .escape_literal(str)
             .map_err(|e| crate::Error::Escape(str.to_string(), e))
+            .map(|x| String::from_utf8_lossy(x.as_ref()).to_string())
     }
 
     /**
@@ -612,11 +614,11 @@ impl Connection {
             .map_err(|e| crate::Error::Mutex(e.to_string()))?;
 
         let mut params = HashMap::new();
-        params.insert("dbname".to_string(), connection.db());
-        params.insert("host".to_string(), connection.host());
-        params.insert("port".to_string(), connection.port());
-        params.insert("user".to_string(), connection.user());
-        if let Some(password) = connection.pass() {
+        params.insert("dbname".to_string(), connection.db()?);
+        params.insert("host".to_string(), connection.host()?);
+        params.insert("port".to_string(), connection.port()?);
+        params.insert("user".to_string(), connection.user()?);
+        if let Some(password) = connection.pass()? {
             params.insert("password".to_string(), password);
         }
 
@@ -634,7 +636,7 @@ impl Connection {
             .connection
             .lock()
             .map_err(|e| crate::Error::Mutex(e.to_string()))?;
-        let info = connection.info();
+        let info = connection.info()?;
 
         let config = crate::Config {
             application_name: info
@@ -766,7 +768,7 @@ impl Connection {
         if let Some(result) = connection.result() {
             if result.status() == libpq::Status::FatalError {
                 return Err(crate::Error::Copy(
-                    result.error_message().unwrap_or_default(),
+                    libpq::errors::Error::Backend(result.error_message()?.unwrap_or_default()),
                 ));
             }
         }

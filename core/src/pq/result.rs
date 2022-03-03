@@ -27,10 +27,12 @@ impl Result {
         self.len() == 0
     }
 
-    pub fn state(&self) -> Option<crate::pq::State> {
-        self.inner
-            .error_field(libpq::result::ErrorField::Sqlstate)
-            .map(crate::pq::State::from_code)
+    pub fn state(&self) -> crate::Result<Option<crate::pq::State>> {
+        let state = self.inner
+            .error_field(libpq::result::ErrorField::Sqlstate)?
+            .map(crate::pq::State::from_code);
+
+        Ok(state)
     }
 }
 
