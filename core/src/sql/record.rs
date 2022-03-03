@@ -75,7 +75,11 @@ pub fn text_to_vec(raw: Option<&str>) -> crate::Result<Vec<Option<&str>>> {
  * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/rowtypes.c#L453
  */
 #[doc(hidden)]
-pub fn binary_to_vec<'a>(rust_type: &'a str, pg_type: &crate::pq::Type, raw: Option<&'a [u8]>) -> crate::Result<Vec<Option<&'a [u8]>>> {
+pub fn binary_to_vec<'a>(
+    rust_type: &'a str,
+    pg_type: &crate::pq::Type,
+    raw: Option<&'a [u8]>,
+) -> crate::Result<Vec<Option<&'a [u8]>>> {
     let mut buf = crate::not_null(raw)?;
 
     let mut values: Vec<Option<&[u8]>> = Vec::new();
@@ -97,11 +101,9 @@ pub fn binary_to_vec<'a>(rust_type: &'a str, pg_type: &crate::pq::Type, raw: Opt
             continue;
         }
 
-        let value = &buf.get(..length as usize)
-            .ok_or_else(error)?;
+        let value = &buf.get(..length as usize).ok_or_else(error)?;
         values.push(Some(value));
-        buf = buf.get(length as usize..)
-            .ok_or_else(error)?;
+        buf = buf.get(length as usize..).ok_or_else(error)?;
     }
 
     Ok(values)

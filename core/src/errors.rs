@@ -11,7 +11,10 @@ pub enum Error {
     Config(#[from] config::ConfigError),
     /** Connection error */
     #[error("{error}")]
-    Connect { dsn: String, error: libpq::errors::Error },
+    Connect {
+        dsn: String,
+        error: libpq::errors::Error,
+    },
     /** Copy error */
     #[error("Copy error: {0}")]
     Copy(libpq::errors::Error),

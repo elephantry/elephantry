@@ -28,7 +28,8 @@ impl Result {
     }
 
     pub fn state(&self) -> crate::Result<Option<crate::pq::State>> {
-        let state = self.inner
+        let state = self
+            .inner
             .error_field(libpq::result::ErrorField::Sqlstate)?
             .map(crate::pq::State::from_code);
 

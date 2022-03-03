@@ -268,11 +268,7 @@ impl Connection {
     /**
      * Return the number of records matching a condition.
      */
-    pub fn count_where<M>(
-        &self,
-        clause: &str,
-        params: &[&dyn crate::ToSql],
-    ) -> crate::Result<usize>
+    pub fn count_where<M>(&self, clause: &str, params: &[&dyn crate::ToSql]) -> crate::Result<usize>
     where
         M: crate::Model,
     {
@@ -290,11 +286,7 @@ impl Connection {
     /**
      * Check if rows matching the given condition do exist or not.
      */
-    pub fn exist_where<M>(
-        &self,
-        clause: &str,
-        params: &[&dyn crate::ToSql],
-    ) -> crate::Result<bool>
+    pub fn exist_where<M>(&self, clause: &str, params: &[&dyn crate::ToSql]) -> crate::Result<bool>
     where
         M: crate::Model,
     {
@@ -639,9 +631,7 @@ impl Connection {
         let info = connection.info()?;
 
         let config = crate::Config {
-            application_name: info
-                .get("application_name")
-                .and_then(|x| x.val.clone()),
+            application_name: info.get("application_name").and_then(|x| x.val.clone()),
             channel_binding: self.config_get(&info, "channel_binding")?,
             client_encoding: info.get("client_encoding").and_then(|x| x.val.clone()),
             connect_timeout: self.config_get(&info, "connect_timeout")?,
@@ -763,9 +753,9 @@ impl Connection {
 
         if let Some(result) = connection.result() {
             if result.status() == libpq::Status::FatalError {
-                return Err(crate::Error::Copy(
-                    libpq::errors::Error::Backend(result.error_message()?.unwrap_or_default()),
-                ));
+                return Err(crate::Error::Copy(libpq::errors::Error::Backend(
+                    result.error_message()?.unwrap_or_default(),
+                )));
             }
         }
 

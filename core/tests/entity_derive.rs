@@ -32,7 +32,9 @@ impl elephantry::Model for EventModel {
     type Structure = EventStructure;
 
     fn new(connection: &elephantry::Connection) -> Self {
-        Self { connection: connection.clone() }
+        Self {
+            connection: connection.clone(),
+        }
     }
 }
 
