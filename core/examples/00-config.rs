@@ -1,8 +1,9 @@
 fn main() -> elephantry::Result {
-    let mut config = config::Config::new();
-    config.merge(config::Environment::with_prefix("DATABASE"))?;
+    let config = config::Config::builder()
+        .add_source(config::Environment::with_prefix("DATABASE"))
+        .build()?;
 
-    let elephantry = elephantry::Pool::from_config(&config.try_into()?)?;
+    let elephantry = elephantry::Pool::from_config(&config.try_deserialize()?)?;
 
     elephantry.ping()
 }
