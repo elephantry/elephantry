@@ -521,7 +521,7 @@ impl Connection {
         }
 
         let clause = keys.iter().enumerate().fold(String::new(), |acc, (i, x)| {
-            let field = format!("\"{}\"", x.replace("\"", "\\\""));
+            let field = format!("\"{}\"", x.replace('"', "\\\""));
 
             if acc.is_empty() {
                 format!("{} = ${}", field, i + 1)
@@ -641,52 +641,48 @@ impl Connection {
         let config = crate::Config {
             application_name: info
                 .get("application_name")
-                .map(|x| x.val.clone())
-                .flatten(),
+                .and_then(|x| x.val.clone()),
             channel_binding: self.config_get(&info, "channel_binding")?,
-            client_encoding: info.get("client_encoding").map(|x| x.val.clone()).flatten(),
+            client_encoding: info.get("client_encoding").and_then(|x| x.val.clone()),
             connect_timeout: self.config_get(&info, "connect_timeout")?,
-            dbname: info.get("dbname").map(|x| x.val.clone()).flatten(),
+            dbname: info.get("dbname").and_then(|x| x.val.clone()),
             fallback_application_name: info
                 .get("fallback_application_name")
-                .map(|x| x.val.clone())
-                .flatten(),
+                .and_then(|x| x.val.clone()),
             gssencmode: self.config_get(&info, "gssencmode")?,
-            gsslib: info.get("gsslib").map(|x| x.val.clone()).flatten(),
-            hostaddr: info.get("hostaddr").map(|x| x.val.clone()).flatten(),
-            host: info.get("host").map(|x| x.val.clone()).flatten(),
+            gsslib: info.get("gsslib").and_then(|x| x.val.clone()),
+            hostaddr: info.get("hostaddr").and_then(|x| x.val.clone()),
+            host: info.get("host").and_then(|x| x.val.clone()),
             keepalives_count: self.config_get(&info, "keepalives_count")?,
             keepalives_idle: self.config_get(&info, "keepalives_idle")?,
             keepalives_interval: self.config_get(&info, "keepalives_interval")?,
             keepalives: self.config_get::<i32>(&info, "keepalives")?.map(|x| x == 1),
-            krbsrvname: info.get("krbsrvname").map(|x| x.val.clone()).flatten(),
-            options: info.get("options").map(|x| x.val.clone()).flatten(),
-            passfile: info.get("passfile").map(|x| x.val.clone()).flatten(),
-            password: info.get("password").map(|x| x.val.clone()).flatten(),
-            port: info.get("port").map(|x| x.val.clone()).flatten(),
-            replication: info.get("replication").map(|x| x.val.clone()).flatten(),
-            requirepeer: info.get("requirepeer").map(|x| x.val.clone()).flatten(),
-            service: info.get("service").map(|x| x.val.clone()).flatten(),
-            sslcert: info.get("sslcert").map(|x| x.val.clone()).flatten(),
+            krbsrvname: info.get("krbsrvname").and_then(|x| x.val.clone()),
+            options: info.get("options").and_then(|x| x.val.clone()),
+            passfile: info.get("passfile").and_then(|x| x.val.clone()),
+            password: info.get("password").and_then(|x| x.val.clone()),
+            port: info.get("port").and_then(|x| x.val.clone()),
+            replication: info.get("replication").and_then(|x| x.val.clone()),
+            requirepeer: info.get("requirepeer").and_then(|x| x.val.clone()),
+            service: info.get("service").and_then(|x| x.val.clone()),
+            sslcert: info.get("sslcert").and_then(|x| x.val.clone()),
             sslcompression: self
                 .config_get::<i32>(&info, "sslcompression")?
                 .map(|x| x == 1),
-            sslcrl: info.get("sslcrl").map(|x| x.val.clone()).flatten(),
-            sslkey: info.get("sslkey").map(|x| x.val.clone()).flatten(),
+            sslcrl: info.get("sslcrl").and_then(|x| x.val.clone()),
+            sslkey: info.get("sslkey").and_then(|x| x.val.clone()),
             ssl_max_protocol_version: info
                 .get("ssl_max_protocol_version")
-                .map(|x| x.val.clone())
-                .flatten(),
+                .and_then(|x| x.val.clone()),
             ssl_min_protocol_version: info
                 .get("ssl_min_protocol_version")
-                .map(|x| x.val.clone())
-                .flatten(),
+                .and_then(|x| x.val.clone()),
             sslmode: self.config_get(&info, "sslmode")?,
-            sslpassword: info.get("sslpassword").map(|x| x.val.clone()).flatten(),
-            sslrootcert: info.get("sslrootcert").map(|x| x.val.clone()).flatten(),
+            sslpassword: info.get("sslpassword").and_then(|x| x.val.clone()),
+            sslrootcert: info.get("sslrootcert").and_then(|x| x.val.clone()),
             target_session_attrs: self.config_get(&info, "target_session_attrs")?,
             tcp_user_timeout: self.config_get(&info, "tcp_user_timeout")?,
-            user: info.get("user").map(|x| x.val.clone()).flatten(),
+            user: info.get("user").and_then(|x| x.val.clone()),
         };
 
         Ok(config)

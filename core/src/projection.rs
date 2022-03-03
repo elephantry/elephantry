@@ -90,7 +90,7 @@ impl std::fmt::Display for Projection {
             .map(|(alias, row)| {
                 let field = REGEX
                     .replace_all(
-                        &row.replace("\"", "\\\""),
+                        &row.replace('"', "\\\""),
                         format!("{}.\"$1\"", relation).as_str(),
                     )
                     .to_string();

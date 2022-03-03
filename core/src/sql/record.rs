@@ -100,7 +100,7 @@ pub fn binary_to_vec<'a>(rust_type: &'a str, pg_type: &crate::pq::Type, raw: Opt
         let value = &buf.get(..length as usize)
             .ok_or_else(error)?;
         values.push(Some(value));
-        buf = &buf.get(length as usize..)
+        buf = buf.get(length as usize..)
             .ok_or_else(error)?;
     }
 
