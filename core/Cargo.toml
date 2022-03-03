@@ -4,7 +4,7 @@ description = "Object model manager for PostgreSQL"
 repository = "https://github.com/elephantry/elephantry"
 homepage = "https://elephantry.github.io"
 license = "MIT"
-version = "3.0.0-beta.3"
+version = "3.0.0-beta.4"
 authors = ["Sanpi <sanpi@homecomputing.fr>"]
 edition = "2021"
 readme = "../docs/README.md"
@@ -58,7 +58,7 @@ version = "1.0.0"
 optional = true
 
 [dependencies.elephantry-derive]
-version = "3.0.0-beta.2"
+version = "3.0.0-beta"
 path = "../derive"
 
 [dependencies.geo-types]
