@@ -26,7 +26,7 @@ impl std::fmt::Display for Path {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut s = String::new();
 
-        for coordinate in self.0.points_iter() {
+        for coordinate in self.0.points() {
             s.push_str(&format!("({}, {}),", coordinate.x(), coordinate.y()));
         }
 
