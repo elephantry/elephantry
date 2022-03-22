@@ -55,7 +55,7 @@ impl Pool {
      * Retreive the default connection.
      */
     pub fn get_default(&self) -> Option<&crate::Connection> {
-        self.connections.get(&self.default)
+        self.get(&self.default)
     }
 
     /**
