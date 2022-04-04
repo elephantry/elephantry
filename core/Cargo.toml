@@ -46,7 +46,7 @@ features = ["clock", "std"]
 optional = true
 
 [dependencies.config]
-version = "0.12"
+version = "0.13"
 optional = true
 
 [dependencies.ipnetwork]
