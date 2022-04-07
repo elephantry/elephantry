@@ -125,7 +125,7 @@ all-types = [
     "xml"
 ]
 bit = ["bit-vec", "elephantry-derive/bit"]
-config-support = ["config", "serde"]
+config = ["dep:config", "serde"]
 date = ["chrono", "elephantry-derive/date"]
 geo = ["geo-types", "elephantry-derive/geo"]
 json = ["serde_json", "elephantry-derive/json"]
@@ -140,7 +140,7 @@ xml = ["xmltree", "elephantry-derive/xml"]
 
 [[example]]
 name = "00-config"
-required-features = ["config-support"]
+required-features = ["config"]
 
 [[example]]
 name = "02-query"
@@ -183,5 +183,5 @@ name = "12-copy"
 required-features = ["date", "numeric"]
 
 [package.metadata.docs.rs]
-features = ["all-types", "config-support", "rocket", "arbitrary", "serde", "r2d2"]
+features = ["all-types", "config", "rocket", "arbitrary", "serde", "r2d2"]
 rustdoc-args = ["--cfg", "docsrs"]

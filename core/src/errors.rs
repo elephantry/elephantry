@@ -6,7 +6,7 @@ pub enum Error {
     #[error("Async error: {0}")]
     Async(libpq::errors::Error),
     /** Configuration error */
-    #[cfg(feature = "config-support")]
+    #[cfg(feature = "config")]
     #[error(transparent)]
     Config(#[from] config::ConfigError),
     /** Connection error */
