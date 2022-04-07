@@ -10,6 +10,7 @@ edition = "2021"
 readme = "../docs/README.md"
 keywords = ["database", "postgresql"]
 categories = ["database"]
+rust-version = "1.60"
 
 [dependencies]
 bitflags = "1.3"
@@ -133,9 +134,8 @@ net = ["ipnetwork", "macaddr", "elephantry-derive/net"]
 multirange = ["libpq/v14"]
 numeric = ["bigdecimal", "num", "elephantry-derive/numeric"]
 rocket = ["r2d2", "rocket_contrib"]
-# @see https://github.com/rust-lang/cargo/issues/5565
-#uuid = ["dep:uuid", "elephantry-derive/uuid"]
-#time = ["dep::time", "elephantry-derive/time"]
+uuid = ["dep:uuid", "elephantry-derive/uuid"]
+time = ["dep:time", "elephantry-derive/time"]
 xml = ["xmltree", "elephantry-derive/xml"]
 
 [[example]]
