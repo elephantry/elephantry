@@ -1,6 +1,6 @@
 [package]
 name = "elephantry-cli"
-version = "3.0.0-beta.4"
+version = "3.0.0-rc.1"
 description = "elephantry cli tool"
 repository = "https://github.com/elephantry/elephantry/tree/main/cli"
 homepage = "https://elephantry.github.io"
@@ -19,6 +19,6 @@ version = "3.0"
 features = ["derive"]
 
 [dependencies.elephantry]
-version = "3.0.0-beta"
+version = "3.0.0-rc"
 features = ["all-types"]
 path = "../core/"
