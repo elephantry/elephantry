@@ -94,7 +94,7 @@ features = ["macros", "parsing"]
 optional = true
 
 [dependencies.uuid]
-version = "0.8"
+version = "1.0"
 optional = true
 
 [dependencies.xmltree]
@@ -103,7 +103,7 @@ optional = true
 
 [dev-dependencies]
 serde_json = "1.0"
-uuid = "0.8"
+uuid = "1.0"
 env_logger = "0.9"
 
 [dev-dependencies.async-std]
