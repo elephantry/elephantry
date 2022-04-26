@@ -1,17 +1,25 @@
 # Version 3.0.0
 
-- Adds multirange support;
+- Adds multirange support (pg >= 14);
 - `Entity` trait is no longer automatically impl for type impl `FromSql` +
     `ToSql`. You need to impl the `entity::Simple` empty trait. As a
     counterpart, you can use nested entity, see the `07-relation` example;
 - Removes `Composite` and `Enum` traits, in flavor of implementing
     `FromSql`/`ToSql` traits directly;
 - Adds arbitrary crate support;
-- Updates time to 0.3;
 - Makes pq::Result thread safe;
 - Fixes update query without field;
 - Adds Connection::copy;
-- Better derive error.
+- Better derive error;
+- Removes Model lifetime.
+
+## Dependencies
+
+- libpq 3.0;
+- config 0.13;
+- ipnetwork 0.19;
+- time 0.3;
+- uuid 1.0.
 
 # Version 2.1.0
 
