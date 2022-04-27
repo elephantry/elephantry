@@ -38,7 +38,7 @@ impl<T: crate::FromSql + crate::ToSql, S: std::hash::BuildHasher + Default> Enti
     }
 
     fn get(&self, field: &str) -> Option<&dyn crate::ToSql> {
-        self.get(field).map(|x| x as &dyn crate::ToSql)
+        HashMap::get(self, field).map(|x| x as &dyn crate::ToSql)
     }
 }
 
