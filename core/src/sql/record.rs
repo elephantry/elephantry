@@ -89,7 +89,7 @@ pub fn binary_to_vec<'a>(
     let error = || crate::Error::FromSql {
         pg_type: pg_type.clone(),
         rust_type: rust_type.to_string(),
-        value: format!("{:?}", raw),
+        value: format!("{raw:?}"),
     };
 
     for _ in 0..validcols {
@@ -146,7 +146,7 @@ macro_rules! tuple_impls {
                             crate::Error::FromSql {
                                 pg_type: ty.clone(),
                                 rust_type: stringify!($name).to_string(),
-                                value: format!("{:?}", values),
+                                value: format!("{values:?}"),
                             }
                         );
                     }
@@ -169,7 +169,7 @@ macro_rules! tuple_impls {
                             crate::Error::FromSql {
                                 pg_type: ty.clone(),
                                 rust_type: stringify!($name).to_string(),
-                                value: format!("{:?}", values),
+                                value: format!("{values:?}"),
                             }
                         );
                     }

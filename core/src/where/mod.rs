@@ -53,9 +53,7 @@ impl<'a> Where<'a> {
         params: Vec<&'a dyn crate::ToSql>,
     ) -> Self {
         let element = format!(
-            "{} {} ({})",
-            element,
-            operation,
+            "{element} {operation} ({})",
             params
                 .iter()
                 .map(|_| "$*".to_string())

@@ -94,7 +94,7 @@ pub fn relation(
         ]));
     }
 
-    println!("\nRelation {}.{}", schema, relation);
+    println!("\nRelation {schema}.{relation}");
     println!("{}", table.render());
 
     Ok(())
@@ -191,7 +191,7 @@ pub fn composites(connection: &elephantry::Connection, schema: &str) -> crate::R
         let fields = composite
             .fields
             .iter()
-            .map(|(n, t)| format!("{}::{}", n, t.name))
+            .map(|(n, t)| format!("{n}::{}", t.name))
             .collect::<Vec<_>>()
             .join(", ");
 

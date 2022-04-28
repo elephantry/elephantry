@@ -8,7 +8,7 @@ pub fn schema(
 ) -> crate::Result {
     let relations = elephantry::inspect::schema(connection, schema)?;
 
-    add_mod(&format!("{}/model", prefix_dir), schema)?;
+    add_mod(&format!("{prefix_dir}/model"), schema)?;
 
     for r in relations {
         relation(connection, prefix_dir, schema, &r.name)?;
@@ -23,10 +23,10 @@ pub fn relation(
     schema: &str,
     relation: &str,
 ) -> crate::Result {
-    let dir = format!("{}/model/{}", prefix_dir, schema);
+    let dir = format!("{prefix_dir}/model/{schema}");
     add_mod(&dir, relation)?;
 
-    let filename = format!("{}/{}.rs", dir, relation);
+    let filename = format!("{dir}/{relation}.rs");
     let mut file = std::io::BufWriter::new(std::fs::File::create(filename)?);
 
     let columns = elephantry::inspect::relation(connection, schema, relation)?;
@@ -40,7 +40,7 @@ pub fn relation(
         if column.is_primary {
             fields.push("    #[elephantry(pk)]".to_string());
         }
-        fields.push(format!("    pub {}: {},", name, ty));
+        fields.push(format!("    pub {name}: {ty},"));
     }
 
     write!(
@@ -64,10 +64,10 @@ pub fn entity(
     schema: &str,
     relation: &str,
 ) -> crate::Result {
-    let dir = format!("{}/model/{}", prefix_dir, schema);
+    let dir = format!("{prefix_dir}/model/{schema}");
     add_mod(&dir, relation)?;
 
-    let filename = format!("{}/{}.rs", dir, relation);
+    let filename = format!("{dir}/{relation}.rs");
     let mut file = std::io::BufWriter::new(std::fs::File::create(filename)?);
 
     write_entity(&mut file, connection, schema, relation)?;
@@ -92,7 +92,7 @@ where
         let name = name_to_rust(column);
         let ty = ty_to_rust(column)?;
 
-        fields.push(format!("    pub {}: {},", name, ty));
+        fields.push(format!("    pub {name}: {ty},"));
     }
 
     write!(
@@ -109,10 +109,10 @@ pub struct Entity {{
 }
 
 pub fn enums(connection: &elephantry::Connection, prefix_dir: &str, schema: &str) -> crate::Result {
-    let dir = format!("{}/enums", prefix_dir);
+    let dir = format!("{prefix_dir}/enums");
     std::fs::create_dir_all(&dir)?;
 
-    let filename = format!("{}/{}.rs", dir, schema);
+    let filename = format!("{dir}/{schema}.rs");
     let mut file = std::io::BufWriter::new(std::fs::File::create(filename)?);
 
     for enumeration in &elephantry::inspect::enums(connection, schema)? {
@@ -132,7 +132,7 @@ where
     let elements = enumeration
         .elements
         .iter()
-        .map(|x| format!("    {},", x))
+        .map(|x| format!("    {x},"))
         .collect::<Vec<_>>();
 
     write!(
@@ -154,10 +154,10 @@ pub fn composites(
     prefix_dir: &str,
     schema: &str,
 ) -> crate::Result {
-    let dir = format!("{}/composites", prefix_dir);
+    let dir = format!("{prefix_dir}/composites");
     std::fs::create_dir_all(&dir)?;
 
-    let filename = format!("{}/{}.rs", dir, schema);
+    let filename = format!("{dir}/{schema}.rs");
     let mut file = std::io::BufWriter::new(std::fs::File::create(filename)?);
 
     for composite in &elephantry::inspect::composites(connection, schema)? {
@@ -177,7 +177,7 @@ where
     let fields = composite
         .fields
         .iter()
-        .map(|(name, ty)| format!("    {}: {},", name, elephantry::pq::sql_to_rust(ty)))
+        .map(|(name, ty)| format!("    {name}: {},", elephantry::pq::sql_to_rust(ty)))
         .collect::<Vec<_>>();
 
     write!(
@@ -207,7 +207,7 @@ fn ty_to_rust(column: &elephantry::inspect::Column) -> crate::Result<String> {
     };
 
     if !column.is_notnull {
-        rty = format!("Option<{}>", rty);
+        rty = format!("Option<{rty}>");
     }
 
     Ok(rty)
@@ -217,7 +217,7 @@ fn name_to_rust(column: &elephantry::inspect::Column) -> String {
     let mut name = column.name.to_snake();
 
     if is_keyword(&name) {
-        name = format!("r#{}", name);
+        name = format!("r#{name}");
     }
 
     name
@@ -238,12 +238,12 @@ fn is_keyword(name: &str) -> bool {
 fn add_mod(dir: &str, name: &str) -> crate::Result {
     std::fs::create_dir_all(&dir)?;
 
-    let mod_filename = format!("{}/mod.rs", dir);
+    let mod_filename = format!("{dir}/mod.rs");
     let mut file = std::fs::OpenOptions::new()
         .create(true)
         .append(true)
         .open(&mod_filename)?;
-    file.write_all(format!("mod {};\n", name).as_bytes())?;
+    file.write_all(format!("mod {name};\n").as_bytes())?;
 
     Ok(())
 }

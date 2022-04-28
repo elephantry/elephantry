@@ -8,7 +8,7 @@ impl crate::ToSql for u8 {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L146
      */
     fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
-        format!("{}", self).to_text()
+        format!("{self}").to_text()
     }
 
     /*
@@ -61,7 +61,7 @@ impl crate::ToSql for bit_vec::BitVec {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L451
      */
     fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
-        format!("b{:?}", self).to_text()
+        format!("b{self:?}").to_text()
     }
 
     /*

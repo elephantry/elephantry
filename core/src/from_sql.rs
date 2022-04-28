@@ -107,7 +107,7 @@ pub trait FromSql: Sized {
         crate::Error::FromSql {
             pg_type: pg_type.clone(),
             rust_type: std::any::type_name::<Self>().to_string(),
-            value: format!("{:?}", raw),
+            value: format!("{raw:?}"),
         }
     }
 }

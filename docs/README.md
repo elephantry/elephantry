@@ -28,7 +28,7 @@ let rows = elephantry.execute("select id from entity")?;
 
 for row in &rows {
     let id: i32 = row.get("id");
-    println!("{}", id);
+    println!("{id}");
 }
 
 // Define entity

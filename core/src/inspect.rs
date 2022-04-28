@@ -113,7 +113,7 @@ select c.oid as oid
             &[&schema, &relation],
         )
         .map_err(|_| {
-            return crate::Error::Inspect(format!("Unknow relation {}.{}", schema, relation));
+            return crate::Error::Inspect(format!("Unknow relation {schema}.{relation}"));
         })?;
 
     connection
@@ -278,6 +278,6 @@ where s.nspname = $*
             &[&name],
         )
         .map_err(|_| {
-            return crate::Error::Inspect(format!("Unknow schema {}", name));
+            return crate::Error::Inspect(format!("Unknow schema {name}"));
         })
 }

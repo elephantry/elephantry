@@ -13,7 +13,7 @@ impl std::str::FromStr for TargetSessionAttrs {
         let sslmode = match s {
             "any" => Self::Any,
             "read-write" => Self::ReadWrite,
-            _ => return Err(crate::Error::Parse(format!("Invalid gssencmode: {}", s))),
+            _ => return Err(crate::Error::Parse(format!("Invalid gssencmode: {s}"))),
         };
 
         Ok(sslmode)

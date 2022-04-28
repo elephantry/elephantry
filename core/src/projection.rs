@@ -17,7 +17,7 @@ impl Projection {
     pub fn new(relation: &str, fields: &[&str]) -> Self {
         let mut map = BTreeMap::new();
         for field in fields {
-            map.insert((*field).to_string(), format!("%:{}:%", field));
+            map.insert((*field).to_string(), format!("%:{field}:%"));
         }
 
         Self {
@@ -91,16 +91,16 @@ impl std::fmt::Display for Projection {
                 let field = REGEX
                     .replace_all(
                         &row.replace('"', "\\\""),
-                        format!("{}.\"$1\"", relation).as_str(),
+                        format!("{relation}.\"$1\"").as_str(),
                     )
                     .to_string();
-                format!(r#"{} as "{}""#, field, alias)
+                format!(r#"{field} as "{alias}""#)
             })
             .fold(String::new(), |acc, x| {
                 if acc.is_empty() {
                     x
                 } else {
-                    format!("{}, {}", acc, x)
+                    format!("{acc}, {x}")
                 }
             });
 

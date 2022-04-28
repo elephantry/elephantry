@@ -259,7 +259,8 @@ impl<T: crate::ToSql> crate::ToSql for Array<T> {
 
         if need_dims {
             for (dim, lb) in self.dimensions.iter().zip(&self.lower_bounds) {
-                data.extend(format!("[{}:{}]", lb, lb + dim - 1).as_bytes());
+                let hb = lb + dim - 1;
+                data.extend(format!("[{lb}:{hb}]").as_bytes());
             }
 
             data.push(b'=');

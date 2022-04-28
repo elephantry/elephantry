@@ -91,8 +91,7 @@ fn get_lit_str(attr_name: crate::symbol::Symbol, lit: &syn::Lit) -> syn::Result<
         crate::error(
             lit,
             &format!(
-                "expected elephantry {} attribute to be a string: `{} = \"...\"`",
-                attr_name, attr_name
+                "expected elephantry {attr_name} attribute to be a string: `{attr_name} = \"...\"`"
             ),
         )
     }

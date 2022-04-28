@@ -108,8 +108,7 @@ pub(crate) fn check_type(ty: &syn::Type) -> syn::Result<()> {
             return error(
                 ty,
                 &format!(
-                    "Enable '{}' feature to use the type `{}` in this entity",
-                    feature, feature_ty
+                    "Enable '{feature}' feature to use the type `{feature_ty}` in this entity"
                 ),
             );
         }

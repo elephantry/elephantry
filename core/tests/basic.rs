@@ -10,7 +10,7 @@ fn main() -> elephantry::Result {
     let elephantry = elephantry::Pool::default().add_default("elephantry", &database_url)?;
 
     let count = elephantry.count_where::<EventModel>("name = $1", &[&"pageview"])?;
-    println!("Count events: {}", count);
+    println!("Count events: {count}");
     assert_eq!(count, 7);
     println!();
 
@@ -65,7 +65,7 @@ fn main() -> elephantry::Result {
 
     let count = elephantry.model::<EventModel>().count_uniq_visitor()?;
     assert_eq!(count, 4);
-    println!("Count uniq visitor: {}", count);
+    println!("Count uniq visitor: {count}");
 
     Ok(())
 }
@@ -80,8 +80,8 @@ where
     let event = connection.find_by_pk::<EventModel>(&elephantry::pk!(uuid))?;
 
     match event {
-        Some(event) => println!("{:?}", event),
-        None => println!("Event '{}' not found", uuid),
+        Some(event) => println!("{event:?}"),
+        None => println!("Event '{uuid}' not found"),
     };
 
     Ok(())
@@ -98,7 +98,7 @@ where
         println!("No events in database.");
     } else {
         for event in events {
-            println!("{:?}", event);
+            println!("{event:?}");
         }
     }
 
@@ -115,7 +115,7 @@ where
 {
     let new_entity = connection.insert_one::<M>(&entity)?;
 
-    println!("{:?}", new_entity);
+    println!("{new_entity:?}");
 
     Ok(new_entity)
 }
@@ -131,7 +131,7 @@ where
 {
     let new_entity = connection.update_one::<M>(pk, entity)?;
 
-    println!("{:?}", new_entity);
+    println!("{new_entity:?}");
 
     Ok(new_entity.unwrap())
 }

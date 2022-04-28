@@ -109,7 +109,7 @@ impl<'c> Transaction<'c> {
      */
     pub fn roolback(&self, name: Option<&str>) -> crate::Result {
         let query = match name {
-            Some(name) => format!("rollback to savepoint {}", name),
+            Some(name) => format!("rollback to savepoint {name}"),
             None => "rollback transaction".to_string(),
         };
 
@@ -120,7 +120,7 @@ impl<'c> Transaction<'c> {
      * Set a savepoint in a transaction.
      */
     pub fn set_save_point(&self, name: &str) -> crate::Result {
-        let query = format!("savepoint {}", name);
+        let query = format!("savepoint {name}");
 
         self.exec(&query)
     }
@@ -129,7 +129,7 @@ impl<'c> Transaction<'c> {
      * Drop a savepoint.
      */
     pub fn release_savepoint(&self, name: &str) -> crate::Result {
-        let query = format!("release savepoint {}", name);
+        let query = format!("release savepoint {name}");
 
         self.exec(&query)
     }
@@ -183,7 +183,7 @@ impl<'c> Transaction<'c> {
             "ALL".to_string()
         };
 
-        let query = format!("set constraints {} {}", name, constraints);
+        let query = format!("set constraints {name} {constraints}");
 
         self.exec(&query)
     }
@@ -202,7 +202,7 @@ impl<'c> Transaction<'c> {
      * See <http://www.postgresql.org/docs/current/sql-set-transaction.html>
      */
     pub fn set_isolation_level(&self, level: IsolationLevel) -> crate::Result {
-        let query = format!("set transaction isolation level {}", level);
+        let query = format!("set transaction isolation level {level}");
 
         self.exec(&query)
     }
@@ -214,7 +214,7 @@ impl<'c> Transaction<'c> {
      * See <http://www.postgresql.org/docs/current/sql-set-transaction.html>
      */
     pub fn set_access_mode(&self, mode: AccessMode) -> crate::Result {
-        let query = format!("set transaction {}", mode);
+        let query = format!("set transaction {mode}");
 
         self.exec(&query)
     }

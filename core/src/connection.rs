@@ -165,7 +165,7 @@ impl Connection {
         REGEX.replace_all(query, |captures: &regex::Captures<'_>| {
             count += 1;
 
-            captures[0].replace("$*", &format!("${}", count))
+            captures[0].replace("$*", &format!("${count}"))
         })
     }
 
@@ -251,10 +251,9 @@ impl Connection {
         M: crate::Model,
     {
         let suffix = format!(
-            "{} offset {} fetch first {} rows only",
+            "{} offset {} fetch first {max_per_page} rows only",
             suffix.unwrap_or_default(),
             max_per_page * (page - 1),
-            max_per_page
         );
 
         let rows = self.find_where::<M>(clause, params, Some(&suffix))?;
@@ -273,9 +272,8 @@ impl Connection {
         M: crate::Model,
     {
         let query = format!(
-            "SELECT COUNT(*) FROM {} WHERE {};",
+            "SELECT COUNT(*) FROM {} WHERE {clause};",
             M::Structure::relation(),
-            clause,
         );
 
         let results = self.send_query(&query, params)?;
@@ -291,9 +289,8 @@ impl Connection {
         M: crate::Model,
     {
         let query = format!(
-            "SELECT EXISTS (SELECT true FROM {} WHERE {}) AS result;",
+            "SELECT EXISTS (SELECT true FROM {} WHERE {clause}) AS result;",
             M::Structure::relation(),
-            clause,
         );
 
         let results = self.send_query(&query, params)?;
@@ -330,7 +327,7 @@ impl Connection {
     where
         M: crate::Model,
     {
-        let suffix = format!("on conflict {} do {}", target, action);
+        let suffix = format!("on conflict {target} do {action}");
         self.insert::<M>(entity, Some(suffix.as_str()))
     }
 
@@ -352,7 +349,7 @@ impl Connection {
         for field in M::Structure::columns() {
             if let Some(value) = entity.get(field) {
                 tuple.push(value);
-                params.push(format!("${}", x));
+                params.push(format!("${x}"));
                 fields.push(*field);
                 x += 1;
             }
@@ -420,7 +417,7 @@ impl Connection {
 
         for (key, value) in data.iter() {
             if projection.has_field(key) {
-                set.push(format!("{} = ${}", key, x));
+                set.push(format!("{key} = ${x}"));
                 params.push(*value);
                 x += 1;
             }
@@ -432,10 +429,9 @@ impl Connection {
         }
 
         let query = format!(
-            "UPDATE {} SET {} WHERE {} RETURNING {};",
+            "UPDATE {} SET {} WHERE {clause} RETURNING {};",
             M::Structure::relation(),
             set.join(", "),
-            clause,
             M::create_projection(),
         );
 
@@ -490,9 +486,8 @@ impl Connection {
         M: crate::Model,
     {
         let query = format!(
-            "DELETE FROM {} WHERE {} RETURNING {};",
+            "DELETE FROM {} WHERE {clause} RETURNING {};",
             M::Structure::relation(),
-            clause,
             M::create_projection(),
         );
 
@@ -516,9 +511,9 @@ impl Connection {
             let field = format!("\"{}\"", x.replace('"', "\\\""));
 
             if acc.is_empty() {
-                format!("{} = ${}", field, i + 1)
+                format!("{field} = ${}", i + 1)
             } else {
-                format!("{} AND {} = ${}", acc, field, i + 1)
+                format!("{acc} AND {field} = ${}", i + 1)
             }
         });
 
@@ -547,7 +542,7 @@ impl Connection {
     pub fn notify(&self, channel: &str, data: Option<&str>) -> crate::Result {
         let data = self.escape_literal(data.unwrap_or_default())?;
 
-        let query = format!("notify {}, {}", channel, data);
+        let query = format!("notify {channel}, {data}");
 
         self.execute(&query).map(|_| ())
     }
@@ -559,7 +554,7 @@ impl Connection {
      * transaction is committed or rollback.
      */
     pub fn listen(&self, channel: &str) -> crate::Result {
-        let query = format!("listen {}", channel);
+        let query = format!("listen {channel}");
 
         self.execute(&query).map(|_| ())
     }
@@ -568,7 +563,7 @@ impl Connection {
      * Stop to listen on the given channel.
      */
     pub fn unlisten(&self, channel: &str) -> crate::Result {
-        let query = format!("unlisten {}", channel);
+        let query = format!("unlisten {channel}");
 
         self.execute(&query).map(|_| ())
     }

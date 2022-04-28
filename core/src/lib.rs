@@ -176,8 +176,7 @@ mod test {
 
                 for (value, expected) in &$tests {
                     let result = conn.execute(&format!(
-                        "select {}::{} as actual",
-                        value,
+                        "select {value}::{} as actual",
                         stringify!($sql_type)
                     ))?;
                     assert_eq!(result.get(0).get::<$rust_type>("actual"), *expected);
@@ -192,7 +191,7 @@ mod test {
 
                 for (value, expected) in &$tests {
                     let result = conn.query::<HashMap<String, $rust_type>>(
-                        &format!("select {}::{} as actual", value, stringify!($sql_type)),
+                        &format!("select {value}::{} as actual", stringify!($sql_type)),
                         &[],
                     )?;
                     assert_eq!(result.get(0).get("actual").unwrap(), expected);

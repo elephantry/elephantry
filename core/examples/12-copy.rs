@@ -16,8 +16,8 @@ mod employee {
         pub fn new(id: i32) -> Self {
             Self {
                 id,
-                first_name: format!("first name {}", id),
-                last_name: format!("last name {}", id),
+                first_name: format!("first name {id}"),
+                last_name: format!("last name {id}"),
                 birth_date: chrono::NaiveDate::from_ymd(1900, 1, 1),
                 is_manager: false,
                 day_salary: 0.into(),

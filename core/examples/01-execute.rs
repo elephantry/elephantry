@@ -8,7 +8,7 @@ fn main() -> elephantry::Result {
 
     for result in &results {
         let name: String = result.get("name");
-        println!("- {}", name);
+        println!("- {name}");
     }
 
     let parent_id: Option<i32> = results.get(0).get("parent_id");
@@ -16,12 +16,12 @@ fn main() -> elephantry::Result {
 
     match results.get(0).try_get::<i32>("parent_id") {
         Ok(_) => (),
-        Err(err) => eprintln!("Error: {:?}", err),
+        Err(err) => eprintln!("Error: {err:?}"),
     }
 
     match results.get(0).try_get::<i32>("missing_field") {
         Ok(_) => (),
-        Err(err) => eprintln!("Error: {:?}", err),
+        Err(err) => eprintln!("Error: {err:?}"),
     }
 
     Ok(())

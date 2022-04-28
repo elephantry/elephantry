@@ -15,7 +15,7 @@ impl std::str::FromStr for GssEncMode {
             "disable" => Self::Disable,
             "prefer" => Self::Prefer,
             "require" => Self::Require,
-            _ => return Err(crate::Error::Parse(format!("Invalid gssencmode: {}", s))),
+            _ => return Err(crate::Error::Parse(format!("Invalid gssencmode: {s}"))),
         };
 
         Ok(sslmode)

@@ -34,7 +34,7 @@ fn find_by_pk(elephantry: &elephantry::Pool) -> elephantry::Result {
     println!("# Find by primary key\n");
 
     let employee = elephantry.find_by_pk::<employee::Model>(&elephantry::pk!(employee_id => 1))?;
-    println!("{:?}\n", employee);
+    println!("{employee:?}\n");
 
     Ok(())
 }
@@ -68,7 +68,7 @@ fn count_where(elephantry: &elephantry::Pool) -> elephantry::Result {
     println!("# Count where\n");
 
     let n = elephantry.count_where::<employee::Model>("is_manager = $1", &[&true])?;
-    println!("{}\n", n);
+    println!("{n}\n");
 
     Ok(())
 }
@@ -77,7 +77,7 @@ fn exist_where(elephantry: &elephantry::Pool) -> elephantry::Result {
     println!("# Exist where\n");
 
     let exist = elephantry.exist_where::<employee::Model>("day_salary < $1", &[&10_000])?;
-    println!("{}\n", exist);
+    println!("{exist}\n");
 
     Ok(())
 }
