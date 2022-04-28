@@ -121,9 +121,9 @@ mod test {
         varbit,
         bit_vec::BitVec,
         [
-            //("'00000000'", bit_vec::BitVec::from_bytes(&[0b00000000])),
+            ("'00000000'", bit_vec::BitVec::from_bytes(&[0b00000000])),
             ("'10101010'", bit_vec::BitVec::from_bytes(&[0b10101010])),
-            //("'11111111'", bit_vec::BitVec::from_bytes(&[0b11111111])),
+            ("'11111111'", bit_vec::BitVec::from_bytes(&[0b11111111])),
         ]
     );
 }
