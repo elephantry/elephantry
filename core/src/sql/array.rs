@@ -144,8 +144,10 @@ impl<T: crate::FromSql> crate::FromSql for Array<T> {
                         let value = if current.eq_ignore_ascii_case("null") {
                             has_nulls = true;
                             None
-                        } else {
+                        } else if current.eq_ignore_ascii_case("'null'") {
                             Some(current.trim_matches('\''))
+                        } else {
+                            Some(current.as_str())
                         };
                         data.push(T::from_text(&elemtype, value)?);
                         current = String::new();
@@ -212,7 +214,7 @@ impl<T: crate::FromSql> crate::FromSql for Array<T> {
                 let mut data = vec![0; len];
                 buf.read_exact(data.as_mut_slice())?;
 
-                if data.get(0) == Some(&b'\'') || data.last() == Some(&b'\'') {
+                if slice_eq_ignore_case(&data, "'null'") {
                     data.remove(0);
                     data.pop();
                 }
@@ -282,7 +284,7 @@ impl<T: crate::ToSql> crate::ToSql for Array<T> {
                 .map(|mut x| {
                     x.pop(); // removes \0
 
-                    if element.ty().is_text() {
+                    if element.ty().is_text() && slice_eq_ignore_case(&x, "null") {
                         x.insert(0, b'\'');
                         x.push(b'\'');
                     }
@@ -343,6 +345,12 @@ impl<T: crate::ToSql> crate::ToSql for Array<T> {
 
         Ok(Some(buf))
     }
+}
+
+fn slice_eq_ignore_case(a: &[u8], b: &str) -> bool {
+    let s = String::from_utf8_lossy(a);
+
+    s.eq_ignore_ascii_case(b)
 }
 
 impl<T: crate::FromSql + crate::ToSql> crate::entity::Simple for Array<T> {}
@@ -475,12 +483,13 @@ mod test {
         _varchar,
         Vec<Option<String>>,
         [(
-            "'{str, null, \'\'null\'\', \'\'abcd\'\'}'",
+            "'{str, null, \'\'null\'\', \'\'NuLl\'\', \'\'abcd\'\'}'",
             vec![
                 Some("str".to_string()),
                 None,
                 Some("null".to_string()),
-                Some("abcd".to_string())
+                Some("NuLl".to_string()),
+                Some("'abcd'".to_string())
             ]
         )]
     );
