@@ -214,7 +214,7 @@ impl<T: crate::FromSql> crate::FromSql for Array<T> {
                 let mut data = vec![0; len];
                 buf.read_exact(data.as_mut_slice())?;
 
-                if slice_eq_ignore_case(&data, "'null'") {
+                if data.eq_ignore_ascii_case(b"'null'") {
                     data.remove(0);
                     data.pop();
                 }
@@ -284,7 +284,7 @@ impl<T: crate::ToSql> crate::ToSql for Array<T> {
                 .map(|mut x| {
                     x.pop(); // removes \0
 
-                    if element.ty().is_text() && slice_eq_ignore_case(&x, "null") {
+                    if element.ty().is_text() && x.eq_ignore_ascii_case(b"null") {
                         x.insert(0, b'\'');
                         x.push(b'\'');
                     }
@@ -345,12 +345,6 @@ impl<T: crate::ToSql> crate::ToSql for Array<T> {
 
         Ok(Some(buf))
     }
-}
-
-fn slice_eq_ignore_case(a: &[u8], b: &str) -> bool {
-    let s = String::from_utf8_lossy(a);
-
-    s.eq_ignore_ascii_case(b)
 }
 
 impl<T: crate::FromSql + crate::ToSql> crate::entity::Simple for Array<T> {}
