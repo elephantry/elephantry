@@ -118,7 +118,7 @@ impl<'a, T> From<&'a (Bound<T>, Bound<T>)> for Bounds<&'a T> {
     }
 }
 
-impl<'a, T> From<Bounds<T>> for (Bound<T>, Bound<T>) {
+impl<T> From<Bounds<T>> for (Bound<T>, Bound<T>) {
     fn from(bounds: Bounds<T>) -> Self {
         (bounds.start, bounds.end)
     }

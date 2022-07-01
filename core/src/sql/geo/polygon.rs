@@ -24,10 +24,12 @@ impl std::ops::Deref for Polygon {
 
 impl std::fmt::Display for Polygon {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        use std::fmt::Write as _;
+
         let mut s = String::new();
 
         for coordinate in self.0.exterior().points() {
-            s.push_str(&format!("({}, {}),", coordinate.x(), coordinate.y()));
+            write!(s, "({}, {}),", coordinate.x(), coordinate.y())?;
         }
 
         write!(f, "{}", s.trim_end_matches(','))

@@ -1,6 +1,7 @@
 # Next
 
 - `pg14` feature
+- Impl `Eq` for `Bytea`, `Jsonb` and `Hstore`
 
 # Version 3.0.0
 

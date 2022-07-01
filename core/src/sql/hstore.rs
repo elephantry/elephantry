@@ -3,7 +3,7 @@ use std::collections::HashMap;
 /**
  * Rust type for [hstore](https://www.postgresql.org/docs/current/hstore.html).
  */
-#[derive(Clone, Debug, Default, PartialEq)]
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 pub struct Hstore(HashMap<String, Option<String>>);
 

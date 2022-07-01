@@ -24,10 +24,12 @@ impl std::ops::Deref for Path {
 
 impl std::fmt::Display for Path {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        use std::fmt::Write as _;
+
         let mut s = String::new();
 
         for coordinate in self.0.points() {
-            s.push_str(&format!("({}, {}),", coordinate.x(), coordinate.y()));
+            write!(s, "({}, {}),", coordinate.x(), coordinate.y())?;
         }
 
         if !self.is_closed() {
