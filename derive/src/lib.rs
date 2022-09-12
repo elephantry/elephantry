@@ -60,6 +60,8 @@ pub(crate) fn check_type(ty: &syn::Type) -> syn::Result<()> {
         "date",
         #[cfg(feature = "geo")]
         "geo",
+        #[cfg(feature = "ltree")]
+        "ltree",
         #[cfg(feature = "json")]
         "json",
         #[cfg(feature = "multirange")]
@@ -91,6 +93,7 @@ pub(crate) fn check_type(ty: &syn::Type) -> syn::Result<()> {
         ("geo", "elephantry::Polygon"),
         ("geo", "elephantry::Segment"),
         ("json", "serde_json::value::Value"),
+        ("ltree", "elephantry::Ltree"),
         ("multirange", "elephantry::Multirange"),
         ("net", "ipnetwork::IpNetwork"),
         ("net", "macaddr::MacAddr6"),

@@ -14,6 +14,8 @@ mod hstore;
 mod json;
 #[cfg(feature = "json")]
 mod jsonb;
+#[cfg(feature = "ltree")]
+mod ltree;
 #[cfg(feature = "money")]
 mod money;
 #[cfg(feature = "multirange")]
@@ -45,6 +47,8 @@ pub use geo::*;
 pub use hstore::*;
 #[cfg(feature = "json")]
 pub use jsonb::*;
+#[cfg(feature = "ltree")]
+pub use ltree::*;
 #[cfg(feature = "money")]
 pub use money::*;
 #[cfg(feature = "multirange")]

@@ -27,6 +27,7 @@
  * | `jsonb`                     | `elephantry::Jsonb`      | json       |
  * | `line`                      | `elephantry::Line`       | geo        |
  * | `lseg`                      | `elephantry::Segment`    | geo        |
+ * | `ltree`                     | `elephantry::Ltree`      | ltree      |
  * | `null`                      | `()`                     |            |
  * | `macaddr`                   | `macaddr::MacAddr6`      | net        |
  * | `macaddr8`                  | `macaddr::MacAddr8`      | net        |
@@ -311,6 +312,7 @@ mod test {
 
         let conn = crate::Pool::new(&dsn())?;
         conn.execute("create extension if not exists hstore")?;
+        conn.execute("create extension if not exists ltree")?;
         conn.execute("set lc_monetary to 'en_US.UTF-8';")?;
         conn.execute(
             "

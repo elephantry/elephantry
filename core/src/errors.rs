@@ -32,6 +32,8 @@ pub enum Error {
         rust_type: String,
         value: String,
     },
+    #[error("{0}")]
+    Infallible(#[from] std::convert::Infallible),
     /** Inspector error */
     #[error("{0}")]
     Inspect(String),

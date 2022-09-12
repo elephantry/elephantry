@@ -151,6 +151,14 @@ lazy_static::lazy_static! {
         );
 
         types.insert(
+            "ltree",
+            #[cfg(feature = "ltree")]
+            t::<crate::Ltree>(),
+            #[cfg(not(feature = "ltree"))]
+            "elephantry::Ltree",
+        );
+
+        types.insert(
             types::MONEY.name,
             #[cfg(feature = "money")]
             t::<postgres_money::Money>(),

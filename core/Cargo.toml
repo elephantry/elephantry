@@ -118,6 +118,7 @@ all-types = [
     "date",
     "geo",
     "json",
+    "ltree",
     "money",
     "net",
     "numeric",
@@ -130,6 +131,7 @@ config = ["dep:config", "serde"]
 date = ["chrono", "elephantry-derive/date"]
 geo = ["geo-types", "elephantry-derive/geo"]
 json = ["serde_json", "elephantry-derive/json"]
+ltree = ["elephantry-derive/ltree"]
 money = ["postgres_money", "elephantry-derive/money"]
 multirange = ["libpq/v14"]
 net = ["ipnetwork", "macaddr", "elephantry-derive/net"]
