@@ -164,6 +164,13 @@ lazy_static::lazy_static! {
             #[cfg(not(feature = "ltree"))]
             "elephantry::Ltree",
         );
+        types.insert(
+            "ltxtquery",
+            #[cfg(feature = "ltree")]
+            t::<crate::Ltxtquery>(),
+            #[cfg(not(feature = "ltree"))]
+            "elephantry::Ltxtquery",
+        );
 
         types.insert(
             types::MONEY.name,

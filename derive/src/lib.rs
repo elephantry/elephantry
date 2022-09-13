@@ -95,6 +95,7 @@ pub(crate) fn check_type(ty: &syn::Type) -> syn::Result<()> {
         ("json", "serde_json::value::Value"),
         ("ltree", "elephantry::Lquery"),
         ("ltree", "elephantry::Ltree"),
+        ("ltree", "elephantry::Ltxtquery"),
         ("multirange", "elephantry::Multirange"),
         ("net", "ipnetwork::IpNetwork"),
         ("net", "macaddr::MacAddr6"),

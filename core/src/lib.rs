@@ -29,6 +29,7 @@
  * | `lquery`                    | `elephantry::Lquery`     | ltree      |
  * | `lseg`                      | `elephantry::Segment`    | geo        |
  * | `ltree`                     | `elephantry::Ltree`      | ltree      |
+ * | `ltxtquery`                 | `elephantry::Ltxtquery`  | ltree      |
  * | `null`                      | `()`                     |            |
  * | `macaddr`                   | `macaddr::MacAddr6`      | net        |
  * | `macaddr8`                  | `macaddr::MacAddr8`      | net        |

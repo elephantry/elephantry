@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Adds `ltree`, `lquery` types;
+- Adds `ltree`, `lquery` and `ltxtquery` types;
 
 ## [3.2.0] - 2023-03-17
 
