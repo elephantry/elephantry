@@ -11,78 +11,78 @@ type Result<T = ()> = std::result::Result<T, crate::Error>;
 
 #[derive(Debug, Parser)]
 enum Opt {
-    #[clap(
+    #[command(
         name = "inspect:database",
         about = "Show schemas in the current database"
     )]
     InspectDatabase {},
-    #[clap(name = "inspect:schema", about = "Show relations in a given schema")]
+    #[command(name = "inspect:schema", about = "Show relations in a given schema")]
     InspectSchema {
-        #[clap(default_value = "public")]
+        #[arg(default_value = "public")]
         schema: String,
     },
-    #[clap(name = "inspect:relation", about = "Display a relation information")]
+    #[command(name = "inspect:relation", about = "Display a relation information")]
     InspectRelation {
         relation: String,
-        #[clap(default_value = "public")]
+        #[arg(default_value = "public")]
         schema: String,
     },
-    #[clap(name = "inspect:enums", about = "List enums")]
+    #[command(name = "inspect:enums", about = "List enums")]
     InspectEnums {
-        #[clap(default_value = "public")]
+        #[arg(default_value = "public")]
         schema: String,
     },
-    #[clap(name = "inspect:domains", about = "List domains")]
+    #[command(name = "inspect:domains", about = "List domains")]
     InspectDomains {
-        #[clap(default_value = "public")]
+        #[arg(default_value = "public")]
         schema: String,
     },
-    #[clap(name = "inspect:composites", about = "List composites type")]
+    #[command(name = "inspect:composites", about = "List composites type")]
     InspectComposites {
-        #[clap(default_value = "public")]
+        #[arg(default_value = "public")]
         schema: String,
     },
-    #[clap(
+    #[command(
         name = "generate:schema-all",
         about = "Generate structure, model and entity file for all relations in a schema."
     )]
     GenerateSchema {
-        #[clap(long, short = 'd', default_value = "src")]
+        #[arg(long, short = 'd', default_value = "src")]
         prefix_dir: String,
-        #[clap(default_value = "public")]
+        #[arg(default_value = "public")]
         schema: String,
     },
-    #[clap(
+    #[command(
         name = "generate:relation-all",
         about = "Generate structure, model and entity file for a given relation"
     )]
     GenerateRelation {
-        #[clap(long, short = 'd', default_value = "src")]
+        #[arg(long, short = 'd', default_value = "src")]
         prefix_dir: String,
         relation: String,
-        #[clap(default_value = "public")]
+        #[arg(default_value = "public")]
         schema: String,
     },
-    #[clap(name = "generate:entity", about = "Generate an Entity class")]
+    #[command(name = "generate:entity", about = "Generate an Entity class")]
     GenerateEntity {
-        #[clap(long, short = 'd', default_value = "src")]
+        #[arg(long, short = 'd', default_value = "src")]
         prefix_dir: String,
         relation: String,
-        #[clap(default_value = "public")]
+        #[arg(default_value = "public")]
         schema: String,
     },
-    #[clap(name = "generate:enums", about = "Generate enums")]
+    #[command(name = "generate:enums", about = "Generate enums")]
     GenerateEnums {
-        #[clap(long, short = 'd', default_value = "src")]
+        #[arg(long, short = 'd', default_value = "src")]
         prefix_dir: String,
-        #[clap(default_value = "public")]
+        #[arg(default_value = "public")]
         schema: String,
     },
-    #[clap(name = "generate:composites", about = "Generate composites")]
+    #[command(name = "generate:composites", about = "Generate composites")]
     GenerateComposites {
-        #[clap(long, short = 'd', default_value = "src")]
+        #[arg(long, short = 'd', default_value = "src")]
         prefix_dir: String,
-        #[clap(default_value = "public")]
+        #[arg(default_value = "public")]
         schema: String,
     },
 }
