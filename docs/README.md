@@ -57,6 +57,8 @@ elephantry.delete_where::<Model>("deleted = $1", &[&true])?;
 - `all-types` — enables all type features (see below);
 - `arbitrary` — add support for [arbitrary
     crate](https://crates.io/crates/arbitrary);
+- `bb8` — adds support for [bb8](https://crates.io/crates/bb8) async
+    connection pool;
 - `config` — adds support for [config](https://crates.io/crates/config)
     layered configuration system;
 - `pg14` — enables postgresql 14 features (multirange and new

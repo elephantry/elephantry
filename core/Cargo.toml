@@ -29,6 +29,14 @@ version = "1.0"
 features = ["derive"]
 optional = true
 
+[dependencies.async-trait]
+version = "0.1"
+optional = true
+
+[dependencies.bb8]
+version = "0.8"
+optional = true
+
 [dependencies.bit-vec]
 version = "0.6"
 optional = true
@@ -109,7 +117,7 @@ env_logger = "0.10"
 
 [dev-dependencies.async-std]
 version= "1.6"
-features = ["attributes"]
+features = ["attributes", "tokio1"]
 
 [features]
 default = []
@@ -125,6 +133,7 @@ all-types = [
     "uuid",
     "xml"
 ]
+bb8 = ["async-trait", "dep:bb8"]
 bit = ["bit-vec", "elephantry-derive/bit"]
 config = ["dep:config", "serde"]
 date = ["chrono", "elephantry-derive/date"]

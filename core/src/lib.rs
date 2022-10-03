@@ -52,6 +52,9 @@
  * | `(,)`                       | `std::ops::RangeFull`    |            |
  */
 
+#[cfg(feature = "bb8")]
+#[cfg_attr(docsrs, doc(cfg(feature = "bb8")))]
+pub mod bb8;
 pub mod config;
 pub mod connection;
 pub mod entity;
