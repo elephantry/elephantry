@@ -46,7 +46,12 @@ impl std::ops::Deref for Hstore {
 
 impl crate::ToSql for crate::Hstore {
     fn ty(&self) -> crate::pq::Type {
-        crate::pq::types::UNKNOWN
+        crate::pq::Type {
+            descr: "HSTORE - data type for storing sets of (key, value) pairs",
+            name: "hstore",
+
+            ..crate::pq::types::UNKNOWN
+        }
     }
 
     /*
