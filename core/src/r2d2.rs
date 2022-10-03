@@ -8,10 +8,6 @@ impl ConnectionManager {
             dsn: dsn.to_string(),
         }
     }
-
-    fn etablish(&self) -> crate::Result<crate::Connection> {
-        crate::Connection::new(&self.dsn)
-    }
 }
 
 impl r2d2::ManageConnection for ConnectionManager {
@@ -19,7 +15,7 @@ impl r2d2::ManageConnection for ConnectionManager {
     type Error = crate::Error;
 
     fn connect(&self) -> std::result::Result<Self::Connection, Self::Error> {
-        self.etablish()
+        crate::Connection::new(&self.dsn)
     }
 
     fn is_valid(&self, conn: &mut Self::Connection) -> std::result::Result<(), Self::Error> {
