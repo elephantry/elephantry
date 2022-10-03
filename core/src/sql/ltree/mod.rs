@@ -1,3 +1,7 @@
+mod lquery;
+
+pub use lquery::*;
+
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct Ltree(Vec<String>);
 

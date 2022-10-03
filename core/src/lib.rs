@@ -26,6 +26,7 @@
  * | `json`                      | `serde_json::Value`      | json       |
  * | `jsonb`                     | `elephantry::Jsonb`      | json       |
  * | `line`                      | `elephantry::Line`       | geo        |
+ * | `lquery`                    | `elephantry::Lquery`     | ltree      |
  * | `lseg`                      | `elephantry::Segment`    | geo        |
  * | `ltree`                     | `elephantry::Ltree`      | ltree      |
  * | `null`                      | `()`                     |            |

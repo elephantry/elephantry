@@ -151,6 +151,13 @@ lazy_static::lazy_static! {
         );
 
         types.insert(
+            "lquery",
+            #[cfg(feature = "ltree")]
+            t::<crate::Lquery>(),
+            #[cfg(not(feature = "ltree"))]
+            "elephantry::Lquery",
+        );
+        types.insert(
             "ltree",
             #[cfg(feature = "ltree")]
             t::<crate::Ltree>(),

@@ -93,6 +93,7 @@ pub(crate) fn check_type(ty: &syn::Type) -> syn::Result<()> {
         ("geo", "elephantry::Polygon"),
         ("geo", "elephantry::Segment"),
         ("json", "serde_json::value::Value"),
+        ("ltree", "elephantry::Lquery"),
         ("ltree", "elephantry::Ltree"),
         ("multirange", "elephantry::Multirange"),
         ("net", "ipnetwork::IpNetwork"),
