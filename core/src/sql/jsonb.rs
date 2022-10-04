@@ -69,9 +69,7 @@ impl crate::FromSql for Jsonb {
         let mut buf = crate::not_null(raw)?;
 
         let _version = crate::from_sql::read_i8(&mut buf)?;
-        let value = serde_json::Value::from_binary(ty, Some(buf))?;
-
-        Ok(Self::from(value))
+        serde_json::Value::from_binary(ty, Some(buf)).map(Self::from)
     }
 }
 
