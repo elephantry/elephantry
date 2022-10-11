@@ -1,3 +1,4 @@
+use crate::Projectable;
 use crate::Structure;
 use std::collections::HashMap;
 

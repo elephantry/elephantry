@@ -134,12 +134,14 @@ impl elephantry::Model for EventExtraModel {
 struct EventStructure;
 
 impl elephantry::Structure for EventStructure {
-    fn relation() -> &'static str {
-        "public.event"
-    }
-
     fn primary_key() -> &'static [&'static str] {
         &["uuid"]
+    }
+}
+
+impl elephantry::Projectable for EventStructure {
+    fn relation() -> &'static str {
+        "public.event"
     }
 
     fn columns() -> &'static [&'static str] {

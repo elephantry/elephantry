@@ -160,14 +160,17 @@ fn structure_impl(
 
         #[automatically_derived]
         impl #elephantry::Structure for #name {
-            fn relation() -> &'static str {
-                #relation
-            }
-
             fn primary_key() -> &'static [&'static str] {
                 &[
                     #(#primary_key, )*
                 ]
+            }
+        }
+
+        #[automatically_derived]
+        impl #elephantry::Projectable for #name {
+            fn relation() -> &'static str {
+                #relation
             }
 
             fn columns() -> &'static [&'static str] {

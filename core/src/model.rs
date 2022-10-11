@@ -21,7 +21,7 @@ pub trait Model {
      */
     #[must_use]
     fn default_projection() -> crate::Projection {
-        use crate::Structure;
+        use crate::Projectable;
 
         crate::Projection::new(Self::Structure::relation(), Self::Structure::columns())
     }

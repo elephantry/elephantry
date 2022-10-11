@@ -22,7 +22,7 @@ mod employee {
 
     impl Model {
         pub fn employee_with_department(&self, id: i32) -> elephantry::Result<Entity> {
-            use elephantry::{Model, Structure};
+            use elephantry::{Model, Projectable};
 
             let employee_projection = Self::create_projection()
                 .unset_field("department_id")
