@@ -184,5 +184,5 @@ name = "12-copy"
 required-features = ["date", "numeric"]
 
 [package.metadata.docs.rs]
-features = ["all-types", "config", "rocket", "arbitrary", "serde", "r2d2"]
+all-features = true
 rustdoc-args = ["--cfg", "docsrs"]
