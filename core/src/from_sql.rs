@@ -238,21 +238,64 @@ impl FromSql for () {
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(float4, f32, [(1., 1.), (-1., -1.), (2.1, 2.1)]);
+    crate::sql_test!(float4, f32, [("1.", 1.), ("-1.", -1.), ("2.1", 2.1)]);
 
-    crate::sql_test!(float8, f64, [(1., 1.), (-1., -1.), (2.1, 2.1)]);
+    crate::sql_test!(float8, f64, [("1.", 1.), ("-1.", -1.), ("2.1", 2.1)]);
 
-    crate::sql_test!(int2, i16, [(i16::MAX, i16::MAX), (1, 1), (0, 0), (-1, -1),]);
+    crate::sql_test!(
+        int2,
+        i16,
+        [
+            (i16::MAX.to_string().as_str(), i16::MAX),
+            ("1", 1),
+            ("0", 0),
+            ("-1", -1),
+        ]
+    );
 
-    crate::sql_test!(int, u16, [(u16::MAX, u16::MAX), (1, 1), (0, 0)]);
+    crate::sql_test!(
+        int,
+        u16,
+        [
+            (u16::MAX.to_string().as_str(), u16::MAX),
+            ("1", 1),
+            ("0", 0)
+        ]
+    );
 
-    crate::sql_test!(int4, i32, [(i32::MAX, i32::MAX), (1, 1), (0, 0), (-1, -1),]);
+    crate::sql_test!(
+        int4,
+        i32,
+        [
+            (i32::MAX.to_string().as_str(), i32::MAX),
+            ("1", 1),
+            ("0", 0),
+            ("-1", -1),
+        ]
+    );
 
-    crate::sql_test!(bigint, u32, [(u32::MAX, u32::MAX), (1, 1), (0, 0)]);
+    crate::sql_test!(
+        bigint,
+        u32,
+        [
+            (u32::MAX.to_string().as_str(), u32::MAX),
+            ("1", 1),
+            ("0", 0)
+        ]
+    );
 
-    crate::sql_test!(int8, i64, [(i64::MAX, i64::MAX), (1, 1), (0, 0), (-1, -1),]);
+    crate::sql_test!(
+        int8,
+        i64,
+        [
+            (i64::MAX.to_string().as_str(), i64::MAX),
+            ("1", 1),
+            ("0", 0),
+            ("-1", -1),
+        ]
+    );
 
-    crate::sql_test!(oid, crate::pq::Oid, [(1, 1)]);
+    crate::sql_test!(oid, crate::pq::Oid, [("1", 1)]);
 
     crate::sql_test!(
         bool,
@@ -269,7 +312,11 @@ mod test {
 
     crate::sql_test!(varchar, Option<String>, [("null", None::<String>)]);
 
-    crate::sql_test!(text, String, [("'foo'", "foo"), ("''", "")]);
+    crate::sql_test!(
+        text,
+        String,
+        [("'foo'", "foo".to_string()), ("''", "".to_string())]
+    );
 
     crate::sql_test!(us_postal_code, String, [("'12345'", "12345".to_string()),]);
 

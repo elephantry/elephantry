@@ -66,7 +66,7 @@ mod test {
         xml,
         xmltree::Element,
         [(
-            format!("'{}'", super::XML),
+            &format!("'{}'", super::XML),
             xmltree::Element::parse(super::XML.as_bytes()).unwrap()
         )]
     );
