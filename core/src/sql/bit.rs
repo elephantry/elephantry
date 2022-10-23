@@ -8,14 +8,16 @@ impl crate::ToSql for u8 {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L146
      */
     fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
-        format!("{self}").to_text()
+        let bytes = bit_vec::BitVec::from_bytes(&[self.reverse_bits()]);
+
+        bytes.to_text()
     }
 
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L330
      */
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
-        let bytes = bit_vec::BitVec::from_bytes(&[*self]);
+        let bytes = bit_vec::BitVec::from_bytes(&[self.reverse_bits()]);
 
         bytes.to_binary()
     }
@@ -115,15 +117,16 @@ impl crate::entity::Simple for bit_vec::BitVec {}
 
 #[cfg(test)]
 mod test {
-    //crate::sql_test!(bit, u8, [("'0'", 0), ("'1'", 1), ("0", 0), ("1", 1)]);
+    crate::sql_test!(bit, u8, [("'0'", 0), ("'1'", 1), ("0", 0), ("1", 1)]);
 
     crate::sql_test!(
         varbit,
         bit_vec::BitVec,
         [
-            ("'00000000'", bit_vec::BitVec::from_bytes(&[0b00000000])),
-            ("'10101010'", bit_vec::BitVec::from_bytes(&[0b10101010])),
-            ("'11111111'", bit_vec::BitVec::from_bytes(&[0b11111111])),
+            ("'00000000'", bit_vec::BitVec::from_bytes(&[0b0000_0000])),
+            ("'11110000'", bit_vec::BitVec::from_bytes(&[0b1111_0000])),
+            ("'10101010'", bit_vec::BitVec::from_bytes(&[0b1010_1010])),
+            ("'11111111'", bit_vec::BitVec::from_bytes(&[0b1111_1111])),
         ]
     );
 }

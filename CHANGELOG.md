@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `pg14` feature;
 - Impl `Eq` for `Bytea`, `Jsonb` and `Hstore`;
+- Impl `Clone` for `inspect::*` types;
+
+### Fixed
+- `u8` conversion;
 
 ## [3.0.0] - 2022-04-27
 ### Added
