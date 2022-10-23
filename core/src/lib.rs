@@ -189,8 +189,8 @@ mod test {
         let conn = crate::test::new_conn()?;
 
         for (value, expected) in tests {
-            let result = conn.execute(&format!("select {value}::{sql_type} as actual",))?;
-            assert_eq!(result.get(0).get::<T>("actual"), *expected);
+            let result = conn.execute(&format!("select {value}::{sql_type} as actual"))?;
+            assert_eq!(result.get(0).get::<T>("actual"), *expected, "from_text");
         }
 
         Ok(())
@@ -207,7 +207,11 @@ mod test {
                 &format!("select {value}::{sql_type} as actual"),
                 &[],
             )?;
-            assert_eq!(result.get(0).get("actual").unwrap(), expected);
+            assert_eq!(
+                result.get(0).get("actual").unwrap(),
+                expected,
+                "from_binary"
+            );
         }
 
         Ok(())
@@ -237,7 +241,7 @@ mod test {
         for (_, value) in tests {
             let result = conn.query::<T>(&format!("select $1::{sql_type}"), &[value]);
             assert!(dbg!(&result).is_ok());
-            assert_eq!(&result.unwrap().get(0), value);
+            assert_eq!(&result.unwrap().get(0), value, "to_text");
         }
 
         Ok(())
@@ -264,7 +268,7 @@ mod test {
                 .try_into()?;
             let rows: crate::Rows<T> = result.into();
 
-            assert_eq!(&rows.get(0), value);
+            assert_eq!(&rows.get(0), value, "to_binary");
         }
 
         Ok(())
