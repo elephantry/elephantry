@@ -12,7 +12,7 @@ pub fn database(connection: &elephantry::Connection) -> crate::Result {
     for schema in elephantry::inspect::database(connection)?.iter() {
         table.add_row(term_table::row::Row::new(vec![
             term_table::table_cell::TableCell::new(&schema.name),
-            term_table::table_cell::TableCell::new(&schema.oid),
+            term_table::table_cell::TableCell::new(schema.oid),
             term_table::table_cell::TableCell::new(&schema.relations),
             term_table::table_cell::TableCell::new(&schema.comment),
         ]));
@@ -39,7 +39,7 @@ pub fn schema(connection: &elephantry::Connection, schema: &str) -> crate::Resul
         table.add_row(term_table::row::Row::new(vec![
             term_table::table_cell::TableCell::new(&relation.name),
             term_table::table_cell::TableCell::new(&relation.ty),
-            term_table::table_cell::TableCell::new(&relation.oid),
+            term_table::table_cell::TableCell::new(relation.oid),
             term_table::table_cell::TableCell::new(relation.comment.clone().unwrap_or_default()),
         ]));
     }

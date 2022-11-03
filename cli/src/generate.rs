@@ -236,7 +236,7 @@ fn is_keyword(name: &str) -> bool {
 }
 
 fn add_mod(dir: &str, name: &str) -> crate::Result {
-    std::fs::create_dir_all(&dir)?;
+    std::fs::create_dir_all(dir)?;
 
     let mod_filename = format!("{dir}/mod.rs");
     let mut file = std::fs::OpenOptions::new()
