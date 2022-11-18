@@ -5,7 +5,7 @@
 pub struct Schema {
     pub name: String,
     pub oid: crate::pq::Oid,
-    pub relations: String,
+    pub relations: u32,
     pub comment: String,
 }
 
