@@ -1,6 +1,6 @@
 #![allow(unused_variables)]
 
-#[derive(Debug, elephantry_derive::Entity)]
+#[derive(Clone, Debug, elephantry_derive::Entity)]
 #[elephantry(internal)]
 pub struct Schema {
     pub name: String,
@@ -34,7 +34,7 @@ order by 1;
         .map(|x| x.collect())
 }
 
-#[derive(Debug, elephantry_derive::Entity)]
+#[derive(Clone, Debug, elephantry_derive::Entity)]
 #[elephantry(internal)]
 pub struct Relation {
     pub name: String,
@@ -79,7 +79,7 @@ order by name asc;
         .map(|x| x.collect())
 }
 
-#[derive(Debug, elephantry_derive::Entity)]
+#[derive(Clone, Debug, elephantry_derive::Entity)]
 #[elephantry(internal)]
 pub struct Column {
     #[elephantry(default)]
@@ -149,7 +149,7 @@ order by
         .map(|x| x.collect())
 }
 
-#[derive(Debug, elephantry_derive::Entity)]
+#[derive(Clone, Debug, elephantry_derive::Entity)]
 #[elephantry(internal)]
 pub struct Enum {
     pub name: String,
@@ -167,7 +167,7 @@ pub fn enums(
     crate::inspect::types(connection, schema, 'e').map(|x| x.collect())
 }
 
-#[derive(Debug, elephantry_derive::Entity)]
+#[derive(Clone, Debug, elephantry_derive::Entity)]
 #[elephantry(internal)]
 pub struct Domain {
     pub name: String,
@@ -184,7 +184,7 @@ pub fn domains(
     crate::inspect::types(connection, schema, 'd').map(|x| x.collect())
 }
 
-#[derive(Debug, elephantry_derive::Entity)]
+#[derive(Clone, Debug, elephantry_derive::Entity)]
 #[elephantry(internal)]
 pub struct Composite {
     pub name: String,
