@@ -122,8 +122,9 @@ select
     att.attname as "name",
     typ.oid as "oid",
     case
-        when name.nspname = 'pg_catalog' then typ.typname
-        else format('%s.%s', name.nspname, typ.typname)
+      when att.attlen = -1 then format('%s(%s)', typ.typname, att.atttypmod - 4)
+      when name.nspname != 'pg_catalog' then format('%s.%s', name.nspname, typ.typname)
+      else typ.typname
     end as "ty",
     pg_catalog.pg_get_expr(def.adbin, def.adrelid) as "default",
     att.attnotnull as "is_notnull",
