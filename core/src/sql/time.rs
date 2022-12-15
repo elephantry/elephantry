@@ -85,7 +85,7 @@ impl crate::ToSql for TimeTz {
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
         let mut buf = self.0.to_binary()?.unwrap();
 
-        crate::to_sql::write_i32(&mut buf, -self.1.whole_seconds() as i32)?;
+        crate::to_sql::write_i32(&mut buf, -self.1.whole_seconds())?;
 
         Ok(Some(buf))
     }

@@ -13,7 +13,7 @@ pub fn database(connection: &elephantry::Connection) -> crate::Result {
         table.add_row(term_table::row::Row::new(vec![
             term_table::table_cell::TableCell::new(&schema.name),
             term_table::table_cell::TableCell::new(schema.oid),
-            term_table::table_cell::TableCell::new(&schema.relations),
+            term_table::table_cell::TableCell::new(schema.relations),
             term_table::table_cell::TableCell::new(&schema.comment),
         ]));
     }

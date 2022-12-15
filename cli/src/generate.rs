@@ -242,7 +242,7 @@ fn add_mod(dir: &str, name: &str) -> crate::Result {
     let mut file = std::fs::OpenOptions::new()
         .create(true)
         .append(true)
-        .open(&mod_filename)?;
+        .open(mod_filename)?;
     file.write_all(format!("mod {name};\n").as_bytes())?;
 
     Ok(())

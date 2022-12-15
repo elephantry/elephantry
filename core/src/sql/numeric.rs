@@ -153,7 +153,7 @@ impl TryFrom<&bigdecimal::BigDecimal> for PgNumeric {
         let mut digits = ToBase10000(Some(integer)).collect::<Vec<_>>();
         digits.reverse();
         let digits_after_decimal = dscale / 4 + 1;
-        let weight = digits.len() as i16 - digits_after_decimal as i16 - 1;
+        let weight = digits.len() as i16 - digits_after_decimal - 1;
 
         let unnecessary_zeroes = digits.iter().rev().take_while(|i| i.is_zero()).count();
 
