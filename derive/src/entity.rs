@@ -78,13 +78,13 @@ fn entity_impl(
         let get_part = if is_option(ty) {
             quote::quote! {
                 #column => match self.#name {
-                    Some(ref value) => Some(value),
-                    None => None,
+                    ::std::option::Option::Some(ref value) => ::std::option::Option::Some(value),
+                    ::std::option::Option::None => ::std::option::Option::None,
                 }
             }
         } else {
             quote::quote! {
-                #column => Some(&self.#name)
+                #column => ::std::option::Option::Some(&self.#name)
             }
         };
 
@@ -108,7 +108,7 @@ fn entity_impl(
             fn get(&self, field: &str) -> ::std::option::Option<&dyn #elephantry::ToSql> {
                 match field {
                     #(#get_body, )*
-                    _ => None,
+                    _ => ::std::option::Option::None,
                 }
             }
         }

@@ -55,7 +55,7 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::Tok
                     #(#from_text_body, )*
                 };
 
-                Ok(s)
+                ::std::result::Result::Ok(s)
             }
 
             fn from_binary(ty: &#elephantry::pq::Type, raw: ::std::option::Option<&[u8]>) -> #elephantry::Result<Self> {
@@ -65,7 +65,7 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::Tok
                     #(#from_binary_body, )*
                 };
 
-                Ok(s)
+                ::std::result::Result::Ok(s)
             }
         }
 
@@ -81,16 +81,16 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::Tok
                 }
             }
 
-            fn to_text(&self) -> #elephantry::Result<::std::option::Option<Vec<u8>>> {
-                let mut vec = Vec::new();
+            fn to_text(&self) -> #elephantry::Result<::std::option::Option<::std::vec::Vec<u8>>> {
+                let mut vec = ::std::vec::Vec::new();
 
                 #(#to_vec_body; )*
 
                 #elephantry::record::vec_to_text(&vec)
             }
 
-            fn to_binary(&self) -> #elephantry::Result<::std::option::Option<Vec<u8>>> {
-                let mut vec = Vec::new();
+            fn to_binary(&self) -> #elephantry::Result<::std::option::Option<::std::vec::Vec<u8>>> {
+                let mut vec = ::std::vec::Vec::new();
 
                 #(#to_vec_body; )*
 
