@@ -32,7 +32,6 @@ main()
         cd $crate
 
         cargo publish
-        sleep 30
 
         cd -
     done
