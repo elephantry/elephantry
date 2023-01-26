@@ -66,8 +66,7 @@ impl Pool {
             return Err(crate::Error::Connect {
                 dsn: name.to_string(),
                 error: libpq::errors::Error::Backend(format!(
-                    "Unable to set {} connection as default, unknow connection",
-                    name
+                    "Unable to set {name} connection as default, unknow connection"
                 )),
             });
         }

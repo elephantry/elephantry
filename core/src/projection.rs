@@ -104,6 +104,6 @@ impl std::fmt::Display for Projection {
                 }
             });
 
-        write!(f, "{}", s)
+        write!(f, "{s}")
     }
 }

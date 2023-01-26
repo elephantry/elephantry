@@ -24,7 +24,7 @@ impl<'a> Tuple<'a> {
         T: crate::FromSql,
     {
         self.try_get(name)
-            .unwrap_or_else(|err| panic!("Unable to retreive '{}' field: {}", name, err))
+            .unwrap_or_else(|err| panic!("Unable to retreive '{name}' field: {err}"))
     }
 
     /**
@@ -55,7 +55,7 @@ impl<'a> Tuple<'a> {
         T: crate::FromSql,
     {
         self.try_nth(n)
-            .unwrap_or_else(|err| panic!("Unable to retreive field {}: {}", n, err))
+            .unwrap_or_else(|err| panic!("Unable to retreive field {n}: {err}"))
     }
 
     /**
