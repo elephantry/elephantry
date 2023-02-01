@@ -1,12 +1,13 @@
 [package]
 name = "elephantry-derive"
 description = "Macro implementation of #[derive(Entity)]"
-repository = "https://github.com/elephantry/elephantry/tree/main/derive"
-homepage = "https://elephantry.github.io"
-license = "MIT"
-version = "3.0.0"
-authors = ["Sanpi <sanpi@homecomputing.fr>"]
-edition = "2021"
+
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
 
 [lib]
 proc-macro = true

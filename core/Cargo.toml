@@ -1,16 +1,17 @@
 [package]
 name = "elephantry"
 description = "Object model manager for PostgreSQL"
-repository = "https://github.com/elephantry/elephantry"
-homepage = "https://elephantry.github.io"
-license = "MIT"
-version = "3.0.0"
-authors = ["Sanpi <sanpi@homecomputing.fr>"]
-edition = "2021"
 readme = "../docs/README.md"
 keywords = ["database", "postgresql"]
 categories = ["database"]
 rust-version = "1.60"
+
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
 
 [dependencies]
 bitflags = "1.3"
