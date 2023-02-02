@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Impl `FromSql`/`ToSql` for `[u8; N]`;
 - Impl `TryFrom<elephantry::Interval>` for `std::time::Duration`;
 - Impl `TryFrom<elephantry::Interval>` for `chrono::Duration`;
+- Inspect constraints;
 
 ### Fixed
 - `u8` conversion;

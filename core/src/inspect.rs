@@ -36,6 +36,33 @@ order by 1;
 
 #[derive(Clone, Debug, elephantry_derive::Entity)]
 #[elephantry(internal)]
+pub struct Constraint {
+    pub oid: crate::pq::Oid,
+    pub name: String,
+    pub definition: String,
+}
+
+/**
+ * Retreive constraints.
+ */
+pub fn constraints(
+    connection: &crate::Connection,
+    oid: crate::pq::Oid,
+) -> crate::Result<Vec<crate::inspect::Constraint>> {
+    connection
+        .query(
+            r#"
+select oid, conname as name, pg_get_constraintdef(oid) as definition
+    from pg_catalog.pg_constraint
+    where connamespace = $*;
+"#,
+            &[&oid],
+        )
+        .map(|x| x.collect())
+}
+
+#[derive(Clone, Debug, elephantry_derive::Entity)]
+#[elephantry(internal)]
 pub struct Relation {
     pub name: String,
     pub ty: String,
