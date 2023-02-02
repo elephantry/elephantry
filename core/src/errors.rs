@@ -70,6 +70,9 @@ pub enum Error {
         rust_type: String,
         message: String,
     },
+    /** TryFrom int error */
+    #[error(transparent)]
+    TryFromIntError(#[from] std::num::TryFromIntError),
     /** UTF8 error */
     #[error(transparent)]
     Utf8(#[from] std::string::FromUtf8Error),

@@ -105,6 +105,16 @@ impl From<&Interval> for i64 {
     }
 }
 
+impl TryFrom<Interval> for std::time::Duration {
+    type Error = crate::Error;
+
+    fn try_from(value: Interval) -> Result<Self, Self::Error> {
+        let secs = i64::from(&value).try_into()?;
+
+        Ok(Self::from_secs(secs))
+    }
+}
+
 impl PartialEq for Interval {
     fn eq(&self, other: &Self) -> bool {
         let a: i64 = i64::from(self);
