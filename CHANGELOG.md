@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `pg14` feature;
 - Impl `Eq` for `Bytea`, `Jsonb` and `Hstore`;
 - Impl `Clone` for `inspect::*` types;
+- Impl `FromSql`/`ToSql` for `[u8; N]`;
 
 ### Fixed
 - `u8` conversion;

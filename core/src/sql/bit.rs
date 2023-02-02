@@ -54,6 +54,63 @@ impl crate::FromSql for u8 {
 impl crate::entity::Simple for u8 {}
 
 #[cfg_attr(docsrs, doc(cfg(feature = "bit")))]
+impl<const N: usize> crate::ToSql for [u8; N] {
+    fn ty(&self) -> crate::pq::Type {
+        crate::pq::types::BIT
+    }
+
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L146
+     */
+    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+        let bytes = bit_vec::BitVec::from_bytes(self);
+
+        bytes.to_text()
+    }
+
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L330
+     */
+    fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
+        let bytes = bit_vec::BitVec::from_bytes(self);
+
+        bytes.to_binary()
+    }
+}
+
+#[cfg_attr(docsrs, doc(cfg(feature = "bit")))]
+impl<const N: usize> crate::FromSql for [u8; N] {
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L279
+     */
+    fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
+        let bytes = bit_vec::BitVec::from_text(ty, raw)?;
+
+        bytes
+            .to_bytes()
+            .as_slice()
+            .try_into()
+            .map_err(|_| Self::error(ty, raw))
+    }
+
+    /*
+     * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L375
+     */
+    fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
+        let bytes = bit_vec::BitVec::from_binary(ty, raw)?;
+
+        bytes
+            .to_bytes()
+            .as_slice()
+            .try_into()
+            .map_err(|_| Self::error(ty, raw))
+    }
+}
+
+#[cfg_attr(docsrs, doc(cfg(feature = "bit")))]
+impl<const N: usize> crate::entity::Simple for [u8; N] {}
+
+#[cfg_attr(docsrs, doc(cfg(feature = "bit")))]
 impl crate::ToSql for bit_vec::BitVec {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::VARBIT
@@ -118,6 +175,33 @@ impl crate::entity::Simple for bit_vec::BitVec {}
 #[cfg(test)]
 mod test {
     crate::sql_test!(bit, u8, [("'0'", 0), ("'1'", 1), ("0", 0), ("1", 1)]);
+
+    #[test]
+    fn byte() -> crate::Result {
+        let tests = [("'00000000'", [0]), ("'11111111'", [255])];
+
+        crate::test::from_text("bit(8)", &tests)?;
+        crate::test::from_binary("bit(8)", &tests)?;
+        crate::test::to_text("bit(8)", &tests)?;
+        crate::test::to_binary("bit(8)", &tests)?;
+
+        Ok(())
+    }
+
+    #[test]
+    fn bytes() -> crate::Result {
+        let tests = [(
+            "'1111111110000000010000000010000000010000'",
+            [255, 128, 64, 32, 16],
+        )];
+
+        crate::test::from_text("bit(40)", &tests)?;
+        crate::test::from_binary("bit(40)", &tests)?;
+        crate::test::to_text("bit(40)", &tests)?;
+        crate::test::to_binary("bit(40)", &tests)?;
+
+        Ok(())
+    }
 
     crate::sql_test!(
         varbit,

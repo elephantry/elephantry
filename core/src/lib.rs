@@ -8,6 +8,7 @@
  * |-----------------------------|--------------------------|------------|
  * | `bigint`/`int8`             | `i64`                    |            |
  * | `bit`                       | `u8`                     | bit        |
+ * | `bit(n)`                    | `[u8; n]`                | bit        |
  * | `bit varying`               | `bit_vec::BitVec`        | bit        |
  * | `boolean`                   | `bool`                   |            |
  * | `box`                       | `elephantry::Box`        | geo        |
