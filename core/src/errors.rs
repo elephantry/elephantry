@@ -5,6 +5,10 @@ pub enum Error {
     /** An error in async context. */
     #[error("Async error: {0}")]
     Async(libpq::errors::Error),
+    /** Chrono error */
+    #[cfg(feature = "date")]
+    #[error("{0}")]
+    Chrono(String),
     /** Configuration error */
     #[cfg(feature = "config")]
     #[error(transparent)]
@@ -45,6 +49,10 @@ pub enum Error {
     /** Fetch a null value in a non-option type */
     #[error("Try to retreive null field as non-option type")]
     NotNull,
+    /** Chrono out of range error */
+    #[cfg(feature = "date")]
+    #[error(transparent)]
+    ChronoOutOfRangeError(#[from] chrono::OutOfRangeError),
     /** Parse error */
     #[error("{0}")]
     Parse(String),

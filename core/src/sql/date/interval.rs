@@ -115,6 +115,14 @@ impl TryFrom<Interval> for std::time::Duration {
     }
 }
 
+impl TryFrom<Interval> for chrono::Duration {
+    type Error = crate::Error;
+
+    fn try_from(value: Interval) -> Result<chrono::Duration, Self::Error> {
+        Self::from_std(value.try_into()?).map_err(|e| crate::Error::Chrono(e.to_string()))
+    }
+}
+
 impl PartialEq for Interval {
     fn eq(&self, other: &Self) -> bool {
         let a: i64 = i64::from(self);
