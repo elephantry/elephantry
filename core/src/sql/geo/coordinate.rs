@@ -1,15 +1,15 @@
 #[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 #[derive(Clone, Debug, PartialEq)]
-pub struct Coordinate(geo_types::Coordinate<f64>);
+pub struct Coordinate(geo_types::Coord<f64>);
 
 impl Coordinate {
     pub fn new(x: f64, y: f64) -> Self {
-        Self(geo_types::Coordinate { x, y })
+        Self(geo_types::Coord { x, y })
     }
 }
 
 impl std::ops::Deref for Coordinate {
-    type Target = geo_types::Coordinate<f64>;
+    type Target = geo_types::Coord<f64>;
 
     fn deref(&self) -> &Self::Target {
         &self.0

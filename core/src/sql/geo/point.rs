@@ -26,8 +26,8 @@ impl std::fmt::Display for Point {
     }
 }
 
-impl From<geo_types::Coordinate<f64>> for Point {
-    fn from(coordinate: geo_types::Coordinate<f64>) -> Self {
+impl From<geo_types::Coord<f64>> for Point {
+    fn from(coordinate: geo_types::Coord<f64>) -> Self {
         Self(coordinate.into())
     }
 }
