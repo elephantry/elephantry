@@ -15,8 +15,7 @@ impl crate::ToSql for chrono::NaiveDateTime {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/timestamp.c#L265
      */
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
-        let base = chrono::NaiveDate::from_ymd(2000, 1, 1).and_hms(0, 0, 0);
-        let t: chrono::Duration = *self - base;
+        let t: chrono::Duration = *self - super::base_datetime()?;
 
         let mut buf = Vec::new();
         crate::to_sql::write_i64(&mut buf, t.num_microseconds().unwrap())?;
@@ -46,9 +45,8 @@ impl crate::FromSql for chrono::NaiveDateTime {
      */
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         let t = i64::from_binary(ty, raw)?;
-        let base = chrono::NaiveDate::from_ymd(2000, 1, 1).and_hms(0, 0, 0);
 
-        Ok(base + chrono::Duration::microseconds(t))
+        Ok(super::base_datetime()? + chrono::Duration::microseconds(t))
     }
 }
 

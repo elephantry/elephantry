@@ -4,6 +4,16 @@ mod timestamptz;
 
 pub use interval::*;
 
+fn base_date() -> crate::Result<chrono::NaiveDate> {
+    base_datetime().map(|x| x.date())
+}
+
+fn base_datetime() -> crate::Result<chrono::NaiveDateTime> {
+    chrono::NaiveDate::from_ymd_opt(2000, 1, 1)
+        .and_then(|x| x.and_hms_opt(0, 0, 0))
+        .ok_or_else(|| crate::Error::Chrono("Invalid base date".to_string()))
+}
+
 #[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::ToSql for chrono::NaiveDate {
     fn ty(&self) -> crate::pq::Type {
@@ -21,8 +31,7 @@ impl crate::ToSql for chrono::NaiveDate {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/date.c#L226
      */
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
-        let base = chrono::NaiveDate::from_ymd(2000, 1, 1);
-        let t: chrono::Duration = *self - base;
+        let t: chrono::Duration = *self - base_date()?;
 
         let mut buf = Vec::new();
         crate::to_sql::write_i32(&mut buf, t.num_days() as i32)?;
@@ -48,9 +57,8 @@ impl crate::FromSql for chrono::NaiveDate {
      */
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         let t = i32::from_binary(ty, raw)?;
-        let base = chrono::NaiveDate::from_ymd(2000, 1, 1);
 
-        Ok(base + chrono::Duration::days(t.into()))
+        Ok(base_date()? + chrono::Duration::days(t.into()))
     }
 }
 

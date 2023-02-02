@@ -66,7 +66,10 @@ impl crate::FromSql for chrono::DateTime<chrono::offset::FixedOffset> {
 
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         let utc = chrono::DateTime::<chrono::Utc>::from_binary(ty, raw)?;
-        Ok(utc.with_timezone(&chrono::offset::FixedOffset::east(0)))
+        let offset = chrono::offset::FixedOffset::east_opt(0)
+            .ok_or_else(|| crate::Error::Chrono("Invalid offest".to_string()))?;
+
+        Ok(utc.with_timezone(&offset))
     }
 }
 

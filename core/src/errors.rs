@@ -49,10 +49,6 @@ pub enum Error {
     /** Fetch a null value in a non-option type */
     #[error("Try to retreive null field as non-option type")]
     NotNull,
-    /** Chrono out of range error */
-    #[cfg(feature = "date")]
-    #[error(transparent)]
-    ChronoOutOfRangeError(#[from] chrono::OutOfRangeError),
     /** Parse error */
     #[error("{0}")]
     Parse(String),
