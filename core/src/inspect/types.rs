@@ -1,4 +1,4 @@
-#[derive(Clone, Debug, elephantry_derive::Entity)]
+#[derive(Clone, Debug, Eq, PartialEq, elephantry_derive::Entity)]
 #[elephantry(internal)]
 pub struct Enum {
     pub name: String,
@@ -16,7 +16,7 @@ pub fn enums(
     types(connection, schema, super::Type::Enum).map(|x| x.collect())
 }
 
-#[derive(Clone, Debug, elephantry_derive::Entity)]
+#[derive(Clone, Debug, Eq, PartialEq, elephantry_derive::Entity)]
 #[elephantry(internal)]
 pub struct Domain {
     pub name: String,
@@ -62,12 +62,12 @@ order by 1;
         ).map(Iterator::collect)
 }
 
-#[derive(Clone, Debug, elephantry_derive::Entity)]
+#[derive(Clone, Debug, Eq, PartialEq, elephantry_derive::Entity)]
 #[elephantry(internal)]
 pub struct Composite {
     pub name: String,
     #[elephantry(default)]
-    pub fields: Vec<(String, crate::pq::Type)>,
+    pub fields: Vec<crate::inspect::Column>,
     pub description: Option<String>,
 }
 
@@ -82,30 +82,10 @@ pub fn composites(
         .collect::<Vec<crate::inspect::Composite>>();
 
     for composite in &mut composites {
-        composite.fields = crate::inspect::composite_fields(connection, &composite.name)?;
+        composite.fields = crate::inspect::relation(connection, schema, &composite.name)?;
     }
 
     Ok(composites)
-}
-
-pub(crate) fn composite_fields(
-    connection: &crate::Connection,
-    composite: &str,
-) -> crate::Result<Vec<(String, crate::pq::Type)>> {
-    connection
-        .query(
-            r#"
-select row(a.attname, pg_catalog.format_type(a.atttypid, a.atttypmod))
-    from pg_catalog.pg_attribute a
-    join pg_catalog.pg_class c
-        on a.attrelid = c.oid
-            and c.relname = $*
-    where a.attnum > 0 and not a.attisdropped
-    order by a.attnum;
-        "#,
-            &[&composite],
-        )
-        .map(|x| x.collect())
 }
 
 pub(crate) fn types<E: crate::Entity>(

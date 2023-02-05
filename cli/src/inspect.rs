@@ -203,7 +203,7 @@ pub fn composites(connection: &elephantry::Connection, schema: &str) -> crate::R
         let fields = composite
             .fields
             .iter()
-            .map(|(n, t)| format!("{n}::{}", t.name))
+            .map(|f| format!("{}::{}", f.name, f.ty))
             .collect::<Vec<_>>()
             .join(", ");
 
