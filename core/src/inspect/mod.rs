@@ -1,12 +1,12 @@
 mod column;
-mod types;
 mod relation;
 mod schema;
+mod types;
 
 pub use column::*;
-pub use types::*;
 pub use relation::*;
 pub use schema::*;
+pub use types::*;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Kind {
@@ -109,6 +109,50 @@ impl crate::FromText for Persistence {
         };
 
         Ok(persistence)
+    }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum Type {
+    Base,
+    Composite,
+    Domain,
+    Enum,
+    Pseudo,
+    Range,
+    Multirange,
+}
+
+impl crate::ToText for Type {
+    fn to_text(&self) -> crate::Result<String> {
+        let s = match self {
+            Self::Base => "b",
+            Self::Composite => "c",
+            Self::Domain => "d",
+            Self::Enum => "e",
+            Self::Pseudo => "p",
+            Self::Range => "r",
+            Self::Multirange => "m",
+        };
+
+        Ok(s.to_string())
+    }
+}
+
+impl crate::FromText for Type {
+    fn from_text(raw: &str) -> crate::Result<Self> {
+        let ty = match raw {
+            "b" => Self::Base,
+            "c" => Self::Composite,
+            "d" => Self::Domain,
+            "e" => Self::Enum,
+            "p" => Self::Pseudo,
+            "r" => Self::Range,
+            "m" => Self::Multirange,
+            _ => return Err(Self::error(raw)),
+        };
+
+        Ok(ty)
     }
 }
 

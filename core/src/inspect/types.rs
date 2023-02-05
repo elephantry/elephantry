@@ -13,7 +13,7 @@ pub fn enums(
     connection: &crate::Connection,
     schema: &str,
 ) -> crate::Result<Vec<crate::inspect::Enum>> {
-    crate::inspect::types(connection, schema, 'e').map(|x| x.collect())
+    types(connection, schema, super::Type::Enum).map(|x| x.collect())
 }
 
 #[derive(Clone, Debug, elephantry_derive::Entity)]
@@ -30,7 +30,7 @@ pub fn domains(
     connection: &crate::Connection,
     schema: &str,
 ) -> crate::Result<Vec<crate::inspect::Domain>> {
-    crate::inspect::types(connection, schema, 'd').map(|x| x.collect())
+    types(connection, schema, super::Type::Domain).map(|x| x.collect())
 }
 
 #[derive(Clone, Debug, elephantry_derive::Entity)]
@@ -49,8 +49,8 @@ pub fn composites(
     connection: &crate::Connection,
     schema: &str,
 ) -> crate::Result<Vec<crate::inspect::Composite>> {
-    let mut composites =
-        crate::inspect::types(connection, schema, 'c')?.collect::<Vec<crate::inspect::Composite>>();
+    let mut composites = types(connection, schema, super::Type::Composite)?
+        .collect::<Vec<crate::inspect::Composite>>();
 
     for composite in &mut composites {
         composite.fields = crate::inspect::composite_fields(connection, &composite.name)?;
@@ -82,7 +82,7 @@ select row(a.attname, pg_catalog.format_type(a.atttypid, a.atttypmod))
 pub(crate) fn types<E: crate::Entity>(
     connection: &crate::Connection,
     schema: &str,
-    typtype: char,
+    typtype: super::Type,
 ) -> crate::Result<crate::Rows<E>> {
     super::schema_oid(connection, schema)?;
 
