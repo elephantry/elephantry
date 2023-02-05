@@ -24,12 +24,12 @@ select
 from pg_catalog.pg_namespace n
     left join pg_catalog.pg_description d on n.oid = d.objoid
     left join pg_catalog.pg_class c on
-        c.relnamespace = n.oid and c.relkind in ('r', 'v')
+        c.relnamespace = n.oid and c.relkind = any($*)
 where n.nspname !~ '^pg' and n.nspname <> 'information_schema'
 group by 1, 2, 4
 order by 1;
 "#,
-            &[],
+            &[&vec![Kind::OrdinaryTable, Kind::View]],
         )
         .map(|x| x.collect())
 }
@@ -65,9 +65,83 @@ select oid, conname as name, pg_get_constraintdef(oid) as definition
 #[elephantry(internal)]
 pub struct Relation {
     pub name: String,
+    #[deprecated(since = "3.1.0", note = "Use `kind` field instead")]
     pub ty: String,
+    pub kind: Kind,
     pub oid: crate::pq::Oid,
     pub comment: Option<String>,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum Kind {
+    OrdinaryTable,
+    Index,
+    Sequence,
+    ToastTable,
+    View,
+    MaterializedView,
+    CompositeType,
+    ForeignTable,
+    PartitionedTable,
+    PartitionedIndex,
+}
+
+impl std::fmt::Display for Kind {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let s = match self {
+            Kind::OrdinaryTable => "table",
+            Kind::Index => "index",
+            Kind::Sequence => "sequence",
+            Kind::ToastTable => "TOAST table",
+            Kind::View => "view",
+            Kind::MaterializedView => "materialized view",
+            Kind::CompositeType => "composite type",
+            Kind::ForeignTable => "foreign table",
+            Kind::PartitionedTable => "partitioned table",
+            Kind::PartitionedIndex => "partitioned index",
+        };
+
+        f.write_str(s)
+    }
+}
+
+impl crate::ToText for Kind {
+    fn to_text(&self) -> crate::Result<String> {
+        let s = match self {
+            Kind::OrdinaryTable => "r",
+            Kind::Index => "i",
+            Kind::Sequence => "S",
+            Kind::ToastTable => "t",
+            Kind::View => "v",
+            Kind::MaterializedView => "m",
+            Kind::CompositeType => "c",
+            Kind::ForeignTable => "f",
+            Kind::PartitionedTable => "p",
+            Kind::PartitionedIndex => "I",
+        };
+
+        Ok(s.to_string())
+    }
+}
+
+impl crate::FromText for Kind {
+    fn from_text(raw: &str) -> crate::Result<Self> {
+        let kind = match raw {
+            "r" => Self::OrdinaryTable,
+            "i" => Self::Index,
+            "S" => Self::Sequence,
+            "t" => Self::ToastTable,
+            "v" => Self::View,
+            "m" => Self::MaterializedView,
+            "c" => Self::CompositeType,
+            "f" => Self::ForeignTable,
+            "p" => Self::PartitionedTable,
+            "I" => Self::PartitionedIndex,
+            _ => return Err(Self::error(raw)),
+        };
+
+        Ok(kind)
+    }
 }
 
 /**
@@ -91,19 +165,28 @@ select
         when cl.relkind = 'f' then 'foreign table'
         else 'other'
     end             as "ty",
+    cl.relkind      as "kind",
     cl.oid          as "oid",
     des.description as "comment"
 from
     pg_catalog.pg_class cl
         left join pg_catalog.pg_description des on
             cl.oid = des.objoid and des.objsubid = 0
-where relkind in ('r', 'v', 'm', 'f')
+where relkind = any($*)
 and cl.relnamespace = $*
 order by name asc;
 "#,
-            &[&oid],
+            &[
+                &vec![
+                    Kind::OrdinaryTable,
+                    Kind::View,
+                    Kind::MaterializedView,
+                    Kind::ForeignTable,
+                ],
+                &oid,
+            ],
         )
-        .map(|x| x.collect())
+        .map(Iterator::collect)
 }
 
 #[derive(Clone, Debug, elephantry_derive::Entity)]

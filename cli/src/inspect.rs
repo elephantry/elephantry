@@ -38,7 +38,7 @@ pub fn schema(connection: &elephantry::Connection, schema: &str) -> crate::Resul
     for relation in relations.iter() {
         table.add_row(term_table::row::Row::new(vec![
             term_table::table_cell::TableCell::new(&relation.name),
-            term_table::table_cell::TableCell::new(&relation.ty),
+            term_table::table_cell::TableCell::new(&relation.kind),
             term_table::table_cell::TableCell::new(relation.oid),
             term_table::table_cell::TableCell::new(relation.comment.clone().unwrap_or_default()),
         ]));
