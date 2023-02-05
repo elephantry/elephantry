@@ -67,6 +67,7 @@ pub struct Relation {
     pub name: String,
     #[deprecated(since = "3.1.0", note = "Use `kind` field instead")]
     pub ty: String,
+    pub persistence: Persistence,
     pub kind: Kind,
     pub oid: crate::pq::Oid,
     pub comment: Option<String>,
@@ -144,6 +145,38 @@ impl crate::FromText for Kind {
     }
 }
 
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum Persistence {
+    Permanent,
+    Unlogged,
+    Temporary,
+}
+
+impl crate::ToText for Persistence {
+    fn to_text(&self) -> crate::Result<String> {
+        let s = match self {
+            Persistence::Permanent => "p",
+            Persistence::Unlogged => "u",
+            Persistence::Temporary => "t",
+        };
+
+        Ok(s.to_string())
+    }
+}
+
+impl crate::FromText for Persistence {
+    fn from_text(raw: &str) -> crate::Result<Self> {
+        let persistence = match raw {
+            "p" => Self::Permanent,
+            "u" => Self::Unlogged,
+            "t" => Self::Temporary,
+            _ => return Err(Self::error(raw)),
+        };
+
+        Ok(persistence)
+    }
+}
+
 /**
  * Retreive relations (ie: tables, views, …) of `schema`.
  */
@@ -157,17 +190,18 @@ pub fn schema(
         .query(
             r#"
 select
-    cl.relname      as "name",
+    cl.relname        as "name",
+    cl.relpersistence as "persistence",
     case
         when cl.relkind = 'r' then 'table'
         when cl.relkind = 'v' then 'view'
         when cl.relkind = 'm' then 'materialized view'
         when cl.relkind = 'f' then 'foreign table'
         else 'other'
-    end             as "ty",
-    cl.relkind      as "kind",
-    cl.oid          as "oid",
-    des.description as "comment"
+    end               as "ty",
+    cl.relkind        as "kind",
+    cl.oid            as "oid",
+    des.description   as "comment"
 from
     pg_catalog.pg_class cl
         left join pg_catalog.pg_description des on
