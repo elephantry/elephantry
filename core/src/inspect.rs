@@ -6,6 +6,7 @@ pub struct Schema {
     pub name: String,
     pub oid: crate::pq::Oid,
     pub relations: u32,
+    #[elephantry(default)]
     pub comment: String,
 }
 
