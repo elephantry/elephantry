@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Impl `TryFrom<elephantry::Interval>` for `std::time::Duration`;
 - Impl `TryFrom<elephantry::Interval>` for `chrono::Duration`;
 - Inspect constraints;
+- New `FromText`/`ToText` to easily convert type from/to text;
 
 ### Fixed
 - `u8` conversion;
