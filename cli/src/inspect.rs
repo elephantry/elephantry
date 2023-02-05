@@ -225,3 +225,34 @@ pub fn composites(connection: &elephantry::Connection, schema: &str) -> crate::R
 
     Ok(())
 }
+
+pub fn extensions(connection: &elephantry::Connection, schema: &str) -> crate::Result {
+    let extensions = elephantry::inspect::extensions(connection, schema)?;
+
+    let mut table = term_table::Table::new();
+    table.style = term_table::TableStyle::rounded();
+
+    table.add_row(term_table::row::Row::new(vec![
+        term_table::table_cell::TableCell::new("name"),
+        term_table::table_cell::TableCell::new("version"),
+        term_table::table_cell::TableCell::new("description"),
+    ]));
+
+    for extension in &extensions {
+        table.add_row(term_table::row::Row::new(vec![
+            term_table::table_cell::TableCell::new(&extension.name),
+            term_table::table_cell::TableCell::new(&extension.version),
+            term_table::table_cell::TableCell::new(
+                extension.description.as_deref().unwrap_or_default(),
+            ),
+        ]));
+    }
+
+    println!(
+        "\nFound {} extension(s) in schema '{schema}'.",
+        extensions.len(),
+    );
+    println!("{}", table.render());
+
+    Ok(())
+}

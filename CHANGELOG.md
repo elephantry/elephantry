@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New `FromText`/`ToText` to easily convert type from/to text;
 - New `inspect::Relation::kind` field;
 - New `inspect::Relation::persistence` field;
+- Inspect extensions;
 
 ### Changed
 - `inspect::Relation::ty` is deprecated;

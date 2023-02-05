@@ -32,6 +32,11 @@ enum Opt {
         #[arg(default_value = "public")]
         schema: String,
     },
+    #[command(name = "inspect:extensions", about = "List extensions")]
+    InspectExtensions {
+        #[arg(default_value = "public")]
+        schema: String,
+    },
     #[command(name = "inspect:domains", about = "List domains")]
     InspectDomains {
         #[arg(default_value = "public")]
@@ -101,6 +106,7 @@ fn main() -> Result {
             inspect::relation(&elephantry, &schema, &relation)
         }
         Opt::InspectEnums { schema } => inspect::enums(&elephantry, &schema),
+        Opt::InspectExtensions { schema } => inspect::extensions(&elephantry, &schema),
         Opt::InspectDomains { schema } => inspect::domains(&elephantry, &schema),
         Opt::InspectComposites { schema } => inspect::composites(&elephantry, &schema),
         Opt::GenerateSchema { prefix_dir, schema } => {
