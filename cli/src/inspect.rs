@@ -153,13 +153,27 @@ pub fn domains(connection: &elephantry::Connection, schema: &str) -> crate::Resu
 
     table.add_row(term_table::row::Row::new(vec![
         term_table::table_cell::TableCell::new("name"),
+        term_table::table_cell::TableCell::new("constraint"),
+        term_table::table_cell::TableCell::new("notnull"),
         term_table::table_cell::TableCell::new("description"),
     ]));
 
     for domain in &domains {
+        let not_null = if domain.is_notnull {
+            "yes".to_string()
+        } else {
+            "no".to_string()
+        };
+
         table.add_row(term_table::row::Row::new(vec![
             term_table::table_cell::TableCell::new(&domain.name),
-            term_table::table_cell::TableCell::new(&domain.description.clone().unwrap_or_default()),
+            term_table::table_cell::TableCell::new(
+                domain.constraint.as_deref().unwrap_or_default(),
+            ),
+            term_table::table_cell::TableCell::new(&not_null),
+            term_table::table_cell::TableCell::new(
+                domain.description.as_deref().unwrap_or_default(),
+            ),
         ]));
     }
 
