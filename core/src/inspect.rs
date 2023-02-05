@@ -266,7 +266,7 @@ select
     att.attname as "name",
     typ.oid as "oid",
     case
-      when att.attlen = -1 then format('%s(%s)', typ.typname, att.atttypmod - 4)
+      when att.attlen < 0 and att.atttypmod > 0 then format('%s(%s)', typ.typname, att.atttypmod - 4)
       when name.nspname != 'pg_catalog' then format('%s.%s', name.nspname, typ.typname)
       else typ.typname
     end as "ty",
