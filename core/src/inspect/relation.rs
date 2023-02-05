@@ -8,6 +8,7 @@ pub struct Relation {
     pub kind: super::Kind,
     pub oid: crate::pq::Oid,
     pub comment: Option<String>,
+    pub definition: Option<String>,
 }
 
 /**
@@ -34,16 +35,20 @@ select
     end               as "ty",
     cl.relkind        as "kind",
     cl.oid            as "oid",
-    des.description   as "comment"
+    des.description   as "comment",
+    v.definition      as "definition"
 from
     pg_catalog.pg_class cl
         left join pg_catalog.pg_description des on
             cl.oid = des.objoid and des.objsubid = 0
+        left join pg_catalog.pg_views v on
+            v.viewname = cl.relname and v.schemaname = $*
 where relkind = any($*)
 and cl.relnamespace = $*
 order by name asc;
 "#,
             &[
+                &schema,
                 &vec![
                     super::Kind::OrdinaryTable,
                     super::Kind::View,
