@@ -2,8 +2,6 @@
 #[elephantry(internal)]
 pub struct Relation {
     pub name: String,
-    #[deprecated(since = "3.1.0", note = "Use `kind` field instead")]
-    pub ty: String,
     pub persistence: super::Persistence,
     pub kind: super::Kind,
     pub oid: crate::pq::Oid,
@@ -24,13 +22,6 @@ pub fn schema(connection: &crate::Connection, schema: &str) -> crate::Result<Vec
 select
     cl.relname        as "name",
     cl.relpersistence as "persistence",
-    case
-        when cl.relkind = 'r' then 'table'
-        when cl.relkind = 'v' then 'view'
-        when cl.relkind = 'm' then 'materialized view'
-        when cl.relkind = 'f' then 'foreign table'
-        else 'other'
-    end               as "ty",
     cl.relkind        as "kind",
     cl.oid            as "oid",
     des.description   as "comment",

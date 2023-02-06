@@ -34,6 +34,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - [Fix c_char type error (i8 vs u8) when building on linux arm64](https://github.com/elephantry/elephantry/pull/25)
 
+### Changed
+- Removes `inspect::Relation::ty` field;
+
 ## [3.1.0] - 2023-02-11
 ### Added
 - `pg14` feature;
