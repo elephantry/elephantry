@@ -40,7 +40,7 @@ pub fn schema(connection: &elephantry::Connection, schema: &str) -> crate::Resul
             term_table::table_cell::TableCell::new(&relation.name),
             term_table::table_cell::TableCell::new(&relation.kind),
             term_table::table_cell::TableCell::new(relation.oid),
-            term_table::table_cell::TableCell::new(relation.comment.clone().unwrap_or_default()),
+            term_table::table_cell::TableCell::new(relation.comment.as_deref().unwrap_or_default()),
         ]));
     }
 
@@ -88,9 +88,9 @@ pub fn relation(
             term_table::table_cell::TableCell::new(primary),
             term_table::table_cell::TableCell::new(&column.name),
             term_table::table_cell::TableCell::new(&column_type(&column)),
-            term_table::table_cell::TableCell::new(column.default.clone().unwrap_or_default()),
+            term_table::table_cell::TableCell::new(column.default.as_deref().unwrap_or_default()),
             term_table::table_cell::TableCell::new(not_null),
-            term_table::table_cell::TableCell::new(column.comment.clone().unwrap_or_default()),
+            term_table::table_cell::TableCell::new(column.comment.as_deref().unwrap_or_default()),
         ]));
     }
 
@@ -130,7 +130,7 @@ pub fn enums(connection: &elephantry::Connection, schema: &str) -> crate::Result
             term_table::table_cell::TableCell::new(&enumeration.name),
             term_table::table_cell::TableCell::new(&format!("{:?}", enumeration.elements)),
             term_table::table_cell::TableCell::new(
-                &enumeration.description.clone().unwrap_or_default(),
+                enumeration.description.as_deref().unwrap_or_default(),
             ),
         ]));
     }
@@ -211,7 +211,7 @@ pub fn composites(connection: &elephantry::Connection, schema: &str) -> crate::R
             term_table::table_cell::TableCell::new(&composite.name),
             term_table::table_cell::TableCell::new(&fields),
             term_table::table_cell::TableCell::new(
-                &composite.description.clone().unwrap_or_default(),
+                composite.description.as_deref().unwrap_or_default(),
             ),
         ]));
     }
