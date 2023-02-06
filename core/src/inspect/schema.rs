@@ -30,5 +30,5 @@ order by 1;
 "#,
             &[&vec![super::Kind::OrdinaryTable, super::Kind::View]],
         )
-        .map(|x| x.collect())
+        .map(Iterator::collect)
 }

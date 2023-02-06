@@ -13,7 +13,7 @@ pub fn enums(
     connection: &crate::Connection,
     schema: &str,
 ) -> crate::Result<Vec<crate::inspect::Enum>> {
-    types(connection, schema, super::Type::Enum).map(|x| x.collect())
+    types(connection, schema, super::Type::Enum).map(Iterator::collect)
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, elephantry_derive::Entity)]

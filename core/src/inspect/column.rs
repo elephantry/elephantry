@@ -66,5 +66,5 @@ order by
 "#,
             &[&oid],
         )
-        .map(|x| x.collect())
+        .map(Iterator::collect)
 }
