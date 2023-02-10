@@ -19,9 +19,13 @@ pub fn enums(
 #[derive(Clone, Debug, Eq, PartialEq, elephantry_derive::Entity)]
 #[elephantry(internal)]
 pub struct Domain {
+    pub oid: crate::pq::Oid,
     pub name: String,
     pub ty: String,
+    #[deprecated(since = "3.1.0", note = "Use `constraints` field instead")]
     pub constraint: Option<String>,
+    #[elephantry(default)]
+    pub constraints: Vec<super::Constraint>,
     pub description: Option<String>,
     pub is_notnull: bool,
     pub default: Option<String>,
@@ -37,9 +41,10 @@ pub fn domains(
     super::schema_oid(connection, schema)?;
 
     connection
-        .query(
+        .query::<crate::inspect::Domain>(
             r#"
-select pg_catalog.format_type(t.oid, null) as "name",
+select t.oid as "oid",
+    pg_catalog.format_type(t.oid, null) as "name",
     pg_catalog.obj_description(t.oid, 'pg_type') as "description",
     tt.typname as "ty",
     pg_get_constraintdef(con.oid) as "constraint",
@@ -59,7 +64,12 @@ where t.typtype = $*
 order by 1;
     "#,
             &[&super::Type::Domain, &schema],
-        ).map(Iterator::collect)
+        )?
+            .map(|mut x| {
+                x.constraints = super::constraints(connection, x.oid)?;
+                Ok(x)
+            })
+            .collect()
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, elephantry_derive::Entity)]

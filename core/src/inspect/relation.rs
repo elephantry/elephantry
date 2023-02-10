@@ -1,4 +1,4 @@
-#[derive(Clone, Debug, elephantry_derive::Entity)]
+#[derive(Clone, Debug, Eq, PartialEq, elephantry_derive::Entity)]
 #[elephantry(internal)]
 pub struct Relation {
     pub name: String,
@@ -14,10 +14,7 @@ pub struct Relation {
 /**
  * Retreive relations (ie: tables, views, …) of `schema`.
  */
-pub fn schema(
-    connection: &crate::Connection,
-    schema: &str,
-) -> crate::Result<Vec<crate::inspect::Relation>> {
+pub fn schema(connection: &crate::Connection, schema: &str) -> crate::Result<Vec<Relation>> {
     let oid = super::schema_oid(connection, schema)?;
 
     connection

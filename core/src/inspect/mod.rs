@@ -1,10 +1,12 @@
 mod column;
+mod constraint;
 mod extension;
 mod relation;
 mod schema;
 mod types;
 
 pub use column::*;
+pub use constraint::*;
 pub use extension::*;
 pub use relation::*;
 pub use schema::*;

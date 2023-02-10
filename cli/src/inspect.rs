@@ -168,7 +168,12 @@ pub fn domains(connection: &elephantry::Connection, schema: &str) -> crate::Resu
         table.add_row(term_table::row::Row::new(vec![
             term_table::table_cell::TableCell::new(&domain.name),
             term_table::table_cell::TableCell::new(
-                domain.constraint.as_deref().unwrap_or_default(),
+                domain
+                    .constraints
+                    .iter()
+                    .map(|x| x.definition.as_str())
+                    .collect::<Vec<_>>()
+                    .join("\n"),
             ),
             term_table::table_cell::TableCell::new(&not_null),
             term_table::table_cell::TableCell::new(
