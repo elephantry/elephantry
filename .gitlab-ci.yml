@@ -21,7 +21,7 @@ lint:clippy:
         - echo "deb http://apt.postgresql.org/pub/repos/apt bullseye-pgdg main" > /etc/apt/sources.list.d/pgdg.list
         - curl https://www.postgresql.org/media/keys/ACCC4CF8.asc > /etc/apt/trusted.gpg.d/ACCC4CF8.asc
         - apt update -yqq
-        - apt install -yqq postgresql-14 clang libpq-dev
+        - apt install -yqq postgresql-15 clang libpq-dev
         - rustup component add clippy
     script: cargo +nightly clippy --all-features -- --deny warnings
 
@@ -33,10 +33,10 @@ lint:clippy:
         - echo "deb http://apt.postgresql.org/pub/repos/apt bullseye-pgdg main" > /etc/apt/sources.list.d/pgdg.list
         - curl https://www.postgresql.org/media/keys/ACCC4CF8.asc > /etc/apt/trusted.gpg.d/ACCC4CF8.asc
         - apt update -yqq
-        - apt install -yqq sudo postgresql-14 locales clang libpq-dev
+        - apt install -yqq sudo postgresql-15 locales clang libpq-dev
         - echo "en_US UTF-8" > /etc/locale.gen
         - locale-gen en_US.UTF-8
-        - sudo -u postgres pg_ctlcluster 14 main start
+        - sudo -u postgres pg_ctlcluster 15 main start
         - sudo -u postgres psql --command "create role root WITH LOGIN ENCRYPTED PASSWORD '1234' SUPERUSER;";
         - sudo -u postgres psql --command "create database root with owner root;";
         - export DATABASE_URL='host=localhost password=1234'
