@@ -33,15 +33,21 @@ select
     cl.relkind        as "kind",
     cl.oid            as "oid",
     des.description   as "comment",
-    v.definition      as "definition"
+    case
+        when cl.relkind = 'v' then v.definition
+        when cl.relkind = 'm' then mv.definition
+        else null
+    end               as "definition"
 from
     pg_catalog.pg_class cl
         left join pg_catalog.pg_description des on
             cl.oid = des.objoid and des.objsubid = 0
         left join pg_catalog.pg_views v on
-            v.viewname = cl.relname and v.schemaname = $*
-where relkind = any($*)
-and cl.relnamespace = $*
+            v.viewname = cl.relname and v.schemaname = $1
+        left join pg_catalog.pg_matviews mv on
+            mv.matviewname = cl.relname and mv.schemaname = $1
+where relkind = any($2)
+and cl.relnamespace = $3
 order by name asc;
 "#,
             &[
