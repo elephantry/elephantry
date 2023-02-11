@@ -9,6 +9,7 @@ pub struct Relation {
     pub oid: crate::pq::Oid,
     pub comment: Option<String>,
     pub definition: Option<String>,
+    pub schema: String,
 }
 
 /**
@@ -37,7 +38,8 @@ select
         when cl.relkind = 'v' then v.definition
         when cl.relkind = 'm' then mv.definition
         else null
-    end               as "definition"
+    end               as "definition",
+    $1                as "schema"
 from
     pg_catalog.pg_class cl
         left join pg_catalog.pg_description des on
