@@ -60,7 +60,7 @@ mod test {
         chrono::NaiveDateTime,
         [(
             "'1970-01-01 00:00:00'",
-            chrono::NaiveDateTime::from_timestamp(0, 0),
+            chrono::NaiveDateTime::from_timestamp_opt(0, 0).unwrap(),
         )]
     );
 }

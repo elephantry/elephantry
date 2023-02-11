@@ -18,7 +18,7 @@ mod employee {
                 id,
                 first_name: format!("first name {id}"),
                 last_name: format!("last name {id}"),
-                birth_date: chrono::NaiveDate::from_ymd(1900, 1, 1),
+                birth_date: chrono::NaiveDate::from_ymd_opt(1900, 1, 1).unwrap(),
                 is_manager: false,
                 day_salary: 0.into(),
                 department_id: 1,

@@ -73,7 +73,7 @@ fn main() -> elephantry::Result {
             employee_id: None,
             first_name: "First name".to_string(),
             last_name: "Last name".to_string(),
-            birth_date: chrono::NaiveDate::from_ymd(1990, 1, 1),
+            birth_date: chrono::NaiveDate::from_ymd_opt(1990, 1, 1).unwrap(),
             is_manager: true,
             day_salary: 1_000.into(),
             department_id: -1,

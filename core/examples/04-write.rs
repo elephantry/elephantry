@@ -33,7 +33,7 @@ fn insert(elephantry: &elephantry::Pool) -> elephantry::Result<employee::Entity>
         employee_id: None,
         first_name: "First name".to_string(),
         last_name: "Last name".to_string(),
-        birth_date: chrono::NaiveDate::from_ymd(1952, 03, 21),
+        birth_date: chrono::NaiveDate::from_ymd_opt(1952, 03, 21).unwrap(),
         is_manager: false,
         day_salary: 10_000.into(),
         department_id: 3,

@@ -115,7 +115,7 @@ mod test {
         [(
             "'1970-01-01 00:00:00+00'",
             chrono::DateTime::<chrono::Utc>::from_utc(
-                chrono::NaiveDateTime::from_timestamp(0, 0),
+                chrono::NaiveDateTime::from_timestamp_opt(0, 0).unwrap(),
                 chrono::Utc
             ),
         )]
