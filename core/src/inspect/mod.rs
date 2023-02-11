@@ -7,7 +7,7 @@ mod schema;
 mod types;
 
 pub use column::*;
-pub use constraint::{constraints, Constraint};
+pub use constraint::{constraints, indexes, Constraint, Index};
 pub use extension::*;
 pub use relation::*;
 pub use schema::*;

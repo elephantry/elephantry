@@ -67,3 +67,30 @@ select oid, contype as ty, conname as name, pg_get_constraintdef(oid) as definit
         )
         .map(Iterator::collect)
 }
+
+#[derive(Clone, Debug, Eq, PartialEq, elephantry_derive::Entity, elephantry_derive::Composite)]
+#[elephantry(internal)]
+pub struct Index {
+    pub name: String,
+    pub definition: String,
+}
+
+/**
+ * Retreive relation indexes.
+ */
+pub fn indexes(
+    connection: &crate::Connection,
+    relation: &crate::inspect::Relation,
+) -> crate::Result<Vec<Index>> {
+    connection
+        .query(
+            r#"
+select indexname as "name", indexdef as "definition"
+    from pg_catalog.pg_indexes
+    where schemaname = $*
+        and tablename = $*;
+"#,
+            &[&relation.schema, &relation.name],
+        )
+        .map(Iterator::collect)
+}
