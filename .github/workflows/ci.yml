@@ -14,7 +14,6 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: nightly
-          override: true
           components: rustfmt
       - name: Check formating
         run: cargo fmt -- --check
@@ -28,7 +27,6 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: nightly
-          override: true
           components: clippy
       - name: Run clippy
         run: cargo clippy --all-features -- --deny warnings
@@ -45,7 +43,6 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: nightly
-          override: true
 
       - name: Install postgreSQL (Linux)
         if: runner.os == 'Linux'
@@ -77,7 +74,6 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: nightly
-          override: true
 
       - name: Install postgreSQL
         run: |
