@@ -22,8 +22,6 @@ pub struct Domain {
     pub oid: crate::pq::Oid,
     pub name: String,
     pub ty: String,
-    #[deprecated(since = "3.1.0", note = "Use `constraints` field instead")]
-    pub constraint: Option<String>,
     #[elephantry(default)]
     pub constraints: Vec<super::Constraint>,
     pub description: Option<String>,
@@ -47,7 +45,6 @@ select t.oid as "oid",
     pg_catalog.format_type(t.oid, null) as "name",
     pg_catalog.obj_description(t.oid, 'pg_type') as "description",
     tt.typname as "ty",
-    pg_get_constraintdef(con.oid) as "constraint",
     t.typnotnull as is_notnull,
     t.typdefault as default
 from pg_catalog.pg_type t
