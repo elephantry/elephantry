@@ -59,6 +59,7 @@ elephantry.delete_where::<Model>("deleted = $1", &[&true])?;
     crate](https://crates.io/crates/arbitrary);
 - `config` — adds support for [config](https://crates.io/crates/config)
     layered configuration system;
+- `inspect` — include the `inspect` module to inspect a database structure;
 - `pg14` — enables postgresql 14 features (multirange and new
     `TargetSessionAttrs`);
 - `r2d2` — adds support for [r2d2](https://crates.io/crates/r2d2) generic

@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [3.3.0] - 2023-05-28
 
 ### Added
+- New `inspect` feature;
 - Adds `ltree`, `lquery` and `ltxtquery` types;
 - Impl `Copy` for `inspect::Type`;
 - The `Composite` proc macro now supports unnamed struct.

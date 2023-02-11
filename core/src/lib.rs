@@ -58,6 +58,8 @@
 pub mod config;
 pub mod connection;
 pub mod entity;
+#[cfg(feature = "inspect")]
+#[cfg_attr(docsrs, doc(cfg(feature = "inspect")))]
 /** database inspection module. */
 pub mod inspect;
 /** libpq abstraction layer. */
