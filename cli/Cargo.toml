@@ -20,6 +20,6 @@ version = "4.0"
 features = ["derive"]
 
 [dependencies.elephantry]
-version = "3.0"
+version = "3.1"
 features = ["all-types"]
 path = "../core/"

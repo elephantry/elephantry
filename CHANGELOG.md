@@ -5,27 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [3.1.0] - 2023-02-11
 ### Added
 - `pg14` feature;
 - Impl `Eq` for `Bytea`, `Jsonb` and `Hstore`;
-- Impl `Clone` for `inspect::*` types;
 - Impl `FromSql`/`ToSql` for `[u8; N]`;
 - Impl `TryFrom<elephantry::Interval>` for `std::time::Duration`;
 - Impl `TryFrom<elephantry::Interval>` for `chrono::Duration`;
-- Inspect constraints;
-- New `FromText`/`ToText` to easily convert type from/to text;
-- New `inspect::Relation::kind` field;
-- New `inspect::Relation::persistence` field;
-- Inspect extensions;
-- New `inspect::Domain::constraints` field;
+- New `FromText`/`ToText` to easily convert type from/to text.
+- Major inspector improvemnts:
+    - Inspect constraints and indexes;
+    - Inspect extensions;
+    - Impl `Clone` for `inspect::*` types;
+    - New `inspect::Relation::kind` field;
+    - New `inspect::Relation::persistence` field;
+    - New `inspect::Domain::constraints` field.
 
 ### Changed
 - `inspect::Relation::ty` is deprecated;
-- `inspect::Domain::constraint` is deprecated;
+- `inspect::Domain::constraint` is deprecated.
 
 ### Fixed
-- `u8` conversion;
+- `u8` conversion.
 
 ## [3.0.0] - 2022-04-27
 ### Added
