@@ -14,7 +14,7 @@ main()
     sed -i '0,/version/{s/^version = ".*"/version = "'$version'"/}' Cargo.toml
     sed -i -r -e '/dependencies\.elephantry/ {n; s/^version = ".*"/version = "'$short_version'"/}' cli/Cargo.toml core/Cargo.toml
 
-    git add CHANGELOG.md derive/Cargo.toml core/Cargo.toml cli/Cargo.toml
+    git add CHANGELOG.md Cargo.toml derive/Cargo.toml core/Cargo.toml cli/Cargo.toml
     git diff --cached
 
     read -p "Are you sure? [yN]" -n 1 -r
