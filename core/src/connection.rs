@@ -16,7 +16,7 @@ pub struct Connection {
     pub(crate) connection: std::sync::Arc<std::sync::Mutex<libpq::Connection>>,
 }
 
-extern "C" fn notice_processor(_arg: *mut std::ffi::c_void, message: *const i8) {
+extern "C" fn notice_processor(_arg: *mut std::ffi::c_void, message: *const std::ffi::c_char) {
     let message = unsafe { std::ffi::CStr::from_ptr(message) };
 
     log::info!("{}", message.to_str().unwrap().trim());
