@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - #[must_use] attribute;
+- Impl `Clone`, `Copy`, `Debug`, `Eq` and `PatialEq` for `transaction::*` enums;
 
 ## [3.1.1] - 2023-02-14
 

@@ -10,6 +10,7 @@ pub struct Transaction<'c> {
 /**
  * <http://www.postgresql.org/docs/current/sql-set-constraints.html>
  */
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Constraints {
     Deferred,
     Immediate,
@@ -29,6 +30,7 @@ impl std::fmt::Display for Constraints {
 /**
  * <https://www.postgresql.org/docs/current/sql-set-transaction.html>
  */
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum IsolationLevel {
     /**
      * A statement can only see rows committed before it began. This is the
@@ -67,6 +69,7 @@ impl std::fmt::Display for IsolationLevel {
 /**
  * <https://www.postgresql.org/docs/current/sql-set-transaction.html>
  */
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum AccessMode {
     ReadOnly,
     ReadWrite,
