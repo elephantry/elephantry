@@ -147,7 +147,7 @@ impl Connection {
             .lock()
             .map_err(|e| crate::Error::Mutex(e.to_string()))?
             .exec_params(
-                &self.order_parameters(query),
+                &Self::order_parameters(query),
                 &param_types,
                 &param_values,
                 &[],
@@ -156,7 +156,7 @@ impl Connection {
             .try_into()
     }
 
-    fn order_parameters<'a>(&self, query: &'a str) -> std::borrow::Cow<'a, str> {
+    fn order_parameters(query: &str) -> std::borrow::Cow<'_, str> {
         lazy_static::lazy_static! {
             static ref REGEX: regex::Regex =
                 #[allow(clippy::trivial_regex)]
@@ -183,7 +183,7 @@ impl Connection {
     where
         M: crate::Model,
     {
-        let (clause, params) = self.pk_clause::<M>(pk)?;
+        let (clause, params) = Self::pk_clause::<M>(pk)?;
         let mut tuples = self.find_where::<M>(&clause, &params, None)?;
 
         Ok(tuples.next())
@@ -413,7 +413,7 @@ impl Connection {
     where
         M: crate::Model,
     {
-        let (clause, mut params) = self.pk_clause::<M>(pk)?;
+        let (clause, mut params) = Self::pk_clause::<M>(pk)?;
         let mut x = params.len() + 1;
         let mut set = Vec::new();
         let projection = M::default_projection();
@@ -470,7 +470,7 @@ impl Connection {
     where
         M: crate::Model,
     {
-        let (clause, params) = self.pk_clause::<M>(pk)?;
+        let (clause, params) = Self::pk_clause::<M>(pk)?;
         let mut results = self.delete_where::<M>(&clause, &params)?;
 
         Ok(results.next())
@@ -498,7 +498,6 @@ impl Connection {
     }
 
     fn pk_clause<'a, M>(
-        &self,
         pk: &HashMap<&str, &'a dyn crate::ToSql>,
     ) -> crate::Result<(String, Vec<&'a dyn crate::ToSql>)>
     where
@@ -630,21 +629,21 @@ impl Connection {
 
         let config = crate::Config {
             application_name: info.get("application_name").and_then(|x| x.val.clone()),
-            channel_binding: self.config_get(&info, "channel_binding")?,
+            channel_binding: Self::config_get(&info, "channel_binding")?,
             client_encoding: info.get("client_encoding").and_then(|x| x.val.clone()),
-            connect_timeout: self.config_get(&info, "connect_timeout")?,
+            connect_timeout: Self::config_get(&info, "connect_timeout")?,
             dbname: info.get("dbname").and_then(|x| x.val.clone()),
             fallback_application_name: info
                 .get("fallback_application_name")
                 .and_then(|x| x.val.clone()),
-            gssencmode: self.config_get(&info, "gssencmode")?,
+            gssencmode: Self::config_get(&info, "gssencmode")?,
             gsslib: info.get("gsslib").and_then(|x| x.val.clone()),
             hostaddr: info.get("hostaddr").and_then(|x| x.val.clone()),
             host: info.get("host").and_then(|x| x.val.clone()),
-            keepalives_count: self.config_get(&info, "keepalives_count")?,
-            keepalives_idle: self.config_get(&info, "keepalives_idle")?,
-            keepalives_interval: self.config_get(&info, "keepalives_interval")?,
-            keepalives: self.config_get::<i32>(&info, "keepalives")?.map(|x| x == 1),
+            keepalives_count: Self::config_get(&info, "keepalives_count")?,
+            keepalives_idle: Self::config_get(&info, "keepalives_idle")?,
+            keepalives_interval: Self::config_get(&info, "keepalives_interval")?,
+            keepalives: Self::config_get::<i32>(&info, "keepalives")?.map(|x| x == 1),
             krbsrvname: info.get("krbsrvname").and_then(|x| x.val.clone()),
             options: info.get("options").and_then(|x| x.val.clone()),
             passfile: info.get("passfile").and_then(|x| x.val.clone()),
@@ -654,8 +653,7 @@ impl Connection {
             requirepeer: info.get("requirepeer").and_then(|x| x.val.clone()),
             service: info.get("service").and_then(|x| x.val.clone()),
             sslcert: info.get("sslcert").and_then(|x| x.val.clone()),
-            sslcompression: self
-                .config_get::<i32>(&info, "sslcompression")?
+            sslcompression: Self::config_get::<i32>(&info, "sslcompression")?
                 .map(|x| x == 1),
             sslcrl: info.get("sslcrl").and_then(|x| x.val.clone()),
             sslkey: info.get("sslkey").and_then(|x| x.val.clone()),
@@ -665,11 +663,11 @@ impl Connection {
             ssl_min_protocol_version: info
                 .get("ssl_min_protocol_version")
                 .and_then(|x| x.val.clone()),
-            sslmode: self.config_get(&info, "sslmode")?,
+            sslmode: Self::config_get(&info, "sslmode")?,
             sslpassword: info.get("sslpassword").and_then(|x| x.val.clone()),
             sslrootcert: info.get("sslrootcert").and_then(|x| x.val.clone()),
-            target_session_attrs: self.config_get(&info, "target_session_attrs")?,
-            tcp_user_timeout: self.config_get(&info, "tcp_user_timeout")?,
+            target_session_attrs: Self::config_get(&info, "target_session_attrs")?,
+            tcp_user_timeout: Self::config_get(&info, "tcp_user_timeout")?,
             user: info.get("user").and_then(|x| x.val.clone()),
         };
 
@@ -677,7 +675,6 @@ impl Connection {
     }
 
     fn config_get<T>(
-        &self,
         info: &HashMap<String, libpq::connection::Info>,
         name: &str,
     ) -> Result<Option<T>, <T as std::str::FromStr>::Err>
