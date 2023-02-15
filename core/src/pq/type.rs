@@ -211,7 +211,7 @@ pub fn sql_to_rust(ty: &crate::pq::Type) -> String {
     if matches!(ty.kind, crate::pq::types::Kind::Array(_)) {
         format!("Vec<{rty}>")
     } else {
-        rty.to_string()
+        (*rty).to_string()
     }
 }
 

@@ -395,7 +395,7 @@ impl Connection {
                 Some(value) => value,
                 None => &Option::<&str>::None,
             };
-            data.insert(field.to_string(), value);
+            data.insert((*field).to_string(), value);
         }
 
         self.update_by_pk::<M>(pk, &data)
