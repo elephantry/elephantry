@@ -141,12 +141,12 @@ impl<'a, T: crate::ToSql> crate::ToSql for Bounds<&'a T> {
 
         match self.start {
             Included(start) | Excluded(start) => return start.ty().to_range(),
-            _ => (),
+            Unbounded => (),
         }
 
         match self.end {
             Included(end) | Excluded(end) => return end.ty().to_range(),
-            _ => (),
+            Unbounded => (),
         }
 
         crate::pq::types::UNKNOWN
@@ -191,13 +191,13 @@ impl<'a, T: crate::ToSql> crate::ToSql for Bounds<&'a T> {
         match self.start {
             Included(_) => flags.insert(Flags::LB_INC),
             Unbounded => flags.insert(Flags::LB_INF),
-            _ => (),
+            Excluded(_) => (),
         };
 
         match self.end {
             Included(_) => flags.insert(Flags::UB_INC),
             Unbounded => flags.insert(Flags::UB_INF),
-            _ => (),
+            Excluded(_) => (),
         };
 
         buf.push(flags.bits());
