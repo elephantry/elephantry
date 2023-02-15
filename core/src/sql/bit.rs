@@ -135,7 +135,7 @@ impl crate::ToSql for bit_vec::BitVec {
             buf.push(byte);
         }
 
-        Ok(Some(buf.to_vec()))
+        Ok(Some(buf))
     }
 }
 
