@@ -46,10 +46,12 @@ impl Connection {
         })
     }
 
+    #[must_use]
     pub fn r#async(&self) -> crate::Async<'_> {
         crate::Async::new(&self.connection)
     }
 
+    #[must_use]
     pub fn transaction(&self) -> crate::Transaction<'_> {
         crate::Transaction::new(self)
     }
@@ -82,6 +84,7 @@ impl Connection {
         Self::new(&config.to_string())
     }
 
+    #[must_use]
     pub fn model<M>(&self) -> M
     where
         M: crate::Model,

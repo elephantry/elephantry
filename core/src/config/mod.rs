@@ -53,6 +53,7 @@ pub struct Config {
 }
 
 impl Config {
+    #[must_use]
     pub fn new() -> Self {
         Self::default()
     }

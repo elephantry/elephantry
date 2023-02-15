@@ -7,6 +7,7 @@
 pub struct Polygon(geo_types::Polygon<f64>);
 
 impl Polygon {
+    #[must_use]
     pub fn new(path: &crate::Path) -> Self {
         use std::ops::Deref;
 

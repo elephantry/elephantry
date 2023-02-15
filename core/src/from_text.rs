@@ -1,6 +1,7 @@
 pub trait FromText: Sized {
     fn from_text(raw: &str) -> crate::Result<Self>;
 
+    #[must_use]
     fn error(raw: &str) -> crate::Error {
         crate::Error::FromSql {
             pg_type: crate::pq::types::TEXT,

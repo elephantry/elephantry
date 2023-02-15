@@ -3,6 +3,7 @@
 pub struct Coordinate(geo_types::Coord<f64>);
 
 impl Coordinate {
+    #[must_use]
     pub fn new(x: f64, y: f64) -> Self {
         Self(geo_types::Coord { x, y })
     }

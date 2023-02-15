@@ -16,10 +16,12 @@ pub struct Where<'a> {
 }
 
 impl<'a> Where<'a> {
+    #[must_use]
     pub fn new() -> Self {
         Self::default()
     }
 
+    #[must_use]
     pub fn from(element: &str, params: Vec<&'a dyn crate::ToSql>) -> Self {
         Self {
             element: Some(element.to_string()),
@@ -29,6 +31,7 @@ impl<'a> Where<'a> {
         }
     }
 
+    #[must_use]
     pub fn builder() -> Builder<'a> {
         Builder::new()
     }
@@ -36,6 +39,7 @@ impl<'a> Where<'a> {
     /**
      * Create an escaped IN clause.
      */
+    #[must_use]
     pub fn new_in(element: &str, params: Vec<&'a dyn crate::ToSql>) -> Self {
         Self::new_group_condition(element, "in", params)
     }
@@ -43,10 +47,12 @@ impl<'a> Where<'a> {
     /**
      * Create an escaped NOT IN clause.
      */
+    #[must_use]
     pub fn new_not_in(element: &str, params: Vec<&'a dyn crate::ToSql>) -> Self {
         Self::new_group_condition(element, "not in", params)
     }
 
+    #[must_use]
     pub fn new_group_condition(
         element: &str,
         operation: &str,
@@ -67,6 +73,7 @@ impl<'a> Where<'a> {
     /**
      * Is it a fresh brand new object?
      */
+    #[must_use]
     pub fn is_empty(&self) -> bool {
         self.element.is_none() && self.stack.len() == 0
     }
@@ -129,6 +136,7 @@ impl<'a> Where<'a> {
     /**
      * Get all the params back for the prepared statement.
      */
+    #[must_use]
     pub fn params(&self) -> Vec<&dyn crate::ToSql> {
         if self.is_empty() {
             return Vec::new();

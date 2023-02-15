@@ -15,6 +15,7 @@ impl<E: crate::Entity> Rows<E> {
      *
      * Panics if `n` is greater than or equal to tuple length.
      */
+    #[must_use]
     pub fn get(&self, n: usize) -> E {
         self.try_get(n).unwrap_or_else(|| {
             panic!(

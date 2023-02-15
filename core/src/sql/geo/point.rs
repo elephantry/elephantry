@@ -7,6 +7,7 @@
 pub struct Point(geo_types::Point<f64>);
 
 impl Point {
+    #[must_use]
     pub fn new(x: f64, y: f64) -> Self {
         Self(geo_types::Point::new(x, y))
     }

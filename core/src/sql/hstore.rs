@@ -8,6 +8,7 @@ use std::collections::HashMap;
 pub struct Hstore(HashMap<String, Option<String>>);
 
 impl Hstore {
+    #[must_use]
     pub fn new() -> Self {
         Self::default()
     }

@@ -16,6 +16,7 @@ pub struct Interval {
 }
 
 impl Interval {
+    #[must_use]
     pub fn new(
         years: i32,
         months: i32,
@@ -36,58 +37,72 @@ impl Interval {
         }
     }
 
+    #[must_use]
     pub fn year() -> Self {
         Self::years(1)
     }
 
+    #[must_use]
     pub fn years(n: i32) -> Self {
         Self::new(n, 0, 0, 0, 0, 0, 0)
     }
 
+    #[must_use]
     pub fn month() -> Self {
         Self::months(1)
     }
 
+    #[must_use]
     pub fn months(n: i32) -> Self {
         Self::new(0, n, 0, 0, 0, 0, 0)
     }
 
+    #[must_use]
     pub fn day() -> Self {
         Self::days(1)
     }
 
+    #[must_use]
     pub fn days(n: i32) -> Self {
         Self::new(0, 0, n, 0, 0, 0, 0)
     }
 
+    #[must_use]
     pub fn hour() -> Self {
         Self::hours(1)
     }
 
+    #[must_use]
     pub fn hours(n: i32) -> Self {
         Self::new(0, 0, 0, n, 0, 0, 0)
     }
 
+    #[must_use]
     pub fn minute() -> Self {
         Self::minutes(1)
     }
 
+    #[must_use]
     pub fn minutes(n: i32) -> Self {
         Self::new(0, 0, 0, 0, n, 0, 0)
     }
 
+    #[must_use]
     pub fn second() -> Self {
         Self::seconds(1)
     }
 
+    #[must_use]
     pub fn seconds(n: i32) -> Self {
         Self::new(0, 0, 0, 0, 0, n, 0)
     }
 
+    #[must_use]
     pub fn microsecond() -> Self {
         Self::microseconds(1)
     }
 
+    #[must_use]
     pub fn microseconds(n: i32) -> Self {
         Self::new(0, 0, 0, 0, 0, 0, n)
     }

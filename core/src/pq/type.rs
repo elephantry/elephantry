@@ -204,6 +204,7 @@ lazy_static::lazy_static! {
 }
 
 #[doc(hidden)]
+#[must_use]
 pub fn sql_to_rust(ty: &crate::pq::Type) -> String {
     let rty = TYPES.get(ty.name).unwrap_or(&"String");
 

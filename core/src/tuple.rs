@@ -19,6 +19,7 @@ impl<'a> Tuple<'a> {
      *
      * Panics if `n` is greater than or equal to tuple length.
      */
+    #[must_use]
     pub fn get<T>(&self, name: &str) -> T
     where
         T: crate::FromSql,
@@ -50,6 +51,7 @@ impl<'a> Tuple<'a> {
      *
      * Panics if `n` is greater than or equal to the length of the tuple.
      */
+    #[must_use]
     pub fn nth<T>(&self, n: usize) -> T
     where
         T: crate::FromSql,
@@ -76,6 +78,7 @@ impl<'a> Tuple<'a> {
     /**
      * Number of field.
      */
+    #[must_use]
     pub fn len(&self) -> usize {
         self.result.nfields()
     }
@@ -83,6 +86,7 @@ impl<'a> Tuple<'a> {
     /**
      * Is the tuple is empty (doesn’t contain field)?
      */
+    #[must_use]
     pub fn is_empty(&self) -> bool {
         self.len() == 0
     }

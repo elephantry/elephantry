@@ -19,6 +19,7 @@ pub trait Model {
      *
      * [`create_projection`]: #method.create_projection
      */
+    #[must_use]
     fn default_projection() -> crate::Projection {
         use crate::Structure;
 
@@ -29,6 +30,7 @@ pub trait Model {
      * This is a helper to create a new projection according to the current
      * structure. Overriding this method will change projection for all models.
      */
+    #[must_use]
     fn create_projection() -> crate::Projection {
         Self::default_projection()
     }
@@ -36,6 +38,7 @@ pub trait Model {
     /**
      * Create a new entity.
      */
+    #[must_use]
     fn create_entity(tuple: &crate::Tuple<'_>) -> Self::Entity {
         <Self::Entity as crate::Entity>::from(tuple)
     }

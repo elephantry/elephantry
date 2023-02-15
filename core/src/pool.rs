@@ -54,6 +54,7 @@ impl Pool {
     /**
      * Retreive the default connection.
      */
+    #[must_use]
     pub fn get_default(&self) -> Option<&crate::Connection> {
         self.get(&self.default)
     }
@@ -79,6 +80,7 @@ impl Pool {
     /**
      * Retreive the connection `name`, on `None` if not exists.
      */
+    #[must_use]
     pub fn get(&self, name: &str) -> Option<&crate::Connection> {
         self.connections.get(&name.to_string())
     }

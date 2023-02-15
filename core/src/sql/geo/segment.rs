@@ -7,6 +7,7 @@
 pub struct Segment(geo_types::Line<f64>);
 
 impl Segment {
+    #[must_use]
     pub fn new(start: crate::Coordinate, end: crate::Coordinate) -> Self {
         Self(geo_types::Line::new(*start, *end))
     }

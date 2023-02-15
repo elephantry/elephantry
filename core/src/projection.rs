@@ -14,6 +14,7 @@ impl Projection {
     /**
      * Create a new projection with `fields`.
      */
+    #[must_use]
     pub fn new(relation: &str, fields: &[&str]) -> Self {
         let mut map = BTreeMap::new();
         for field in fields {
@@ -30,6 +31,7 @@ impl Projection {
     /**
      * Add alias for the relation name.
      */
+    #[must_use]
     pub fn alias(mut self, alias: &str) -> Projection {
         self.alias = Some(alias.to_string());
 
@@ -39,6 +41,7 @@ impl Projection {
     /**
      * Add a field from the projection.
      */
+    #[must_use]
     pub fn add_field(mut self, name: &str, row: &str) -> Projection {
         self.fields.insert(name.to_string(), row.to_string());
 
@@ -48,6 +51,7 @@ impl Projection {
     /**
      * Unset an existing field.
      */
+    #[must_use]
     pub fn unset_field(mut self, name: &str) -> Projection {
         self.fields.remove(name);
 
@@ -57,6 +61,7 @@ impl Projection {
     /**
      * Return the list of fields.
      */
+    #[must_use]
     pub fn fields(&self) -> &BTreeMap<String, String> {
         &self.fields
     }
@@ -64,6 +69,7 @@ impl Projection {
     /**
      * Return fields names list.
      */
+    #[must_use]
     pub fn field_names(&self) -> Vec<String> {
         self.fields.keys().cloned().collect()
     }
@@ -71,6 +77,7 @@ impl Projection {
     /**
      * Return if the given field exist.
      */
+    #[must_use]
     pub fn has_field(&self, name: &str) -> bool {
         self.fields.contains_key(name)
     }
