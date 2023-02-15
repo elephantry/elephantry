@@ -64,8 +64,7 @@ impl crate::ToSql for crate::Hstore {
         for (key, value) in self.iter() {
             let v = value
                 .as_ref()
-                .map(|x| format!("\"{x}\""))
-                .unwrap_or_else(|| "NULL".to_string());
+                .map_or_else(|| "NULL".to_string(), |x| format!("\"{x}\""));
 
             vec.push(format!("\"{key}\"=>{v}"));
         }

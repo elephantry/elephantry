@@ -281,7 +281,7 @@ impl<T: crate::ToSql> crate::ToSql for Array<T> {
 
             let mut raw = element
                 .to_text()?
-                .map(|mut x| {
+                .map_or_else(|| b"null".to_vec(), |mut x| {
                     x.pop(); // removes \0
 
                     if element.ty().is_text() && x.eq_ignore_ascii_case(b"null") {
@@ -290,8 +290,7 @@ impl<T: crate::ToSql> crate::ToSql for Array<T> {
                     }
 
                     x
-                })
-                .unwrap_or_else(|| b"null".to_vec());
+                });
 
             data.append(&mut raw);
             k += 1;
