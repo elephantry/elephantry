@@ -143,7 +143,7 @@ impl<'a> Where<'a> {
         }
 
         if self.element.is_some() {
-            return self.params.to_vec();
+            return self.params.clone();
         }
 
         let mut params = Vec::new();
