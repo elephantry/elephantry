@@ -302,10 +302,10 @@ impl<T: crate::ToSql> crate::ToSql for Array<T> {
                 if indx[i] < self.dimensions[i] {
                     data.push(b',');
                     break;
-                } else {
-                    indx[i] = 0;
-                    data.push(b'}');
                 }
+
+                indx[i] = 0;
+                data.push(b'}');
 
                 if i == 0 {
                     break 'outer;
