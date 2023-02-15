@@ -222,7 +222,7 @@ impl FromSql for String {
     }
 
     fn from_binary(_: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
-        String::from_utf8(not_null(raw)?.to_vec()).map_err(|e| e.into())
+        String::from_utf8(not_null(raw)?.to_vec()).map_err(Into::into)
     }
 }
 
