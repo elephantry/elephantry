@@ -149,7 +149,7 @@ impl<'a> Where<'a> {
         let mut params = Vec::new();
 
         for w in &self.stack {
-            params.extend(w.params())
+            params.extend(w.params());
         }
 
         params
