@@ -256,13 +256,9 @@ impl<T: crate::FromSql> crate::FromSql for Bounds<T> {
             return Err(Self::error(ty, raw));
         }
 
-        lazy_static::lazy_static! {
-            static ref REGEX: regex::Regex =
-                regex::Regex::new(r"[\[\(](?P<start>.?*),(?P<end>.?*)[\]\)]")
-                    .unwrap();
-        }
+        let regex = crate::regex!(r"[\[\(](?P<start>.?*),(?P<end>.?*)[\]\)]");
 
-        let matches = REGEX.captures(raw).unwrap();
+        let matches = regex.captures(raw).unwrap();
 
         // tstzrange are quoted
         let start_str = matches

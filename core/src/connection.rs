@@ -157,15 +157,11 @@ impl Connection {
     }
 
     fn order_parameters(query: &str) -> std::borrow::Cow<'_, str> {
-        lazy_static::lazy_static! {
-            static ref REGEX: regex::Regex =
-                #[allow(clippy::trivial_regex)]
-                regex::Regex::new(r"\$\*").unwrap();
-        }
+        let regex = crate::regex!(r"\$\*");
 
         let mut count = 0;
 
-        REGEX.replace_all(query, |captures: &regex::Captures<'_>| {
+        regex.replace_all(query, |captures: &regex::Captures<'_>| {
             count += 1;
 
             captures[0].replace("$*", &format!("${count}"))

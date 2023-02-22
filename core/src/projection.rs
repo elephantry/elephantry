@@ -85,9 +85,7 @@ impl Projection {
 
 impl std::fmt::Display for Projection {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        lazy_static::lazy_static! {
-            static ref REGEX: regex::Regex = regex::Regex::new(r"%:(.*?):%").unwrap();
-        }
+        let regex = crate::regex!(r"%:(.*?):%");
 
         let relation = self.alias.as_ref().unwrap_or(&self.relation);
 
@@ -95,7 +93,7 @@ impl std::fmt::Display for Projection {
             .fields
             .iter()
             .map(|(alias, row)| {
-                let field = REGEX
+                let field = regex
                     .replace_all(
                         &row.replace('"', "\\\""),
                         format!("{relation}.\"$1\"").as_str(),

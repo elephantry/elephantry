@@ -104,15 +104,11 @@ impl crate::FromSql for Hstore {
      * https://github.com/postgres/postgres/blob/REL_12_0/contrib/hstore/hstore_io.c#L1155
      */
     fn from_text(_: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        lazy_static::lazy_static! {
-            static ref REGEX: regex::Regex = regex::Regex::new(
-                "\"(?P<key>.*?)\"=>(\"(?P<value>.*?)\"|(?P<null>NULL))",
-            ).unwrap();
-        }
+        let regex = crate::regex!("\"(?P<key>.*?)\"=>(\"(?P<value>.*?)\"|(?P<null>NULL))");
 
         let mut hstore = Self::new();
 
-        for capture in REGEX.captures_iter(crate::not_null(raw)?) {
+        for capture in regex.captures_iter(crate::not_null(raw)?) {
             let key = capture.name("key").unwrap().as_str().to_string();
             let value = if capture.name("null").is_some() {
                 None

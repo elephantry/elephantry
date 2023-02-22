@@ -184,12 +184,9 @@ impl crate::FromSql for Interval {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/timestamp.c#L871
      */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        lazy_static::lazy_static! {
-            static ref REGEX: regex::Regex = regex::Regex::new(
-                r"((?P<years>\d+) years?)? ?((?P<months>\d+) (months?|mons?))? ?((?P<days>\d+) days?)? ?((?P<hours>\d+):(?P<mins>\d+):(?P<secs>\d+))?(\.(?P<usecs>\d+))?",
-            )
-            .unwrap();
-        }
+        let regex = crate::regex!(
+            r"((?P<years>\d+) years?)? ?((?P<months>\d+) (months?|mons?))? ?((?P<days>\d+) days?)? ?((?P<hours>\d+):(?P<mins>\d+):(?P<secs>\d+))?(\.(?P<usecs>\d+))?"
+        );
 
         let s = String::from_text(ty, raw)?;
 
@@ -197,7 +194,7 @@ impl crate::FromSql for Interval {
             return Ok(Self::default());
         }
 
-        let caps = match REGEX.captures(&s) {
+        let caps = match regex.captures(&s) {
             Some(caps) => caps,
             None => return Err(Self::error(ty, raw)),
         };

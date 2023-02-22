@@ -56,11 +56,9 @@ impl crate::FromSql for Circle {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L4495
      */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        lazy_static::lazy_static! {
-            static ref REGEX: regex::Regex = regex::Regex::new(r"([\d\.]+)").unwrap();
-        }
+        let regex = crate::regex!(r"([\d\.]+)");
 
-        let mut matches = REGEX.find_iter(crate::not_null(raw)?);
+        let mut matches = regex.find_iter(crate::not_null(raw)?);
         let x =
             crate::Coordinates::coordinate(&matches.next()).ok_or_else(|| Self::error(ty, raw))?;
         let y =

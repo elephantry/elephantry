@@ -104,6 +104,17 @@ pub use to_text::*;
 pub use transaction::Transaction;
 pub use tuple::*;
 
+macro_rules! regex {
+    ($regex:literal) => {{
+        lazy_static::lazy_static! {
+            static ref REGEX: regex::Regex = regex::Regex::new($regex).unwrap();
+        };
+        &REGEX
+    }}
+}
+
+pub(crate) use regex;
+
 /**
  * Easily create pk argument for where clause, including [`find_by_pk`]
  * function.
