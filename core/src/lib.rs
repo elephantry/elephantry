@@ -110,7 +110,7 @@ macro_rules! regex {
             static ref REGEX: regex::Regex = regex::Regex::new($regex).unwrap();
         };
         &REGEX
-    }}
+    }};
 }
 
 pub(crate) use regex;

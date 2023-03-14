@@ -649,8 +649,7 @@ impl Connection {
             requirepeer: info.get("requirepeer").and_then(|x| x.val.clone()),
             service: info.get("service").and_then(|x| x.val.clone()),
             sslcert: info.get("sslcert").and_then(|x| x.val.clone()),
-            sslcompression: Self::config_get::<i32>(&info, "sslcompression")?
-                .map(|x| x == 1),
+            sslcompression: Self::config_get::<i32>(&info, "sslcompression")?.map(|x| x == 1),
             sslcrl: info.get("sslcrl").and_then(|x| x.val.clone()),
             sslkey: info.get("sslkey").and_then(|x| x.val.clone()),
             ssl_max_protocol_version: info
