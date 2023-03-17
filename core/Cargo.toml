@@ -143,48 +143,63 @@ xml = ["xmltree", "elephantry-derive/xml"]
 [[example]]
 name = "00-config"
 required-features = ["config"]
+doc-scrape-examples = true
 
 [[example]]
 name = "02-query"
 required-features = ["date", "numeric"]
+doc-scrape-examples = true
 
 [[example]]
 name = "03-read"
 required-features = ["date", "numeric"]
+doc-scrape-examples = true
 
 [[example]]
 name = "04-write"
 required-features = ["date", "numeric"]
+doc-scrape-examples = true
 
 [[example]]
 name = "05-extra"
 required-features = ["date", "numeric"]
+doc-scrape-examples = true
 
 [[example]]
 name = "06-complex"
 required-features = ["date", "numeric"]
+doc-scrape-examples = true
 
 [[example]]
 name = "07-relations"
 required-features = ["date", "numeric"]
+doc-scrape-examples = true
 
 [[example]]
 name = "08-composite"
 required-features = ["date", "numeric"]
+doc-scrape-examples = true
 
 [[example]]
 name = "09-async"
 required-features = ["date", "numeric"]
+doc-scrape-examples = true
 
 [[example]]
 name = "10-transaction"
 required-features = ["date", "numeric"]
+doc-scrape-examples = true
+
+[[example]]
+name = "11-notification"
+doc-scrape-examples = true
 
 [[example]]
 name = "12-copy"
 required-features = ["date", "numeric"]
+doc-scrape-examples = true
 
 [package.metadata.docs.rs]
 all-features = true
-cargo-args = ["-Zunstable-options", "-Zrustdoc-scrape-examples=examples"]
+cargo-args = ["-Zunstable-options", "-Zrustdoc-scrape-examples"]
 rustdoc-args = ["--cfg", "docsrs"]
