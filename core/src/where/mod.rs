@@ -204,8 +204,8 @@ impl<'a> std::ops::BitOrAssign for Where<'a> {
 mod test {
     #[test]
     fn create() {
-        crate::Where::new();
-        crate::Where::from("a = pika($*, $*)", vec![&1, &2]);
+        _ = crate::Where::new();
+        _ = crate::Where::from("a = pika($*, $*)", vec![&1, &2]);
     }
 
     #[test]
