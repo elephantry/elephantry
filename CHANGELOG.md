@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The `Composite` proc macro now supports unnamed struct.
 
 ### Changed
-- `Box::new` takes references;
+- `Box::new` and `Segment::new` takes references;
 
 ### Fixed
 - Bit type inspection.

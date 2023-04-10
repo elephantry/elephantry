@@ -8,8 +8,10 @@ pub struct Segment(geo_types::Line<f64>);
 
 impl Segment {
     #[must_use]
-    pub fn new(start: crate::Coordinate, end: crate::Coordinate) -> Self {
-        Self(geo_types::Line::new(*start, *end))
+    pub fn new(start: &crate::Coordinate, end: &crate::Coordinate) -> Self {
+        use std::ops::Deref;
+
+        Self(geo_types::Line::new(*start.deref(), *end.deref()))
     }
 }
 
@@ -35,8 +37,8 @@ impl std::fmt::Display for Segment {
 impl<'a> arbitrary::Arbitrary<'a> for Segment {
     fn arbitrary(u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
         let segment = Self::new(
-            crate::Coordinate::arbitrary(u)?,
-            crate::Coordinate::arbitrary(u)?,
+            &crate::Coordinate::arbitrary(u)?,
+            &crate::Coordinate::arbitrary(u)?,
         );
 
         Ok(segment)
@@ -85,7 +87,7 @@ impl crate::FromSql for Segment {
             return Err(Self::error(ty, raw));
         }
 
-        Ok(Self::new(coordinates[0].clone(), coordinates[1].clone()))
+        Ok(Self::new(&coordinates[0], &coordinates[1]))
     }
 
     /*
@@ -103,7 +105,7 @@ impl crate::FromSql for Segment {
             crate::from_sql::read_f64(&mut buf)?,
         );
 
-        Ok(Self::new(start, end))
+        Ok(Self::new(&start, &end))
     }
 }
 
@@ -119,15 +121,15 @@ mod test {
             (
                 "'[(1, 2), (3, 4)]'",
                 crate::Segment::new(
-                    crate::Coordinate::new(1., 2.),
-                    crate::Coordinate::new(3., 4.)
+                    &crate::Coordinate::new(1., 2.),
+                    &crate::Coordinate::new(3., 4.)
                 )
             ),
             (
                 "'((10.3, 20.0), (0.5, 0.003))'",
                 crate::Segment::new(
-                    crate::Coordinate::new(10.3, 20.),
-                    crate::Coordinate::new(0.5, 0.003)
+                    &crate::Coordinate::new(10.3, 20.),
+                    &crate::Coordinate::new(0.5, 0.003)
                 )
             ),
         ]
