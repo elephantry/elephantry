@@ -12,6 +12,7 @@ pub struct Circle {
 }
 
 impl Circle {
+    #[must_use]
     pub fn new(x: f64, y: f64, r: f64) -> Self {
         Self { x, y, r }
     }

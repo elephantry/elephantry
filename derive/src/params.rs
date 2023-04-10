@@ -53,7 +53,7 @@ impl Entity {
                 syn::NestedMeta::Meta(syn::Meta::NameValue(m))
                     if m.path == crate::symbol::RELATION =>
                 {
-                    let relation = get_lit_str(crate::symbol::STRUCTURE, &m.lit)?;
+                    let relation = get_lit_str(&crate::symbol::STRUCTURE, &m.lit)?;
                     param.relation = Some(relation);
                 }
                 // Parse #[elephantry(structure = "")]
@@ -80,11 +80,11 @@ fn get_lit(
     attr_name: crate::symbol::Symbol,
     lit: &syn::Lit,
 ) -> syn::Result<proc_macro2::TokenStream> {
-    let lit = get_lit_str(attr_name, lit)?;
+    let lit = get_lit_str(&attr_name, lit)?;
     syn::parse_str(&lit)
 }
 
-fn get_lit_str(attr_name: crate::symbol::Symbol, lit: &syn::Lit) -> syn::Result<String> {
+fn get_lit_str(attr_name: &crate::symbol::Symbol, lit: &syn::Lit) -> syn::Result<String> {
     if let syn::Lit::Str(lit) = lit {
         Ok(lit.value())
     } else {
@@ -124,7 +124,7 @@ impl Field {
                 syn::NestedMeta::Meta(syn::Meta::NameValue(m))
                     if m.path == crate::symbol::COLUMN =>
                 {
-                    let column = get_lit_str(crate::symbol::COLUMN, &m.lit)?;
+                    let column = get_lit_str(&crate::symbol::COLUMN, &m.lit)?;
                     param.column = Some(column);
                 }
                 // Parse #[elephantry(virtual)]
@@ -135,7 +135,7 @@ impl Field {
                 syn::NestedMeta::Meta(syn::Meta::NameValue(m))
                     if m.path == crate::symbol::VIRTUAL =>
                 {
-                    let projection = get_lit_str(crate::symbol::VIRTUAL, &m.lit)?;
+                    let projection = get_lit_str(&crate::symbol::VIRTUAL, &m.lit)?;
                     param.r#virtual = true;
                     param.projection = Some(projection);
                 }

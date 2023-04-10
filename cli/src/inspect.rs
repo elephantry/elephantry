@@ -9,7 +9,7 @@ pub fn database(connection: &elephantry::Connection) -> crate::Result {
         term_table::table_cell::TableCell::new("comment"),
     ]));
 
-    for schema in elephantry::inspect::database(connection)?.iter() {
+    for schema in &elephantry::inspect::database(connection)? {
         table.add_row(term_table::row::Row::new(vec![
             term_table::table_cell::TableCell::new(&schema.name),
             term_table::table_cell::TableCell::new(schema.oid),
@@ -35,7 +35,7 @@ pub fn schema(connection: &elephantry::Connection, schema: &str) -> crate::Resul
         term_table::table_cell::TableCell::new("comment"),
     ]));
 
-    for relation in relations.iter() {
+    for relation in &relations {
         table.add_row(term_table::row::Row::new(vec![
             term_table::table_cell::TableCell::new(&relation.name),
             term_table::table_cell::TableCell::new(&relation.kind),

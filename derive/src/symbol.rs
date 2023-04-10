@@ -1,3 +1,4 @@
+#[derive(Clone, Copy)]
 pub(crate) struct Symbol(&'static str);
 
 pub(crate) const COLUMN: Symbol = Symbol("column");

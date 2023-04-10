@@ -12,6 +12,7 @@ pub struct Line {
 }
 
 impl Line {
+    #[must_use]
     pub fn new(a: f64, b: f64, c: f64) -> Self {
         Self { a, b, c }
     }

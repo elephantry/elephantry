@@ -123,9 +123,8 @@ fn structure_impl(
     elephantry: &proc_macro2::TokenStream,
     public: &proc_macro2::TokenStream,
 ) -> syn::Result<proc_macro2::TokenStream> {
-    let name = match &params.structure {
-        Some(name) => name,
-        None => return Ok(proc_macro2::TokenStream::new()),
+    let Some(name) = &params.structure else {
+        return Ok(proc_macro2::TokenStream::new());
     };
 
     let fields = match ast.data {
@@ -188,9 +187,8 @@ fn model_impl(
     elephantry: &proc_macro2::TokenStream,
     public: &proc_macro2::TokenStream,
 ) -> syn::Result<proc_macro2::TokenStream> {
-    let name = match &params.model {
-        Some(name) => name,
-        None => return Ok(proc_macro2::TokenStream::new()),
+    let Some(name) = &params.model else {
+        return Ok(proc_macro2::TokenStream::new());
     };
 
     let fields = match ast.data {
@@ -198,9 +196,8 @@ fn model_impl(
         _ => unreachable!(),
     };
 
-    let structure = match &params.structure {
-        Some(structure) => structure,
-        None => return crate::error(ast, "Model requires structure attribute"),
+    let Some(structure) = &params.structure else {
+        return crate::error(ast, "Model requires structure attribute");
     };
 
     let entity = &ast.ident;
@@ -259,9 +256,8 @@ fn is_public(ast: &syn::DeriveInput) -> bool {
 }
 
 fn is_option(ty: &syn::Type) -> bool {
-    let typepath = match ty {
-        syn::Type::Path(typepath) => typepath,
-        _ => return false,
+    let syn::Type::Path(typepath) = ty else {
+        return false;
     };
 
     typepath.path.leading_colon.is_none()

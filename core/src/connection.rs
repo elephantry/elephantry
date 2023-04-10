@@ -306,7 +306,7 @@ impl Connection {
     where
         M: crate::Model,
     {
-        self.insert::<M>(entity, None).map(|x| x.unwrap())
+        self.insert::<M>(entity, None).map(Option::unwrap)
     }
 
     /**
