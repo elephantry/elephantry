@@ -117,7 +117,7 @@ impl crate::FromText for Persistence {
     }
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Type {
     Base,
     Composite,
