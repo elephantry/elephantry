@@ -8,7 +8,7 @@ pub struct Box(geo_types::Rect<f64>);
 
 impl Box {
     #[must_use]
-    pub fn new(start: crate::Point, end: crate::Point) -> Self {
+    pub fn new(start: &crate::Point, end: &crate::Point) -> Self {
         use std::ops::Deref;
 
         Self(geo_types::Rect::new(*start.deref(), *end.deref()))
@@ -39,7 +39,7 @@ impl std::fmt::Display for Box {
 #[cfg(feature = "arbitrary")]
 impl<'a> arbitrary::Arbitrary<'a> for Box {
     fn arbitrary(u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
-        let b = Self::new(crate::Point::arbitrary(u)?, crate::Point::arbitrary(u)?);
+        let b = Self::new(&crate::Point::arbitrary(u)?, &crate::Point::arbitrary(u)?);
 
         Ok(b)
     }
@@ -81,7 +81,7 @@ impl crate::FromSql for Box {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let segment = crate::Segment::from_text(ty, raw)?;
 
-        Ok(Self::new(segment.end.into(), segment.start.into()))
+        Ok(Self::new(&segment.end.into(), &segment.start.into()))
     }
 
     /*
@@ -90,7 +90,7 @@ impl crate::FromSql for Box {
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         let segment = crate::Segment::from_binary(ty, raw)?;
 
-        Ok(Self::new(segment.end.into(), segment.start.into()))
+        Ok(Self::new(&segment.end.into(), &segment.start.into()))
     }
 }
 
@@ -106,11 +106,14 @@ mod test {
         [
             (
                 "'((1, 2), (3, 4))'",
-                crate::Box::new(crate::Point::new(1., 2.), crate::Point::new(3., 4.))
+                crate::Box::new(&crate::Point::new(1., 2.), &crate::Point::new(3., 4.))
             ),
             (
                 "'((0.5, 0.003), (10.3, 20.0))'",
-                crate::Box::new(crate::Point::new(0.5, 0.003), crate::Point::new(10.3, 20.))
+                crate::Box::new(
+                    &crate::Point::new(0.5, 0.003),
+                    &crate::Point::new(10.3, 20.)
+                )
             ),
         ]
     );

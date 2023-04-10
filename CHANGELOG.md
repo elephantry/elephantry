@@ -19,6 +19,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Impl `Copy` for `inspect::Type`;
 - The `Composite` proc macro now supports unnamed struct.
 
+### Changed
+- `Box::new` takes references;
+
 ### Fixed
 - Bit type inspection.
 
