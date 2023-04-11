@@ -93,7 +93,7 @@ enum Opt {
 }
 
 fn main() -> Result {
-    dotenv::dotenv().ok();
+    dotenvy::dotenv().ok();
 
     let opt = Opt::parse();
     let dsn = std::env::var("DATABASE_URL").expect("Missing DATABASE_URL env variable");
