@@ -128,9 +128,7 @@ fn check_u8_array(ty: &syn::Type) -> syn::Result<()> {
         if array.elem == syn::parse_str("u8")? {
             return error(
                 ty,
-                &format!(
-                    "Enable 'bit' feature to use the type `[u8]` in this entity"
-                ),
+                &format!("Enable 'bit' feature to use the type `[u8]` in this entity"),
             );
         }
     }
