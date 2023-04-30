@@ -202,9 +202,14 @@ pub struct {name} {{
 
 fn ty_to_rust(column: &elephantry::inspect::Column) -> crate::Result<String> {
     let mut rty = match elephantry::pq::Type::try_from(column.oid) {
+        Ok(elephantry::pq::types::BIT) => match column.len {
+            Some(1) => "u8".to_string(),
+            Some(len) => format!("[u8; {len}]"),
+            _ => unreachable!(),
+        },
         Ok(ty) => elephantry::pq::sql_to_rust(&ty),
         Err(err) => {
-            if column.ty == "public.hstore" {
+            if column.ty() == "public.hstore" {
                 "elephantry::Hstore".to_string()
             } else {
                 return Err(crate::Error::Libpq(err));

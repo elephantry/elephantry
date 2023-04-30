@@ -87,7 +87,7 @@ pub fn relation(
         table.add_row(term_table::row::Row::new(vec![
             term_table::table_cell::TableCell::new(primary),
             term_table::table_cell::TableCell::new(&column.name),
-            term_table::table_cell::TableCell::new(&column_type(&column)),
+            term_table::table_cell::TableCell::new(&column.ty()),
             term_table::table_cell::TableCell::new(column.default.as_deref().unwrap_or_default()),
             term_table::table_cell::TableCell::new(not_null),
             term_table::table_cell::TableCell::new(column.comment.as_deref().unwrap_or_default()),
@@ -98,19 +98,6 @@ pub fn relation(
     println!("{}", table.render());
 
     Ok(())
-}
-
-fn column_type(column: &elephantry::inspect::Column) -> String {
-    if let Ok(ty) = elephantry::pq::types::Type::try_from(column.oid) {
-        match ty.kind {
-            elephantry::pq::types::Kind::Array(_) => {
-                format!("{}[]", ty.name.trim_start_matches('_'))
-            }
-            _ => ty.name.to_string(),
-        }
-    } else {
-        column.ty.clone()
-    }
 }
 
 pub fn enums(connection: &elephantry::Connection, schema: &str) -> crate::Result {
@@ -208,7 +195,7 @@ pub fn composites(connection: &elephantry::Connection, schema: &str) -> crate::R
         let fields = composite
             .fields
             .iter()
-            .map(|f| format!("{}::{}", f.name, f.ty))
+            .map(|f| format!("{}::{}", f.name, f.ty()))
             .collect::<Vec<_>>()
             .join(", ");
 
