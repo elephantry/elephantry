@@ -5,12 +5,11 @@ pub struct Column {
     pub is_primary: bool,
     pub name: String,
     pub oid: crate::pq::Oid,
-    #[deprecated(since = "3.3.0", note = "Use `Column::ty()` instead")]
-    pub ty: String,
     pub len: Option<i32>,
     pub default: Option<String>,
     pub is_notnull: bool,
     pub comment: Option<String>,
+    ty: String,
 }
 
 impl Column {
@@ -29,7 +28,6 @@ impl Column {
                 ty.name.to_string()
             }
         } else {
-            #[allow(deprecated)]
             self.ty.clone()
         }
     }
