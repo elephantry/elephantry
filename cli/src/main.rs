@@ -93,10 +93,10 @@ enum Opt {
 }
 
 fn main() -> Result {
-    dotenvy::dotenv().ok();
+    envir::dotenv();
 
     let opt = Opt::parse();
-    let dsn = std::env::var("DATABASE_URL").expect("Missing DATABASE_URL env variable");
+    let dsn = envir::get("DATABASE_URL")?;
     let elephantry = elephantry::Pool::new(&dsn).expect("Unable to connect to postgresql");
 
     match opt {
