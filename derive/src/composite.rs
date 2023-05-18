@@ -22,26 +22,41 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::Tok
     let mut from_binary_body = Vec::new();
 
     for (x, field) in fields.iter().enumerate() {
-        let name = &field.ident;
-
-        let to_vec_part = quote::quote! {
-            vec.push(&self.#name as &dyn #elephantry::ToSql)
-        };
-        to_vec_body.push(to_vec_part);
-
         let ty = &field.ty;
         crate::check_type(ty)?;
 
-        let from_text_part = quote::quote! {
-            #name: <#ty>::from_text(ty, values[#x])?
-        };
-        from_text_body.push(from_text_part);
+        let (to_vec_part, from_text_part, from_binary_part) = if let Some(name) = &field.ident {
+            (
+                quote::quote! { vec.push(&self.#name as &dyn #elephantry::ToSql) },
+                quote::quote! { #name: <#ty>::from_text(ty, values[#x])? },
+                quote::quote! { #name: <#ty>::from_binary(ty, values[#x])? },
+            )
+        } else {
+            let x = syn::Index::from(x);
 
-        let from_binary_part = quote::quote! {
-            #name: <#ty>::from_binary(ty, values[#x])?
+            (
+                quote::quote! { vec.push(&self.#x as &dyn #elephantry::ToSql) },
+                quote::quote! { <#ty>::from_text(ty, values[#x])? },
+                quote::quote! { <#ty>::from_binary(ty, values[#x])? },
+            )
         };
+
+        to_vec_body.push(to_vec_part);
+        from_text_body.push(from_text_part);
         from_binary_body.push(from_binary_part);
     }
+
+    let (self_from_text, self_from_binary) = if matches!(fields, syn::Fields::Unnamed(_)) {
+        (
+            quote::quote! { Self ( #(#from_text_body, )*) },
+            quote::quote! { Self ( #(#from_binary_body, )*) },
+        )
+    } else {
+        (
+            quote::quote! { Self { #(#from_text_body, )* } },
+            quote::quote! { Self { #(#from_binary_body, )* } },
+        )
+    };
 
     let (impl_generics, ty_generics, where_clause) = ast.generics.split_for_impl();
 
@@ -51,21 +66,13 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::Tok
             fn from_text(ty: &#elephantry::pq::Type, raw: ::std::option::Option<&str>) -> #elephantry::Result<Self> {
                 let values = #elephantry::record::text_to_vec(raw)?;
 
-                let s = Self {
-                    #(#from_text_body, )*
-                };
-
-                ::std::result::Result::Ok(s)
+                ::std::result::Result::Ok(#self_from_text)
             }
 
             fn from_binary(ty: &#elephantry::pq::Type, raw: ::std::option::Option<&[u8]>) -> #elephantry::Result<Self> {
                 let values = #elephantry::record::binary_to_vec(stringify!(#name), ty, raw)?;
 
-                let s = Self {
-                    #(#from_binary_body, )*
-                };
-
-                ::std::result::Result::Ok(s)
+                ::std::result::Result::Ok(#self_from_binary)
             }
         }
 

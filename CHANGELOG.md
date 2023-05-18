@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Adds `ltree`, `lquery` and `ltxtquery` types;
 - Impl `Copy` for `inspect::Type`;
+- The `Composite` proc macro now supports unnamed struct;
 
 ### Fixed
 - Bit type inspection;
