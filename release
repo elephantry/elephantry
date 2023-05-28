@@ -13,6 +13,7 @@ main()
 
     sed -i '0,/version/{s/^version = ".*"/version = "'$version'"/}' Cargo.toml
     sed -i -r -e '/dependencies\.elephantry/ {n; s/^version = ".*"/version = "'$short_version'"/}' cli/Cargo.toml core/Cargo.toml
+    sed -i -e "s/\[Unreleased\]/[$version] - $(date +%Y-%m-%d)/" CHANGELOG.md
 
     git add CHANGELOG.md Cargo.toml derive/Cargo.toml core/Cargo.toml cli/Cargo.toml
     git diff --cached
