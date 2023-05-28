@@ -24,7 +24,7 @@ impl<'c> std::future::Future for Async<'c> {
         if let Some(result) = connection.result() {
             self.last_result = Some(result.try_into());
         } else {
-            let last_result = std::mem::replace(&mut self.last_result, None);
+            let last_result = self.last_result.take();
 
             if let Some(result) = last_result {
                 return std::task::Poll::Ready(result);
