@@ -5,15 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [3.3.0] - 2023-05-28
 
 ### Added
 - Adds `ltree`, `lquery` and `ltxtquery` types;
 - Impl `Copy` for `inspect::Type`;
-- The `Composite` proc macro now supports unnamed struct;
+- The `Composite` proc macro now supports unnamed struct.
 
 ### Fixed
-- Bit type inspection;
+- Bit type inspection.
 
 ## [3.2.0] - 2023-03-17
 
