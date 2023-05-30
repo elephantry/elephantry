@@ -202,7 +202,7 @@ lazy_static::lazy_static! {
         );
         types.insert(
             types::TIMESTAMPTZ.name,
-            "chrono::DateTime<chrono::FixedOffset>>",
+            "chrono::DateTime<chrono::FixedOffset>",
         );
 
         types.insert(
