@@ -33,7 +33,7 @@
  * | `null`                      | `()`                     |            |
  * | `macaddr`                   | `macaddr::MacAddr6`      | net        |
  * | `macaddr8`                  | `macaddr::MacAddr8`      | net        |
- * | `money`                     | `f32`                    |            |
+ * | `money`                     | `postgres_money::Money`  | money      |
  * | `multirange`                | `elephantry::Multirange` | multirange |
  * | `numeric`                   | `bigdecimal::BigDecimal` | numeric    |
  * | `path`                      | `elephantry::Path`       | geo        |
