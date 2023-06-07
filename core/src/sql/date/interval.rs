@@ -120,6 +120,26 @@ impl From<&Interval> for i64 {
     }
 }
 
+impl From<i64> for Interval {
+    fn from(value: i64) -> Self {
+        let mut usecs = value;
+        let years = usecs / 12 / 30 / 24 / 60 / 60 / 1_000_000;
+        usecs %= 12 * 30 * 24 * 60 * 60 * 1_000_000;
+        let months = usecs / 30 / 24 / 60 / 60 / 1_000_000;
+        usecs %= 30 * 24 * 60 * 60 * 1_000_000;
+        let days = usecs / 24 / 60 / 60 / 1_000_000;
+        usecs %= 24 * 60 * 60 * 1_000_000;
+        let hours = usecs / 60 / 60 / 1_000_000;
+        usecs %= 60 * 60 * 1_000_000;
+        let mins = usecs / 60 / 1_000_000;
+        usecs %= 60 * 1_000_000;
+        let secs = usecs / 1_000_000;
+        usecs %= 1_000_000;
+
+        Self::new(years as i32, months as i32, days as i32, hours as i32, mins as i32, secs as i32, usecs as i32)
+    }
+}
+
 impl TryFrom<Interval> for std::time::Duration {
     type Error = crate::Error;
 
