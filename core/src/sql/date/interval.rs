@@ -140,6 +140,12 @@ impl From<i64> for Interval {
     }
 }
 
+impl From<std::time::Duration> for Interval {
+    fn from(value: std::time::Duration) -> Self {
+        Self::from(value.as_micros() as i64)
+    }
+}
+
 impl TryFrom<Interval> for std::time::Duration {
     type Error = crate::Error;
 

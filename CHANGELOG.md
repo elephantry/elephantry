@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Impl `From<u64>` for `Interval`;
+- Impl `From<std::time::Duration>` for `Interval`;
 
 ## [3.3.0] - 2023-05-28
 
