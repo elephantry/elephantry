@@ -204,10 +204,7 @@ mod test {
                 bigdecimal::BigDecimal::try_from(20000.0000019073486328125).unwrap()
             ),
             ("3900", bigdecimal::BigDecimal::from(3_900)),
-            (
-                "3900.5",
-                bigdecimal::BigDecimal::try_from(3_900.5).unwrap()
-            ),
+            ("3900.5", bigdecimal::BigDecimal::try_from(3_900.5).unwrap()),
             (
                 "-0.4375",
                 bigdecimal::BigDecimal::try_from(-0.4375).unwrap()

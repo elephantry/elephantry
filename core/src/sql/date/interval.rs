@@ -136,7 +136,15 @@ impl From<i64> for Interval {
         let secs = usecs / 1_000_000;
         usecs %= 1_000_000;
 
-        Self::new(years as i32, months as i32, days as i32, hours as i32, mins as i32, secs as i32, usecs as i32)
+        Self::new(
+            years as i32,
+            months as i32,
+            days as i32,
+            hours as i32,
+            mins as i32,
+            secs as i32,
+            usecs as i32,
+        )
     }
 }
 
