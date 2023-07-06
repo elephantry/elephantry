@@ -34,7 +34,7 @@ version = "0.6"
 optional = true
 
 [dependencies.bigdecimal]
-version = "0.3"
+version = "0.4"
 optional = true
 
 [dependencies.num]

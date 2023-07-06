@@ -200,17 +200,17 @@ mod test {
         [
             ("20000", bigdecimal::BigDecimal::from(20_000)),
             (
-                "20000.000001",
-                bigdecimal::BigDecimal::try_from(20_000.000001).unwrap()
+                "20000.0000019073486328125",
+                bigdecimal::BigDecimal::try_from(20000.0000019073486328125).unwrap()
             ),
             ("3900", bigdecimal::BigDecimal::from(3_900)),
             (
-                "3900.98",
-                bigdecimal::BigDecimal::try_from(3_900.98).unwrap()
+                "3900.5",
+                bigdecimal::BigDecimal::try_from(3_900.5).unwrap()
             ),
             (
-                "-0.12345",
-                bigdecimal::BigDecimal::try_from(-0.12345).unwrap()
+                "-0.4375",
+                bigdecimal::BigDecimal::try_from(-0.4375).unwrap()
             ),
         ]
     );
