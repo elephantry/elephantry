@@ -138,17 +138,17 @@ mod test {
         std::ops::Range<chrono::DateTime<chrono::Utc>>,
         [(
             "'[1970-01-01 00:00:00+00, 2010-01-01 00:00:00+00)'",
-            chrono::DateTime::<chrono::Utc>::from_utc(
-                chrono::NaiveDate::from_ymd_opt(1970, 01, 01)
+            chrono::TimeZone::from_utc_datetime(
+                &chrono::Utc,
+                &chrono::NaiveDate::from_ymd_opt(1970, 01, 01)
                     .and_then(|x| x.and_hms_opt(0, 0, 0))
-                    .unwrap(),
-                chrono::Utc
+                    .unwrap()
             )
-                ..chrono::DateTime::<chrono::Utc>::from_utc(
-                    chrono::NaiveDate::from_ymd_opt(2010, 01, 01)
+                ..chrono::TimeZone::from_utc_datetime(
+                    &chrono::Utc,
+                    &chrono::NaiveDate::from_ymd_opt(2010, 01, 01)
                         .and_then(|x| x.and_hms_opt(0, 0, 0))
                         .unwrap(),
-                    chrono::Utc
                 )
         )]
     );

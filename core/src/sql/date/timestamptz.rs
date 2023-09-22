@@ -35,7 +35,7 @@ impl crate::FromSql for chrono::DateTime<chrono::Utc> {
      */
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         let naive = chrono::NaiveDateTime::from_binary(ty, raw)?;
-        Ok(chrono::DateTime::from_utc(naive, chrono::Utc))
+        Ok(chrono::TimeZone::from_utc_datetime(&chrono::Utc, &naive))
     }
 }
 
@@ -114,9 +114,9 @@ mod test {
         chrono::DateTime<chrono::Utc>,
         [(
             "'1970-01-01 00:00:00+00'",
-            chrono::DateTime::<chrono::Utc>::from_utc(
-                chrono::NaiveDateTime::from_timestamp_opt(0, 0).unwrap(),
-                chrono::Utc
+            chrono::TimeZone::from_utc_datetime(
+                &chrono::Utc,
+                &chrono::NaiveDateTime::from_timestamp_opt(0, 0).unwrap(),
             ),
         )]
     );
