@@ -184,8 +184,6 @@ macro_rules! values {
 mod test {
     use std::collections::HashMap;
 
-    static INIT: std::sync::Once = std::sync::Once::new();
-
     #[macro_export]
     macro_rules! sql_test_from {
         ($sql_type:ident, $rust_type:ty, $tests:expr) => {
@@ -307,17 +305,23 @@ mod test {
         std::env::var("DATABASE_URL").unwrap_or_else(|_| "host=localhost".to_string())
     }
 
-    pub fn new_conn() -> crate::Result<crate::Pool> {
+    pub fn new_conn() -> crate::Result<&'static crate::Connection> {
+        static INIT: std::sync::Once = std::sync::Once::new();
         INIT.call_once(|| {
             env_logger::init();
         });
 
-        let conn = crate::Pool::new(&dsn())?;
-        conn.execute("create extension if not exists hstore")?;
-        conn.execute("create extension if not exists ltree")?;
-        conn.execute("set lc_monetary to 'en_US.UTF-8';")?;
-        conn.execute(
-            "
+        static POOL: std::sync::OnceLock<crate::Result<crate::Pool>> = std::sync::OnceLock::new();
+
+        let pool = POOL
+            // @TODO #[feature(once_cell_try)]
+            .get_or_init(|| {
+                let pool = crate::Pool::new(&dsn())?;
+                pool.execute("create extension if not exists hstore")?;
+                pool.execute("create extension if not exists ltree")?;
+                pool.execute("set lc_monetary to 'en_US.UTF-8';")?;
+                pool.execute(
+                    "
 do $$
 begin
     if not exists (select 1 from pg_type where typname = 'compfoo')
@@ -340,9 +344,14 @@ begin
     end if;
 end$$;
         ",
-        )?;
+                )?;
 
-        Ok(conn)
+                Ok(pool)
+            })
+            .as_ref()
+            .unwrap();
+
+        Ok(pool)
     }
 
     #[test]
