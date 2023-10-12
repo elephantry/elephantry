@@ -54,7 +54,7 @@ impl crate::entity::Simple for xmltree::Element {}
 
 #[cfg(test)]
 mod test {
-    static XML: &'static str = r#"<?xml version="1.0"?>
+    static XML: &str = r#"<?xml version="1.0"?>
 <!-- Awesome data incoming -->
 <data awesome="true">
   <datum>Science</datum>

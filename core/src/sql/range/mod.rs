@@ -128,7 +128,7 @@ mod test {
         std::ops::RangeTo<chrono::NaiveDate>,
         [(
             "'[, 2010-01-01)'",
-            ..chrono::NaiveDate::from_ymd_opt(2010, 01, 01).unwrap(),
+            ..chrono::NaiveDate::from_ymd_opt(2010, 1, 1).unwrap(),
         )]
     );
 
@@ -140,13 +140,13 @@ mod test {
             "'[1970-01-01 00:00:00+00, 2010-01-01 00:00:00+00)'",
             chrono::TimeZone::from_utc_datetime(
                 &chrono::Utc,
-                &chrono::NaiveDate::from_ymd_opt(1970, 01, 01)
+                &chrono::NaiveDate::from_ymd_opt(1970, 1, 1)
                     .and_then(|x| x.and_hms_opt(0, 0, 0))
                     .unwrap()
             )
                 ..chrono::TimeZone::from_utc_datetime(
                     &chrono::Utc,
-                    &chrono::NaiveDate::from_ymd_opt(2010, 01, 01)
+                    &chrono::NaiveDate::from_ymd_opt(2010, 1, 1)
                         .and_then(|x| x.and_hms_opt(0, 0, 0))
                         .unwrap(),
                 )

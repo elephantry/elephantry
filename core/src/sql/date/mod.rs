@@ -73,11 +73,11 @@ mod test {
         [
             (
                 "'1970-01-01'",
-                chrono::NaiveDate::from_ymd_opt(1970, 01, 01).unwrap()
+                chrono::NaiveDate::from_ymd_opt(1970, 1, 1).unwrap()
             ),
             (
                 "'2010-01-01'",
-                chrono::NaiveDate::from_ymd_opt(2010, 01, 01).unwrap()
+                chrono::NaiveDate::from_ymd_opt(2010, 1, 1).unwrap()
             ),
             (
                 "'2100-12-30'",

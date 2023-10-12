@@ -58,10 +58,7 @@ fn main() -> elephantry::Result {
     assert!(elephantry
         .find_by_pk::<EventModel>(&elephantry::pk! {uuid => uuid})?
         .is_none());
-    assert_eq!(
-        elephantry.exist_where::<EventModel>("uuid = $1", &[&uuid])?,
-        false
-    );
+    assert!(!elephantry.exist_where::<EventModel>("uuid = $1", &[&uuid])?);
 
     let count = elephantry.model::<EventModel>().count_uniq_visitor()?;
     assert_eq!(count, 4);
@@ -77,7 +74,7 @@ where
 {
     #[cfg(feature = "uuid")]
     let uuid = uuid::Uuid::parse_str(uuid).unwrap();
-    let event = connection.find_by_pk::<EventModel>(&elephantry::pk!(uuid))?;
+    let event = connection.find_by_pk::<M>(&elephantry::pk!(uuid))?;
 
     match event {
         Some(event) => println!("{event:?}"),
@@ -113,7 +110,7 @@ where
     M: elephantry::Model,
     M::Entity: std::fmt::Debug,
 {
-    let new_entity = connection.insert_one::<M>(&entity)?;
+    let new_entity = connection.insert_one::<M>(entity)?;
 
     println!("{new_entity:?}");
 

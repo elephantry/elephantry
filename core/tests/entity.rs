@@ -31,17 +31,12 @@ impl<T: elephantry::FromSql + elephantry::ToSql> elephantry::Entity for Event<T>
 
     fn get(&self, field: &str) -> Option<&dyn elephantry::ToSql> {
         match field {
-            "uuid" => match self.uuid {
-                Some(ref uuid) => Some(uuid),
-                None => None,
-            },
+            "uuid" => self.uuid.as_ref().map(|x| x as _),
             "name" => Some(&self.name),
-            "visitor_id" => match self.visitor_id {
-                Some(ref visitor_id) => Some(visitor_id),
-                None => Default::default(),
-            },
+            "visitor_id" => self.visitor_id.as_ref().map(|x| x as _),
             "properties" => Some(&self.properties),
             "browser" => Some(&self.browser),
+            "generic" => self.generic.as_ref().map(|x| x as _),
             _ => None,
         }
     }
@@ -73,7 +68,7 @@ impl EventModel {
 }
 
 #[derive(Debug)]
-struct EventExtra<T> {
+struct EventExtra<T: elephantry::Entity + elephantry::ToSql> {
     #[cfg(feature = "uuid")]
     uuid: Option<uuid::Uuid>,
     #[cfg(not(feature = "uuid"))]
@@ -92,7 +87,7 @@ struct EventExtra<T> {
     os: Option<String>,
 }
 
-impl<T: elephantry::Entity> elephantry::Entity for EventExtra<T> {
+impl<T: elephantry::Entity + elephantry::ToSql> elephantry::Entity for EventExtra<T> {
     fn from(tuple: &elephantry::Tuple) -> Self {
         let event = <Event<String> as elephantry::Entity>::from(tuple);
 
@@ -109,21 +104,13 @@ impl<T: elephantry::Entity> elephantry::Entity for EventExtra<T> {
 
     fn get(&self, field: &str) -> Option<&dyn elephantry::ToSql> {
         match field {
-            "uuid" => match self.uuid {
-                Some(ref uuid) => Some(uuid),
-                None => None,
-            },
+            "uuid" => self.uuid.as_ref().map(|x| x as _),
             "name" => Some(&self.name),
-            "visitor_id" => match self.visitor_id {
-                Some(ref visitor_id) => Some(visitor_id),
-                None => Default::default(),
-            },
+            "visitor_id" => self.visitor_id.as_ref().map(|x| x as _),
             "properties" => Some(&self.properties),
             "browser" => Some(&self.browser),
-            "os" => match self.os {
-                Some(ref os) => Some(os),
-                None => None,
-            },
+            "generic" => self.generic.as_ref().map(|x| x as _),
+            "os" => self.os.as_ref().map(|x| x as _),
             _ => None,
         }
     }

@@ -188,13 +188,13 @@ mod test {
     macro_rules! sql_test_from {
         ($sql_type:ident, $rust_type:ty, $tests:expr) => {
             #[test]
-            fn from_text() -> crate::Result {
-                crate::test::from_text::<$rust_type>(stringify!($sql_type), &$tests)
+            fn from_text() -> $crate::Result {
+                $crate::test::from_text::<$rust_type>(stringify!($sql_type), &$tests)
             }
 
             #[test]
-            fn from_binary() -> crate::Result {
-                crate::test::from_binary::<$rust_type>(stringify!($sql_type), &$tests)
+            fn from_binary() -> $crate::Result {
+                $crate::test::from_binary::<$rust_type>(stringify!($sql_type), &$tests)
             }
         };
     }
@@ -238,13 +238,13 @@ mod test {
     macro_rules! sql_test_to {
         ($sql_type:ident, $rust_type:ty, $tests:expr) => {
             #[test]
-            fn to_text() -> crate::Result {
-                crate::test::to_text::<$rust_type>(stringify!($sql_type), &$tests)
+            fn to_text() -> $crate::Result {
+                $crate::test::to_text::<$rust_type>(stringify!($sql_type), &$tests)
             }
 
             #[test]
-            fn to_binary() -> crate::Result {
-                crate::test::to_binary::<$rust_type>(stringify!($sql_type), &$tests)
+            fn to_binary() -> $crate::Result {
+                $crate::test::to_binary::<$rust_type>(stringify!($sql_type), &$tests)
             }
         };
     }
