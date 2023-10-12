@@ -208,11 +208,11 @@ fn ty_to_rust(column: &elephantry::inspect::Column) -> crate::Result<String> {
             _ => unreachable!(),
         },
         Ok(ty) => elephantry::pq::sql_to_rust(&ty),
-        Err(err) => {
+        Err(_) => {
             if column.ty() == "public.hstore" {
                 "elephantry::Hstore".to_string()
             } else {
-                return Err(crate::Error::Libpq(err));
+                column.ty().replace('.', "::").to_string()
             }
         }
     };
