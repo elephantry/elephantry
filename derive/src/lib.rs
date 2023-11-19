@@ -29,7 +29,7 @@ pub fn composite_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStre
  */
 #[proc_macro_derive(Entity, attributes(elephantry))]
 pub fn entity_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    let ast = syn::parse(input).unwrap();
+    let ast: syn::DeriveInput = syn::parse(input).unwrap();
 
     entity::impl_macro(&ast)
         .unwrap_or_else(syn::Error::into_compile_error)

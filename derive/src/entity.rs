@@ -234,7 +234,7 @@ fn model_impl(
         }
 
         #[automatically_derived]
-        impl #elephantry::Model for Model {
+        impl #elephantry::Model for #name {
             type Entity = #entity;
             type Structure = #structure;
 

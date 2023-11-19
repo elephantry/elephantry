@@ -37,7 +37,7 @@ impl Entity {
             // Parse #[elephantry(model = "")]
             } else if item.0 == crate::symbol::MODEL {
                 if let Some(model) = item.1 {
-                    param.model = Some(model);
+                    param.model = Some(syn::parse_str(&model)?);
                 } else {
                     return crate::error(
                         &item.0,
@@ -46,10 +46,18 @@ impl Entity {
                 }
             // Parse #[elephantry(structure = "")]
             } else if item.0 == crate::symbol::STRUCTURE {
-                param.structure = Some(item.1.unwrap());
+                if let Some(structure) = item.1 {
+                    param.structure = Some(syn::parse_str(&structure)?);
+                } else {
+                    return crate::error(&item.0, "expected #[elephantry(structure = \"\")]");
+                }
             // Parse #[elephantry(relation = "")]
             } else if item.0 == crate::symbol::RELATION {
-                param.relation = Some(item.1.unwrap().to_string());
+                if let Some(relation) = item.1 {
+                    param.relation = Some(relation);
+                } else {
+                    return crate::error(&item.0, "expected #[elephantry(relation = \"\")]");
+                }
             } else {
                 return crate::error(&item.0, "Unknow elephantry container attribute");
             }
@@ -59,12 +67,7 @@ impl Entity {
     }
 }
 
-fn get_lit(meta: &syn::meta::ParseNestedMeta) -> syn::Result<proc_macro2::TokenStream> {
-    let lit = get_lit_str(meta)?;
-    syn::parse_str(&lit)
-}
-
-fn get_lit_str(meta: &syn::meta::ParseNestedMeta) -> syn::Result<String> {
+fn get_lit(meta: &syn::meta::ParseNestedMeta) -> syn::Result<String> {
     let expr: syn::Expr = meta.value()?.parse()?;
     let mut value = &expr;
     while let syn::Expr::Group(e) = value {
@@ -118,10 +121,14 @@ impl Field {
             // Parse #[elephantry(virtual)] and #[elephantry(virtual = "")]
             } else if item.0 == crate::symbol::VIRTUAL {
                 param.r#virtual = true;
-                param.projection = item.1.map(|x| x.to_string());
+                param.projection = item.1;
             // Parse #[elephantry(column = "")]
             } else if item.0 == crate::symbol::COLUMN {
-                param.column = Some(item.1.unwrap().to_string());
+                if let Some(column) = item.1 {
+                    param.column = Some(column);
+                } else {
+                    return crate::error(&item.0, "expected #[elephantry(columun = \"\")]");
+                }
             } else {
                 return crate::error(&item.0, "Unknow elephantry field attribute");
             }
@@ -131,9 +138,7 @@ impl Field {
     }
 }
 
-fn flat_map(
-    attrs: &[syn::Attribute],
-) -> syn::Result<Vec<(syn::Path, Option<proc_macro2::TokenStream>)>> {
+fn flat_map(attrs: &[syn::Attribute]) -> syn::Result<Vec<(syn::Path, Option<String>)>> {
     let mut items = Vec::new();
 
     for attr in attrs {
@@ -143,9 +148,7 @@ fn flat_map(
     Ok(items)
 }
 
-fn meta_items(
-    attr: &syn::Attribute,
-) -> syn::Result<Vec<(syn::Path, Option<proc_macro2::TokenStream>)>> {
+fn meta_items(attr: &syn::Attribute) -> syn::Result<Vec<(syn::Path, Option<String>)>> {
     let mut items = Vec::new();
 
     if attr.path() != crate::symbol::ELEPHANTRY {

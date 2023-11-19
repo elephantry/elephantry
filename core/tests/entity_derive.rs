@@ -9,7 +9,7 @@ struct Event<T: elephantry::FromSql + elephantry::ToSql> {
     uuid: Option<String>,
     name: String,
     #[elephantry(default)]
-    visitor_id: i32,
+    visitor_id: Option<i32>,
     #[cfg(feature = "json")]
     properties: serde_json::Value,
     #[cfg(not(feature = "json"))]
