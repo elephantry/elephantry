@@ -10,6 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Impl `From<u64>` for `Interval`;
 - Impl `From<std::time::Duration>` for `Interval`;
+- `Projectable` trait;
+- The inspect feature.
+
+### Changed
+- Updates Rocket to 0.5;
+- Makes inspect::Column.ty private.
+
+### Removed
+- Remove inspect::Domain::constraint deprecated field;
+- Removes inspect::Relation::ty deprecated field.
 
 ## [3.3.0] - 2023-05-28
 
