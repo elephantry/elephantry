@@ -23,7 +23,7 @@ impl crate::ToSql for Type {
         types::TEXT
     }
 
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<String>> {
         self.name.to_text()
     }
 

@@ -7,7 +7,7 @@ impl crate::ToSql for serde_json::Value {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/json.c#L246
      */
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<String>> {
         self.to_string().to_text()
     }
 

@@ -7,14 +7,13 @@ impl crate::ToSql for xmltree::Element {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/xml.c#L336
      */
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<String>> {
         let mut vec = Vec::new();
 
         self.write(&mut vec)
             .map_err(|e| self.error(&e.to_string()))?;
-        vec.push(b'\0');
 
-        Ok(Some(vec))
+        Ok(Some(String::from_utf8(vec)?))
     }
 
     /*

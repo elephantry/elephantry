@@ -15,7 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Updates Rocket to 0.5;
-- Makes `inspect::Column.ty` private.
+- Makes `inspect::Column.ty` private;
+- `FromSql::to_sql` returns a String.
 
 ### Removed
 - Remove `inspect::Domain::constraint` deprecated field;

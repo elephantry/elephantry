@@ -86,22 +86,19 @@ where
     /*
      * https://github.com/postgres/postgres/blob/REL_14_0/src/backend/utils/adt/multirangetypes.c#L293
      */
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
-        let mut vec = vec![b'{'];
+    fn to_text(&self) -> crate::Result<Option<String>> {
+        let mut data = String::from("{");
 
         for range in &self.ranges {
-            let mut s = range.to_text()?.unwrap_or_default();
-            s.pop(); // removes \0
-            s.push(b',');
-
-            vec.extend_from_slice(&s);
+            let s = range.to_text()?.unwrap_or_default();
+            data.push_str(&s);
+            data.push(',');
         }
 
-        vec.pop(); // removes extra ','
-        vec.push(b'}');
-        vec.push(0);
+        data.pop(); // removes extra ','
+        data.push('}');
 
-        Ok(Some(vec))
+        Ok(Some(data))
     }
 
     /*

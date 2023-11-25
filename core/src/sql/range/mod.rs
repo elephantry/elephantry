@@ -10,7 +10,7 @@ macro_rules! impl_range {
                 Bounds::from(self).ty()
             }
 
-            fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+            fn to_text(&self) -> crate::Result<Option<String>> {
                 Bounds::from(self).to_text()
             }
 
@@ -47,7 +47,7 @@ impl<T: crate::ToSql> crate::ToSql for std::ops::RangeToInclusive<T> {
         Bounds::from(self).ty()
     }
 
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<String>> {
         Bounds::from(self).to_text()
     }
 
@@ -61,7 +61,7 @@ impl crate::ToSql for std::ops::RangeFull {
         crate::pq::types::UNKNOWN
     }
 
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<String>> {
         "(,)".to_text()
     }
 
@@ -89,7 +89,7 @@ impl<T: crate::ToSql> crate::ToSql for std::ops::RangeInclusive<T> {
         Bounds::from(self).ty()
     }
 
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<String>> {
         Bounds::from(self).to_text()
     }
 

@@ -7,7 +7,7 @@ impl crate::ToSql for macaddr::MacAddr8 {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/mac8.c#L242
      */
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<String>> {
         self.to_string().to_text()
     }
 

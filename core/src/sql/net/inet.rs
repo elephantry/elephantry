@@ -7,7 +7,7 @@ impl crate::ToSql for std::net::IpAddr {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/network.c#L14
      */
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<String>> {
         self.to_string().to_text()
     }
 

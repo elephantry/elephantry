@@ -88,7 +88,7 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::Tok
                 }
             }
 
-            fn to_text(&self) -> #elephantry::Result<::std::option::Option<::std::vec::Vec<u8>>> {
+            fn to_text(&self) -> #elephantry::Result<::std::option::Option<::std::string::String>> {
                 let mut vec = ::std::vec::Vec::new();
 
                 #(#to_vec_body; )*

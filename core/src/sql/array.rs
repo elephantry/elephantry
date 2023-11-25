@@ -247,12 +247,12 @@ impl<T: crate::ToSql> crate::ToSql for Array<T> {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/arrayfuncs.c#L172
      */
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<String>> {
         if self.data.is_empty() {
-            return Ok(Some(b"{}\0".to_vec()));
+            return "{}".to_text();
         }
 
-        let mut data = Vec::new();
+        let mut data = String::new();
 
         let need_dims = self
             .lower_bounds
@@ -262,59 +262,55 @@ impl<T: crate::ToSql> crate::ToSql for Array<T> {
         if need_dims {
             for (dim, lb) in self.dimensions.iter().zip(&self.lower_bounds) {
                 let hb = lb + dim - 1;
-                data.extend(format!("[{lb}:{hb}]").as_bytes());
+                data.push_str(&format!("[{lb}:{hb}]"));
             }
 
-            data.push(b'=');
+            data.push('=');
         }
 
-        data.push(b'{');
+        data.push('{');
 
         let mut indx = vec![0; self.ndim];
         let mut j = 0;
         let mut k = 0;
 
         'outer: loop {
-            data.resize(data.len() + self.ndim - 1 - j as usize, b'{');
+            data.push_str(&(0..self.ndim - 1 - j).map(|_| "{").collect::<String>());
 
             let element = &self.data[k];
 
-            let mut raw = element.to_text()?.map_or_else(
-                || b"null".to_vec(),
+            let raw = element.to_text()?.map_or_else(
+                || "null".to_string(),
                 |mut x| {
-                    x.pop(); // removes \0
-
-                    if element.ty().is_text() && x.eq_ignore_ascii_case(b"null") {
-                        x.insert(0, b'\'');
-                        x.push(b'\'');
+                    if element.ty().is_text() && x.eq_ignore_ascii_case("null") {
+                        x.insert(0, '\'');
+                        x.push('\'');
                     }
 
                     x
                 },
             );
 
-            data.append(&mut raw);
+            data.push_str(&raw);
             k += 1;
 
             for i in (0..self.ndim).rev() {
-                j = i as i32;
+                j = i;
                 indx[i] += 1;
 
                 if indx[i] < self.dimensions[i] {
-                    data.push(b',');
+                    data.push(',');
                     break;
                 }
 
                 indx[i] = 0;
-                data.push(b'}');
+                data.push('}');
 
                 if i == 0 {
                     break 'outer;
                 }
             }
         }
-
-        data.push(b'\0');
 
         Ok(Some(data))
     }
@@ -390,7 +386,7 @@ impl<T: crate::ToSql + Clone> crate::ToSql for Vec<T> {
         crate::pq::types::UNKNOWN
     }
 
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<String>> {
         crate::sql::Array::from(self).to_text()
     }
 
@@ -425,14 +421,14 @@ mod test {
     fn vec_to_text() {
         let vec = vec![1, 2, 3];
 
-        assert_eq!(vec.to_text().unwrap(), Some(b"{1,2,3}\0".to_vec()));
+        assert_eq!(vec.to_text().unwrap(), Some("{1,2,3}".to_string()));
     }
 
     #[test]
     fn empty_vec() {
         let vec = Vec::<String>::new();
 
-        assert_eq!(vec.to_text().unwrap(), Some(b"{}\0".to_vec()));
+        assert_eq!(vec.to_text().unwrap(), Some("{}".to_string()));
     }
 
     #[test]

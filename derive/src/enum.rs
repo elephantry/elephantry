@@ -69,8 +69,8 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::Tok
             /*
              * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/enum.c#L216
              */
-            fn to_text(&self) -> #elephantry::Result<::std::option::Option<Vec<u8>>> {
-                format!("{:?}", self).to_text()
+            fn to_text(&self) -> #elephantry::Result<::std::option::Option<String>> {
+                format!("{self:?}").to_text()
             }
 
             /*

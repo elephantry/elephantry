@@ -54,7 +54,7 @@ impl crate::ToSql for Lquery {
     /*
      * https://github.com/postgres/postgres/blob/REL_14_STABLE/contrib/ltree/ltree_io.c#L730
      */
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<String>> {
         self.to_string().to_text()
     }
 

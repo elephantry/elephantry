@@ -23,7 +23,7 @@ impl crate::ToSql for chrono::NaiveDate {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/date.c#L179
      */
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<String>> {
         self.format("%F").to_string().to_text()
     }
 

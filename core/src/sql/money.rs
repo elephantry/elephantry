@@ -14,7 +14,7 @@ impl crate::ToSql for Money {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/cash.c#L310
      */
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<String>> {
         self.to_string().to_text()
     }
 

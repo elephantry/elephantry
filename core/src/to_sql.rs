@@ -39,7 +39,7 @@ pub trait ToSql {
      * [adt](https://github.com/postgres/postgres/tree/REL_12_0/src/backend/utils/adt)
      * module source code, mainly `*_out` functions.
      */
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>>;
+    fn to_text(&self) -> crate::Result<Option<String>>;
 
     /**
      * Convert the value to binary format
@@ -78,7 +78,7 @@ macro_rules! number {
                 Ok(Some(buf))
             }
 
-            fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+            fn to_text(&self) -> crate::Result<Option<String>> {
                 self.to_string().to_text()
             }
         }
@@ -100,7 +100,7 @@ impl ToSql for u16 {
         (*self as i32).to_binary()
     }
 
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<String>> {
         (*self as i32).to_text()
     }
 }
@@ -114,7 +114,7 @@ impl ToSql for u32 {
         (*self as i64).to_binary()
     }
 
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<String>> {
         (*self as i64).to_text()
     }
 }
@@ -127,10 +127,10 @@ impl ToSql for bool {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/bool.c#L164
      */
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
-        let v = if *self { b"t\0" } else { b"f\0" };
+    fn to_text(&self) -> crate::Result<Option<String>> {
+        let data = if *self { "t" } else { "f" };
 
-        Ok(Some(v.to_vec()))
+        data.to_text()
     }
 
     /*
@@ -149,20 +149,15 @@ impl ToSql for &str {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varchar.c#L489
      */
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
-        let mut v = self.as_bytes().to_vec();
-        v.push(0);
-
-        Ok(Some(v))
+    fn to_text(&self) -> crate::Result<Option<String>> {
+        self.to_string().to_text()
     }
 
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varchar.c#L522
      */
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
-        let v = self.as_bytes().to_vec();
-
-        Ok(Some(v))
+        self.to_string().to_binary()
     }
 }
 
@@ -174,7 +169,7 @@ impl ToSql for char {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/char.c#L33
      */
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<String>> {
         self.to_string().to_text()
     }
 
@@ -191,12 +186,12 @@ impl ToSql for String {
         crate::pq::types::TEXT
     }
 
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
-        self.as_str().to_text()
+    fn to_text(&self) -> crate::Result<Option<String>> {
+        Ok(Some(self.clone()))
     }
 
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
-        self.as_str().to_binary()
+        Ok(Some(self.clone().into_bytes()))
     }
 }
 
@@ -208,7 +203,7 @@ impl<T: ToSql> ToSql for Option<T> {
         }
     }
 
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<String>> {
         match self {
             Some(data) => T::to_text(data),
             None => Ok(None),
@@ -228,7 +223,7 @@ impl ToSql for () {
         crate::pq::types::UNKNOWN
     }
 
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<String>> {
         Ok(None)
     }
 

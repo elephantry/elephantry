@@ -141,7 +141,10 @@ impl Connection {
 
         for param in params.iter() {
             param_types.push(param.ty().oid);
-            param_values.push(param.to_text()?);
+            param_values.push(param.to_text()?.map(|mut x| {
+                x.push('\0');
+                x.into_bytes()
+            }));
         }
 
         self.connection

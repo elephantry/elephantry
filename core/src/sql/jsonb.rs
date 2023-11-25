@@ -34,7 +34,7 @@ impl crate::ToSql for Jsonb {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/jsonb.c#L132
      */
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<String>> {
         self.0.to_text()
     }
 

@@ -155,30 +155,28 @@ impl<'a, T: crate::ToSql> crate::ToSql for Bounds<&'a T> {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/rangetypes.c#L123
      */
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
-        let mut vec = Vec::new();
+    fn to_text(&self) -> crate::Result<Option<String>> {
+        let mut data = String::new();
 
         let start_char = match self.start {
-            Included(_) => b'[',
-            _ => b'(',
+            Included(_) => '[',
+            _ => '(',
         };
-        vec.push(start_char);
+        data.push(start_char);
 
-        bound_to_text(&mut vec, &self.start)?;
+        bound_to_text(&mut data, &self.start)?;
 
-        vec.push(b',');
+        data.push(',');
 
-        bound_to_text(&mut vec, &self.end)?;
+        bound_to_text(&mut data, &self.end)?;
 
         let end_char = match self.end {
-            Included(_) => b']',
-            _ => b')',
+            Included(_) => ']',
+            _ => ')',
         };
-        vec.push(end_char);
+        data.push(end_char);
 
-        vec.push(b'\0');
-
-        Ok(Some(vec))
+        Ok(Some(data))
     }
 
     /*
@@ -224,11 +222,10 @@ macro_rules! bound {
     }};
 }
 
-fn bound_to_text<T: crate::ToSql>(buf: &mut Vec<u8>, bound: &Bound<&T>) -> crate::Result<()> {
+fn bound_to_text<T: crate::ToSql>(buf: &mut String, bound: &Bound<&T>) -> crate::Result<()> {
     if !matches!(bound, Unbounded) {
-        let mut b = bound!(bound, to_text);
-        b.pop(); // removes \0
-        buf.append(&mut b);
+        let b = bound!(bound, to_text);
+        buf.push_str(&b);
     }
 
     Ok(())

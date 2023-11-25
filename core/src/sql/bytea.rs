@@ -27,11 +27,10 @@ impl crate::ToSql for Bytea {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varlena.c#L277
      */
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
-        let mut v = self.0.clone();
-        v.push(0);
+    fn to_text(&self) -> crate::Result<Option<String>> {
+        let data = String::from_utf8(self.0.clone())?;
 
-        Ok(Some(v))
+        Ok(Some(data))
     }
 
     /*

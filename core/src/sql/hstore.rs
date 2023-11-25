@@ -58,7 +58,7 @@ impl crate::ToSql for crate::Hstore {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/contrib/hstore/hstore_io.c#L407
      */
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<String>> {
         let mut vec = Vec::new();
 
         for (key, value) in self.iter() {
@@ -81,15 +81,13 @@ impl crate::ToSql for crate::Hstore {
         crate::to_sql::write_i32(&mut buf, self.len() as i32)?;
 
         for (key, value) in self.iter() {
-            let mut k = key.to_text()?.unwrap();
-            k.pop();
+            let k = key.to_text()?.unwrap();
             crate::to_sql::write_i32(&mut buf, k.len() as i32)?;
-            buf.append(&mut k);
+            buf.append(&mut k.into_bytes());
 
-            if let Some(mut v) = value.to_text()? {
-                v.pop();
+            if let Some(v) = value.to_text()? {
                 crate::to_sql::write_i32(&mut buf, v.len() as i32)?;
-                buf.append(&mut v);
+                buf.append(&mut v.into_bytes());
             } else {
                 crate::to_sql::write_i32(&mut buf, -1)?;
             }

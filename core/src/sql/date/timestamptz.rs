@@ -7,7 +7,7 @@ impl crate::ToSql for chrono::DateTime<chrono::Utc> {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/timestamp.c#L756
      */
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<String>> {
         self.format("%F %T%z").to_string().to_text()
     }
 
@@ -48,7 +48,7 @@ impl crate::ToSql for chrono::DateTime<chrono::offset::FixedOffset> {
         crate::pq::types::TIMESTAMPTZ
     }
 
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<String>> {
         self.format("%F %T%z").to_string().to_text()
     }
 
@@ -82,7 +82,7 @@ impl crate::ToSql for chrono::DateTime<chrono::offset::Local> {
         crate::pq::types::TIMESTAMPTZ
     }
 
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<String>> {
         self.format("%F %T").to_string().to_text()
     }
 

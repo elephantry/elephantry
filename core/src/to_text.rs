@@ -15,7 +15,7 @@ impl<T: ToText> crate::ToSql for T {
         crate::pq::types::TEXT
     }
 
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<String>> {
         ToText::to_text(self).and_then(|x| x.to_text())
     }
 

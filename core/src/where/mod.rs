@@ -264,9 +264,9 @@ mod test {
                 .map(|x| x.to_text().unwrap())
                 .collect::<Vec<_>>(),
             vec![
-                Some(vec![b'1', 0]),
-                Some(vec![b'2', 0]),
-                Some(vec![b'3', 0])
+                Some("1".to_string()),
+                Some("2".to_string()),
+                Some("3".to_string())
             ],
         );
     }
@@ -286,10 +286,10 @@ mod test {
                 .map(|x| x.to_text().unwrap())
                 .collect::<Vec<_>>(),
             vec![
-                Some(vec![b'1', 0]),
-                Some(vec![b'2', 0]),
-                Some(vec![b'3', 0]),
-                Some(vec![b'4', 0])
+                Some("1".to_string()),
+                Some("2".to_string()),
+                Some("3".to_string()),
+                Some("4".to_string())
             ],
         );
     }

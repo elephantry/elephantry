@@ -7,7 +7,7 @@ impl crate::ToSql for u8 {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L146
      */
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<String>> {
         let bytes = bit_vec::BitVec::from_bytes(&[self.reverse_bits()]);
 
         bytes.to_text()
@@ -62,7 +62,7 @@ impl<const N: usize> crate::ToSql for [u8; N] {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L146
      */
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<String>> {
         let bytes = bit_vec::BitVec::from_bytes(self);
 
         bytes.to_text()
@@ -119,7 +119,7 @@ impl crate::ToSql for bit_vec::BitVec {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L451
      */
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<String>> {
         format!("b{self:?}").to_text()
     }
 

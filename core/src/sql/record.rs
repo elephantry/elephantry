@@ -2,20 +2,19 @@
  * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/rowtypes.c#L74
  */
 #[doc(hidden)]
-pub fn vec_to_text(vec: &[&dyn crate::ToSql]) -> crate::Result<Option<Vec<u8>>> {
-    let mut data = b"(".to_vec();
+pub fn vec_to_text(vec: &[&dyn crate::ToSql]) -> crate::Result<Option<String>> {
+    let mut data = String::from("(");
 
     for field in vec {
-        if let Some(mut value) = field.to_text()? {
-            value.pop();
-            data.append(&mut value);
+        if let Some(value) = field.to_text()? {
+            data.push_str(&value);
         }
-        data.push(b',');
+        data.push(',');
     }
 
     data.pop();
 
-    data.extend_from_slice(b")\0");
+    data.push(')');
 
     Ok(Some(data))
 }
@@ -121,7 +120,7 @@ macro_rules! tuple_impls {
                     crate::pq::types::RECORD
                 }
 
-                fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+                fn to_text(&self) -> crate::Result<Option<String>> {
                     let vec = vec![$(&self.$idx as &dyn crate::ToSql),+];
 
                     vec_to_text(&vec)

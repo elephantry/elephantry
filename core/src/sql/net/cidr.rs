@@ -7,7 +7,7 @@ impl crate::ToSql for ipnetwork::IpNetwork {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/network.c#L104
      */
-    fn to_text(&self) -> crate::Result<Option<Vec<u8>>> {
+    fn to_text(&self) -> crate::Result<Option<String>> {
         self.to_string().to_text()
     }
 
