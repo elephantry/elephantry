@@ -93,24 +93,15 @@ impl<'c> Async<'c> {
         query: &str,
         params: &[&dyn crate::ToSql],
     ) -> crate::Result<crate::pq::Result> {
-        let mut param_types = Vec::new();
-        let mut param_values = Vec::new();
-
-        for param in params.iter() {
-            param_types.push(param.ty().oid);
-            param_values.push(param.to_text()?.map(|mut x| {
-                x.push('\0');
-                x.into_bytes()
-            }));
-        }
+        let param = crate::Connection::transform_params(params)?;
 
         self.connection
             .lock()
             .map_err(|e| crate::Error::Mutex(e.to_string()))?
             .send_query_params(
                 query,
-                &param_types,
-                &param_values,
+                &param.types,
+                &param.values,
                 &[],
                 crate::pq::Format::Binary,
             )

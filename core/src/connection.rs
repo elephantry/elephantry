@@ -2,6 +2,12 @@ use crate::Projectable;
 use crate::Structure;
 use std::collections::HashMap;
 
+#[derive(Default)]
+pub(crate) struct Param {
+    pub types: Vec<u32>,
+    pub values: Vec<Option<Vec<u8>>>,
+}
+
 /**
  * Result type of [`ping`] function.
  *
@@ -136,28 +142,33 @@ impl Connection {
         query: &str,
         params: &[&dyn crate::ToSql],
     ) -> crate::Result<crate::pq::Result> {
-        let mut param_types = Vec::new();
-        let mut param_values = Vec::new();
-
-        for param in params.iter() {
-            param_types.push(param.ty().oid);
-            param_values.push(param.to_text()?.map(|mut x| {
-                x.push('\0');
-                x.into_bytes()
-            }));
-        }
+        let param = Self::transform_params(params)?;
 
         self.connection
             .lock()
             .map_err(|e| crate::Error::Mutex(e.to_string()))?
             .exec_params(
                 &Self::order_parameters(query),
-                &param_types,
-                &param_values,
+                &param.types,
+                &param.values,
                 &[],
                 crate::pq::Format::Binary,
             )
             .try_into()
+    }
+
+    pub(crate) fn transform_params(params: &[&dyn crate::ToSql]) -> crate::Result<Param> {
+        let mut p = Param::default();
+
+        for param in params.iter() {
+            p.types.push(param.ty().oid);
+            p.values.push(param.to_text()?.map(|mut x| {
+                x.push('\0');
+                x.into_bytes()
+            }));
+        }
+
+        Ok(p)
     }
 
     fn order_parameters(query: &str) -> std::borrow::Cow<'_, str> {
