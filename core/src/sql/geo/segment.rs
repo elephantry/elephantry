@@ -9,9 +9,7 @@ pub struct Segment(geo_types::Line<f64>);
 impl Segment {
     #[must_use]
     pub fn new(start: &crate::Coordinate, end: &crate::Coordinate) -> Self {
-        use std::ops::Deref;
-
-        Self(geo_types::Line::new(*start.deref(), *end.deref()))
+        Self(geo_types::Line::new(**start, **end))
     }
 }
 

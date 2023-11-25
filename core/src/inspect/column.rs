@@ -43,14 +43,14 @@ pub fn relation(
 ) -> crate::Result<Vec<crate::inspect::Column>> {
     let oid = connection
         .query_one::<i32>(
-            r#"
+            "
 select c.oid as oid
     from
         pg_catalog.pg_class c
             left join pg_catalog.pg_namespace n on n.oid = c.relnamespace
     where n.nspname = $1
         and c.relname = $2
-    "#,
+    ",
             &[&schema, &relation],
         )
         .map_err(|_| crate::Error::Inspect(format!("Unknow relation {schema}.{relation}")))?;

@@ -83,7 +83,7 @@ fn get_lit(meta: &syn::meta::ParseNestedMeta) -> syn::Result<String> {
         if !suffix.is_empty() {
             return crate::error(
                 &meta.path,
-                &format!("unexpected suffix `{}` on string literal", suffix),
+                &format!("unexpected suffix `{suffix}` on string literal"),
             );
         }
         Ok(lit.value())

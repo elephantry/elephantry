@@ -9,10 +9,8 @@ pub struct Path(geo_types::LineString<f64>);
 impl Path {
     #[must_use]
     pub fn new(coordinates: &crate::Coordinates) -> Self {
-        use std::ops::Deref;
-
         Self(geo_types::LineString(
-            coordinates.iter().map(|x| *x.deref()).collect(),
+            coordinates.iter().map(|x| **x).collect(),
         ))
     }
 }

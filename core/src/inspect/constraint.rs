@@ -57,12 +57,12 @@ pub fn constraints(
 ) -> crate::Result<Vec<Constraint>> {
     connection
         .query(
-            r#"
+            "
 select oid, contype as ty, conname as name, pg_get_constraintdef(oid) as definition
     from pg_catalog.pg_constraint
     where contypid = $1
         or conrelid = $1;
-"#,
+",
             &[&oid],
         )
         .map(Iterator::collect)

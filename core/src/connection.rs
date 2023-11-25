@@ -160,7 +160,7 @@ impl Connection {
     pub(crate) fn transform_params(params: &[&dyn crate::ToSql]) -> crate::Result<Param> {
         let mut p = Param::default();
 
-        for param in params.iter() {
+        for param in params {
             p.types.push(param.ty().oid);
             p.values.push(param.to_text()?.map(|mut x| {
                 x.push('\0');
@@ -429,7 +429,7 @@ impl Connection {
         let mut set = Vec::new();
         let projection = M::default_projection();
 
-        for (key, value) in data.iter() {
+        for (key, value) in data {
             if projection.has_field(key) {
                 set.push(format!("{key} = ${x}"));
                 params.push(*value);

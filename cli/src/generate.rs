@@ -35,7 +35,7 @@ pub fn relation(
 
     for column in &columns {
         let name = name_to_rust(column);
-        let ty = ty_to_rust(column)?;
+        let ty = ty_to_rust(column);
 
         if column.is_primary {
             fields.push("    #[elephantry(pk)]".to_string());
@@ -90,7 +90,7 @@ where
 
     for column in &columns {
         let name = name_to_rust(column);
-        let ty = ty_to_rust(column)?;
+        let ty = ty_to_rust(column);
 
         fields.push(format!("    pub {name}: {ty},"));
     }
@@ -200,7 +200,7 @@ pub struct {name} {{
     Ok(())
 }
 
-fn ty_to_rust(column: &elephantry::inspect::Column) -> crate::Result<String> {
+fn ty_to_rust(column: &elephantry::inspect::Column) -> String {
     let mut rty = match elephantry::pq::Type::try_from(column.oid) {
         Ok(elephantry::pq::types::BIT) => match column.len {
             Some(1) => "u8".to_string(),
@@ -221,7 +221,7 @@ fn ty_to_rust(column: &elephantry::inspect::Column) -> crate::Result<String> {
         rty = format!("Option<{rty}>");
     }
 
-    Ok(rty)
+    rty
 }
 
 fn name_to_rust(column: &elephantry::inspect::Column) -> String {

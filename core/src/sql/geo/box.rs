@@ -9,9 +9,7 @@ pub struct Box(geo_types::Rect<f64>);
 impl Box {
     #[must_use]
     pub fn new(start: &crate::Point, end: &crate::Point) -> Self {
-        use std::ops::Deref;
-
-        Self(geo_types::Rect::new(*start.deref(), *end.deref()))
+        Self(geo_types::Rect::new(**start, **end))
     }
 }
 

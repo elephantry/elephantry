@@ -164,13 +164,13 @@ impl crate::FromText for Type {
 pub(crate) fn schema_oid(connection: &crate::Connection, name: &str) -> crate::Result<i32> {
     connection
         .query_one::<i32>(
-            r#"
+            "
 select
     s.oid as oid
 from
     pg_catalog.pg_namespace s
 where s.nspname = $*
-    "#,
+    ",
             &[&name],
         )
         .map_err(|_| crate::Error::Inspect(format!("Unknow schema {name}")))

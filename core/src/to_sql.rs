@@ -97,11 +97,11 @@ impl ToSql for u16 {
     }
 
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
-        (*self as i32).to_binary()
+        i32::from(*self).to_binary()
     }
 
     fn to_text(&self) -> crate::Result<Option<String>> {
-        (*self as i32).to_text()
+        i32::from(*self).to_text()
     }
 }
 
@@ -111,11 +111,11 @@ impl ToSql for u32 {
     }
 
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
-        (*self as i64).to_binary()
+        i64::from(*self).to_binary()
     }
 
     fn to_text(&self) -> crate::Result<Option<String>> {
-        (*self as i64).to_text()
+        i64::from(*self).to_text()
     }
 }
 
@@ -137,7 +137,7 @@ impl ToSql for bool {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/bool.c#L181
      */
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
-        Ok(Some(vec![*self as u8]))
+        Ok(Some(vec![u8::from(*self)]))
     }
 }
 
@@ -150,14 +150,14 @@ impl ToSql for &str {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varchar.c#L489
      */
     fn to_text(&self) -> crate::Result<Option<String>> {
-        self.to_string().to_text()
+        (*self).to_string().to_text()
     }
 
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varchar.c#L522
      */
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
-        self.to_string().to_binary()
+        (*self).to_string().to_binary()
     }
 }
 
