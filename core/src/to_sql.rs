@@ -50,11 +50,6 @@ pub trait ToSql {
      */
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>>;
 
-    /** Prefered default format */
-    fn format(&self) -> crate::pq::Format {
-        crate::pq::Format::Text
-    }
-
     fn error(&self, message: &str) -> crate::Error {
         crate::Error::ToSql {
             pg_type: self.ty(),
