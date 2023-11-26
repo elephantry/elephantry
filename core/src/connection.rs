@@ -6,6 +6,7 @@ use std::collections::HashMap;
 pub(crate) struct Param {
     pub types: Vec<u32>,
     pub values: Vec<Option<Vec<u8>>>,
+    pub formats: Vec<crate::pq::Format>,
 }
 
 /**
@@ -151,7 +152,7 @@ impl Connection {
                 &Self::order_parameters(query),
                 &param.types,
                 &param.values,
-                &[],
+                &param.formats,
                 crate::pq::Format::Binary,
             )
             .try_into()
@@ -166,6 +167,7 @@ impl Connection {
                 x.push('\0');
                 x.into_bytes()
             }));
+            p.formats.push(crate::pq::Format::Text);
         }
 
         Ok(p)
