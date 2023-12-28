@@ -34,11 +34,7 @@ mod xml;
 
 #[cfg(feature = "time")]
 pub use self::time::*;
-#[cfg(feature = "uuid")]
-pub use self::uuid::*;
 pub use array::*;
-#[cfg(feature = "bit")]
-pub use bit::*;
 pub use bytea::*;
 #[cfg(feature = "date")]
 pub use date::*;
@@ -53,5 +49,3 @@ pub use ltree::*;
 pub use money::*;
 #[cfg(feature = "multirange")]
 pub use multirange::*;
-#[cfg(feature = "net")]
-pub use net::*;
