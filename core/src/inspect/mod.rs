@@ -4,6 +4,7 @@ mod column;
 mod extension;
 mod relation;
 mod schema;
+mod trigger;
 mod types;
 
 pub use column::*;
@@ -11,6 +12,7 @@ pub use constraint::{constraints, indexes, Constraint, Index};
 pub use extension::*;
 pub use relation::*;
 pub use schema::*;
+pub use trigger::*;
 pub use types::*;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
