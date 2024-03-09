@@ -68,6 +68,7 @@ pub mod pq;
 #[cfg_attr(docsrs, doc(cfg(feature = "r2d2")))]
 pub mod r2d2;
 #[cfg(feature = "rocket")]
+#[cfg_attr(docsrs, doc(cfg(feature = "rocket")))]
 #[doc(hidden)]
 pub mod rocket;
 pub mod transaction;
