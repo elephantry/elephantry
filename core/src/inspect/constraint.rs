@@ -71,6 +71,7 @@ select oid, contype as ty, conname as name, pg_get_constraintdef(oid) as definit
 #[derive(Clone, Debug, Eq, PartialEq, elephantry_derive::Entity, elephantry_derive::Composite)]
 #[elephantry(internal)]
 pub struct Index {
+    pub oid: crate::pq::Oid,
     pub name: String,
     pub definition: String,
 }
@@ -85,12 +86,14 @@ pub fn indexes(
     connection
         .query(
             r#"
-select indexname as "name", indexdef as "definition"
-    from pg_catalog.pg_indexes
-    where schemaname = $*
-        and tablename = $*;
+select i.indexrelid as oid, c.relname as name, pg_get_indexdef(c.oid) as definition
+    from pg_index i
+    join pg_class c on c.oid = i.indexrelid
+    left join pg_constraint x on x.conindid = c.oid
+    where i.indrelid = $1
+        and x.oid is null;
 "#,
-            &[&relation.schema, &relation.name],
+            &[&relation.oid],
         )
         .map(Iterator::collect)
 }
