@@ -75,7 +75,7 @@ where
     fn ty(&self) -> crate::pq::Type {
         use crate::pq::ToArray;
 
-        let range = match self.ranges.get(0) {
+        let range = match self.ranges.first() {
             Some(range) => range,
             None => return crate::pq::types::UNKNOWN,
         };
