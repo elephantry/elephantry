@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 ### Added
+- `inspect::functions` function;
+- `inspect::triggers` function;
 - Impl `From<u64>` for `Interval`;
 - Impl `From<std::time::Duration>` for `Interval`;
 - `Projectable` trait;
@@ -16,12 +18,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Updates Rocket to 0.5;
 - Makes `inspect::Column.ty` private;
-- `FromSql::to_sql` returns a String.
+- `ToSql::to_text` returns a String.
 
 ### Removed
 - Remove `inspect::Domain::constraint` deprecated field;
 - Removes `inspect::Relation::ty` deprecated field;
-- Removes `ToSql::to_sql` function.
+- Removes `ToSql::to_sql` function;
+- Removes `ToSql::format` function.
 
 ## [3.3.0] - 2023-05-28
 
