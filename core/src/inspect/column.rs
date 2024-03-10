@@ -63,11 +63,11 @@ select
     att.attname as "name",
     typ.oid as "oid",
     case
-      when att.attlen < 0 and att.atttypmod > 0 then format('%s(%s)', typ.typname, att.atttypmod - 4)
+      when att.attlen < 0 and att.atttypmod > 0 then format('%s(%s)', typ.typname, catt.len)
       when name.nspname != 'pg_catalog' then format('%s.%s', name.nspname, typ.typname)
       else typ.typname
     end as "ty",
-    nullif(att.atttypmod, -1) as "len",
+    catt.len as "len",
     pg_catalog.pg_get_expr(def.adbin, def.adrelid) as "default",
     att.attnotnull as "is_notnull",
     dsc.description as "comment"
@@ -79,7 +79,15 @@ from
     left join pg_catalog.pg_description dsc on cla.oid = dsc.objoid and att.attnum = dsc.objsubid
     left join pg_catalog.pg_attrdef def     on att.attrelid = def.adrelid and att.attnum = def.adnum
     left join pg_catalog.pg_index ind       on cla.oid = ind.indrelid and ind.indisprimary
-    left join pg_catalog.pg_namespace name  on typ.typnamespace = name.oid
+    left join pg_catalog.pg_namespace name  on typ.typnamespace = name.oid,
+    lateral (
+        select
+            case
+                when atttypmod = -1 then null
+                when atttypid in ($*, $*) then atttypmod - 4
+                else atttypmod
+            end
+        ) as catt("len")
 where
     att.attnum > 0
     and not att.attisdropped
@@ -87,7 +95,11 @@ where
 order by
     att.attnum
 "#,
-            &[&oid],
+            &[
+                &crate::pq::types::BPCHAR.oid,
+                &crate::pq::types::VARCHAR.oid,
+                &oid,
+            ],
         )
         .map(Iterator::collect)
 }
