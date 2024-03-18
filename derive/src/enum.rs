@@ -62,7 +62,7 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::Tok
                     oid: 0,
                     descr: stringify!(#name),
                     name: stringify!(#name),
-                    kind: libpq::types::Kind::Enum,
+                    kind: #elephantry::pq::types::Kind::Enum,
                 }
             }
 

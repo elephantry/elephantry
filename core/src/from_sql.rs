@@ -1,7 +1,8 @@
 use byteorder::ReadBytesExt;
 
+#[doc(hidden)]
 #[inline]
-pub(crate) fn not_null<T>(raw: Option<T>) -> crate::Result<T> {
+pub fn not_null<T>(raw: Option<T>) -> crate::Result<T> {
     raw.ok_or(crate::Error::NotNull)
 }
 
