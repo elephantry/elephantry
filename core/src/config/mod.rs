@@ -1,10 +1,18 @@
 mod channel_binding;
 mod gssencmode;
+#[cfg(feature = "v16")]
+mod load_balance_hosts;
+#[cfg(feature = "v16")]
+mod sslcertmode;
 mod sslmode;
 mod target_session_attrs;
 
 pub use channel_binding::*;
 pub use gssencmode::*;
+#[cfg(feature = "v16")]
+pub use load_balance_hosts::*;
+#[cfg(feature = "v16")]
+pub use sslcertmode::*;
 pub use sslmode::*;
 pub use target_session_attrs::*;
 
@@ -15,6 +23,7 @@ pub use target_session_attrs::*;
  */
 #[derive(Clone, Debug, Default)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[non_exhaustive]
 pub struct Config {
     pub application_name: Option<String>,
     pub channel_binding: Option<ChannelBinding>,
@@ -31,14 +40,20 @@ pub struct Config {
     pub keepalives_interval: Option<i32>,
     pub keepalives: Option<bool>,
     pub krbsrvname: Option<String>,
+    #[cfg(feature = "v16")]
+    pub load_balance_hosts: Option<LoadBalanceHosts>,
     pub options: Option<String>,
     pub passfile: Option<String>,
     pub password: Option<String>,
     pub port: Option<String>,
     pub replication: Option<String>,
     pub requirepeer: Option<String>,
+    #[cfg(feature = "v16")]
+    pub require_auth: Option<String>,
     pub service: Option<String>,
     pub sslcert: Option<String>,
+    #[cfg(feature = "v16")]
+    pub sslcertmode: Option<SslCertMode>,
     pub sslcompression: Option<bool>,
     pub sslcrl: Option<String>,
     pub sslkey: Option<String>,
@@ -84,14 +99,20 @@ impl std::fmt::Display for Config {
         display!(f, self.keepalives_interval);
         display!(f, self.keepalives);
         display!(f, self.krbsrvname);
+        #[cfg(feature = "v16")]
+        display!(f, self.load_balance_hosts);
         display!(f, self.options);
         display!(f, self.passfile);
         display!(f, self.password);
         display!(f, self.port);
         display!(f, self.replication);
         display!(f, self.requirepeer);
+        #[cfg(feature = "v16")]
+        display!(f, self.require_auth);
         display!(f, self.service);
         display!(f, self.sslcert);
+        #[cfg(feature = "v16")]
+        display!(f, self.sslcertmode);
         display!(f, self.sslcompression);
         display!(f, self.sslcrl);
         display!(f, self.sslkey);
