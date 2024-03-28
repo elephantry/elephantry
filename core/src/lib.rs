@@ -43,7 +43,7 @@
  * | `record`                    | `tuple`                  |            |
  * | `smallint`/`int2`           | `i16`                    |            |
  * | `text`                      | `String`                 |            |
- * | `time`                      | `elephantry::Time`       | time       |
+ * | `time`                      | `chrono::NaiveTime`      | time       |
  * | `timetz`                    | `elephantry::TimeTz`     | time       |
  * | `timestamp`                 | `chrono::NaiveDateTime`  | date       |
  * | `timestamptz`               | `chrono::DateTime`       | date       |
