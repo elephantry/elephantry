@@ -1,20 +1,12 @@
 /**
  * Rust type for
- * [time](https://www.postgresql.org/docs/current/datatype-datetime.html).
- */
-#[cfg_attr(docsrs, doc(cfg(feature = "time")))]
-pub use time::Time;
-#[cfg_attr(docsrs, doc(cfg(feature = "time")))]
-pub use time::UtcOffset as Timezone;
-/**
- * Rust type for
  * [timetz](https://www.postgresql.org/docs/current/datatype-datetime.html).
  */
 #[cfg_attr(docsrs, doc(cfg(feature = "time")))]
-pub type TimeTz = (Time, Timezone);
+pub type TimeTz = (chrono::NaiveTime, chrono::FixedOffset);
 
 #[cfg_attr(docsrs, doc(cfg(feature = "time")))]
-impl crate::ToSql for Time {
+impl crate::ToSql for chrono::NaiveTime {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::TIME
     }
@@ -30,11 +22,12 @@ impl crate::ToSql for Time {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/date.c#L1281
      */
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
+        use chrono::Timelike;
+
         let usecs = self.hour() as i64 * 60 * 60 * 1_000_000
             + self.minute() as i64 * 60 * 1_000_000
             + self.second() as i64 * 1_000_000
-            + self.millisecond() as i64 * 1_000
-            + self.microsecond() as i64;
+            + self.nanosecond() as i64 / 1_000;
 
         let mut buf = Vec::new();
         crate::to_sql::write_i64(&mut buf, usecs)?;
@@ -44,13 +37,12 @@ impl crate::ToSql for Time {
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "time")))]
-impl crate::FromSql for Time {
+impl crate::FromSql for chrono::NaiveTime {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/date.c#L1170
      */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        let format = time::macros::format_description!("[hour]:[minute]:[second]");
-        Time::parse(crate::not_null(raw)?, &format).map_err(|_| Self::error(ty, raw))
+        Self::parse_from_str(crate::not_null(raw)?, "%H:%M:%S").map_err(|_| Self::error(ty, raw))
     }
 
     /*
@@ -59,12 +51,12 @@ impl crate::FromSql for Time {
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         let usec = i64::from_binary(ty, raw)?;
 
-        Ok(Time::MIDNIGHT + time::Duration::microseconds(usec))
+        Ok(Self::MIN + std::time::Duration::from_micros(usec as u64))
     }
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "time")))]
-impl crate::entity::Simple for Time {}
+impl crate::entity::Simple for chrono::NaiveTime {}
 
 #[cfg_attr(docsrs, doc(cfg(feature = "time")))]
 impl crate::ToSql for TimeTz {
@@ -85,7 +77,7 @@ impl crate::ToSql for TimeTz {
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
         let mut buf = self.0.to_binary()?.unwrap();
 
-        crate::to_sql::write_i32(&mut buf, -self.1.whole_seconds())?;
+        crate::to_sql::write_i32(&mut buf, self.1.utc_minus_local())?;
 
         Ok(Some(buf))
     }
@@ -104,17 +96,16 @@ impl crate::FromSql for TimeTz {
             None => return Err(Self::error(ty, raw)),
         };
 
-        let format = time::macros::format_description!("[hour]:[minute]:[second]");
-        let time = Time::parse(&value[0..x], &format).map_err(|_| Self::error(ty, raw))?;
+        let time = chrono::NaiveTime::parse_from_str(&value[0..x], "%H:%M:%S")
+            .map_err(|_| Self::error(ty, raw))?;
 
-        let mut tz = value[x..].replace(':', "");
+        let mut tz = value[x..].to_string();
 
         if tz.len() == 3 {
             tz.push_str("00");
         }
 
-        let format = time::macros::format_description!("[offset_hour][offset_minute]");
-        let timezone = Timezone::parse(&tz, &format).map_err(|_| Self::error(ty, raw))?;
+        let timezone = std::str::FromStr::from_str(&tz).map_err(|_| Self::error(ty, raw))?;
 
         Ok((time, timezone))
     }
@@ -128,8 +119,8 @@ impl crate::FromSql for TimeTz {
         let zone = crate::from_sql::read_i32(&mut buf)?;
 
         Ok((
-            Time::MIDNIGHT + time::Duration::microseconds(time),
-            Timezone::from_whole_seconds(-zone).map_err(|_| Self::error(ty, raw))?,
+            chrono::NaiveTime::MIN + std::time::Duration::from_micros(time as u64),
+            chrono::FixedOffset::west_opt(zone).ok_or_else(|| Self::error(ty, raw))?,
         ))
     }
 }
@@ -141,10 +132,13 @@ impl crate::entity::Simple for TimeTz {}
 mod test {
     crate::sql_test!(
         time,
-        crate::Time,
+        chrono::NaiveTime,
         [
-            ("'00:00:00'", crate::Time::MIDNIGHT),
-            ("'01:02:03'", time::macros::time!(01:02:03)),
+            ("'00:00:00'", chrono::NaiveTime::MIN),
+            (
+                "'01:02:03'",
+                chrono::NaiveTime::from_hms_opt(1, 2, 3).unwrap()
+            ),
         ]
     );
 
@@ -154,11 +148,17 @@ mod test {
         [
             (
                 "'00:00:00+0000'",
-                (crate::Time::MIDNIGHT, crate::Timezone::UTC)
+                (
+                    chrono::NaiveTime::MIN,
+                    chrono::FixedOffset::east_opt(0).unwrap()
+                )
             ),
             (
                 "'01:02:03+0200'",
-                (time::macros::time!(01:02:03), time::macros::offset!(+2))
+                (
+                    chrono::NaiveTime::from_hms_opt(1, 2, 3).unwrap(),
+                    chrono::FixedOffset::east_opt(2 * 60 * 60).unwrap()
+                )
             ),
         ]
     );

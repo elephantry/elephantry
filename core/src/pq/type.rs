@@ -190,18 +190,30 @@ lazy_static::lazy_static! {
 
         types.insert(
             types::TIME.name,
+            #[cfg(feature = "time")]
+            t::<chrono::NaiveTime>(),
+            #[cfg(not(feature = "time"))]
             "chrono::NaiveTime",
         );
         types.insert(
             types::TIMETZ.name,
-            "chrono::TimeTz",
+            #[cfg(feature = "time")]
+            t::<crate::TimeTz>(),
+            #[cfg(not(feature = "time"))]
+            "elephantry::TimeTz",
         );
         types.insert(
             types::TIMESTAMP.name,
+            #[cfg(feature = "time")]
+            t::<chrono::NaiveDateTime>(),
+            #[cfg(not(feature = "time"))]
             "chrono::NaiveDateTime",
         );
         types.insert(
             types::TIMESTAMPTZ.name,
+            #[cfg(feature = "time")]
+            t::<chrono::DateTime<chrono::FixedOffset>>(),
+            #[cfg(not(feature = "time"))]
             "chrono::DateTime<chrono::FixedOffset>",
         );
 

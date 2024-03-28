@@ -102,7 +102,7 @@ pub(crate) fn check_type(ty: &syn::Type) -> syn::Result<()> {
         ("net", "macaddr::MacAddr8"),
         ("net", "std::net::IpAddr"),
         ("numeric", "bigdecimal::BigDecimal"),
-        ("time", "elephantry::Time"),
+        ("time", "chrono::NaiveTime"),
         ("time", "elephantry::TimeTz"),
         ("uuid", "uuid::Uuid"),
         ("xml", "xmltree::Element"),

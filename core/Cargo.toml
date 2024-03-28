@@ -88,11 +88,6 @@ features = ["derive"]
 version = "1.0"
 optional = true
 
-[dependencies.time]
-version = "0.3"
-features = ["macros", "parsing"]
-optional = true
-
 [dependencies.uuid]
 version = "1.0"
 optional = true
@@ -139,8 +134,8 @@ numeric = ["bigdecimal", "num", "elephantry-derive/numeric"]
 pg14 = ["libpq/v14", "multirange"]
 pg16 = []
 rocket = ["r2d2", "rocket_sync_db_pools"]
-serde = ["dep:serde", "time/serde"]
-time = ["dep:time", "elephantry-derive/time"]
+serde = ["dep:serde"]
+time = ["chrono", "elephantry-derive/time"]
 uuid = ["dep:uuid", "elephantry-derive/uuid"]
 xml = ["xmltree", "elephantry-derive/xml"]
 
