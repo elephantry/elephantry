@@ -1,6 +1,5 @@
 use byteorder::ReadBytesExt;
 
-#[doc(hidden)]
 #[inline]
 pub fn not_null<T>(raw: Option<T>) -> crate::Result<T> {
     raw.ok_or(crate::Error::NotNull)
@@ -10,7 +9,7 @@ macro_rules! read {
     ($fn:ident, $ty:ty) => {
         #[inline]
         #[allow(dead_code)]
-        pub(crate) fn $fn(buf: &mut &[u8]) -> crate::Result<$ty> {
+        pub fn $fn(buf: &mut &[u8]) -> crate::Result<$ty> {
             let n = buf.$fn::<byteorder::BigEndian>()?;
 
             Ok(n)
@@ -28,14 +27,14 @@ read!(read_u128, u128);
 
 #[inline]
 #[allow(dead_code)]
-pub(crate) fn read_i8(buf: &mut &[u8]) -> crate::Result<i8> {
+pub fn read_i8(buf: &mut &[u8]) -> crate::Result<i8> {
     let n = buf.read_i8()?;
 
     Ok(n)
 }
 
 #[inline]
-pub(crate) fn read_u8(buf: &mut &[u8]) -> crate::Result<u8> {
+pub fn read_u8(buf: &mut &[u8]) -> crate::Result<u8> {
     let n = buf.read_u8()?;
 
     Ok(n)
@@ -45,7 +44,7 @@ macro_rules! number {
     ($type:ty, $read:ident) => {
         impl FromSql for $type {
             fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
-                let mut buf = crate::not_null(raw)?;
+                let mut buf = crate::from_sql::not_null(raw)?;
                 let v = $read(&mut buf)?;
 
                 if !buf.is_empty() {
@@ -56,7 +55,7 @@ macro_rules! number {
             }
 
             fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-                crate::not_null(raw)?
+                crate::from_sql::not_null(raw)?
                     .parse()
                     .map_err(|_| Self::error(ty, raw))
             }

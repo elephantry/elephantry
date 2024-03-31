@@ -246,7 +246,7 @@ impl<T: crate::FromSql> crate::FromSql for Bounds<T> {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/rangetypes.c#L81
      */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        let raw = crate::not_null(raw)?;
+        let raw = crate::from_sql::not_null(raw)?;
 
         if raw == "empty" {
             log::error!("Unsuported empty range");

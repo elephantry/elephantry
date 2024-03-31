@@ -145,7 +145,7 @@ impl crate::FromSql for bit_vec::BitVec {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L586
      */
     fn from_text(_: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        let s = crate::not_null(raw)?;
+        let s = crate::from_sql::not_null(raw)?;
         let mut bits = bit_vec::BitVec::from_elem(s.len(), false);
 
         for (x, bit) in s.chars().enumerate() {
@@ -161,7 +161,7 @@ impl crate::FromSql for bit_vec::BitVec {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L680
      */
     fn from_binary(_: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
-        let mut buf = crate::not_null(raw)?;
+        let mut buf = crate::from_sql::not_null(raw)?;
 
         let _size = crate::from_sql::read_i32(&mut buf)?;
 

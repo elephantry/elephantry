@@ -59,7 +59,7 @@ impl crate::FromSql for Circle {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let regex = crate::regex!(r"([\d\.]+)");
 
-        let mut matches = regex.find_iter(crate::not_null(raw)?);
+        let mut matches = regex.find_iter(crate::from_sql::not_null(raw)?);
         let x =
             crate::Coordinates::coordinate(&matches.next()).ok_or_else(|| Self::error(ty, raw))?;
         let y =

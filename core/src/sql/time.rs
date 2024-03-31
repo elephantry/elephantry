@@ -50,7 +50,7 @@ impl crate::FromSql for Time {
      */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let format = time::macros::format_description!("[hour]:[minute]:[second]");
-        Time::parse(crate::not_null(raw)?, &format).map_err(|_| Self::error(ty, raw))
+        Time::parse(crate::from_sql::not_null(raw)?, &format).map_err(|_| Self::error(ty, raw))
     }
 
     /*
@@ -97,7 +97,7 @@ impl crate::FromSql for TimeTz {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/date.c#L1971
      */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        let value = crate::not_null(raw)?;
+        let value = crate::from_sql::not_null(raw)?;
 
         let x = match value.find(|c| c == '+' || c == '-') {
             Some(x) => x,

@@ -77,7 +77,7 @@ impl crate::FromSql for Segment {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L2022
      */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        let coordinates = crate::not_null(raw)?
+        let coordinates = crate::from_sql::not_null(raw)?
             .parse::<crate::Coordinates>()
             .map_err(|_| Self::error(ty, raw))?;
 

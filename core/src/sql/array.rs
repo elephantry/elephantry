@@ -104,7 +104,7 @@ impl<T: crate::FromSql> crate::FromSql for Array<T> {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/arrayfuncs.c#L1012
      */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        let raw = crate::not_null(raw)?;
+        let raw = crate::from_sql::not_null(raw)?;
 
         let mut has_nulls = false;
         let mut dimensions = Vec::new();
@@ -175,7 +175,7 @@ impl<T: crate::FromSql> crate::FromSql for Array<T> {
     fn from_binary(_: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         use std::io::Read;
 
-        let mut buf = crate::not_null(raw)?;
+        let mut buf = crate::from_sql::not_null(raw)?;
 
         let ndim = crate::from_sql::read_i32(&mut buf)?;
         if ndim < 0 {

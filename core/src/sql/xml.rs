@@ -35,7 +35,7 @@ impl crate::FromSql for xmltree::Element {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/xml.c#L258
      */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        xmltree::Element::parse(crate::not_null(raw)?.as_bytes()).map_err(|_| Self::error(ty, raw))
+        xmltree::Element::parse(crate::from_sql::not_null(raw)?.as_bytes()).map_err(|_| Self::error(ty, raw))
     }
 
     /*

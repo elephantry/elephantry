@@ -93,7 +93,7 @@ impl crate::FromSql for Path {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L1364
      */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        let raw = crate::not_null(raw)?;
+        let raw = crate::from_sql::not_null(raw)?;
 
         let coordinates = raw.parse().map_err(|_| Self::error(ty, raw))?;
 
@@ -110,7 +110,7 @@ impl crate::FromSql for Path {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L1447
      */
     fn from_binary(_: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
-        let mut buf = crate::not_null(raw)?;
+        let mut buf = crate::from_sql::not_null(raw)?;
         let closed = crate::from_sql::read_u8(&mut buf)? == 1;
         let npts = crate::from_sql::read_i32(&mut buf)?;
         let mut coordinates = Vec::new();

@@ -46,7 +46,7 @@ impl crate::FromSql for ipnetwork::IpNetwork {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/network.c#L148
      */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        crate::not_null(raw)?
+        crate::from_sql::not_null(raw)?
             .parse()
             .map_err(|_| Self::error(ty, raw))
     }

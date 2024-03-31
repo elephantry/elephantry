@@ -12,7 +12,7 @@ impl crate::FromSql for Type {
     }
 
     fn from_text(ty: &Type, raw: Option<&str>) -> crate::Result<Self> {
-        crate::not_null(raw)?
+        crate::from_sql::not_null(raw)?
             .parse()
             .map_err(|_| Self::error(ty, raw))
     }

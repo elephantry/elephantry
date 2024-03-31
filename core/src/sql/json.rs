@@ -25,7 +25,7 @@ impl crate::FromSql for serde_json::Value {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/json.c#L228
      */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        match serde_json::from_str(crate::not_null(raw)?) {
+        match serde_json::from_str(crate::from_sql::not_null(raw)?) {
             Ok(json) => Ok(json),
             _ => Err(Self::error(ty, raw)),
         }

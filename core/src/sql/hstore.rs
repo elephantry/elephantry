@@ -106,7 +106,7 @@ impl crate::FromSql for Hstore {
 
         let mut hstore = Self::new();
 
-        for capture in regex.captures_iter(crate::not_null(raw)?) {
+        for capture in regex.captures_iter(crate::from_sql::not_null(raw)?) {
             let key = capture.name("key").unwrap().as_str().to_string();
             let value = if capture.name("null").is_some() {
                 None

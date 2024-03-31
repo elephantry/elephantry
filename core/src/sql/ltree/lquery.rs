@@ -78,7 +78,7 @@ impl crate::FromSql for Lquery {
      * https://github.com/postgres/postgres/blob/REL_14_STABLE/contrib/ltree/ltree_io.c#L756
      */
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
-        let mut buf = crate::not_null(raw)?;
+        let mut buf = crate::from_sql::not_null(raw)?;
 
         let _version = crate::from_sql::read_i8(&mut buf)?;
         String::from_binary(ty, Some(buf)).map(|x| x.parse().map_err(crate::Error::Infallible))?

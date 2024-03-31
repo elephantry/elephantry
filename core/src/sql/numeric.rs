@@ -38,7 +38,7 @@ impl crate::FromSql for bigdecimal::BigDecimal {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/numeric.c#L573
      */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        crate::not_null(raw)?
+        crate::from_sql::not_null(raw)?
             .parse()
             .map_err(|_| Self::error(ty, raw))
     }
@@ -47,7 +47,7 @@ impl crate::FromSql for bigdecimal::BigDecimal {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/numeric.c#L805
      */
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
-        let mut buf = crate::not_null(raw)?;
+        let mut buf = crate::from_sql::not_null(raw)?;
         let ndigits = crate::from_sql::read_i16(&mut buf)?;
         let weight = crate::from_sql::read_i16(&mut buf)?;
         let sign = crate::from_sql::read_i16(&mut buf)?;

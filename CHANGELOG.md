@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `pg16` feature with new connection options;
 
+### Changed
+- `from_sql::read_*` and `from_sql::not_null` public;
+
 ## [4.0.1] - 2024-03-18
 
 ### Fixed

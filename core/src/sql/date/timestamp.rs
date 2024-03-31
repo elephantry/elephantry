@@ -30,11 +30,11 @@ impl crate::FromSql for chrono::NaiveDateTime {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/timestamp.c#L143
      */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        if let Ok(date) = chrono::NaiveDateTime::parse_from_str(crate::not_null(raw)?, "%F %T") {
+        if let Ok(date) = chrono::NaiveDateTime::parse_from_str(crate::from_sql::not_null(raw)?, "%F %T") {
             return Ok(date);
         }
 
-        match chrono::NaiveDateTime::parse_from_str(crate::not_null(raw)?, "%F %T.%f") {
+        match chrono::NaiveDateTime::parse_from_str(crate::from_sql::not_null(raw)?, "%F %T.%f") {
             Ok(date) => Ok(date),
             _ => Err(Self::error(ty, raw)),
         }

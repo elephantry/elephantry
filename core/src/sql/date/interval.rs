@@ -250,7 +250,7 @@ impl crate::FromSql for Interval {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/timestamp.c#L969
      */
     fn from_binary(_: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
-        let mut buf = crate::not_null(raw)?;
+        let mut buf = crate::from_sql::not_null(raw)?;
 
         let mut usecs = crate::from_sql::read_i64(&mut buf)?;
         let days = crate::from_sql::read_i32(&mut buf)?;

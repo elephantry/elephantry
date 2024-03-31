@@ -66,7 +66,7 @@ impl crate::FromSql for Jsonb {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/jsonb.c#L113
      */
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
-        let mut buf = crate::not_null(raw)?;
+        let mut buf = crate::from_sql::not_null(raw)?;
 
         let _version = crate::from_sql::read_i8(&mut buf)?;
         serde_json::Value::from_binary(ty, Some(buf)).map(Self::from)

@@ -25,7 +25,7 @@ impl crate::FromSql for uuid::Uuid {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/uuid.c#L53
      */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        match uuid::Uuid::parse_str(crate::not_null(raw)?) {
+        match uuid::Uuid::parse_str(crate::from_sql::not_null(raw)?) {
             Ok(uuid) => Ok(uuid),
             _ => Err(Self::error(ty, raw)),
         }
@@ -35,7 +35,7 @@ impl crate::FromSql for uuid::Uuid {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/uuid.c#L152
      */
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
-        let buf = crate::not_null(raw)?;
+        let buf = crate::from_sql::not_null(raw)?;
 
         if buf.len() != 16 {
             return Err(Self::error(ty, raw));

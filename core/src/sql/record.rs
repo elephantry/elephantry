@@ -50,7 +50,7 @@ pub fn vec_to_binary(vec: &[&dyn crate::ToSql]) -> crate::Result<Option<Vec<u8>>
  */
 #[doc(hidden)]
 pub fn text_to_vec(raw: Option<&str>) -> crate::Result<Vec<Option<&str>>> {
-    let s = crate::not_null(raw)?;
+    let s = crate::from_sql::not_null(raw)?;
 
     if !s.starts_with('(') && !s.ends_with(')') {
         return Err(crate::Error::FromSql {
@@ -79,7 +79,7 @@ pub fn binary_to_vec<'a>(
     pg_type: &crate::pq::Type,
     raw: Option<&'a [u8]>,
 ) -> crate::Result<Vec<Option<&'a [u8]>>> {
-    let mut buf = crate::not_null(raw)?;
+    let mut buf = crate::from_sql::not_null(raw)?;
 
     let mut values: Vec<Option<&[u8]>> = Vec::new();
 

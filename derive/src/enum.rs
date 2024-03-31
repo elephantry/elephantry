@@ -34,7 +34,7 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::Tok
              * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/enum.c#L150
              */
             fn from_text(ty: &#elephantry::pq::Type, raw: ::std::option::Option<&str>) -> #elephantry::Result<Self> {
-                let buf = #elephantry::not_null(raw)?;
+                let buf = #elephantry::from_sql::not_null(raw)?;
 
                 let value = match buf {
                     #(#from_text_body, )*
@@ -48,7 +48,7 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::Tok
              * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/enum.c#L174
              */
             fn from_binary(ty: &#elephantry::pq::Type, raw: ::std::option::Option<&[u8]>) -> #elephantry::Result<Self> {
-                let buf = #elephantry::not_null(raw)?;
+                let buf = #elephantry::from_sql::not_null(raw)?;
                 let s = ::std::string::String::from_utf8(buf.to_vec())?;
 
                 Self::from_text(ty, ::std::option::Option::Some(&s))

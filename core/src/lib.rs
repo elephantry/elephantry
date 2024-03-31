@@ -58,6 +58,7 @@
 pub mod config;
 pub mod connection;
 pub mod entity;
+pub mod from_sql;
 #[cfg(feature = "inspect")]
 #[cfg_attr(docsrs, doc(cfg(feature = "inspect")))]
 /** database inspection module. */
@@ -75,7 +76,6 @@ pub mod transaction;
 
 mod r#async;
 mod errors;
-mod from_sql;
 mod from_text;
 mod model;
 mod pager;
@@ -95,7 +95,7 @@ pub use connection::Connection;
 pub use elephantry_derive::*;
 pub use entity::Entity;
 pub use errors::*;
-pub use from_sql::*;
+pub use from_sql::FromSql;
 pub use from_text::*;
 pub use model::*;
 pub use pager::*;

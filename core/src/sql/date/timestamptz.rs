@@ -60,7 +60,7 @@ impl crate::ToSql for chrono::DateTime<chrono::offset::FixedOffset> {
 #[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::FromSql for chrono::DateTime<chrono::offset::FixedOffset> {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        chrono::DateTime::parse_from_str(crate::not_null(raw)?, "%F %T%#z")
+        chrono::DateTime::parse_from_str(crate::from_sql::not_null(raw)?, "%F %T%#z")
             .map_err(|_| Self::error(ty, raw))
     }
 
