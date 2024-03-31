@@ -72,6 +72,7 @@ pub mod r2d2;
 #[cfg_attr(docsrs, doc(cfg(feature = "rocket")))]
 #[doc(hidden)]
 pub mod rocket;
+pub mod to_sql;
 pub mod transaction;
 
 mod r#async;
@@ -85,7 +86,6 @@ mod projection;
 mod rows;
 mod sql;
 mod structure;
-mod to_sql;
 mod to_text;
 mod tuple;
 mod r#where;
@@ -107,7 +107,7 @@ pub use r#where::Where;
 pub use rows::*;
 pub use sql::*;
 pub use structure::*;
-pub use to_sql::*;
+pub use to_sql::ToSql;
 pub use to_text::*;
 pub use transaction::Transaction;
 pub use tuple::*;

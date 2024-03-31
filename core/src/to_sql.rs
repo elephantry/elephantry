@@ -3,7 +3,7 @@ use byteorder::WriteBytesExt;
 macro_rules! write {
     ($fn:ident, $ty: ty) => {
         #[inline]
-        pub(crate) fn $fn(buf: &mut Vec<u8>, data: $ty) -> crate::Result<()> {
+        pub fn $fn(buf: &mut Vec<u8>, data: $ty) -> crate::Result<()> {
             buf.$fn::<byteorder::BigEndian>(data)?;
 
             Ok(())
@@ -18,8 +18,7 @@ write!(write_f32, f32);
 write!(write_f64, f64);
 
 #[inline]
-#[allow(dead_code)]
-pub(crate) fn write_i8(buf: &mut Vec<u8>, data: i8) -> crate::Result<()> {
+pub fn write_i8(buf: &mut Vec<u8>, data: i8) -> crate::Result<()> {
     buf.write_i8(data)?;
 
     Ok(())
