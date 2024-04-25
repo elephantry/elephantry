@@ -4,7 +4,6 @@ mod composite;
 mod entity;
 mod r#enum;
 mod params;
-mod symbol;
 
 /**
  * Impl [`FromSql`]/[`ToSql`] traits for [composite
