@@ -22,7 +22,7 @@ libpq = "4.0"
 log = "0.4"
 regex = "1.3"
 thiserror = "1.0"
-tuple_len = "2.0"
+tuple_len = "3.0"
 
 [dependencies.arbitrary]
 version = "1.0"
