@@ -19,9 +19,9 @@ impl From<Ltree> for Vec<String> {
     }
 }
 
-impl ToString for Ltree {
-    fn to_string(&self) -> String {
-        self.0.join(".")
+impl std::fmt::Display for Ltree {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(&self.0.join("."))
     }
 }
 
@@ -74,7 +74,7 @@ impl crate::ToSql for Ltree {
      * https://github.com/postgres/postgres/blob/REL_14_STABLE/contrib/ltree/ltree_io.c#L223
      */
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
-        format!("\u{1}{}", self.to_string()).to_binary()
+        format!("\u{1}{self}").to_binary()
     }
 }
 

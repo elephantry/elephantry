@@ -111,8 +111,8 @@ impl<'a> Where<'a> {
             self.stack.push(rhs.clone());
         } else {
             let mut new = Self::new();
-            new.stack = self.stack.clone();
-            new.operator = self.operator.clone();
+            new.stack.clone_from(&self.stack);
+            new.operator.clone_from(&self.operator);
 
             self.stack = vec![new, rhs.clone()];
         }
@@ -156,13 +156,15 @@ impl<'a> Where<'a> {
     }
 }
 
-impl<'a> ToString for Where<'a> {
-    fn to_string(&self) -> String {
-        if self.is_empty() {
-            return "true".to_string();
-        }
+impl<'a> std::fmt::Display for Where<'a> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let s = if self.is_empty() {
+            "true".to_string()
+        } else {
+            self.parse()
+        };
 
-        self.parse()
+        f.write_str(&s)
     }
 }
 

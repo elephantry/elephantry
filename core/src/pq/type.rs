@@ -240,6 +240,7 @@ pub fn sql_to_rust(ty: &crate::pq::Type) -> String {
 pub(crate) trait ToArray {
     fn to_array(&self) -> Self;
     fn to_range(&self) -> Self;
+    #[cfg(feature = "multirange")]
     fn to_multi_range(&self) -> Self;
     fn elementype(&self) -> Self;
     fn is_text(&self) -> bool;
@@ -260,6 +261,7 @@ impl ToArray for Type {
         }
     }
 
+    #[cfg(feature = "multirange")]
     fn to_multi_range(&self) -> Self {
         match *self {
             types::ANY_RANGE => types::ANYMULTI_RANGE,

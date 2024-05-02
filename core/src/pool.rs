@@ -82,14 +82,14 @@ impl Pool {
      */
     #[must_use]
     pub fn get(&self, name: &str) -> Option<&crate::Connection> {
-        self.connections.get(&name.to_string())
+        self.connections.get(name)
     }
 
     /**
      * Remove the connection `name`.
      */
     pub fn remove(&mut self, name: &str) {
-        self.connections.remove(&name.to_string());
+        self.connections.remove(name);
     }
 }
 

@@ -13,9 +13,9 @@ impl From<&str> for Ltxtquery {
     }
 }
 
-impl ToString for Ltxtquery {
-    fn to_string(&self) -> String {
-        self.0.clone()
+impl std::fmt::Display for Ltxtquery {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(&self.0)
     }
 }
 
@@ -62,7 +62,7 @@ impl crate::ToSql for Ltxtquery {
      * https://github.com/postgres/postgres/blob/REL_14_STABLE/contrib/ltree/ltree_io.c#L781
      */
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
-        format!("\u{1}{}", self.to_string()).to_binary()
+        format!("\u{1}{self}").to_binary()
     }
 }
 
