@@ -11,7 +11,7 @@ repository.workspace = true
 
 [dependencies]
 case = "1.0"
-envir = "0.2"
+envir = "0.3"
 term-table = "1.1"
 thiserror = "1.0"
 
