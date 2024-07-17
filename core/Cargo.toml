@@ -30,7 +30,7 @@ features = ["derive"]
 optional = true
 
 [dependencies.bit-vec]
-version = "0.7"
+version = "0.8"
 optional = true
 
 [dependencies.bigdecimal]
