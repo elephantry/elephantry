@@ -120,7 +120,7 @@ impl crate::ToSql for bit_vec::BitVec {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L451
      */
     fn to_text(&self) -> crate::Result<Option<String>> {
-        format!("b{self:?}").to_text()
+        format!("b{self}").to_text()
     }
 
     /*
