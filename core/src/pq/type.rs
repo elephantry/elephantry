@@ -32,196 +32,173 @@ impl crate::ToSql for Type {
     }
 }
 
-static TYPES: std::sync::LazyLock<HashMap<&'static str, &'static str>> = std::sync::LazyLock::new(|| {
-    use std::any::type_name as t;
+static TYPES: std::sync::LazyLock<HashMap<&'static str, &'static str>> =
+    std::sync::LazyLock::new(|| {
+        use std::any::type_name as t;
 
-    let mut types = HashMap::new();
-    types.insert(types::BIT.name, t::<u8>());
-    types.insert(types::BOOL.name, t::<bool>());
-    types.insert(types::CHAR.name, t::<char>());
-    types.insert(types::FLOAT4.name, t::<f32>());
-    types.insert(types::FLOAT8.name, t::<f64>());
-    types.insert(types::INT2.name, t::<i16>());
-    types.insert(types::INT4.name, t::<i32>());
-    types.insert(types::INT8.name, t::<i64>());
-    types.insert(types::TEXT.name, "String");
-    types.insert(types::VARCHAR.name, "String");
+        let mut types = HashMap::new();
+        types.insert(types::BIT.name, t::<u8>());
+        types.insert(types::BOOL.name, t::<bool>());
+        types.insert(types::CHAR.name, t::<char>());
+        types.insert(types::FLOAT4.name, t::<f32>());
+        types.insert(types::FLOAT8.name, t::<f64>());
+        types.insert(types::INT2.name, t::<i16>());
+        types.insert(types::INT4.name, t::<i32>());
+        types.insert(types::INT8.name, t::<i64>());
+        types.insert(types::TEXT.name, "String");
+        types.insert(types::VARCHAR.name, "String");
 
-    types.insert(
-        types::BYTEA.name,
-        #[cfg(feature = "bit")]
-        t::<crate::Bytea>(),
-        #[cfg(not(feature = "bit"))]
-        "elephantry::Bytea",
-    );
-    types.insert(
-        types::VARBIT.name,
-        #[cfg(feature = "bit")]
-        t::<bit_vec::BitVec>(),
-        #[cfg(not(feature = "bit"))]
-        "bit_vec::BitVec",
-    );
+        types.insert(
+            types::BYTEA.name,
+            #[cfg(feature = "bit")]
+            t::<crate::Bytea>(),
+            #[cfg(not(feature = "bit"))]
+            "elephantry::Bytea",
+        );
+        types.insert(
+            types::VARBIT.name,
+            #[cfg(feature = "bit")]
+            t::<bit_vec::BitVec>(),
+            #[cfg(not(feature = "bit"))]
+            "bit_vec::BitVec",
+        );
 
-    types.insert(
-        types::DATE.name,
-        "chrono::NaiveDate",
-    );
+        types.insert(types::DATE.name, "chrono::NaiveDate");
 
-    types.insert(
-        types::BOX.name,
-        #[cfg(feature = "geo")]
-        t::<crate::Box>(),
-        #[cfg(not(feature = "geo"))]
-        "elephantry::Box",
-    );
-    types.insert(
-        types::CIRCLE.name,
-        #[cfg(feature = "geo")]
-        t::<crate::Circle>(),
-        #[cfg(not(feature = "geo"))]
-        "elephantry::Circle",
-    );
-    types.insert(
-        types::LINE.name,
-        #[cfg(feature = "geo")]
-        t::<crate::Line>(),
-        #[cfg(not(feature = "geo"))]
-        "elephantry::Line",
-    );
-    types.insert(
-        types::LSEG.name,
-        #[cfg(feature = "geo")]
-        t::<crate::Segment>(),
-        #[cfg(not(feature = "geo"))]
-        "elephantry::Segment",
-    );
-    types.insert(
-        types::PATH.name,
-        #[cfg(feature = "geo")]
-        t::<crate::Path>(),
-        #[cfg(not(feature = "geo"))]
-        "elephantry::Path",
-    );
-    types.insert(
-        types::POINT.name,
-        #[cfg(feature = "geo")]
-        t::<crate::Point>(),
-        #[cfg(not(feature = "geo"))]
-        "elephantry::Point",
-    );
-    types.insert(
-        types::POLYGON.name,
-        #[cfg(feature = "geo")]
-        t::<crate::Polygon>(),
-        #[cfg(not(feature = "geo"))]
-        "elephantry::Polygon",
-    );
+        types.insert(
+            types::BOX.name,
+            #[cfg(feature = "geo")]
+            t::<crate::Box>(),
+            #[cfg(not(feature = "geo"))]
+            "elephantry::Box",
+        );
+        types.insert(
+            types::CIRCLE.name,
+            #[cfg(feature = "geo")]
+            t::<crate::Circle>(),
+            #[cfg(not(feature = "geo"))]
+            "elephantry::Circle",
+        );
+        types.insert(
+            types::LINE.name,
+            #[cfg(feature = "geo")]
+            t::<crate::Line>(),
+            #[cfg(not(feature = "geo"))]
+            "elephantry::Line",
+        );
+        types.insert(
+            types::LSEG.name,
+            #[cfg(feature = "geo")]
+            t::<crate::Segment>(),
+            #[cfg(not(feature = "geo"))]
+            "elephantry::Segment",
+        );
+        types.insert(
+            types::PATH.name,
+            #[cfg(feature = "geo")]
+            t::<crate::Path>(),
+            #[cfg(not(feature = "geo"))]
+            "elephantry::Path",
+        );
+        types.insert(
+            types::POINT.name,
+            #[cfg(feature = "geo")]
+            t::<crate::Point>(),
+            #[cfg(not(feature = "geo"))]
+            "elephantry::Point",
+        );
+        types.insert(
+            types::POLYGON.name,
+            #[cfg(feature = "geo")]
+            t::<crate::Polygon>(),
+            #[cfg(not(feature = "geo"))]
+            "elephantry::Polygon",
+        );
 
-    types.insert(
-        types::CIDR.name,
-        #[cfg(feature = "net")]
-        t::<ipnetwork::IpNetwork>(),
-        #[cfg(not(feature = "net"))]
-        "ipnetwork::IpNetwork",
-    );
-    types.insert(
-        types::INET.name,
-        "std::net::IpAddr",
-    );
-    types.insert(
-        types::MACADDR.name,
-        "macaddr::MacAddr6",
-    );
-    types.insert(
-        types::MACADDR8.name,
-        "macaddr::MacAddr8",
-    );
+        types.insert(
+            types::CIDR.name,
+            #[cfg(feature = "net")]
+            t::<ipnetwork::IpNetwork>(),
+            #[cfg(not(feature = "net"))]
+            "ipnetwork::IpNetwork",
+        );
+        types.insert(types::INET.name, "std::net::IpAddr");
+        types.insert(types::MACADDR.name, "macaddr::MacAddr6");
+        types.insert(types::MACADDR8.name, "macaddr::MacAddr8");
 
-    types.insert(
-        types::JSON.name,
-        #[cfg(feature = "json")]
-        t::<serde_json::Value>(),
-        #[cfg(not(feature = "json"))]
-        "serde_json::Value",
-    );
-    types.insert(
-        types::JSONB.name,
-        "serde_json::Value",
-    );
+        types.insert(
+            types::JSON.name,
+            #[cfg(feature = "json")]
+            t::<serde_json::Value>(),
+            #[cfg(not(feature = "json"))]
+            "serde_json::Value",
+        );
+        types.insert(types::JSONB.name, "serde_json::Value");
 
-    types.insert(
-        "lquery",
-        #[cfg(feature = "ltree")]
-        t::<crate::Lquery>(),
-        #[cfg(not(feature = "ltree"))]
-        "elephantry::Lquery",
-    );
-    types.insert(
-        "ltree",
-        #[cfg(feature = "ltree")]
-        t::<crate::Ltree>(),
-        #[cfg(not(feature = "ltree"))]
-        "elephantry::Ltree",
-    );
-    types.insert(
-        "ltxtquery",
-        #[cfg(feature = "ltree")]
-        t::<crate::Ltxtquery>(),
-        #[cfg(not(feature = "ltree"))]
-        "elephantry::Ltxtquery",
-    );
+        types.insert(
+            "lquery",
+            #[cfg(feature = "ltree")]
+            t::<crate::Lquery>(),
+            #[cfg(not(feature = "ltree"))]
+            "elephantry::Lquery",
+        );
+        types.insert(
+            "ltree",
+            #[cfg(feature = "ltree")]
+            t::<crate::Ltree>(),
+            #[cfg(not(feature = "ltree"))]
+            "elephantry::Ltree",
+        );
+        types.insert(
+            "ltxtquery",
+            #[cfg(feature = "ltree")]
+            t::<crate::Ltxtquery>(),
+            #[cfg(not(feature = "ltree"))]
+            "elephantry::Ltxtquery",
+        );
 
-    types.insert(
-        types::MONEY.name,
-        #[cfg(feature = "money")]
-        t::<postgres_money::Money>(),
-        #[cfg(not(feature = "money"))]
-        "postgres_money::Money",
-    );
+        types.insert(
+            types::MONEY.name,
+            #[cfg(feature = "money")]
+            t::<postgres_money::Money>(),
+            #[cfg(not(feature = "money"))]
+            "postgres_money::Money",
+        );
 
-    types.insert(
-        types::NUMERIC.name,
-        #[cfg(feature = "numeric")]
-        t::<bigdecimal::BigDecimal>(),
-        #[cfg(not(feature = "numeric"))]
-        "bigdecimal::BigDecimal",
-    );
+        types.insert(
+            types::NUMERIC.name,
+            #[cfg(feature = "numeric")]
+            t::<bigdecimal::BigDecimal>(),
+            #[cfg(not(feature = "numeric"))]
+            "bigdecimal::BigDecimal",
+        );
 
-    types.insert(
-        types::TIME.name,
-        "chrono::NaiveTime",
-    );
-    types.insert(
-        types::TIMETZ.name,
-        "chrono::TimeTz",
-    );
-    types.insert(
-        types::TIMESTAMP.name,
-        "chrono::NaiveDateTime",
-    );
-    types.insert(
-        types::TIMESTAMPTZ.name,
-        "chrono::DateTime<chrono::FixedOffset>",
-    );
+        types.insert(types::TIME.name, "chrono::NaiveTime");
+        types.insert(types::TIMETZ.name, "chrono::TimeTz");
+        types.insert(types::TIMESTAMP.name, "chrono::NaiveDateTime");
+        types.insert(
+            types::TIMESTAMPTZ.name,
+            "chrono::DateTime<chrono::FixedOffset>",
+        );
 
-    types.insert(
-        types::UUID.name,
-        #[cfg(feature = "uuid")]
-        t::<uuid::Uuid>(),
-        #[cfg(not(feature = "uuid"))]
-        "uuid::Uuid",
-    );
+        types.insert(
+            types::UUID.name,
+            #[cfg(feature = "uuid")]
+            t::<uuid::Uuid>(),
+            #[cfg(not(feature = "uuid"))]
+            "uuid::Uuid",
+        );
 
-    types.insert(
-        types::XML.name,
-        #[cfg(feature = "xml")]
-        t::<xmltree::Element>(),
-        #[cfg(not(feature = "xml"))]
-        "xmltree::Element",
-    );
+        types.insert(
+            types::XML.name,
+            #[cfg(feature = "xml")]
+            t::<xmltree::Element>(),
+            #[cfg(not(feature = "xml"))]
+            "xmltree::Element",
+        );
 
-    types
-});
+        types
+    });
 
 #[doc(hidden)]
 #[must_use]

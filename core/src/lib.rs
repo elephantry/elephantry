@@ -114,9 +114,8 @@ pub use tuple::*;
 
 macro_rules! regex {
     ($regex:literal) => {{
-        static REGEX: std::sync::LazyLock<regex::Regex> = std::sync::LazyLock::new(|| {
-            regex::Regex::new($regex).unwrap()
-        });
+        static REGEX: std::sync::LazyLock<regex::Regex> =
+            std::sync::LazyLock::new(|| regex::Regex::new($regex).unwrap());
         &REGEX
     }};
 }
