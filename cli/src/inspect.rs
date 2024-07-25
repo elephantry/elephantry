@@ -87,7 +87,7 @@ pub fn relation(
         table.add_row(term_table::row::Row::new(vec![
             term_table::table_cell::TableCell::new(primary),
             term_table::table_cell::TableCell::new(&column.name),
-            term_table::table_cell::TableCell::new(&column.ty()),
+            term_table::table_cell::TableCell::new(column.ty()),
             term_table::table_cell::TableCell::new(column.default.as_deref().unwrap_or_default()),
             term_table::table_cell::TableCell::new(not_null),
             term_table::table_cell::TableCell::new(column.comment.as_deref().unwrap_or_default()),
