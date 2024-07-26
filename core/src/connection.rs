@@ -658,14 +658,20 @@ impl Connection {
             keepalives_interval: Self::config_get(&info, "keepalives_interval")?,
             keepalives: Self::config_get::<i32>(&info, "keepalives")?.map(|x| x == 1),
             krbsrvname: info.get("krbsrvname").and_then(|x| x.val.clone()),
+            #[cfg(feature = "pg16")]
+            load_balance_hosts: Self::config_get(&info, "load_balance_hosts")?,
             options: info.get("options").and_then(|x| x.val.clone()),
             passfile: info.get("passfile").and_then(|x| x.val.clone()),
             password: info.get("password").and_then(|x| x.val.clone()),
             port: info.get("port").and_then(|x| x.val.clone()),
             replication: info.get("replication").and_then(|x| x.val.clone()),
             requirepeer: info.get("requirepeer").and_then(|x| x.val.clone()),
+            #[cfg(feature = "pg16")]
+            require_auth: info.get("require_auth").and_then(|x| x.val.clone()),
             service: info.get("service").and_then(|x| x.val.clone()),
             sslcert: info.get("sslcert").and_then(|x| x.val.clone()),
+            #[cfg(feature = "pg16")]
+            sslcertmode: Self::config_get(&info, "sslcertmode")?,
             sslcompression: Self::config_get::<i32>(&info, "sslcompression")?.map(|x| x == 1),
             sslcrl: info.get("sslcrl").and_then(|x| x.val.clone()),
             sslkey: info.get("sslkey").and_then(|x| x.val.clone()),

@@ -7,7 +7,7 @@ pub enum LoadBalanceHosts {
     Random,
 }
 
-impl std::str::FromStr for GssEncMode {
+impl std::str::FromStr for LoadBalanceHosts {
     type Err = crate::Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -25,7 +25,7 @@ impl std::str::FromStr for GssEncMode {
     }
 }
 
-impl std::fmt::Display for GssEncMode {
+impl std::fmt::Display for LoadBalanceHosts {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let s = match *self {
             Self::Disable => "disable",
