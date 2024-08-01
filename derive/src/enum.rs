@@ -1,5 +1,7 @@
 pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> {
-    let parameters = crate::params::Container::from_ast(ast)?;
+    use darling::FromDeriveInput;
+
+    let parameters = crate::params::Enum::from_derive_input(ast)?;
 
     let variants = match ast.data {
         syn::Data::Enum(ref e) => &e.variants,
@@ -7,15 +9,7 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::Tok
     };
 
     let name = &ast.ident;
-    let elephantry = if parameters.internal {
-        quote::quote! {
-            crate
-        }
-    } else {
-        quote::quote! {
-            elephantry
-        }
-    };
+    let elephantry = parameters.elephantry();
 
     let from_text_body = variants.iter().map(|variant| {
         let name = &variant.ident;
