@@ -1,20 +1,20 @@
 #[derive(Debug)]
-struct Event<T: elephantry::FromSql + elephantry::ToSql> {
+pub struct Event<T: elephantry::FromSql + elephantry::ToSql> {
     #[cfg(feature = "uuid")]
-    uuid: Option<uuid::Uuid>,
+    pub uuid: Option<uuid::Uuid>,
     #[cfg(not(feature = "uuid"))]
-    uuid: Option<String>,
-    name: String,
-    visitor_id: Option<i32>,
+    pub uuid: Option<String>,
+    pub name: String,
+    pub visitor_id: Option<i32>,
     #[cfg(feature = "json")]
-    properties: serde_json::Value,
+    pub properties: serde_json::Value,
     #[cfg(not(feature = "json"))]
-    properties: String,
+    pub properties: String,
     #[cfg(feature = "json")]
-    browser: serde_json::Value,
+    pub browser: serde_json::Value,
     #[cfg(not(feature = "json"))]
-    browser: String,
-    generic: Option<T>,
+    pub browser: String,
+    pub generic: Option<T>,
 }
 
 impl<T: elephantry::FromSql + elephantry::ToSql> elephantry::Entity for Event<T> {
@@ -42,7 +42,7 @@ impl<T: elephantry::FromSql + elephantry::ToSql> elephantry::Entity for Event<T>
     }
 }
 
-struct EventModel {
+pub struct EventModel {
     #[allow(dead_code)]
     connection: elephantry::Connection,
 }
@@ -59,8 +59,7 @@ impl elephantry::Model for EventModel {
 }
 
 impl EventModel {
-    #[allow(dead_code)]
-    fn count_uniq_visitor(&self) -> elephantry::Result<u32> {
+    pub fn count_uniq_visitor(&self) -> elephantry::Result<u32> {
         self.connection
             .execute("select count(distinct visitor_id) as count from event")
             .map(|x| x.get(0).get("count"))
@@ -68,23 +67,23 @@ impl EventModel {
 }
 
 #[derive(Debug)]
-struct EventExtra<T: elephantry::Entity + elephantry::ToSql> {
+pub struct EventExtra<T: elephantry::Entity + elephantry::ToSql> {
     #[cfg(feature = "uuid")]
-    uuid: Option<uuid::Uuid>,
+    pub uuid: Option<uuid::Uuid>,
     #[cfg(not(feature = "uuid"))]
-    uuid: Option<String>,
-    name: String,
-    visitor_id: Option<i32>,
+    pub uuid: Option<String>,
+    pub name: String,
+    pub visitor_id: Option<i32>,
     #[cfg(feature = "json")]
-    properties: serde_json::Value,
+    pub properties: serde_json::Value,
     #[cfg(not(feature = "json"))]
-    properties: String,
+    pub properties: String,
     #[cfg(feature = "json")]
-    browser: serde_json::Value,
-    generic: Option<T>,
+    pub browser: serde_json::Value,
+    pub generic: Option<T>,
     #[cfg(not(feature = "json"))]
-    browser: String,
-    os: Option<String>,
+    pub browser: String,
+    pub os: Option<String>,
 }
 
 impl<T: elephantry::Entity + elephantry::ToSql> elephantry::Entity for EventExtra<T> {
@@ -116,7 +115,7 @@ impl<T: elephantry::Entity + elephantry::ToSql> elephantry::Entity for EventExtr
     }
 }
 
-struct EventExtraModel;
+pub struct EventExtraModel;
 
 impl elephantry::Model for EventExtraModel {
     type Entity = EventExtra<String>;
@@ -131,7 +130,7 @@ impl elephantry::Model for EventExtraModel {
     }
 }
 
-struct EventStructure;
+pub struct EventStructure;
 
 impl elephantry::Structure for EventStructure {
     fn primary_key() -> &'static [&'static str] {

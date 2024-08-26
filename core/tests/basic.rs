@@ -1,33 +1,29 @@
-#[cfg(feature = "derive")]
-include!("entity_derive.rs");
-
-#[cfg(not(feature = "derive"))]
-include!("entity.rs");
+mod entity;
 
 fn main() -> elephantry::Result {
     let database_url = std::env::var("DATABASE_URL")
         .unwrap_or_else(|_| "postgres://localhost/elephantry".to_string());
     let elephantry = elephantry::Pool::default().add_default("elephantry", &database_url)?;
 
-    let count = elephantry.count_where::<EventModel>("name = $1", &[&"pageview"])?;
+    let count = elephantry.count_where::<entity::EventModel>("name = $1", &[&"pageview"])?;
     println!("Count events: {count}");
     assert_eq!(count, 7);
     println!();
 
     println!("Find one event:\n");
-    find_by_pk::<EventModel>(&elephantry, "f186b680-237d-449d-ad66-ad91c4e53d3d")?;
+    find_by_pk::<entity::EventModel>(&elephantry, "f186b680-237d-449d-ad66-ad91c4e53d3d")?;
     println!();
 
     println!("Find all events:\n");
-    find_all::<EventModel>(&elephantry)?;
+    find_all::<entity::EventModel>(&elephantry)?;
     println!();
 
     println!("Find all extra events:\n");
-    find_all::<EventExtraModel>(&elephantry)?;
+    find_all::<entity::EventExtraModel>(&elephantry)?;
     println!();
 
     println!("Insert one row:\n");
-    let new_event = Event::<String> {
+    let new_event = entity::Event::<String> {
         uuid: None,
         name: "purchase".to_string(),
         visitor_id: Some(15),
@@ -42,25 +38,30 @@ fn main() -> elephantry::Result {
             .to_string(),
         generic: None,
     };
-    let mut entity = insert_one::<EventModel>(&elephantry, &new_event)?;
+    let mut entity = insert_one::<entity::EventModel>(&elephantry, &new_event)?;
     println!();
 
     println!("Update one row:\n");
     entity.name = "pageview".to_string();
-    let entity =
-        update_one::<EventModel>(&elephantry, &elephantry::pk!(uuid => entity.uuid), &entity)?;
+    let entity = update_one::<entity::EventModel>(
+        &elephantry,
+        &elephantry::pk!(uuid => entity.uuid),
+        &entity,
+    )?;
     assert_eq!(&entity.name, "pageview");
     println!();
 
     println!("Delete one row\n");
-    elephantry.delete_one::<EventModel>(&entity)?;
+    elephantry.delete_one::<entity::EventModel>(&entity)?;
     let uuid = entity.uuid.unwrap();
     assert!(elephantry
-        .find_by_pk::<EventModel>(&elephantry::pk! {uuid => uuid})?
+        .find_by_pk::<entity::EventModel>(&elephantry::pk! {uuid => uuid})?
         .is_none());
-    assert!(!elephantry.exist_where::<EventModel>("uuid = $1", &[&uuid])?);
+    assert!(!elephantry.exist_where::<entity::EventModel>("uuid = $1", &[&uuid])?);
 
-    let count = elephantry.model::<EventModel>().count_uniq_visitor()?;
+    let count = elephantry
+        .model::<entity::EventModel>()
+        .count_uniq_visitor()?;
     assert_eq!(count, 4);
     println!("Count uniq visitor: {count}");
 
