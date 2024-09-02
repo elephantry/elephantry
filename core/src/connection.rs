@@ -254,6 +254,12 @@ impl Connection {
      *
      * This is done with limit/offset, read why it’s probably not a good idea to
      * use it: <https://use-the-index-luke.com/no-offset>.
+     *
+     * <div class="warning">
+     *
+     * `page` starts at 1.
+     *
+     * </div>
      */
     pub fn paginate_find_where<M>(
         &self,
@@ -269,7 +275,7 @@ impl Connection {
         let suffix = format!(
             "{} offset {} fetch first {max_per_page} rows only",
             suffix.unwrap_or_default(),
-            max_per_page * (page - 1),
+            max_per_page * page.saturating_sub(1),
         );
 
         let rows = self.find_where::<M>(clause, params, Some(&suffix))?;
