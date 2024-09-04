@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `to_sql::write_*`public;
 - bit-vec 0.8;
 - xmltree 0.11;
+- postgres_money 0.4;
 
 ## [4.0.1] - 2024-03-18
 
