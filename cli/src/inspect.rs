@@ -115,7 +115,7 @@ pub fn enums(connection: &elephantry::Connection, schema: &str) -> crate::Result
     for enumeration in &enumerations {
         table.add_row(term_table::row::Row::new(vec![
             term_table::table_cell::TableCell::new(&enumeration.name),
-            term_table::table_cell::TableCell::new(&format!("{:?}", enumeration.elements)),
+            term_table::table_cell::TableCell::new(format!("{:?}", enumeration.elements)),
             term_table::table_cell::TableCell::new(
                 enumeration.description.as_deref().unwrap_or_default(),
             ),

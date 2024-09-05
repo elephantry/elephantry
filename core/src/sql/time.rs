@@ -99,7 +99,7 @@ impl crate::FromSql for TimeTz {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let value = crate::from_sql::not_null(raw)?;
 
-        let x = match value.find(|c| c == '+' || c == '-') {
+        let x = match value.find(['+', '-']) {
             Some(x) => x,
             None => return Err(Self::error(ty, raw)),
         };
