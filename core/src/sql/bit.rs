@@ -8,7 +8,7 @@ impl crate::ToSql for u8 {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L146
      */
     fn to_text(&self) -> crate::Result<Option<String>> {
-        let bytes = bit_vec::BitVec::from_bytes(&[self.reverse_bits()]);
+        let bytes = Bits::from_bytes(&[self.reverse_bits()]);
 
         bytes.to_text()
     }
@@ -17,7 +17,7 @@ impl crate::ToSql for u8 {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L330
      */
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
-        let bytes = bit_vec::BitVec::from_bytes(&[self.reverse_bits()]);
+        let bytes = Bits::from_bytes(&[self.reverse_bits()]);
 
         bytes.to_binary()
     }
@@ -29,7 +29,7 @@ impl crate::FromSql for u8 {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L279
      */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        let bytes = bit_vec::BitVec::from_text(ty, raw)?;
+        let bytes = Bits::from_text(ty, raw)?;
 
         bytes
             .get(0)
@@ -41,7 +41,7 @@ impl crate::FromSql for u8 {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L375
      */
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
-        let bytes = bit_vec::BitVec::from_binary(ty, raw)?;
+        let bytes = Bits::from_binary(ty, raw)?;
 
         bytes
             .get(0)
@@ -63,7 +63,7 @@ impl<const N: usize> crate::ToSql for [u8; N] {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L146
      */
     fn to_text(&self) -> crate::Result<Option<String>> {
-        let bytes = bit_vec::BitVec::from_bytes(self);
+        let bytes = Bits::from_bytes(self);
 
         bytes.to_text()
     }
@@ -72,7 +72,7 @@ impl<const N: usize> crate::ToSql for [u8; N] {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L330
      */
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
-        let bytes = bit_vec::BitVec::from_bytes(self);
+        let bytes = Bits::from_bytes(self);
 
         bytes.to_binary()
     }
@@ -84,7 +84,7 @@ impl<const N: usize> crate::FromSql for [u8; N] {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L279
      */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        let bytes = bit_vec::BitVec::from_text(ty, raw)?;
+        let bytes = Bits::from_text(ty, raw)?;
 
         bytes
             .to_bytes()
@@ -97,7 +97,7 @@ impl<const N: usize> crate::FromSql for [u8; N] {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L375
      */
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
-        let bytes = bit_vec::BitVec::from_binary(ty, raw)?;
+        let bytes = Bits::from_binary(ty, raw)?;
 
         bytes
             .to_bytes()
@@ -110,8 +110,14 @@ impl<const N: usize> crate::FromSql for [u8; N] {
 #[cfg_attr(docsrs, doc(cfg(feature = "bit")))]
 impl<const N: usize> crate::entity::Simple for [u8; N] {}
 
+/**
+ * Rust type for [varbit](https://www.postgresql.org/docs/current/datatype.html).
+ */
 #[cfg_attr(docsrs, doc(cfg(feature = "bit")))]
-impl crate::ToSql for bit_vec::BitVec {
+pub type Bits = bit_vec::BitVec;
+
+#[cfg_attr(docsrs, doc(cfg(feature = "bit")))]
+impl crate::ToSql for Bits {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::VARBIT
     }
@@ -140,13 +146,13 @@ impl crate::ToSql for bit_vec::BitVec {
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "bit")))]
-impl crate::FromSql for bit_vec::BitVec {
+impl crate::FromSql for Bits {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L586
      */
     fn from_text(_: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let s = crate::from_sql::not_null(raw)?;
-        let mut bits = bit_vec::BitVec::from_elem(s.len(), false);
+        let mut bits = Bits::from_elem(s.len(), false);
 
         for (x, bit) in s.chars().enumerate() {
             if bit == '1' {
@@ -165,12 +171,12 @@ impl crate::FromSql for bit_vec::BitVec {
 
         let _size = crate::from_sql::read_i32(&mut buf)?;
 
-        Ok(bit_vec::BitVec::from_bytes(buf))
+        Ok(Bits::from_bytes(buf))
     }
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "bit")))]
-impl crate::entity::Simple for bit_vec::BitVec {}
+impl crate::entity::Simple for Bits {}
 
 #[cfg(test)]
 mod test {
@@ -205,12 +211,12 @@ mod test {
 
     crate::sql_test!(
         varbit,
-        bit_vec::BitVec,
+        crate::Bits,
         [
-            ("'00000000'", bit_vec::BitVec::from_bytes(&[0b0000_0000])),
-            ("'11110000'", bit_vec::BitVec::from_bytes(&[0b1111_0000])),
-            ("'10101010'", bit_vec::BitVec::from_bytes(&[0b1010_1010])),
-            ("'11111111'", bit_vec::BitVec::from_bytes(&[0b1111_1111])),
+            ("'00000000'", crate::Bits::from_bytes(&[0b0000_0000])),
+            ("'11110000'", crate::Bits::from_bytes(&[0b1111_0000])),
+            ("'10101010'", crate::Bits::from_bytes(&[0b1010_1010])),
+            ("'11111111'", crate::Bits::from_bytes(&[0b1111_1111])),
         ]
     );
 }

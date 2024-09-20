@@ -76,8 +76,14 @@ impl crate::FromSql for chrono::DateTime<chrono::offset::FixedOffset> {
 #[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::entity::Simple for chrono::DateTime<chrono::offset::FixedOffset> {}
 
+/**
+ * Rust type for [timestamptz](https://www.postgresql.org/docs/current/datatype-datetime.html).
+ */
 #[cfg_attr(docsrs, doc(cfg(feature = "date")))]
-impl crate::ToSql for chrono::DateTime<chrono::offset::Local> {
+pub type TimestampTz = chrono::DateTime<chrono::offset::Local>;
+
+#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
+impl crate::ToSql for TimestampTz {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::TIMESTAMPTZ
     }
@@ -92,7 +98,7 @@ impl crate::ToSql for chrono::DateTime<chrono::offset::Local> {
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "date")))]
-impl crate::FromSql for chrono::DateTime<chrono::offset::Local> {
+impl crate::FromSql for TimestampTz {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let utc = chrono::DateTime::<chrono::Utc>::from_text(ty, raw)?;
         Ok(utc.with_timezone(&chrono::offset::Local))
@@ -105,7 +111,7 @@ impl crate::FromSql for chrono::DateTime<chrono::offset::Local> {
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "date")))]
-impl crate::entity::Simple for chrono::DateTime<chrono::offset::Local> {}
+impl crate::entity::Simple for TimestampTz {}
 
 #[cfg(test)]
 mod test {

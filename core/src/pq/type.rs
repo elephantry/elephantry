@@ -48,6 +48,7 @@ static TYPES: std::sync::LazyLock<HashMap<&'static str, &'static str>> =
         types.insert(types::TEXT.name, "String");
         types.insert(types::VARCHAR.name, "String");
 
+        types.insert(types::VARBIT.name, "elephantry::Bits");
         types.insert(
             types::BYTEA.name,
             #[cfg(feature = "bit")]
@@ -55,15 +56,8 @@ static TYPES: std::sync::LazyLock<HashMap<&'static str, &'static str>> =
             #[cfg(not(feature = "bit"))]
             "elephantry::Bytea",
         );
-        types.insert(
-            types::VARBIT.name,
-            #[cfg(feature = "bit")]
-            t::<bit_vec::BitVec>(),
-            #[cfg(not(feature = "bit"))]
-            "bit_vec::BitVec",
-        );
 
-        types.insert(types::DATE.name, "chrono::NaiveDate");
+        types.insert(types::DATE.name, "elephantry::Date");
 
         types.insert(
             types::BOX.name,
@@ -115,25 +109,19 @@ static TYPES: std::sync::LazyLock<HashMap<&'static str, &'static str>> =
             "elephantry::Polygon",
         );
 
-        types.insert(
-            types::CIDR.name,
-            #[cfg(feature = "net")]
-            t::<ipnetwork::IpNetwork>(),
-            #[cfg(not(feature = "net"))]
-            "ipnetwork::IpNetwork",
-        );
+        types.insert(types::CIDR.name, "elephantry::Cidr");
         types.insert(types::INET.name, "std::net::IpAddr");
-        types.insert(types::MACADDR.name, "macaddr::MacAddr6");
-        types.insert(types::MACADDR8.name, "macaddr::MacAddr8");
+        types.insert(types::MACADDR.name, "elephantry::MacAddr");
+        types.insert(types::MACADDR8.name, "elephantry::MacAddr8");
 
+        types.insert(types::JSON.name, "elephantry::Json");
         types.insert(
-            types::JSON.name,
+            types::JSONB.name,
             #[cfg(feature = "json")]
-            t::<serde_json::Value>(),
+            t::<crate::Jsonb>(),
             #[cfg(not(feature = "json"))]
-            "serde_json::Value",
+            "elephantry::Jsonb",
         );
-        types.insert(types::JSONB.name, "serde_json::Value");
 
         types.insert(
             "lquery",
@@ -157,45 +145,30 @@ static TYPES: std::sync::LazyLock<HashMap<&'static str, &'static str>> =
             "elephantry::Ltxtquery",
         );
 
-        types.insert(
-            types::MONEY.name,
-            #[cfg(feature = "money")]
-            t::<postgres_money::Money>(),
-            #[cfg(not(feature = "money"))]
-            "postgres_money::Money",
-        );
+        types.insert(types::MONEY.name, "elephantry::Money");
+
+        types.insert(types::NUMERIC.name, "elephantry::Numeric");
 
         types.insert(
-            types::NUMERIC.name,
-            #[cfg(feature = "numeric")]
-            t::<bigdecimal::BigDecimal>(),
-            #[cfg(not(feature = "numeric"))]
-            "bigdecimal::BigDecimal",
+            types::TIME.name,
+            #[cfg(feature = "time")]
+            t::<crate::Time>(),
+            #[cfg(not(feature = "time"))]
+            "elephantry::Time",
         );
-
-        types.insert(types::TIME.name, "chrono::NaiveTime");
-        types.insert(types::TIMETZ.name, "chrono::TimeTz");
-        types.insert(types::TIMESTAMP.name, "chrono::NaiveDateTime");
         types.insert(
-            types::TIMESTAMPTZ.name,
-            "chrono::DateTime<chrono::FixedOffset>",
+            types::TIMETZ.name,
+            #[cfg(feature = "time")]
+            t::<crate::TimeTz>(),
+            #[cfg(not(feature = "time"))]
+            "elephantry::TimeTz",
         );
+        types.insert(types::TIMESTAMP.name, "elephantry::Timestamp");
+        types.insert(types::TIMESTAMPTZ.name, "elephantry::TimestampTz");
 
-        types.insert(
-            types::UUID.name,
-            #[cfg(feature = "uuid")]
-            t::<uuid::Uuid>(),
-            #[cfg(not(feature = "uuid"))]
-            "uuid::Uuid",
-        );
+        types.insert(types::UUID.name, "elephantry::Uuid");
 
-        types.insert(
-            types::XML.name,
-            #[cfg(feature = "xml")]
-            t::<xmltree::Element>(),
-            #[cfg(not(feature = "xml"))]
-            "xmltree::Element",
-        );
+        types.insert(types::XML.name, "elephantry::Xml");
 
         types
     });

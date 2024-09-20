@@ -1,5 +1,11 @@
+/**
+ * Rust type for [uuid](https://www.postgresql.org/docs/current/datatype-uuid.html).
+ */
 #[cfg_attr(docsrs, doc(cfg(feature = "uuid")))]
-impl crate::ToSql for uuid::Uuid {
+pub type Uuid = uuid::Uuid;
+
+#[cfg_attr(docsrs, doc(cfg(feature = "uuid")))]
+impl crate::ToSql for Uuid {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::UUID
     }
@@ -20,12 +26,12 @@ impl crate::ToSql for uuid::Uuid {
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "uuid")))]
-impl crate::FromSql for uuid::Uuid {
+impl crate::FromSql for Uuid {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/uuid.c#L53
      */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        match uuid::Uuid::parse_str(crate::from_sql::not_null(raw)?) {
+        match Uuid::parse_str(crate::from_sql::not_null(raw)?) {
             Ok(uuid) => Ok(uuid),
             _ => Err(Self::error(ty, raw)),
         }
@@ -44,21 +50,21 @@ impl crate::FromSql for uuid::Uuid {
         let mut bytes = [0; 16];
         bytes.copy_from_slice(buf);
 
-        Ok(uuid::Uuid::from_bytes(bytes))
+        Ok(Uuid::from_bytes(bytes))
     }
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "uuid")))]
-impl crate::entity::Simple for uuid::Uuid {}
+impl crate::entity::Simple for Uuid {}
 
 #[cfg(test)]
 mod test {
     crate::sql_test!(
         uuid,
-        uuid::Uuid,
+        crate::Uuid,
         [(
             "'12edd47f-e2fc-44eb-9419-1995dfb6725d'",
-            uuid::Uuid::parse_str("12edd47f-e2fc-44eb-9419-1995dfb6725d").unwrap()
+            crate::Uuid::parse_str("12edd47f-e2fc-44eb-9419-1995dfb6725d").unwrap()
         )]
     );
 }

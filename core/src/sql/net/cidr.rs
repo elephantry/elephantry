@@ -1,5 +1,11 @@
+/**
+ * Rust type for [cidr](https://www.postgresql.org/docs/current/datatype-net-types.html).
+ */
 #[cfg_attr(docsrs, doc(cfg(feature = "net")))]
-impl crate::ToSql for ipnetwork::IpNetwork {
+pub type Cidr = ipnetwork::IpNetwork;
+
+#[cfg_attr(docsrs, doc(cfg(feature = "net")))]
+impl crate::ToSql for Cidr {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::CIDR
     }
@@ -18,8 +24,8 @@ impl crate::ToSql for ipnetwork::IpNetwork {
         let mut buf = Vec::new();
 
         let (ip_familly, nb) = match self {
-            ipnetwork::IpNetwork::V4(_) => (super::IpFamilly::Inet, 4),
-            ipnetwork::IpNetwork::V6(_) => (super::IpFamilly::Inet6, 16),
+            Cidr::V4(_) => (super::IpFamilly::Inet, 4),
+            Cidr::V6(_) => (super::IpFamilly::Inet6, 16),
         };
         buf.push(ip_familly as u8);
 
@@ -32,8 +38,8 @@ impl crate::ToSql for ipnetwork::IpNetwork {
         buf.push(nb);
 
         match self {
-            ipnetwork::IpNetwork::V4(addr) => buf.extend_from_slice(&addr.ip().octets()),
-            ipnetwork::IpNetwork::V6(addr) => buf.extend_from_slice(&addr.ip().octets()),
+            Cidr::V4(addr) => buf.extend_from_slice(&addr.ip().octets()),
+            Cidr::V6(addr) => buf.extend_from_slice(&addr.ip().octets()),
         }
 
         Ok(Some(buf))
@@ -41,7 +47,7 @@ impl crate::ToSql for ipnetwork::IpNetwork {
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "net")))]
-impl crate::FromSql for ipnetwork::IpNetwork {
+impl crate::FromSql for Cidr {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/network.c#L148
      */
@@ -66,12 +72,12 @@ impl crate::FromSql for ipnetwork::IpNetwork {
                 let cidr =
                     ipnetwork::Ipv4Network::new((network.ip as u32).into(), network.netmask_bits)
                         .map_err(|_| Self::error(ty, raw))?;
-                ipnetwork::IpNetwork::V4(cidr)
+                Cidr::V4(cidr)
             }
             super::IpFamilly::Inet6 => {
                 let cidr = ipnetwork::Ipv6Network::new(network.ip.into(), network.netmask_bits)
                     .map_err(|_| Self::error(ty, raw))?;
-                ipnetwork::IpNetwork::V6(cidr)
+                Cidr::V6(cidr)
             }
         };
 
@@ -80,16 +86,16 @@ impl crate::FromSql for ipnetwork::IpNetwork {
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "net")))]
-impl crate::entity::Simple for ipnetwork::IpNetwork {}
+impl crate::entity::Simple for Cidr {}
 
 #[cfg(test)]
 mod test {
     crate::sql_test!(
         cidr,
-        ipnetwork::IpNetwork,
+        crate::Cidr,
         [(
             "'192.168.1.0/24'",
-            ipnetwork::IpNetwork::V4("192.168.1.0/24".parse().unwrap())
+            crate::Cidr::V4("192.168.1.0/24".parse().unwrap())
         )]
     );
 }

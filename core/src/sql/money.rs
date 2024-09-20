@@ -3,7 +3,7 @@
  * [money](https://www.postgresql.org/docs/current/datatype-money.html).
  */
 #[cfg_attr(docsrs, doc(cfg(feature = "money")))]
-pub use postgres_money::Money;
+pub type Money = postgres_money::Money;
 
 #[cfg_attr(docsrs, doc(cfg(feature = "money")))]
 impl crate::ToSql for Money {

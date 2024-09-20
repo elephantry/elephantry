@@ -3,6 +3,10 @@ mod inet;
 mod macaddr;
 mod macaddr8;
 
+pub use cidr::*;
+pub use macaddr::*;
+pub use macaddr8::*;
+
 #[derive(Eq, PartialEq)]
 enum IpFamilly {
     Inet = 2,

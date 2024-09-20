@@ -1,7 +1,14 @@
 use std::convert::{TryFrom, TryInto};
 
+/**
+ * Rust type for
+ * [numeric](https://www.postgresql.org/docs/current/datatype-numeric.html).
+ */
 #[cfg_attr(docsrs, doc(cfg(feature = "numeric")))]
-impl crate::ToSql for bigdecimal::BigDecimal {
+pub type Numeric = bigdecimal::BigDecimal;
+
+#[cfg_attr(docsrs, doc(cfg(feature = "numeric")))]
+impl crate::ToSql for Numeric {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::NUMERIC
     }
@@ -33,7 +40,7 @@ impl crate::ToSql for bigdecimal::BigDecimal {
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "numeric")))]
-impl crate::FromSql for bigdecimal::BigDecimal {
+impl crate::FromSql for Numeric {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/numeric.c#L573
      */
@@ -69,7 +76,7 @@ impl crate::FromSql for bigdecimal::BigDecimal {
     }
 }
 
-impl crate::entity::Simple for bigdecimal::BigDecimal {}
+impl crate::entity::Simple for Numeric {}
 
 /*
  * Credits: [Diesel](https://diesel.rs/).
@@ -96,7 +103,7 @@ impl PgNumeric {
     }
 }
 
-impl TryFrom<PgNumeric> for bigdecimal::BigDecimal {
+impl TryFrom<PgNumeric> for Numeric {
     type Error = ();
 
     fn try_from(value: PgNumeric) -> Result<Self, Self::Error> {
@@ -114,7 +121,7 @@ impl TryFrom<PgNumeric> for bigdecimal::BigDecimal {
         }
         // First digit got factor 10_000^(digits.len() - 1), but should get 10_000^weight
         let correction_exp = 4 * (i64::from(value.weight) - count + 1);
-        let result = bigdecimal::BigDecimal::new(
+        let result = Numeric::new(
             num::bigint::BigInt::from_biguint(sign, result),
             -correction_exp,
         )
@@ -124,10 +131,10 @@ impl TryFrom<PgNumeric> for bigdecimal::BigDecimal {
     }
 }
 
-impl TryFrom<&bigdecimal::BigDecimal> for PgNumeric {
+impl TryFrom<&Numeric> for PgNumeric {
     type Error = crate::Error;
 
-    fn try_from(value: &bigdecimal::BigDecimal) -> Result<Self, Self::Error> {
+    fn try_from(value: &Numeric) -> Result<Self, Self::Error> {
         use num::Signed;
 
         let (mut integer, dscale) = value.as_bigint_and_exponent();
@@ -196,19 +203,16 @@ impl Iterator for ToBase10000 {
 mod test {
     crate::sql_test!(
         numeric,
-        bigdecimal::BigDecimal,
+        crate::Numeric,
         [
-            ("20000", bigdecimal::BigDecimal::from(20_000)),
+            ("20000", crate::Numeric::from(20_000)),
             (
                 "20000.0000019073486328125",
-                bigdecimal::BigDecimal::try_from(20_000.000_001_907_348_632_812_5).unwrap()
+                crate::Numeric::try_from(20_000.000_001_907_348_632_812_5).unwrap()
             ),
-            ("3900", bigdecimal::BigDecimal::from(3_900)),
-            ("3900.5", bigdecimal::BigDecimal::try_from(3_900.5).unwrap()),
-            (
-                "-0.4375",
-                bigdecimal::BigDecimal::try_from(-0.4375).unwrap()
-            ),
+            ("3900", crate::Numeric::from(3_900)),
+            ("3900.5", crate::Numeric::try_from(3_900.5).unwrap()),
+            ("-0.4375", crate::Numeric::try_from(-0.4375).unwrap()),
         ]
     );
 }

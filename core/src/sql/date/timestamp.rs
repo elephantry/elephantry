@@ -1,5 +1,11 @@
+/**
+ * Rust type for [date](https://www.postgresql.org/docs/current/datatype-datetime.html).
+ */
 #[cfg_attr(docsrs, doc(cfg(feature = "date")))]
-impl crate::ToSql for chrono::NaiveDateTime {
+pub type Timestamp = chrono::NaiveDateTime;
+
+#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
+impl crate::ToSql for Timestamp {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::TIMESTAMP
     }
@@ -25,18 +31,16 @@ impl crate::ToSql for chrono::NaiveDateTime {
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "date")))]
-impl crate::FromSql for chrono::NaiveDateTime {
+impl crate::FromSql for Timestamp {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/timestamp.c#L143
      */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        if let Ok(date) =
-            chrono::NaiveDateTime::parse_from_str(crate::from_sql::not_null(raw)?, "%F %T")
-        {
+        if let Ok(date) = Timestamp::parse_from_str(crate::from_sql::not_null(raw)?, "%F %T") {
             return Ok(date);
         }
 
-        match chrono::NaiveDateTime::parse_from_str(crate::from_sql::not_null(raw)?, "%F %T.%f") {
+        match Timestamp::parse_from_str(crate::from_sql::not_null(raw)?, "%F %T.%f") {
             Ok(date) => Ok(date),
             _ => Err(Self::error(ty, raw)),
         }
@@ -53,13 +57,13 @@ impl crate::FromSql for chrono::NaiveDateTime {
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "date")))]
-impl crate::entity::Simple for chrono::NaiveDateTime {}
+impl crate::entity::Simple for Timestamp {}
 
 #[cfg(test)]
 mod test {
     crate::sql_test!(
         timestamp,
-        chrono::NaiveDateTime,
+        crate::Timestamp,
         [(
             "'1970-01-01 00:00:00'",
             chrono::DateTime::from_timestamp(0, 0)

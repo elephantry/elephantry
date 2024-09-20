@@ -3,9 +3,9 @@
  * [time](https://www.postgresql.org/docs/current/datatype-datetime.html).
  */
 #[cfg_attr(docsrs, doc(cfg(feature = "time")))]
-pub use time::Time;
+pub type Time = time::Time;
 #[cfg_attr(docsrs, doc(cfg(feature = "time")))]
-pub use time::UtcOffset as Timezone;
+pub type Timezone = time::UtcOffset;
 /**
  * Rust type for
  * [timetz](https://www.postgresql.org/docs/current/datatype-datetime.html).

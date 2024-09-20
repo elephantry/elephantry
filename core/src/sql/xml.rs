@@ -1,5 +1,11 @@
+/**
+ * Rust type for [xml](https://www.postgresql.org/docs/current/datatype-xml.html).
+ */
 #[cfg_attr(docsrs, doc(cfg(feature = "xml")))]
-impl crate::ToSql for xmltree::Element {
+pub type Xml = xmltree::Element;
+
+#[cfg_attr(docsrs, doc(cfg(feature = "xml")))]
+impl crate::ToSql for Xml {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::XML
     }
@@ -30,13 +36,12 @@ impl crate::ToSql for xmltree::Element {
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "xml")))]
-impl crate::FromSql for xmltree::Element {
+impl crate::FromSql for Xml {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/xml.c#L258
      */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        xmltree::Element::parse(crate::from_sql::not_null(raw)?.as_bytes())
-            .map_err(|_| Self::error(ty, raw))
+        Xml::parse(crate::from_sql::not_null(raw)?.as_bytes()).map_err(|_| Self::error(ty, raw))
     }
 
     /*
@@ -50,7 +55,7 @@ impl crate::FromSql for xmltree::Element {
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "xml")))]
-impl crate::entity::Simple for xmltree::Element {}
+impl crate::entity::Simple for Xml {}
 
 #[cfg(test)]
 mod test {
@@ -64,10 +69,10 @@ mod test {
 
     crate::sql_test!(
         xml,
-        xmltree::Element,
+        crate::Xml,
         [(
             &format!("'{}'", super::XML),
-            xmltree::Element::parse(super::XML.as_bytes()).unwrap()
+            crate::Xml::parse(super::XML.as_bytes()).unwrap()
         )]
     );
 }

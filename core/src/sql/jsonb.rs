@@ -1,5 +1,5 @@
 /**
- * Rust type for jsonb.
+ * Rust type for [jsonb](https://www.postgresql.org/docs/16/datatype-json.html).
  */
 #[derive(Clone, Debug, Eq, PartialEq)]
 #[cfg_attr(docsrs, doc(cfg(feature = "json")))]

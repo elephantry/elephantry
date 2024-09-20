@@ -1,5 +1,11 @@
+/**
+ * Rust type for [macaddr](https://www.postgresql.org/docs/current/datatype-net-types.html).
+ */
 #[cfg_attr(docsrs, doc(cfg(feature = "net")))]
-impl crate::ToSql for macaddr::MacAddr6 {
+pub type MacAddr = macaddr::MacAddr6;
+
+#[cfg_attr(docsrs, doc(cfg(feature = "net")))]
+impl crate::ToSql for MacAddr {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::MACADDR
     }
@@ -20,7 +26,7 @@ impl crate::ToSql for macaddr::MacAddr6 {
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "net")))]
-impl crate::FromSql for macaddr::MacAddr6 {
+impl crate::FromSql for MacAddr {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/mac.c#L56
      */
@@ -46,17 +52,17 @@ impl crate::FromSql for macaddr::MacAddr6 {
 }
 
 #[cfg_attr(docsrs, doc(cfg(feature = "net")))]
-impl crate::entity::Simple for macaddr::MacAddr6 {}
+impl crate::entity::Simple for MacAddr {}
 
 #[cfg(test)]
 mod test {
     #![allow(non_snake_case)]
 
-    static MAC: macaddr::MacAddr6 = macaddr::MacAddr6::new(0x08, 0x00, 0x2b, 0x01, 0x02, 0x03);
+    static MAC: crate::MacAddr = crate::MacAddr::new(0x08, 0x00, 0x2b, 0x01, 0x02, 0x03);
 
     crate::sql_test!(
         Macaddr,
-        macaddr::MacAddr6,
+        crate::MacAddr,
         [
             ("'08:00:2b:01:02:03'", crate::sql::net::macaddr::test::MAC),
             ("'08-00-2b-01-02-03'", crate::sql::net::macaddr::test::MAC),

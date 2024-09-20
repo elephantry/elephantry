@@ -3,6 +3,7 @@
 #![cfg_attr(docsrs, feature(doc_cfg))]
 
 /*!
+ * Foreign types (ie defined in another crate), have [type alias](#types).
  *
  * | SQL type                    | Rust type                | Feature    |
  * |-----------------------------|--------------------------|------------|
