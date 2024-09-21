@@ -211,6 +211,12 @@ fn ty_to_rust(column: &elephantry::inspect::Column) -> String {
         Err(_) => {
             if column.ty() == "public.hstore" {
                 "elephantry::Hstore".to_string()
+            } else if column.ty() == "public.ltree" {
+                "elephantry::Ltree".to_string()
+            } else if column.ty() == "public.lquery" {
+                "elephantry::Lquery".to_string()
+            } else if column.ty() == "public.ltxtquery" {
+                "elephantry::Ltxtquery".to_string()
             } else {
                 column.ty().replace('.', "::").to_string()
             }
