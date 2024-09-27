@@ -683,6 +683,8 @@ impl Connection {
             #[cfg(feature = "pg16")]
             sslcertmode: Self::config_get(&info, "sslcertmode")?,
             sslcompression: Self::config_get::<i32>(&info, "sslcompression")?.map(|x| x == 1),
+            #[cfg(feature = "pg17")]
+            sslnegotiation: Self::config_get(&info, "sslnegotiation")?,
             sslcrl: info.get("sslcrl").and_then(|x| x.val.clone()),
             sslkey: info.get("sslkey").and_then(|x| x.val.clone()),
             ssl_max_protocol_version: info

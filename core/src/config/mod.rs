@@ -5,6 +5,8 @@ mod load_balance_hosts;
 #[cfg(feature = "pg16")]
 mod sslcertmode;
 mod sslmode;
+#[cfg(feature = "pg17")]
+mod sslnegotiation;
 mod target_session_attrs;
 
 pub use channel_binding::*;
@@ -14,6 +16,8 @@ pub use load_balance_hosts::*;
 #[cfg(feature = "pg16")]
 pub use sslcertmode::*;
 pub use sslmode::*;
+#[cfg(feature = "pg17")]
+pub use sslnegotiation::*;
 pub use target_session_attrs::*;
 
 /**
@@ -60,6 +64,8 @@ pub struct Config {
     pub ssl_max_protocol_version: Option<String>,
     pub ssl_min_protocol_version: Option<String>,
     pub sslmode: Option<SslMode>,
+    #[cfg(feature = "pg17")]
+    pub sslnegotiation: Option<SslNegotiation>,
     pub sslpassword: Option<String>,
     pub sslrootcert: Option<String>,
     pub target_session_attrs: Option<TargetSessionAttrs>,
