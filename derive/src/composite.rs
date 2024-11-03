@@ -1,5 +1,7 @@
 pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> {
-    let parameters = crate::params::Container::from_ast(ast)?;
+    use darling::FromDeriveInput;
+
+    let parameters = crate::params::Composite::from_derive_input(ast)?;
 
     let fields = match ast.data {
         syn::Data::Struct(ref s) => &s.fields,
@@ -7,15 +9,7 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::Tok
     };
 
     let name = &ast.ident;
-    let elephantry = if parameters.internal {
-        quote::quote! {
-            crate
-        }
-    } else {
-        quote::quote! {
-            elephantry
-        }
-    };
+    let elephantry = parameters.elephantry();
 
     let mut to_vec_body = Vec::new();
     let mut from_text_body = Vec::new();
