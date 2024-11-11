@@ -12,3 +12,6 @@ edition = "2021"
 license = "MIT"
 homepage = "https://elephantry.github.io"
 repository = "https://github.com/elephantry/elephantry"
+
+[workspace.dependencies]
+thiserror = "2.0"
