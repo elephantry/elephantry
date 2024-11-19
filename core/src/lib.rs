@@ -316,11 +316,9 @@ mod test {
             env_logger::init();
         });
 
-        static POOL: std::sync::OnceLock<crate::Result<crate::Pool>> = std::sync::OnceLock::new();
-
-        let pool = POOL
-            // @TODO #[feature(once_cell_try)]
-            .get_or_init(|| {
+        // @TODO #[feature(once_cell_try)]
+        static POOL: std::sync::LazyLock<crate::Result<crate::Pool>> =
+            std::sync::LazyLock::new(|| {
                 let pool = crate::Pool::new(&dsn())?;
                 pool.execute("create extension if not exists hstore")?;
                 pool.execute("create extension if not exists ltree")?;
@@ -352,11 +350,9 @@ end$$;
                 )?;
 
                 Ok(pool)
-            })
-            .as_ref()
-            .unwrap();
+            });
 
-        Ok(pool)
+        Ok(POOL.as_ref().unwrap())
     }
 
     #[test]
