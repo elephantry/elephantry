@@ -27,7 +27,7 @@ jobs:
         with:
           components: clippy
       - name: Run clippy
-        run: cargo clippy --all-features -- --deny warnings
+        run: cargo clippy --all-features --all-targets -- --deny warnings
 
   tests:
     name: Tests

@@ -22,7 +22,7 @@ lint:clippy:
         - apt update -yqq
         - apt install -yqq clang libpq-dev
         - rustup component add clippy
-    script: cargo clippy --all-features -- --deny warnings
+    script: cargo clippy --all-features --all-targets -- --deny warnings
 
 .test: &test
     stage: test
