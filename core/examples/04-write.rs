@@ -33,7 +33,7 @@ fn insert(elephantry: &elephantry::Pool) -> elephantry::Result<employee::Entity>
         employee_id: None,
         first_name: "First name".to_string(),
         last_name: "Last name".to_string(),
-        birth_date: chrono::NaiveDate::from_ymd_opt(1952, 03, 21).unwrap(),
+        birth_date: chrono::NaiveDate::from_ymd_opt(1952, 3, 21).unwrap(),
         is_manager: false,
         day_salary: 10_000.into(),
         department_id: 3,
@@ -79,7 +79,7 @@ fn update(elephantry: &elephantry::Pool, entity: &employee::Entity) -> elephantr
 }
 
 fn delete(elephantry: &elephantry::Pool, entity: &employee::Entity) -> elephantry::Result {
-    let deleted_entity = elephantry.delete_one::<employee::Model>(&entity)?;
+    let deleted_entity = elephantry.delete_one::<employee::Model>(entity)?;
     dbg!(deleted_entity);
 
     let deleted_entity = elephantry

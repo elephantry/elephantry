@@ -35,7 +35,7 @@ fn main() -> elephantry::Result {
     let elephantry = elephantry::Pool::new(&database_url)?;
     elephantry.execute(include_str!("structure.sql"))?;
 
-    let employees = (15..10_000).into_iter().map(employee::Entity::new);
+    let employees = (15..10_000).map(employee::Entity::new);
 
     elephantry.copy::<employee::Model, _>(employees)?;
 

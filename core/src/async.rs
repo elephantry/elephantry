@@ -9,7 +9,7 @@ pub struct Async<'c> {
     connection: &'c std::sync::Mutex<libpq::Connection>,
 }
 
-impl<'c> std::future::Future for Async<'c> {
+impl std::future::Future for Async<'_> {
     type Output = crate::Result<crate::pq::Result>;
 
     fn poll(

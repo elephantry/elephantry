@@ -17,7 +17,7 @@ impl PartialEq<Symbol> for syn::Path {
     }
 }
 
-impl<'a> PartialEq<Symbol> for &'a syn::Path {
+impl PartialEq<Symbol> for &syn::Path {
     fn eq(&self, word: &Symbol) -> bool {
         self.is_ident(word.0)
     }

@@ -156,7 +156,7 @@ impl<'a> Where<'a> {
     }
 }
 
-impl<'a> std::fmt::Display for Where<'a> {
+impl std::fmt::Display for Where<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let s = if self.is_empty() {
             "true".to_string()
@@ -168,7 +168,7 @@ impl<'a> std::fmt::Display for Where<'a> {
     }
 }
 
-impl<'a> std::ops::BitAnd for Where<'a> {
+impl std::ops::BitAnd for Where<'_> {
     type Output = Self;
 
     fn bitand(self, rhs: Self) -> Self::Output {
@@ -179,13 +179,13 @@ impl<'a> std::ops::BitAnd for Where<'a> {
     }
 }
 
-impl<'a> std::ops::BitAndAssign for Where<'a> {
+impl std::ops::BitAndAssign for Where<'_> {
     fn bitand_assign(&mut self, rhs: Self) {
         self.op(&rhs, "and");
     }
 }
 
-impl<'a> std::ops::BitOr for Where<'a> {
+impl std::ops::BitOr for Where<'_> {
     type Output = Self;
 
     fn bitor(self, rhs: Self) -> Self::Output {
@@ -196,7 +196,7 @@ impl<'a> std::ops::BitOr for Where<'a> {
     }
 }
 
-impl<'a> std::ops::BitOrAssign for Where<'a> {
+impl std::ops::BitOrAssign for Where<'_> {
     fn bitor_assign(&mut self, rhs: Self) {
         self.op(&rhs, "or");
     }

@@ -135,7 +135,7 @@ bitflags::bitflags! {
     }
 }
 
-impl<'a, T: crate::ToSql> crate::ToSql for Bounds<&'a T> {
+impl<T: crate::ToSql> crate::ToSql for Bounds<&T> {
     fn ty(&self) -> crate::pq::Type {
         use crate::pq::ToArray;
 
