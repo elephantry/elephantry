@@ -1,5 +1,4 @@
 #[derive(Clone, Debug, Eq, PartialEq, elephantry_derive::Entity, elephantry_derive::Composite)]
-#[elephantry(internal)]
 pub struct Column {
     #[elephantry(default)]
     pub is_primary: bool,

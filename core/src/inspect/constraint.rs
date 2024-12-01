@@ -40,7 +40,6 @@ impl crate::FromText for Type {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, elephantry_derive::Entity, elephantry_derive::Composite)]
-#[elephantry(internal)]
 pub struct Constraint {
     pub oid: crate::pq::Oid,
     pub ty: Type,
@@ -69,7 +68,6 @@ select oid, contype as ty, conname as name, pg_get_constraintdef(oid) as definit
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, elephantry_derive::Entity, elephantry_derive::Composite)]
-#[elephantry(internal)]
 pub struct Index {
     pub oid: crate::pq::Oid,
     pub name: String,

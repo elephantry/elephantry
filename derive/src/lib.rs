@@ -155,3 +155,17 @@ fn check_u8_array(_: &syn::Type) -> syn::Result<()> {
 pub(crate) fn error<R>(ast: &dyn quote::ToTokens, message: &str) -> syn::Result<R> {
     Err(syn::Error::new_spanned(ast, message))
 }
+
+pub(crate) fn elephantry() -> proc_macro2::TokenStream {
+    match (
+        proc_macro_crate::crate_name("elephantry"),
+        std::env::var("CARGO_CRATE_NAME").as_deref(),
+    ) {
+        (Ok(proc_macro_crate::FoundCrate::Itself), Ok("elephantry")) => quote::quote!(crate),
+        (Ok(proc_macro_crate::FoundCrate::Name(name)), _) => {
+            let ident = proc_macro2::Ident::new(&name, proc_macro2::Span::call_site());
+            quote::quote!(::#ident)
+        }
+        _ => quote::quote!(::elephantry),
+    }
+}

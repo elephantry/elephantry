@@ -388,12 +388,7 @@ end$$;
     }
 
     #[derive(elephantry_derive::Entity)]
-    #[elephantry(
-        internal,
-        model = "Model",
-        structure = "Structure",
-        relation = "entity"
-    )]
+    #[elephantry(model = "Model", structure = "Structure", relation = "entity")]
     pub struct Entity {
         #[elephantry(pk, column = "employee_id")]
         pub id: i32,

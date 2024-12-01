@@ -1,26 +1,5 @@
 #[derive(Clone, Default, Debug)]
-pub(crate) struct Container {
-    pub internal: bool,
-}
-
-impl Container {
-    pub fn from_ast(ast: &syn::DeriveInput) -> syn::Result<Self> {
-        let mut param = Self::default();
-
-        for item in flat_map(&ast.attrs)? {
-            // Parse #[elephantry(internal)]
-            if item.0 == crate::symbol::INTERNAL {
-                param.internal = true;
-            }
-        }
-
-        Ok(param)
-    }
-}
-
-#[derive(Clone, Default, Debug)]
 pub(crate) struct Entity {
-    pub internal: bool,
     pub model: Option<proc_macro2::TokenStream>,
     pub relation: Option<String>,
     pub structure: Option<proc_macro2::TokenStream>,
@@ -31,11 +10,8 @@ impl Entity {
         let mut param = Self::default();
 
         for item in flat_map(&ast.attrs)? {
-            // Parse #[elephantry(internal)]
-            if item.0 == crate::symbol::INTERNAL {
-                param.internal = true;
             // Parse #[elephantry(model = "")]
-            } else if item.0 == crate::symbol::MODEL {
+            if item.0 == crate::symbol::MODEL {
                 if let Some(model) = item.1 {
                     param.model = Some(syn::parse_str(&model)?);
                 } else {

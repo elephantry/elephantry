@@ -1,5 +1,4 @@
 #[derive(Clone, Debug, Eq, PartialEq, elephantry_derive::Entity)]
-#[elephantry(internal)]
 pub struct Relation {
     pub name: String,
     pub persistence: super::Persistence,

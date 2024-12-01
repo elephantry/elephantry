@@ -323,7 +323,6 @@ mod test {
     crate::sql_test!(unknown, (), [("null", ())]);
 
     #[derive(elephantry_derive::Enum, Debug, PartialEq)]
-    #[elephantry(internal)]
     enum Mood {
         Sad,
         Ok,
@@ -341,7 +340,6 @@ mod test {
     );
 
     #[derive(elephantry_derive::Composite, Debug, PartialEq)]
-    #[elephantry(internal)]
     struct CompFoo {
         f1: i32,
         f2: String,

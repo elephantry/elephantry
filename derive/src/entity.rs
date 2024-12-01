@@ -1,15 +1,7 @@
 pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> {
     let params = crate::params::Entity::from_ast(ast)?;
 
-    let elephantry = if params.internal {
-        quote::quote! {
-            crate
-        }
-    } else {
-        quote::quote! {
-            elephantry
-        }
-    };
+    let elephantry = crate::elephantry();
 
     let public = if is_public(ast) {
         quote::quote!(pub)

@@ -1,21 +1,11 @@
 pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> {
-    let parameters = crate::params::Container::from_ast(ast)?;
-
     let variants = match ast.data {
         syn::Data::Enum(ref e) => &e.variants,
         _ => return crate::error(ast, "this derive macro only works on enum"),
     };
 
     let name = &ast.ident;
-    let elephantry = if parameters.internal {
-        quote::quote! {
-            crate
-        }
-    } else {
-        quote::quote! {
-            elephantry
-        }
-    };
+    let elephantry = crate::elephantry();
 
     let from_text_body = variants.iter().map(|variant| {
         let name = &variant.ident;

@@ -1,5 +1,4 @@
 #[derive(Clone, Debug, PartialEq, Eq, elephantry_derive::Entity)]
-#[elephantry(internal)]
 pub struct Extension {
     pub oid: crate::pq::Oid,
     pub name: String,

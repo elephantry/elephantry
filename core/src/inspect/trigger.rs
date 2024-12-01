@@ -1,5 +1,4 @@
 #[derive(Clone, Debug, PartialEq, Eq, elephantry_derive::Entity)]
-#[elephantry(internal)]
 pub struct Trigger {
     pub action: String,
     pub event: String,

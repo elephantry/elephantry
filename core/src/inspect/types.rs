@@ -1,5 +1,4 @@
 #[derive(Clone, Debug, Eq, PartialEq, elephantry_derive::Entity)]
-#[elephantry(internal)]
 pub struct Enum {
     pub name: String,
     pub elements: Vec<String>,
@@ -17,7 +16,6 @@ pub fn enums(
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, elephantry_derive::Entity)]
-#[elephantry(internal)]
 pub struct Domain {
     pub oid: crate::pq::Oid,
     pub name: String,
@@ -70,7 +68,6 @@ order by 1;
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, elephantry_derive::Entity)]
-#[elephantry(internal)]
 pub struct Composite {
     pub name: String,
     #[elephantry(default)]

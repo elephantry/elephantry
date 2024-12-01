@@ -1,21 +1,11 @@
 pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> {
-    let parameters = crate::params::Container::from_ast(ast)?;
-
     let fields = match ast.data {
         syn::Data::Struct(ref s) => &s.fields,
         _ => unimplemented!(),
     };
 
     let name = &ast.ident;
-    let elephantry = if parameters.internal {
-        quote::quote! {
-            crate
-        }
-    } else {
-        quote::quote! {
-            elephantry
-        }
-    };
+    let elephantry = crate::elephantry();
 
     let mut to_vec_body = Vec::new();
     let mut from_text_body = Vec::new();

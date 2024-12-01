@@ -1,5 +1,4 @@
 #[derive(Clone, Debug, Eq, PartialEq, elephantry_derive::Entity)]
-#[elephantry(internal)]
 pub struct Schema {
     pub name: String,
     pub oid: crate::pq::Oid,
