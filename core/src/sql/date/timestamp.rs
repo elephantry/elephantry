@@ -1,10 +1,8 @@
 /**
  * Rust type for [date](https://www.postgresql.org/docs/current/datatype-datetime.html).
  */
-#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 pub type Timestamp = chrono::NaiveDateTime;
 
-#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::ToSql for Timestamp {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::TIMESTAMP
@@ -30,7 +28,6 @@ impl crate::ToSql for Timestamp {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::FromSql for Timestamp {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/timestamp.c#L143
@@ -56,7 +53,6 @@ impl crate::FromSql for Timestamp {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::entity::Simple for Timestamp {}
 
 #[cfg(test)]

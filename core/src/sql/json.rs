@@ -1,10 +1,8 @@
 /**
  * Rust type for [json](https://www.postgresql.org/docs/16/datatype-json.html).
  */
-#[cfg_attr(docsrs, doc(cfg(feature = "json")))]
 pub type Json = serde_json::Value;
 
-#[cfg_attr(docsrs, doc(cfg(feature = "json")))]
 impl crate::ToSql for serde_json::Value {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::JSON
@@ -25,7 +23,6 @@ impl crate::ToSql for serde_json::Value {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "json")))]
 impl crate::FromSql for serde_json::Value {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/json.c#L228
@@ -50,7 +47,6 @@ impl crate::FromSql for serde_json::Value {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "json")))]
 impl crate::entity::Simple for serde_json::Value {}
 
 #[cfg(test)]

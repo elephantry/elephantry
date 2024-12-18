@@ -2,18 +2,14 @@
  * Rust type for
  * [time](https://www.postgresql.org/docs/current/datatype-datetime.html).
  */
-#[cfg_attr(docsrs, doc(cfg(feature = "time")))]
 pub type Time = time::Time;
-#[cfg_attr(docsrs, doc(cfg(feature = "time")))]
 pub type Timezone = time::UtcOffset;
 /**
  * Rust type for
  * [timetz](https://www.postgresql.org/docs/current/datatype-datetime.html).
  */
-#[cfg_attr(docsrs, doc(cfg(feature = "time")))]
 pub type TimeTz = (Time, Timezone);
 
-#[cfg_attr(docsrs, doc(cfg(feature = "time")))]
 impl crate::ToSql for Time {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::TIME
@@ -43,7 +39,6 @@ impl crate::ToSql for Time {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "time")))]
 impl crate::FromSql for Time {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/date.c#L1170
@@ -63,10 +58,8 @@ impl crate::FromSql for Time {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "time")))]
 impl crate::entity::Simple for Time {}
 
-#[cfg_attr(docsrs, doc(cfg(feature = "time")))]
 impl crate::ToSql for TimeTz {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::TIMETZ
@@ -91,7 +84,6 @@ impl crate::ToSql for TimeTz {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "time")))]
 impl crate::FromSql for TimeTz {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/date.c#L1971
@@ -134,7 +126,6 @@ impl crate::FromSql for TimeTz {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "time")))]
 impl crate::entity::Simple for TimeTz {}
 
 #[cfg(test)]

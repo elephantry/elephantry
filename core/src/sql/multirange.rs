@@ -1,4 +1,3 @@
-#[cfg_attr(docsrs, doc(cfg(feature = "multirange")))]
 #[derive(Clone, Debug, PartialEq)]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 pub struct Multirange<R, T>
@@ -10,7 +9,6 @@ where
     _phantodata: std::marker::PhantomData<T>,
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "multirange")))]
 impl<R, T> Multirange<R, T>
 where
     R: std::ops::RangeBounds<T> + crate::ToSql + crate::FromSql,
@@ -31,7 +29,6 @@ where
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "multirange")))]
 impl<R, T> Default for Multirange<R, T>
 where
     R: std::ops::RangeBounds<T> + crate::ToSql + crate::FromSql,
@@ -42,7 +39,6 @@ where
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "multirange")))]
 impl<R, T> std::ops::Deref for Multirange<R, T>
 where
     R: std::ops::RangeBounds<T> + crate::ToSql + crate::FromSql,
@@ -55,7 +51,6 @@ where
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "multirange")))]
 impl<R, T> std::ops::DerefMut for Multirange<R, T>
 where
     R: std::ops::RangeBounds<T> + crate::ToSql + crate::FromSql,
@@ -66,7 +61,6 @@ where
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "multirange")))]
 impl<R, T> crate::ToSql for Multirange<R, T>
 where
     R: std::ops::RangeBounds<T> + crate::ToSql + crate::FromSql,
@@ -122,7 +116,6 @@ where
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "multirange")))]
 impl<R, T> crate::FromSql for Multirange<R, T>
 where
     R: std::ops::RangeBounds<T> + crate::ToSql + crate::FromSql,
@@ -184,7 +177,6 @@ where
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "multirange")))]
 impl<R, T> crate::entity::Simple for Multirange<R, T>
 where
     R: std::ops::RangeBounds<T> + crate::ToSql + crate::FromSql,

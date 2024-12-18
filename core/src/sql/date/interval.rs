@@ -2,7 +2,6 @@
  * Rust type for
  * [interval](https://www.postgresql.org/docs/current/datatype-datetime.html).
  */
-#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 #[derive(Clone, Debug, Default)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Interval {
@@ -212,7 +211,6 @@ macro_rules! caps {
     };
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::FromSql for Interval {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/timestamp.c#L871
@@ -282,7 +280,6 @@ impl crate::FromSql for Interval {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::ToSql for Interval {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::INTERVAL
@@ -317,7 +314,6 @@ impl crate::ToSql for Interval {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::entity::Simple for Interval {}
 
 #[cfg(test)]

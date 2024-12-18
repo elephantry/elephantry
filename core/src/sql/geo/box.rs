@@ -2,7 +2,6 @@
  * Rust type for
  * [box](https://www.postgresql.org/docs/current/datatype-geometric.html#id-1.5.7.16.8).
  */
-#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 #[derive(Clone, Debug, PartialEq)]
 pub struct Box(geo_types::Rect<f64>);
 
@@ -43,7 +42,6 @@ impl<'a> arbitrary::Arbitrary<'a> for Box {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::ToSql for Box {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::BOX
@@ -71,7 +69,6 @@ impl crate::ToSql for Box {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::FromSql for Box {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L413
@@ -92,7 +89,6 @@ impl crate::FromSql for Box {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::entity::Simple for Box {}
 
 #[cfg(test)]

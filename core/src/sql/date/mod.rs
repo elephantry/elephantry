@@ -19,10 +19,8 @@ fn base_datetime() -> crate::Result<Timestamp> {
 /**
  * Rust type for [date](https://www.postgresql.org/docs/current/datatype-datetime.html).
  */
-#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 pub type Date = chrono::NaiveDate;
 
-#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::ToSql for Date {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::DATE
@@ -48,7 +46,6 @@ impl crate::ToSql for Date {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::FromSql for Date {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/date.c#L114
@@ -70,7 +67,6 @@ impl crate::FromSql for Date {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::entity::Simple for Date {}
 
 #[cfg(test)]

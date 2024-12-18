@@ -1,4 +1,3 @@
-#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 #[derive(Clone, Debug, PartialEq)]
 pub struct Coordinate(geo_types::Coord<f64>);
 
@@ -26,7 +25,6 @@ impl<'a> arbitrary::Arbitrary<'a> for Coordinate {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 pub struct Coordinates(Vec<Coordinate>);
 

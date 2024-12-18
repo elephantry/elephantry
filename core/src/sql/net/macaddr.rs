@@ -1,10 +1,8 @@
 /**
  * Rust type for [macaddr](https://www.postgresql.org/docs/current/datatype-net-types.html).
  */
-#[cfg_attr(docsrs, doc(cfg(feature = "net")))]
 pub type MacAddr = macaddr::MacAddr6;
 
-#[cfg_attr(docsrs, doc(cfg(feature = "net")))]
 impl crate::ToSql for MacAddr {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::MACADDR
@@ -25,7 +23,6 @@ impl crate::ToSql for MacAddr {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "net")))]
 impl crate::FromSql for MacAddr {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/mac.c#L56
@@ -51,7 +48,6 @@ impl crate::FromSql for MacAddr {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "net")))]
 impl crate::entity::Simple for MacAddr {}
 
 #[cfg(test)]

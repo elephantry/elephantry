@@ -4,10 +4,8 @@ use std::convert::{TryFrom, TryInto};
  * Rust type for
  * [numeric](https://www.postgresql.org/docs/current/datatype-numeric.html).
  */
-#[cfg_attr(docsrs, doc(cfg(feature = "numeric")))]
 pub type Numeric = bigdecimal::BigDecimal;
 
-#[cfg_attr(docsrs, doc(cfg(feature = "numeric")))]
 impl crate::ToSql for Numeric {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::NUMERIC
@@ -39,7 +37,6 @@ impl crate::ToSql for Numeric {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "numeric")))]
 impl crate::FromSql for Numeric {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/numeric.c#L573

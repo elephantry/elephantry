@@ -2,7 +2,6 @@
  * Rust type for
  * [polygon](https://www.postgresql.org/docs/current/datatype-geometric.html#DATATYPE-POLYGON).
  */
-#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 #[derive(Clone, Debug, PartialEq)]
 pub struct Polygon(geo_types::Polygon<f64>);
 
@@ -46,7 +45,6 @@ impl<'a> arbitrary::Arbitrary<'a> for Polygon {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::ToSql for Polygon {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::POLYGON
@@ -78,7 +76,6 @@ impl crate::ToSql for Polygon {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::FromSql for Polygon {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L3348
@@ -109,7 +106,6 @@ impl crate::FromSql for Polygon {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::entity::Simple for Polygon {}
 
 #[cfg(test)]

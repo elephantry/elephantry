@@ -1,4 +1,3 @@
-#[cfg_attr(docsrs, doc(cfg(feature = "bit")))]
 impl crate::ToSql for u8 {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::BIT
@@ -23,7 +22,6 @@ impl crate::ToSql for u8 {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "bit")))]
 impl crate::FromSql for u8 {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L279
@@ -50,10 +48,8 @@ impl crate::FromSql for u8 {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "bit")))]
 impl crate::entity::Simple for u8 {}
 
-#[cfg_attr(docsrs, doc(cfg(feature = "bit")))]
 impl<const N: usize> crate::ToSql for [u8; N] {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::BIT
@@ -78,7 +74,6 @@ impl<const N: usize> crate::ToSql for [u8; N] {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "bit")))]
 impl<const N: usize> crate::FromSql for [u8; N] {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L279
@@ -107,16 +102,13 @@ impl<const N: usize> crate::FromSql for [u8; N] {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "bit")))]
 impl<const N: usize> crate::entity::Simple for [u8; N] {}
 
 /**
  * Rust type for [varbit](https://www.postgresql.org/docs/current/datatype.html).
  */
-#[cfg_attr(docsrs, doc(cfg(feature = "bit")))]
 pub type Bits = bit_vec::BitVec;
 
-#[cfg_attr(docsrs, doc(cfg(feature = "bit")))]
 impl crate::ToSql for Bits {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::VARBIT
@@ -145,7 +137,6 @@ impl crate::ToSql for Bits {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "bit")))]
 impl crate::FromSql for Bits {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varbit.c#L586
@@ -175,7 +166,6 @@ impl crate::FromSql for Bits {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "bit")))]
 impl crate::entity::Simple for Bits {}
 
 #[cfg(test)]

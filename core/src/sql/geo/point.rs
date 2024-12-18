@@ -2,7 +2,6 @@
  * Rust type for
  * [point](https://www.postgresql.org/docs/current/datatype-geometric.html#id-1.5.7.16.5).
  */
-#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 #[derive(Clone, Debug, PartialEq)]
 pub struct Point(geo_types::Point<f64>);
 
@@ -42,7 +41,6 @@ impl<'a> arbitrary::Arbitrary<'a> for Point {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::ToSql for Point {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::POINT
@@ -68,7 +66,6 @@ impl crate::ToSql for Point {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::FromSql for Point {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L1790
@@ -98,7 +95,6 @@ impl crate::FromSql for Point {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::entity::Simple for Point {}
 
 #[cfg(test)]

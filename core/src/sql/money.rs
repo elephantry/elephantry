@@ -2,10 +2,8 @@
  * Rust type for
  * [money](https://www.postgresql.org/docs/current/datatype-money.html).
  */
-#[cfg_attr(docsrs, doc(cfg(feature = "money")))]
 pub type Money = postgres_money::Money;
 
-#[cfg_attr(docsrs, doc(cfg(feature = "money")))]
 impl crate::ToSql for Money {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::MONEY
@@ -26,7 +24,6 @@ impl crate::ToSql for Money {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "money")))]
 impl crate::FromSql for Money {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/cash.c#L97
@@ -47,7 +44,6 @@ impl crate::FromSql for Money {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "money")))]
 impl crate::entity::Simple for Money {}
 
 #[cfg(test)]

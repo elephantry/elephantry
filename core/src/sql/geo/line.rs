@@ -2,7 +2,6 @@
  * Rust type for
  * [line](https://www.postgresql.org/docs/current/datatype-geometric.html#DATATYPE-LINE).
  */
-#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 #[derive(Clone, Debug, PartialEq)]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 pub struct Line {
@@ -24,7 +23,6 @@ impl std::fmt::Display for Line {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::ToSql for Line {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::LINE
@@ -47,7 +45,6 @@ impl crate::ToSql for Line {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::FromSql for Line {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L958
@@ -68,7 +65,6 @@ impl crate::FromSql for Line {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::entity::Simple for Line {}
 
 #[cfg(test)]

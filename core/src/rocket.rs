@@ -1,4 +1,3 @@
-#[cfg_attr(docsrs, doc(cfg(feature = "rocket")))]
 impl rocket_sync_db_pools::Poolable for crate::Connection {
     type Error = r2d2::Error;
     type Manager = crate::r2d2::ConnectionManager;

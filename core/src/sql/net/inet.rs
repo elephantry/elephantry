@@ -1,4 +1,3 @@
-#[cfg_attr(docsrs, doc(cfg(feature = "net")))]
 impl crate::ToSql for std::net::IpAddr {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::INET
@@ -39,7 +38,6 @@ impl crate::ToSql for std::net::IpAddr {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "net")))]
 impl crate::FromSql for std::net::IpAddr {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/network.c#L96
@@ -75,7 +73,6 @@ impl crate::FromSql for std::net::IpAddr {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "net")))]
 impl crate::entity::Simple for std::net::IpAddr {}
 
 #[cfg(test)]

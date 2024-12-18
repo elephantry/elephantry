@@ -1,6 +1,6 @@
 #![warn(warnings)]
 #![doc(html_logo_url = "https://elephantry.github.io/logo.png")]
-#![cfg_attr(docsrs, feature(doc_cfg))]
+#![cfg_attr(docsrs, feature(doc_cfg, doc_auto_cfg))]
 
 /*!
  * Foreign types (ie defined in another crate), have [type alias](#types).
@@ -61,16 +61,13 @@ pub mod connection;
 pub mod entity;
 pub mod from_sql;
 #[cfg(feature = "inspect")]
-#[cfg_attr(docsrs, doc(cfg(feature = "inspect")))]
 /** database inspection module. */
 pub mod inspect;
 /** libpq abstraction layer. */
 pub mod pq;
 #[cfg(feature = "r2d2")]
-#[cfg_attr(docsrs, doc(cfg(feature = "r2d2")))]
 pub mod r2d2;
 #[cfg(feature = "rocket")]
-#[cfg_attr(docsrs, doc(cfg(feature = "rocket")))]
 #[doc(hidden)]
 pub mod rocket;
 pub mod to_sql;

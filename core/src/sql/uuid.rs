@@ -1,10 +1,8 @@
 /**
  * Rust type for [uuid](https://www.postgresql.org/docs/current/datatype-uuid.html).
  */
-#[cfg_attr(docsrs, doc(cfg(feature = "uuid")))]
 pub type Uuid = uuid::Uuid;
 
-#[cfg_attr(docsrs, doc(cfg(feature = "uuid")))]
 impl crate::ToSql for Uuid {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::UUID
@@ -25,7 +23,6 @@ impl crate::ToSql for Uuid {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "uuid")))]
 impl crate::FromSql for Uuid {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/uuid.c#L53
@@ -54,7 +51,6 @@ impl crate::FromSql for Uuid {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "uuid")))]
 impl crate::entity::Simple for Uuid {}
 
 #[cfg(test)]

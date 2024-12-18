@@ -2,7 +2,6 @@
  * Rust type for
  * [circle](https://www.postgresql.org/docs/current/datatype-geometric.html#DATATYPE-CIRCLE).
  */
-#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 #[derive(Clone, Debug, PartialEq)]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 pub struct Circle {
@@ -24,7 +23,6 @@ impl std::fmt::Display for Circle {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::ToSql for Circle {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::CIRCLE
@@ -51,7 +49,6 @@ impl crate::ToSql for Circle {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::FromSql for Circle {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L4495
@@ -84,7 +81,6 @@ impl crate::FromSql for Circle {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::entity::Simple for Circle {}
 
 #[cfg(test)]

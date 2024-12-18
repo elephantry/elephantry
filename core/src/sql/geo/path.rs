@@ -2,7 +2,6 @@
  * Rust type for
  * [path](https://www.postgresql.org/docs/current/datatype-geometric.html#id-1.5.7.16.9).
  */
-#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 #[derive(Clone, Debug, PartialEq)]
 pub struct Path(geo_types::LineString<f64>);
 
@@ -56,7 +55,6 @@ impl<'a> arbitrary::Arbitrary<'a> for Path {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::ToSql for Path {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::PATH
@@ -87,7 +85,6 @@ impl crate::ToSql for Path {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::FromSql for Path {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L1364
@@ -133,7 +130,6 @@ impl crate::FromSql for Path {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::entity::Simple for Path {}
 
 #[cfg(test)]

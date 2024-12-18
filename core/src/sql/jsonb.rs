@@ -2,7 +2,6 @@
  * Rust type for [jsonb](https://www.postgresql.org/docs/16/datatype-json.html).
  */
 #[derive(Clone, Debug, Eq, PartialEq)]
-#[cfg_attr(docsrs, doc(cfg(feature = "json")))]
 pub struct Jsonb(serde_json::Value);
 
 impl From<serde_json::Value> for Jsonb {
@@ -25,7 +24,6 @@ impl std::ops::DerefMut for Jsonb {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "json")))]
 impl crate::ToSql for Jsonb {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::JSONB
@@ -51,7 +49,6 @@ impl crate::ToSql for Jsonb {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "json")))]
 impl crate::FromSql for Jsonb {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/jsonb.c#L97
@@ -73,7 +70,6 @@ impl crate::FromSql for Jsonb {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "json")))]
 impl crate::entity::Simple for Jsonb {}
 
 #[cfg(test)]

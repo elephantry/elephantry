@@ -1,4 +1,3 @@
-#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::ToSql for chrono::DateTime<chrono::Utc> {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::TIMESTAMPTZ
@@ -19,7 +18,6 @@ impl crate::ToSql for chrono::DateTime<chrono::Utc> {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::FromSql for chrono::DateTime<chrono::Utc> {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/timestamp.c#L386
@@ -39,10 +37,8 @@ impl crate::FromSql for chrono::DateTime<chrono::Utc> {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::entity::Simple for chrono::DateTime<chrono::Utc> {}
 
-#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::ToSql for chrono::DateTime<chrono::offset::FixedOffset> {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::TIMESTAMPTZ
@@ -57,7 +53,6 @@ impl crate::ToSql for chrono::DateTime<chrono::offset::FixedOffset> {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::FromSql for chrono::DateTime<chrono::offset::FixedOffset> {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         chrono::DateTime::parse_from_str(crate::from_sql::not_null(raw)?, "%F %T%#z")
@@ -73,16 +68,13 @@ impl crate::FromSql for chrono::DateTime<chrono::offset::FixedOffset> {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::entity::Simple for chrono::DateTime<chrono::offset::FixedOffset> {}
 
 /**
  * Rust type for [timestamptz](https://www.postgresql.org/docs/current/datatype-datetime.html).
  */
-#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 pub type TimestampTz = chrono::DateTime<chrono::offset::Local>;
 
-#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::ToSql for TimestampTz {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::TIMESTAMPTZ
@@ -97,7 +89,6 @@ impl crate::ToSql for TimestampTz {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::FromSql for TimestampTz {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let utc = chrono::DateTime::<chrono::Utc>::from_text(ty, raw)?;
@@ -110,7 +101,6 @@ impl crate::FromSql for TimestampTz {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "date")))]
 impl crate::entity::Simple for TimestampTz {}
 
 #[cfg(test)]

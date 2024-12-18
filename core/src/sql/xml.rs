@@ -1,10 +1,8 @@
 /**
  * Rust type for [xml](https://www.postgresql.org/docs/current/datatype-xml.html).
  */
-#[cfg_attr(docsrs, doc(cfg(feature = "xml")))]
 pub type Xml = xmltree::Element;
 
-#[cfg_attr(docsrs, doc(cfg(feature = "xml")))]
 impl crate::ToSql for Xml {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::XML
@@ -35,7 +33,6 @@ impl crate::ToSql for Xml {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "xml")))]
 impl crate::FromSql for Xml {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/xml.c#L258
@@ -54,7 +51,6 @@ impl crate::FromSql for Xml {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "xml")))]
 impl crate::entity::Simple for Xml {}
 
 #[cfg(test)]

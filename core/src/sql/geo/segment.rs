@@ -2,7 +2,6 @@
  * Rust type for
  * [segment](https://www.postgresql.org/docs/current/datatype-geometric.html#DATATYPE-LSEG).
  */
-#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 #[derive(Clone, Debug, PartialEq)]
 pub struct Segment(geo_types::Line<f64>);
 
@@ -43,7 +42,6 @@ impl<'a> arbitrary::Arbitrary<'a> for Segment {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::ToSql for Segment {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::LSEG
@@ -71,7 +69,6 @@ impl crate::ToSql for Segment {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::FromSql for Segment {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L2022
@@ -107,7 +104,6 @@ impl crate::FromSql for Segment {
     }
 }
 
-#[cfg_attr(docsrs, doc(cfg(feature = "geo")))]
 impl crate::entity::Simple for Segment {}
 
 #[cfg(test)]
