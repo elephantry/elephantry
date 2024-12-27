@@ -6,7 +6,7 @@ pub enum Error {
     #[error("Async error: {0}")]
     Async(libpq::errors::Error),
     /** Chrono error */
-    #[cfg(feature = "date")]
+    #[cfg(feature = "chrono")]
     #[error("{0}")]
     Chrono(String),
     /** Configuration error */
@@ -40,6 +40,10 @@ pub enum Error {
     /** Input/Output error */
     #[error(transparent)]
     Io(#[from] std::io::Error),
+    /** Jiff error */
+    #[cfg(feature = "jiff")]
+    #[error("{0}")]
+    Jiff(#[from] jiff::Error),
     #[error("{0}")]
     Libpq(#[from] libpq::errors::Error),
     /** Our result set require an extra field to build the entity */

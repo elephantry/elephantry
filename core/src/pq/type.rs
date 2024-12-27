@@ -57,7 +57,22 @@ static TYPES: std::sync::LazyLock<HashMap<&'static str, &'static str>> =
             "elephantry::Bytea",
         );
 
-        types.insert(types::DATE.name, "elephantry::Date");
+        if cfg!(feature = "chrono") {
+            types.insert(types::DATE.name, "chrono::NaiveDate");
+            types.insert(types::TIMESTAMP.name, "chrono::NaiveDateTime");
+            types.insert(
+                types::TIMESTAMPTZ.name,
+                "chrono::DateTime<chrono::offset::Local>",
+            );
+        } else if cfg!(feature = "jiff") {
+            types.insert(types::DATE.name, "jiff::civil::Date");
+            types.insert(types::TIMESTAMP.name, "jiff::civil::DateTime");
+            types.insert(types::TIMESTAMPTZ.name, "jiff::Zoned");
+        } else {
+            types.insert(types::DATE.name, "elephantry::Date");
+            types.insert(types::TIMESTAMP.name, "elephantry::Timestamp");
+            types.insert(types::TIMESTAMPTZ.name, "elephantry::TimestampTz");
+        }
 
         types.insert(
             types::BOX.name,
@@ -149,22 +164,15 @@ static TYPES: std::sync::LazyLock<HashMap<&'static str, &'static str>> =
 
         types.insert(types::NUMERIC.name, "elephantry::Numeric");
 
-        types.insert(
-            types::TIME.name,
-            #[cfg(feature = "time")]
-            t::<crate::Time>(),
-            #[cfg(not(feature = "time"))]
-            "elephantry::Time",
-        );
-        types.insert(
-            types::TIMETZ.name,
-            #[cfg(feature = "time")]
-            t::<crate::TimeTz>(),
-            #[cfg(not(feature = "time"))]
-            "elephantry::TimeTz",
-        );
-        types.insert(types::TIMESTAMP.name, "elephantry::Timestamp");
-        types.insert(types::TIMESTAMPTZ.name, "elephantry::TimestampTz");
+        if cfg!(feature = "time") {
+            types.insert(types::TIME.name, t::<crate::Time>());
+            types.insert(types::TIMETZ.name, t::<crate::TimeTz>());
+        } else if cfg!(feature = "jiff") {
+            types.insert(types::TIME.name, "jiff::civil::Time");
+        } else {
+            types.insert(types::TIME.name, "elephantry::Time");
+            types.insert(types::TIMETZ.name, "elephantry::TimeTz");
+        }
 
         types.insert(types::UUID.name, "elephantry::Uuid");
 
