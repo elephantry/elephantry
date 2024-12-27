@@ -122,7 +122,7 @@ mod test {
         [("'[3900,)'", bigdecimal::BigDecimal::from(3_900)..)]
     );
 
-    #[cfg(feature = "date")]
+    #[cfg(feature = "chrono")]
     crate::sql_test!(
         daterange,
         std::ops::RangeTo<chrono::NaiveDate>,
@@ -132,7 +132,7 @@ mod test {
         )]
     );
 
-    #[cfg(feature = "date")]
+    #[cfg(feature = "chrono")]
     crate::sql_test!(
         tstzrange,
         std::ops::Range<chrono::DateTime<chrono::Utc>>,

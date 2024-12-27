@@ -163,11 +163,26 @@ impl TryFrom<Interval> for std::time::Duration {
     }
 }
 
+#[cfg(feature = "chrono")]
 impl TryFrom<Interval> for chrono::Duration {
     type Error = crate::Error;
 
-    fn try_from(value: Interval) -> Result<chrono::Duration, Self::Error> {
+    fn try_from(value: Interval) -> Result<Self, Self::Error> {
         Self::from_std(value.try_into()?).map_err(|e| crate::Error::Chrono(e.to_string()))
+    }
+}
+
+#[cfg(feature = "jiff")]
+impl From<Interval> for jiff::Span {
+    fn from(value: Interval) -> Self {
+        Self::new()
+            .years(value.years)
+            .months(value.months)
+            .days(value.days)
+            .hours(value.hours)
+            .minutes(value.mins)
+            .seconds(value.secs)
+            .microseconds(value.usecs)
     }
 }
 

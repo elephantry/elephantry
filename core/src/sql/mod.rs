@@ -5,7 +5,7 @@ mod array;
 #[cfg(feature = "bit")]
 mod bit;
 mod bytea;
-#[cfg(feature = "date")]
+#[cfg(any(feature = "chrono", feature = "jiff"))]
 mod date;
 #[cfg(feature = "geo")]
 mod geo;
@@ -25,7 +25,7 @@ mod net;
 #[cfg(feature = "numeric")]
 mod numeric;
 mod range;
-#[cfg(feature = "time")]
+#[cfg(any(feature = "time", feature = "jiff"))]
 mod time;
 #[cfg(feature = "uuid")]
 mod uuid;

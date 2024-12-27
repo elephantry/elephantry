@@ -50,6 +50,12 @@ optional = true
 version = "0.15"
 optional = true
 
+[dependencies.jiff]
+version = "0.1"
+default-features = false
+features = ["std"]
+optional = true
+
 [dependencies.ipnetwork]
 version = "0.20"
 optional = true
@@ -126,9 +132,11 @@ all-types = [
 ]
 bit = ["bit-vec", "elephantry-derive/bit"]
 config = ["dep:config", "serde"]
-date = ["chrono", "elephantry-derive/date"]
+chrono = ["dep:chrono", "elephantry-derive/chrono"]
+date = ["chrono"]
 geo = ["geo-types", "elephantry-derive/geo"]
 inspect = []
+jiff = ["dep:jiff", "elephantry-derive/jiff"]
 json = ["serde_json", "elephantry-derive/json"]
 ltree = ["elephantry-derive/ltree"]
 money = ["postgres_money", "elephantry-derive/money"]

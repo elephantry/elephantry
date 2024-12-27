@@ -56,12 +56,16 @@ pub(crate) fn check_type(ty: &syn::Type) -> syn::Result<()> {
     let features = [
         #[cfg(feature = "bit")]
         "bit",
+        #[cfg(feature = "chrono")]
+        "chrono",
         #[cfg(feature = "date")]
         "date",
         #[cfg(feature = "geo")]
         "geo",
         #[cfg(feature = "ltree")]
         "ltree",
+        #[cfg(feature = "jiff")]
+        "jiff",
         #[cfg(feature = "json")]
         "json",
         #[cfg(feature = "multirange")]
@@ -82,11 +86,11 @@ pub(crate) fn check_type(ty: &syn::Type) -> syn::Result<()> {
         ("bit", "bit_vec::BitVec"),
         ("bit", "elephantry::Bits"),
         ("bit", "u8"),
-        ("date", "chrono::DateTime"),
-        ("date", "chrono::NaiveDate"),
+        ("chrono", "chrono::DateTime"),
+        ("chrono", "chrono::NaiveDate"),
+        ("chrono", "chrono::NaiveDateTime"),
         ("date", "elephantry::Date"),
         ("date", "elephantry::TimestampTz"),
-        ("date", "chrono::NaiveDateTime"),
         ("date", "elephantry::Timestamp"),
         ("date", "elephantry::Interval"),
         ("geo", "elephantry::Box"),
@@ -96,6 +100,10 @@ pub(crate) fn check_type(ty: &syn::Type) -> syn::Result<()> {
         ("geo", "elephantry::Point"),
         ("geo", "elephantry::Polygon"),
         ("geo", "elephantry::Segment"),
+        ("jiff", "jiff::civil::Date"),
+        ("jiff", "jiff::civil::DateTime"),
+        ("jiff", "jiff::civil::Time"),
+        ("jiff", "jiff::Zoned"),
         ("json", "serde_json::value::Value"),
         ("json", "elephantry::Json"),
         ("ltree", "elephantry::Lquery"),
