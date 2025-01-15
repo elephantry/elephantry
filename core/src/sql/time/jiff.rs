@@ -126,7 +126,7 @@ fn parse_offset(s: &str) -> Option<jiff::tz::Offset> {
     if s.starts_with('-') {
         offset = offset.negate();
     }
-    let s = s.trim_start_matches(|c| c == '+' || c == '-');
+    let s = s.trim_start_matches(['+', '-']);
 
     let (hours, minutes) = s.split_at(2);
     let span = jiff::Span::new()
