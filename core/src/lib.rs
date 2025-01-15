@@ -280,7 +280,7 @@ mod test {
                 .exec_params(
                     &format!("select $1::{sql_type}"),
                     &[value.ty().oid],
-                    &[value.to_binary()?],
+                    &[value.to_binary()?.as_deref()],
                     &[crate::pq::Format::Binary],
                     crate::pq::Format::Binary,
                 )

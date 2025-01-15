@@ -151,7 +151,11 @@ impl Connection {
             .exec_params(
                 &Self::order_parameters(query),
                 &param.types,
-                &param.values,
+                &param
+                    .values
+                    .iter()
+                    .map(|x| x.as_deref())
+                    .collect::<Vec<_>>(),
                 &param.formats,
                 crate::pq::Format::Binary,
             )

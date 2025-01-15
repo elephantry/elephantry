@@ -101,7 +101,11 @@ impl<'c> Async<'c> {
             .send_query_params(
                 query,
                 &param.types,
-                &param.values,
+                &param
+                    .values
+                    .iter()
+                    .map(|x| x.as_deref())
+                    .collect::<Vec<_>>(),
                 &[],
                 crate::pq::Format::Binary,
             )
