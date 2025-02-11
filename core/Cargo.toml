@@ -51,7 +51,7 @@ version = "0.15"
 optional = true
 
 [dependencies.jiff]
-version = "0.1"
+version = "0.2"
 default-features = false
 features = ["std"]
 optional = true
