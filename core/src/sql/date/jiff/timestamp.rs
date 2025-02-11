@@ -14,10 +14,10 @@ impl crate::ToSql for jiff::civil::DateTime {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/timestamp.c#L265
      */
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
-        let t = *self - super::base_datetime();
+        let t = self.duration_since(super::base_datetime());
 
         let mut buf = Vec::new();
-        crate::to_sql::write_i64(&mut buf, t.total(jiff::Unit::Microsecond)? as i64)?;
+        crate::to_sql::write_i64(&mut buf, t.as_micros() as i64)?;
 
         Ok(Some(buf))
     }
