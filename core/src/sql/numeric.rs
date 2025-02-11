@@ -205,6 +205,7 @@ mod test {
             ("20000", crate::Numeric::from(20_000)),
             (
                 "20000.0000019073486328125",
+                #[allow(clippy::excessive_precision)]
                 crate::Numeric::try_from(20_000.000_001_907_348_632_812_5).unwrap()
             ),
             ("3900", crate::Numeric::from(3_900)),
