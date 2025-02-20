@@ -50,7 +50,7 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::Tok
 
     let (impl_generics, ty_generics, where_clause) = ast.generics.split_for_impl();
 
-    let gen = quote::quote! {
+    let r#gen = quote::quote! {
         #[automatically_derived]
         impl #impl_generics #elephantry::FromSql for #name #ty_generics #where_clause {
             fn from_text(ty: &#elephantry::pq::Type, raw: ::std::option::Option<&str>) -> #elephantry::Result<Self> {
@@ -96,5 +96,5 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::Tok
         }
     };
 
-    Ok(gen)
+    Ok(r#gen)
 }

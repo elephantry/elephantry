@@ -105,8 +105,8 @@ impl<'a, T> From<&'a (Bound<T>, Bound<T>)> for Bounds<&'a T> {
     fn from(range: &'a (Bound<T>, Bound<T>)) -> Self {
         fn as_ref<T>(bound: &Bound<T>) -> Bound<&T> {
             match bound {
-                Included(ref x) => Included(x),
-                Excluded(ref x) => Excluded(x),
+                Included(x) => Included(x),
+                Excluded(x) => Excluded(x),
                 Unbounded => Unbounded,
             }
         }

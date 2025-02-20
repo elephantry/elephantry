@@ -13,13 +13,13 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::Tok
     let structure = structure_impl(ast, &params, &elephantry, &public)?;
     let model = model_impl(ast, &params, &elephantry, &public)?;
 
-    let gen = quote::quote! {
+    let r#gen = quote::quote! {
         #entity
         #structure
         #model
     };
 
-    Ok(gen)
+    Ok(r#gen)
 }
 
 fn entity_impl(

@@ -4,7 +4,6 @@ description = "Object model manager for PostgreSQL"
 readme = "../docs/README.md"
 keywords = ["database", "postgresql"]
 categories = ["database"]
-rust-version = "1.80"
 
 version.workspace = true
 authors.workspace = true
