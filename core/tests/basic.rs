@@ -54,9 +54,11 @@ fn main() -> elephantry::Result {
     println!("Delete one row\n");
     elephantry.delete_one::<entity::EventModel>(&entity)?;
     let uuid = entity.uuid.unwrap();
-    assert!(elephantry
-        .find_by_pk::<entity::EventModel>(&elephantry::pk! {uuid => uuid})?
-        .is_none());
+    assert!(
+        elephantry
+            .find_by_pk::<entity::EventModel>(&elephantry::pk! {uuid => uuid})?
+            .is_none()
+    );
     assert!(!elephantry.exist_where::<entity::EventModel>("uuid = $1", &[&uuid])?);
 
     let count = elephantry

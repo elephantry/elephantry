@@ -17,7 +17,7 @@ impl std::str::FromStr for LoadBalanceHosts {
             _ => {
                 return Err(crate::Error::Parse(format!(
                     "Invalid load_balance_hosts: {s}"
-                )))
+                )));
             }
         };
 

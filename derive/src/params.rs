@@ -17,7 +17,10 @@ impl Entity {
                 } else {
                     return crate::error(
                         &item.0,
-                        &format!("expected elephantry {attr_name:?} attribute to be a string: `{attr_name:?} = \"...\"`", attr_name = item.0),
+                        &format!(
+                            "expected elephantry {attr_name:?} attribute to be a string: `{attr_name:?} = \"...\"`",
+                            attr_name = item.0
+                        ),
                     );
                 }
             // Parse #[elephantry(structure = "")]

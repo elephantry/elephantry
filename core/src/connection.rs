@@ -38,7 +38,7 @@ impl Connection {
                 return Err(crate::Error::Connect {
                     dsn: dsn.to_string(),
                     error,
-                })
+                });
             }
         };
 

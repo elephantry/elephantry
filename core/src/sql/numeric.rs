@@ -79,9 +79,9 @@ impl crate::entity::Simple for Numeric {}
  * Credits: [Diesel](https://diesel.rs/).
  */
 
-use num::integer::Integer;
 use num::ToPrimitive;
 use num::Zero;
+use num::integer::Integer;
 
 const NUMERIC_POS: i16 = 0x0000;
 const NUMERIC_NEG: i16 = 0x4000;

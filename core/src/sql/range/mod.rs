@@ -67,7 +67,7 @@ impl crate::ToSql for std::ops::RangeFull {
 
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
         Ok(Some(vec![
-            (bounds::Flags::LB_INF | bounds::Flags::UB_INF).bits()
+            (bounds::Flags::LB_INF | bounds::Flags::UB_INF).bits(),
         ]))
     }
 }

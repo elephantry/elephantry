@@ -18,7 +18,7 @@ impl std::str::FromStr for ChannelBinding {
             _ => {
                 return Err(crate::Error::Parse(
                     format!("Invalid channel_binding: {s}",),
-                ))
+                ));
             }
         };
 

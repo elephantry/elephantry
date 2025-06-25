@@ -9,7 +9,7 @@ mod trigger;
 mod types;
 
 pub use column::*;
-pub use constraint::{constraints, indexes, Constraint, Index};
+pub use constraint::{Constraint, Index, constraints, indexes};
 pub use extension::*;
 pub use function::*;
 pub use relation::*;

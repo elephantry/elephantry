@@ -89,6 +89,7 @@ mod tuple;
 mod r#where;
 
 pub use crate::config::Config;
+pub use r#async::*;
 pub use connection::Connection;
 pub use elephantry_derive::*;
 pub use entity::Entity;
@@ -100,8 +101,6 @@ pub use pager::*;
 pub use pool::*;
 pub use projectable::*;
 pub use projection::*;
-pub use r#async::*;
-pub use r#where::Where;
 pub use rows::*;
 pub use sql::*;
 pub use structure::*;
@@ -109,6 +108,7 @@ pub use to_sql::ToSql;
 pub use to_text::*;
 pub use transaction::Transaction;
 pub use tuple::*;
+pub use r#where::Where;
 
 macro_rules! regex {
     ($regex:literal) => {{
