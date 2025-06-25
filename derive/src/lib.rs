@@ -89,6 +89,7 @@ pub(crate) fn check_type(ty: &syn::Type) -> syn::Result<()> {
         ("chrono", "chrono::DateTime"),
         ("chrono", "chrono::NaiveDate"),
         ("chrono", "chrono::NaiveDateTime"),
+        ("chrono", "chrono::NaiveTime"),
         ("date", "elephantry::Date"),
         ("date", "elephantry::TimestampTz"),
         ("date", "elephantry::Timestamp"),

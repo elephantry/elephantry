@@ -5,55 +5,55 @@
 /*!
  * Foreign types (ie defined in another crate), have [type alias](#types).
  *
- * | SQL type                    | Rust type                                                                     | Feature          |
- * |-----------------------------|-------------------------------------------------------------------------------|------------------|
- * | `bigint`/`int8`             | `i64`                                                                         |                  |
- * | `bit`                       | `u8`                                                                          | bit              |
- * | `bit(n)`                    | `[u8; n]`                                                                     | bit              |
- * | `bit varying`               | `bit_vec::BitVec`<br>`elephantry::Bits`                                       | bit              |
- * | `boolean`                   | `bool`                                                                        |                  |
- * | `box`                       | `elephantry::Box`                                                             | geo              |
- * | `bytea`                     | `elephantry::Bytea`                                                           |                  |
- * | `char`                      | `char`                                                                        |                  |
- * | `varchar`                   | `String`                                                                      |                  |
- * | `cidr`                      | `ipnetwork::IpNetwork`<br>`elephantry::Cidr`                                  | net              |
- * | `circle`                    | `elephantry::Circle`                                                          | geo              |
- * | `date`                      | `chrono::NaiveDate`<br>`elephantry::Date`<br>`jiff::civil::Date`              | date<br><br>jiff |
- * | `double precision`/`float8` | `f64`                                                                         |                  |
- * | `hstore`                    | `elephantry::Hstore`                                                          |                  |
- * | `inet`                      | `std::net::IpAddr`                                                            | net              |
- * | `integer`/`int4`            | `i32`                                                                         |                  |
- * | `interval`                  | `elephantry::Interval`                                                        | date             |
- * | `json`                      | `serde_json::Value`<br>`elephantry::Json`                                     | json             |
- * | `jsonb`                     | `elephantry::Jsonb`                                                           | json             |
- * | `line`                      | `elephantry::Line`                                                            | geo              |
- * | `lquery`                    | `elephantry::Lquery`                                                          | ltree            |
- * | `lseg`                      | `elephantry::Segment`                                                         | geo              |
- * | `ltree`                     | `elephantry::Ltree`                                                           | ltree            |
- * | `ltxtquery`                 | `elephantry::Ltxtquery`                                                       | ltree            |
- * | `null`                      | `()`                                                                          |                  |
- * | `macaddr`                   | `macaddr::MacAddr6`<br>`elephantry::MacAddr`                                  | net              |
- * | `macaddr8`                  | `macaddr::MacAddr8`<br>`elephantry::MacAddr8`                                 | net              |
- * | `money`                     | `postgres_money::Money`<br>`elephantry::Money`                                | money            |
- * | `multirange`                | `elephantry::Multirange`                                                      | multirange       |
- * | `numeric`                   | `bigdecimal::BigDecimal`<br>`elephantry::Numeric`                             | numeric          |
- * | `path`                      | `elephantry::Path`                                                            | geo              |
- * | `point`                     | `elephantry::Point`                                                           | geo              |
- * | `polygon`                   | `elephantry::Polygon`                                                         | geo              |
- * | `real`/`float4`             | `f32`                                                                         |                  |
- * | `record`                    | `tuple`                                                                       |                  |
- * | `smallint`/`int2`           | `i16`                                                                         |                  |
- * | `text`                      | `String`                                                                      |                  |
- * | `time`                      | `elephantry::Time`<br>`time::Time`<br>`jiff::civil::Time`                     | time<br><br>jiff |
- * | `timetz`                    | `elephantry::TimeTz`<br>`(jiff::civil::Time, jiff::tz::TimeZone)`             | time<br>jiff     |
- * | `timestamp`                 | `chrono::NaiveDateTime`<br>`elephantry::Timestamp`<br>`jiff::civil::DateTime` | date<br><br>jiff |
- * | `timestamptz`               | `chrono::DateTime`<br>`elephantry::Timestamp`<br>`jiff::Zoned`                | date<br><br>jiff |
- * | `uuid`                      | `uuid::Uuid`<br>`elephantry::Uid`                                             | uuid             |
- * | `xml`                       | `xmltree::Element`<br>`elephantry::Xml`                                       | xml              |
- * | `[x, y)`                    | `std::ops::Range`                                                             |                  |
- * | `[x,)`                      | `std::ops::RangeFrom`                                                         |                  |
- * | `[,y)`                      | `std::ops::RangeTo`                                                           |                  |
- * | `(,)`                       | `std::ops::RangeFull`                                                         |                  |
+ * | SQL type                    | Rust type                                                                                                       | Feature                              |
+ * |-----------------------------|-----------------------------------------------------------------------------------------------------------------|--------------------------------------|
+ * | `bigint`/`int8`             | `i64`                                                                                                           |                                      |
+ * | `bit`                       | `u8`                                                                                                            | bit                                  |
+ * | `bit(n)`                    | `[u8; n]`                                                                                                       | bit                                  |
+ * | `bit varying`               | `bit_vec::BitVec`<br>`elephantry::Bits`                                                                         | bit                                  |
+ * | `boolean`                   | `bool`                                                                                                          |                                      |
+ * | `box`                       | `elephantry::Box`                                                                                               | geo                                  |
+ * | `bytea`                     | `elephantry::Bytea`                                                                                             |                                      |
+ * | `char`                      | `char`                                                                                                          |                                      |
+ * | `varchar`                   | `String`                                                                                                        |                                      |
+ * | `cidr`                      | `ipnetwork::IpNetwork`<br>`elephantry::Cidr`                                                                    | net                                  |
+ * | `circle`                    | `elephantry::Circle`                                                                                            | geo                                  |
+ * | `date`                      | `chrono::NaiveDate`<br>`elephantry::Date`<br>`jiff::civil::Date`                                                | date<br><br>jiff                     |
+ * | `double precision`/`float8` | `f64`                                                                                                           |                                      |
+ * | `hstore`                    | `elephantry::Hstore`                                                                                            |                                      |
+ * | `inet`                      | `std::net::IpAddr`                                                                                              | net                                  |
+ * | `integer`/`int4`            | `i32`                                                                                                           |                                      |
+ * | `interval`                  | `elephantry::Interval`                                                                                          | date                                 |
+ * | `json`                      | `serde_json::Value`<br>`elephantry::Json`                                                                       | json                                 |
+ * | `jsonb`                     | `elephantry::Jsonb`                                                                                             | json                                 |
+ * | `line`                      | `elephantry::Line`                                                                                              | geo                                  |
+ * | `lquery`                    | `elephantry::Lquery`                                                                                            | ltree                                |
+ * | `lseg`                      | `elephantry::Segment`                                                                                           | geo                                  |
+ * | `ltree`                     | `elephantry::Ltree`                                                                                             | ltree                                |
+ * | `ltxtquery`                 | `elephantry::Ltxtquery`                                                                                         | ltree                                |
+ * | `null`                      | `()`                                                                                                            |                                      |
+ * | `macaddr`                   | `macaddr::MacAddr6`<br>`elephantry::MacAddr`                                                                    | net                                  |
+ * | `macaddr8`                  | `macaddr::MacAddr8`<br>`elephantry::MacAddr8`                                                                   | net                                  |
+ * | `money`                     | `postgres_money::Money`<br>`elephantry::Money`                                                                  | money                                |
+ * | `multirange`                | `elephantry::Multirange`                                                                                        | multirange                           |
+ * | `numeric`                   | `bigdecimal::BigDecimal`<br>`elephantry::Numeric`                                                               | numeric                              |
+ * | `path`                      | `elephantry::Path`                                                                                              | geo                                  |
+ * | `point`                     | `elephantry::Point`                                                                                             | geo                                  |
+ * | `polygon`                   | `elephantry::Polygon`                                                                                           | geo                                  |
+ * | `real`/`float4`             | `f32`                                                                                                           |                                      |
+ * | `record`                    | `tuple`                                                                                                         |                                      |
+ * | `smallint`/`int2`           | `i16`                                                                                                           |                                      |
+ * | `text`                      | `String`                                                                                                        |                                      |
+ * | `time`                      | `elephantry::Time`<br>`time::Time`<br>`chrono::NaiveTime`<br>`jiff::civil::Time`                                | time<br><br>chrono<br>jiff           |
+ * | `timetz`                    | `elephantry::TimeTz`<br>`(chrono::NaiveTime, chrono::FixedOffset)`<br>`(jiff::civil::Time, jiff::tz::TimeZone)` | time<br>chrono<br>jiff               |
+ * | `timestamp`                 | `chrono::NaiveDateTime`<br>`elephantry::Timestamp`<br>`jiff::civil::DateTime`                                   | date<br><br>jiff                     |
+ * | `timestamptz`               | `chrono::DateTime`<br>`elephantry::Timestamp`<br>`jiff::Zoned`                                                  | date<br><br>jiff                     |
+ * | `uuid`                      | `uuid::Uuid`<br>`elephantry::Uid`                                                                               | uuid                                 |
+ * | `xml`                       | `xmltree::Element`<br>`elephantry::Xml`                                                                         | xml                                  |
+ * | `[x, y)`                    | `std::ops::Range`                                                                                               |                                      |
+ * | `[x,)`                      | `std::ops::RangeFrom`                                                                                           |                                      |
+ * | `[,y)`                      | `std::ops::RangeTo`                                                                                             |                                      |
+ * | `(,)`                       | `std::ops::RangeFull`                                                                                           |                                      |
  */
 
 pub mod config;

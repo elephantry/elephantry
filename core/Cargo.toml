@@ -40,7 +40,7 @@ version = "0.4"
 optional = true
 
 [dependencies.chrono]
-version = "0.4.23"
+version = "0.4"
 default-features = false
 features = ["clock", "std"]
 optional = true

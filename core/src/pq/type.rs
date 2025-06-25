@@ -167,6 +167,12 @@ static TYPES: std::sync::LazyLock<HashMap<&'static str, &'static str>> =
         if cfg!(feature = "time") {
             types.insert(types::TIME.name, "time::Time");
             types.insert(types::TIMETZ.name, "(time::Time, time::UtcOffset)");
+        } else if cfg!(feature = "chrono") {
+            types.insert(types::TIME.name, "chrono::NaiveTime");
+            types.insert(
+                types::TIMETZ.name,
+                "(chrono::NaiveTime, chrono::FixedOffset)",
+            );
         } else if cfg!(feature = "jiff") {
             types.insert(types::TIME.name, "jiff::civil::Time");
             types.insert(types::TIME.name, "(jiff::civil::Time, jiff::tz::TimeZone)");

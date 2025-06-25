@@ -25,7 +25,7 @@ mod net;
 #[cfg(feature = "numeric")]
 mod numeric;
 mod range;
-#[cfg(any(feature = "time", feature = "jiff"))]
+#[cfg(any(feature = "time", feature = "chrono", feature = "jiff"))]
 mod time;
 #[cfg(feature = "uuid")]
 mod uuid;
