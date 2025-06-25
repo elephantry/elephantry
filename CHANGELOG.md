@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Impl `FromSql`/`ToSql` for `chrono::NaiveTime`;
 - Impl `FromSql`/`ToSql` for `(chrono::NaiveTime, chrono::FixedOffset)`;
 - `inspect::Constraint::NotNull` variant;
+- `Notify` type;
 
 ### Changed
 - `from_sql::read_*` and `from_sql::not_null` public;

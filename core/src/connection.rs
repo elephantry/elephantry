@@ -604,14 +604,14 @@ impl Connection {
      * Check if a notification is pending. If so, the payload is returned.
      * Otherwise, `None` is returned.
      */
-    pub fn notifies(&self) -> crate::Result<Option<crate::pq::Notify>> {
+    pub fn notifies(&self) -> crate::Result<Option<crate::Notify>> {
         let connection = self
             .connection
             .lock()
             .map_err(|e| crate::Error::Mutex(e.to_string()))?;
 
         connection.consume_input().ok();
-        Ok(connection.notifies())
+        connection.notifies().map(TryFrom::try_from).transpose()
     }
 
     fn escape_literal(&self, str: &str) -> crate::Result<String> {

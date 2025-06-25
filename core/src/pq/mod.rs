@@ -4,7 +4,6 @@ mod r#type;
 pub use result::*;
 pub use r#type::*;
 
-pub use libpq::connection::Notify;
 pub use libpq::state;
 
 pub type Format = libpq::Format;
