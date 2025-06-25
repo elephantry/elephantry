@@ -29,9 +29,9 @@ lint:clippy:
     before_script:
         - MODE=$(echo "$CI_JOB_NAME" | cut -d ':' -f 2)
         - test "$MODE" == "release" && CARGO_FLAGS='--release' || CARGO_FLAGS=''
-        - echo "deb http://apt.postgresql.org/pub/repos/apt bookworm-pgdg main" > /etc/apt/sources.list.d/pgdg.list
-        - curl https://www.postgresql.org/media/keys/ACCC4CF8.asc > /etc/apt/trusted.gpg.d/ACCC4CF8.asc
-        - apt update -yqq
+        - apt update
+        - apt install postgresql-common
+        - /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
         - apt install -yqq sudo postgresql-17 locales clang libpq-dev
         - echo "en_US UTF-8" > /etc/locale.gen
         - locale-gen en_US.UTF-8
