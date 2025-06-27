@@ -2,6 +2,7 @@
 pub enum Type {
     Check,
     Foreign,
+    NotNull,
     PrimaryKey,
     Trigger,
     Unique,
@@ -13,6 +14,7 @@ impl crate::ToText for Type {
         let s = match self {
             Type::Check => "c",
             Type::Foreign => "f",
+            Type::NotNull => "n",
             Type::PrimaryKey => "p",
             Type::Trigger => "t",
             Type::Unique => "u",
@@ -28,6 +30,7 @@ impl crate::FromText for Type {
         let ty = match raw {
             "c" => Self::Check,
             "f" => Self::Foreign,
+            "n" => Self::NotNull,
             "p" => Self::PrimaryKey,
             "t" => Self::Trigger,
             "u" => Self::Unique,
