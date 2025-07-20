@@ -60,7 +60,7 @@ impl<T: crate::FromSql + crate::ToSql, S: std::hash::BuildHasher + Default> Enti
         let x = match field.parse::<usize>() {
             Ok(x) => x,
             Err(err) => {
-                log::error!("Unable to retreive HashMap field: {}", err);
+                log::error!("Unable to retreive HashMap field: {err}");
                 return None;
             }
         };

@@ -1,5 +1,7 @@
+use darling::{FromDeriveInput, FromField};
+
 pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> {
-    let params = crate::params::Entity::from_ast(ast)?;
+    let params = crate::params::Entity::from_derive_input(ast)?;
 
     let elephantry = crate::elephantry();
 
@@ -42,7 +44,7 @@ fn entity_impl(
     let mut get_body = Vec::new();
 
     for field in fields {
-        let field_params = crate::params::Field::from_ast(field)?;
+        let field_params = crate::params::Field::from_field(field)?;
 
         let name = &field.ident;
         let column = field_params
@@ -133,7 +135,7 @@ fn structure_impl(
     let mut columns = Vec::new();
 
     for field in fields {
-        let field_params = crate::params::Field::from_ast(field)?;
+        let field_params = crate::params::Field::from_field(field)?;
         let column = field_params
             .column
             .unwrap_or_else(|| field.ident.as_ref().unwrap().to_string());
@@ -142,7 +144,7 @@ fn structure_impl(
             primary_key.push(column.clone());
         }
 
-        if !field_params.r#virtual {
+        if field_params.r#virtual.is_none() {
             columns.push(column);
         }
     }
@@ -200,9 +202,9 @@ fn model_impl(
     let mut projection_body = Vec::new();
 
     for field in fields {
-        let field_params = crate::params::Field::from_ast(field)?;
+        let field_params = crate::params::Field::from_field(field)?;
 
-        if let Some(projection) = field_params.projection {
+        if let Some(darling::util::Override::Explicit(projection)) = field_params.r#virtual {
             let name = &field.ident;
             let projection_part = quote::quote!(
                 .add_field(stringify!(#name), #projection)
