@@ -776,12 +776,12 @@ impl Connection {
 
         connection.put_copy_end(None).map_err(crate::Error::Copy)?;
 
-        if let Some(result) = connection.result() {
-            if result.status() == libpq::Status::FatalError {
-                return Err(crate::Error::Copy(libpq::errors::Error::Backend(
-                    result.error_message()?.unwrap_or_default(),
-                )));
-            }
+        if let Some(result) = connection.result()
+            && result.status() == libpq::Status::FatalError
+        {
+            return Err(crate::Error::Copy(libpq::errors::Error::Backend(
+                result.error_message()?.unwrap_or_default(),
+            )));
         }
 
         Ok(())
