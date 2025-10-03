@@ -28,14 +28,7 @@ main()
     git commit --message "v$version"
     git tag "$version"
 
-    for crate in derive core cli
-    do
-        cd $crate
-
-        cargo publish
-
-        cd -
-    done
+    cargo publish --workspace
 
     git push
     git push --tags
