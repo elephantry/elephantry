@@ -386,6 +386,7 @@ end$$;
         assert!(pk.contains_key("name"));
     }
 
+    #[allow(dead_code)]
     #[derive(elephantry_derive::Entity)]
     #[elephantry(model = "Model", structure = "Structure", relation = "entity")]
     pub struct Entity {

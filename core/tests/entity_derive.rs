@@ -1,6 +1,6 @@
 #[derive(Debug, elephantry::Entity)]
 #[elephantry(structure = "EventStructure")]
-struct Event<T: elephantry::FromSql + elephantry::ToSql> {
+pub struct Event<T: elephantry::FromSql + elephantry::ToSql> {
     #[cfg(feature = "uuid")]
     #[elephantry(pk)]
     uuid: Option<uuid::Uuid>,
@@ -22,7 +22,7 @@ struct Event<T: elephantry::FromSql + elephantry::ToSql> {
     generic: Option<T>,
 }
 
-struct EventModel {
+pub struct EventModel {
     #[allow(dead_code)]
     connection: elephantry::Connection,
 }
@@ -48,7 +48,7 @@ impl EventModel {
 }
 
 #[derive(Debug, elephantry::Entity)]
-struct EventExtra {
+pub struct EventExtra {
     #[cfg(feature = "uuid")]
     uuid: Option<uuid::Uuid>,
     #[cfg(not(feature = "uuid"))]
@@ -67,7 +67,7 @@ struct EventExtra {
     os: Option<String>,
 }
 
-struct EventExtraModel;
+pub struct EventExtraModel;
 
 impl elephantry::Model for EventExtraModel {
     type Entity = EventExtra;
