@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unrelease
 
+### Fixed
+- Fixes pk claused field order;
+
 ### Added
 - `pg16` feature with new connection options;
 - Foreign types alias;

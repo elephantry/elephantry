@@ -526,23 +526,30 @@ impl Connection {
     where
         M: crate::Model,
     {
-        let keys: Vec<_> = pk.keys().copied().collect();
+        let mut structure = M::Structure::primary_key().to_vec();
+        let mut clause = String::new();
+        let mut params = Vec::new();
+        let pk = std::collections::BTreeMap::from_iter(pk.iter());
 
-        if keys != M::Structure::primary_key() {
-            return Err(crate::Error::PrimaryKey);
+        for (x, (key, value)) in pk.into_iter().enumerate() {
+            if structure.extract_if(.., |x| x == key).count() == 0 {
+                return Err(crate::Error::PrimaryKey);
+            }
+
+            let field = format!("\"{}\"", key.replace('"', "\\\""));
+
+            if clause.is_empty() {
+                clause = format!("{field} = ${}", x + 1);
+            } else {
+                clause.push_str(&format!(" AND {field} = ${}", x + 1));
+            }
+
+            params.push(*value);
         }
 
-        let clause = keys.iter().enumerate().fold(String::new(), |acc, (i, x)| {
-            let field = format!("\"{}\"", x.replace('"', "\\\""));
-
-            if acc.is_empty() {
-                format!("{field} = ${}", i + 1)
-            } else {
-                format!("{acc} AND {field} = ${}", i + 1)
-            }
-        });
-
-        let params: Vec<_> = pk.values().copied().collect();
+        if !structure.is_empty() {
+            return Err(crate::Error::PrimaryKey);
+        }
 
         Ok((clause, params))
     }
@@ -785,5 +792,53 @@ impl Connection {
         }
 
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod test {
+    #[derive(elephantry_derive::Entity)]
+    #[elephantry(model = "Model", structure = "Structure", relation = "entity")]
+    pub struct Entity {
+        #[elephantry(pk)]
+        pub db: i32,
+        #[elephantry(pk)]
+        pub id: i32,
+    }
+
+    #[test]
+    fn pk_clause() -> crate::Result {
+        let pks = vec![
+            crate::pk! { db => "db", id => "id" },
+            crate::pk! { id => "id", db => "db" },
+        ];
+
+        for pk in pks {
+            let (clause, params) = crate::Connection::pk_clause::<Model>(&pk)?;
+
+            assert_eq!(clause, "\"db\" = $1 AND \"id\" = $2");
+
+            let params = params
+                .iter()
+                .map(|x| x.to_text().unwrap())
+                .collect::<Vec<_>>();
+            assert_eq!(params, vec![Some("db".to_string()), Some("id".to_string())]);
+        }
+
+        Ok(())
+    }
+
+    #[test]
+    fn missing_key() {
+        let pk = crate::pk! { db => "" };
+
+        assert!(crate::Connection::pk_clause::<Model>(&pk).is_err());
+    }
+
+    #[test]
+    fn extra_key() {
+        let pk = crate::pk! { db => "", id => "", extra => "" };
+
+        assert!(crate::Connection::pk_clause::<Model>(&pk).is_err());
     }
 }
