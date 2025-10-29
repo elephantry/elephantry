@@ -209,6 +209,6 @@ required-features = ["date", "numeric"]
 doc-scrape-examples = true
 
 [package.metadata.docs.rs]
-all-features = true
+features = ["pg16"]
 cargo-args = ["-Zunstable-options", "-Zrustdoc-scrape-examples"]
 rustdoc-args = ["--cfg", "docsrs"]
