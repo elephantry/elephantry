@@ -325,6 +325,18 @@ impl Connection {
     }
 
     /**
+     * Check if primary key exists.
+     */
+    pub fn exist_by_pk<M>(&self, pk: &HashMap<&str, &dyn crate::ToSql>) -> crate::Result<bool>
+    where
+        M: crate::Model,
+    {
+        let (clause, params) = Self::pk_clause::<M>(pk)?;
+
+        self.exist_where::<M>(&clause, &params)
+    }
+
+    /**
      * Insert a new entity in the database.
      *
      * Returns the entity with values from database (ie: default values).
