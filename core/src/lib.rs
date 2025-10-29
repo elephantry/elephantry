@@ -1,6 +1,6 @@
 #![warn(warnings)]
 #![doc(html_logo_url = "https://elephantry.github.io/logo.png")]
-#![cfg_attr(docsrs, feature(doc_cfg, doc_auto_cfg))]
+#![cfg_attr(docsrs, feature(doc_cfg))]
 
 /*!
  * Foreign types (ie defined in another crate), have [type alias](#types).
