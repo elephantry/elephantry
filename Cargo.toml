@@ -7,7 +7,7 @@ members = [
 resolver = "3"
 
 [workspace.package]
-version = "5.1.0"
+version = "5.1.1"
 authors = ["Sanpi <sanpi@homecomputing.fr>"]
 edition = "2024"
 license = "MIT"
