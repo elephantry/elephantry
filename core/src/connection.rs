@@ -337,6 +337,18 @@ impl Connection {
     }
 
     /**
+     * Check if entity exists.
+     */
+    pub fn exist_one<M>(&self, entity: &M::Entity) -> crate::Result<bool>
+    where
+        M: crate::Model,
+    {
+        let pk = M::primary_key(entity)?;
+
+        self.exist_by_pk::<M>(&pk)
+    }
+
+    /**
      * Insert a new entity in the database.
      *
      * Returns the entity with values from database (ie: default values).
