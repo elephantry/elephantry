@@ -11,7 +11,7 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::Tok
         proc_macro2::TokenStream::new()
     };
 
-    let entity = entity_impl(ast, &elephantry)?;
+    let entity = entity_impl(ast, &params, &elephantry)?;
     let structure = structure_impl(ast, &params, &elephantry, &public)?;
     let model = model_impl(ast, &params, &elephantry, &public)?;
 
@@ -26,6 +26,7 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::Tok
 
 fn entity_impl(
     ast: &syn::DeriveInput,
+    params: &crate::params::Entity,
     elephantry: &proc_macro2::TokenStream,
 ) -> syn::Result<proc_macro2::TokenStream> {
     let fields = match ast.data {
@@ -45,6 +46,10 @@ fn entity_impl(
 
     for field in fields {
         let field_params = crate::params::Field::from_field(field)?;
+
+        if field_params.r#virtual.is_some() && params.model.is_none() {
+            return crate::error(ast, "virtual attribute requires model attribute");
+        }
 
         let name = &field.ident;
         let column = field_params
