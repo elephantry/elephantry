@@ -12,8 +12,7 @@ pub(crate) struct Field {
     pub column: Option<String>,
     #[darling(default)]
     pub default: bool,
-    #[darling(default)]
-    pub pk: bool,
+    pub pk: Option<bool>,
     #[darling(default, rename = "virtual")]
     pub r#virtual: Option<darling::util::Override<String>>,
 }

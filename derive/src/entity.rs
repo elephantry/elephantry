@@ -47,6 +47,10 @@ fn entity_impl(
     for field in fields {
         let field_params = crate::params::Field::from_field(field)?;
 
+        if field_params.pk.is_some() && params.structure.is_none() {
+            return crate::error(ast, "pk attribute requires structure attribute");
+        }
+
         if field_params.r#virtual.is_some() && params.model.is_none() {
             return crate::error(ast, "virtual attribute requires model attribute");
         }
@@ -145,7 +149,7 @@ fn structure_impl(
             .column
             .unwrap_or_else(|| field.ident.as_ref().unwrap().to_string());
 
-        if field_params.pk {
+        if field_params.pk.unwrap_or_default() {
             primary_key.push(column.clone());
         }
 
