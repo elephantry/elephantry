@@ -31,6 +31,12 @@ impl std::ops::Deref for Bytea {
     }
 }
 
+impl std::ops::DerefMut for Bytea {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
 impl crate::ToSql for Bytea {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::BYTEA

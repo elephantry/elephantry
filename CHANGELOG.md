@@ -13,8 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - xmltree 0.12;
 
 ### Added
-- `Connection::exist_by_pk`
-- `Connection::exist_one`
+- `Connection::exist_by_pk`;
+- `Connection::exist_one`;
+- Improve `Bytea` usability;
 
 ## [5.0.0] - 2025-10-26
 
