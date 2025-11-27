@@ -5,6 +5,12 @@
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 pub struct Bytea(Vec<u8>);
 
+impl Bytea {
+    pub fn new() -> Self {
+        Self(Vec::new())
+    }
+}
+
 impl From<Vec<u8>> for Bytea {
     fn from(vec: Vec<u8>) -> Self {
         Self(vec)
