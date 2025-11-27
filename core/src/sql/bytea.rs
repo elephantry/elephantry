@@ -17,6 +17,12 @@ impl From<Vec<u8>> for Bytea {
     }
 }
 
+impl From<&[u8]> for Bytea {
+    fn from(vec: &[u8]) -> Self {
+        Self(vec.to_vec())
+    }
+}
+
 impl std::ops::Deref for Bytea {
     type Target = Vec<u8>;
 
