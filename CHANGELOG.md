@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - xmltree 0.12;
+- darling 0.22;
 
 ### Added
 - `Connection::exist_by_pk`;
