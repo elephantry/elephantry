@@ -1,3 +1,5 @@
+use darling::FromVariant as _;
+
 pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> {
     let variants = match ast.data {
         syn::Data::Enum(ref e) => &e.variants,
@@ -7,13 +9,23 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::Tok
     let name = &ast.ident;
     let elephantry = crate::elephantry();
 
-    let from_text_body = variants.iter().map(|variant| {
+    let mut from_text_body = Vec::new();
+    let mut to_text_body = Vec::new();
+
+    for variant in variants {
         let name = &variant.ident;
 
-        quote::quote! {
-            stringify!(#name) => Self::#name
-        }
-    });
+        let params = crate::params::Value::from_variant(variant)?;
+        let value = params.value.unwrap_or_else(|| name.to_string());
+
+        from_text_body.push(quote::quote! {
+            #value => Self::#name
+        });
+
+        to_text_body.push(quote::quote! {
+            Self::#name => #value
+        });
+    }
 
     let (impl_generics, ty_generics, where_clause) = ast.generics.split_for_impl();
 
@@ -41,7 +53,11 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::Tok
              * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/enum.c#L110
              */
             fn to_text(&self) -> #elephantry::Result<String> {
-                Ok(format!("{self:?}"))
+                let value = match self {
+                    #(#to_text_body, )*
+                };
+
+                Ok(value.to_string())
             }
         }
 

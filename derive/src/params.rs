@@ -16,3 +16,9 @@ pub(crate) struct Field {
     #[darling(default, rename = "virtual")]
     pub r#virtual: Option<darling::util::Override<String>>,
 }
+
+#[derive(Clone, Debug, darling::FromVariant)]
+#[darling(attributes(elephantry))]
+pub(crate) struct Value {
+    pub value: Option<String>,
+}
