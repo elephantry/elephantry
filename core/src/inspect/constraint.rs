@@ -1,45 +1,19 @@
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, elephantry_derive::Enum)]
 pub enum Type {
+    #[elephantry(value = "c")]
     Check,
+    #[elephantry(value = "f")]
     Foreign,
+    #[elephantry(value = "n")]
     NotNull,
+    #[elephantry(value = "p")]
     PrimaryKey,
+    #[elephantry(value = "t")]
     Trigger,
+    #[elephantry(value = "u")]
     Unique,
+    #[elephantry(value = "x")]
     Exclusion,
-}
-
-impl crate::ToText for Type {
-    fn to_text(&self) -> crate::Result<String> {
-        let s = match self {
-            Type::Check => "c",
-            Type::Foreign => "f",
-            Type::NotNull => "n",
-            Type::PrimaryKey => "p",
-            Type::Trigger => "t",
-            Type::Unique => "u",
-            Type::Exclusion => "x",
-        };
-
-        Ok(s.to_string())
-    }
-}
-
-impl crate::FromText for Type {
-    fn from_text(raw: &str) -> crate::Result<Self> {
-        let ty = match raw {
-            "c" => Self::Check,
-            "f" => Self::Foreign,
-            "n" => Self::NotNull,
-            "p" => Self::PrimaryKey,
-            "t" => Self::Trigger,
-            "u" => Self::Unique,
-            "x" => Self::Exclusion,
-            _ => return Err(Self::error(raw)),
-        };
-
-        Ok(ty)
-    }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, elephantry_derive::Entity, elephantry_derive::Composite)]

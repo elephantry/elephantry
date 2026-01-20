@@ -17,17 +17,27 @@ pub use schema::*;
 pub use trigger::*;
 pub use types::*;
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, elephantry_derive::Enum)]
 pub enum Kind {
+    #[elephantry(value = "r")]
     OrdinaryTable,
+    #[elephantry(value = "i")]
     Index,
+    #[elephantry(value = "S")]
     Sequence,
+    #[elephantry(value = "t")]
     ToastTable,
+    #[elephantry(value = "v")]
     View,
+    #[elephantry(value = "m")]
     MaterializedView,
+    #[elephantry(value = "c")]
     CompositeType,
+    #[elephantry(value = "f")]
     ForeignTable,
+    #[elephantry(value = "p")]
     PartitionedTable,
+    #[elephantry(value = "I")]
     PartitionedIndex,
 }
 
@@ -50,119 +60,32 @@ impl std::fmt::Display for Kind {
     }
 }
 
-impl crate::ToText for Kind {
-    fn to_text(&self) -> crate::Result<String> {
-        let s = match self {
-            Kind::OrdinaryTable => "r",
-            Kind::Index => "i",
-            Kind::Sequence => "S",
-            Kind::ToastTable => "t",
-            Kind::View => "v",
-            Kind::MaterializedView => "m",
-            Kind::CompositeType => "c",
-            Kind::ForeignTable => "f",
-            Kind::PartitionedTable => "p",
-            Kind::PartitionedIndex => "I",
-        };
-
-        Ok(s.to_string())
-    }
-}
-
-impl crate::FromText for Kind {
-    fn from_text(raw: &str) -> crate::Result<Self> {
-        let kind = match raw {
-            "r" => Self::OrdinaryTable,
-            "i" => Self::Index,
-            "S" => Self::Sequence,
-            "t" => Self::ToastTable,
-            "v" => Self::View,
-            "m" => Self::MaterializedView,
-            "c" => Self::CompositeType,
-            "f" => Self::ForeignTable,
-            "p" => Self::PartitionedTable,
-            "I" => Self::PartitionedIndex,
-            _ => return Err(Self::error(raw)),
-        };
-
-        Ok(kind)
-    }
-}
-
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, elephantry_derive::Enum)]
 pub enum Persistence {
+    #[elephantry(value = "p")]
     Permanent,
+    #[elephantry(value = "u")]
     Unlogged,
+    #[elephantry(value = "t")]
     Temporary,
 }
 
-impl crate::ToText for Persistence {
-    fn to_text(&self) -> crate::Result<String> {
-        let s = match self {
-            Persistence::Permanent => "p",
-            Persistence::Unlogged => "u",
-            Persistence::Temporary => "t",
-        };
-
-        Ok(s.to_string())
-    }
-}
-
-impl crate::FromText for Persistence {
-    fn from_text(raw: &str) -> crate::Result<Self> {
-        let persistence = match raw {
-            "p" => Self::Permanent,
-            "u" => Self::Unlogged,
-            "t" => Self::Temporary,
-            _ => return Err(Self::error(raw)),
-        };
-
-        Ok(persistence)
-    }
-}
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, elephantry_derive::Enum)]
 pub enum Type {
+    #[elephantry(value = "b")]
     Base,
+    #[elephantry(value = "c")]
     Composite,
+    #[elephantry(value = "d")]
     Domain,
+    #[elephantry(value = "e")]
     Enum,
+    #[elephantry(value = "p")]
     Pseudo,
+    #[elephantry(value = "r")]
     Range,
+    #[elephantry(value = "m")]
     Multirange,
-}
-
-impl crate::ToText for Type {
-    fn to_text(&self) -> crate::Result<String> {
-        let s = match self {
-            Self::Base => "b",
-            Self::Composite => "c",
-            Self::Domain => "d",
-            Self::Enum => "e",
-            Self::Pseudo => "p",
-            Self::Range => "r",
-            Self::Multirange => "m",
-        };
-
-        Ok(s.to_string())
-    }
-}
-
-impl crate::FromText for Type {
-    fn from_text(raw: &str) -> crate::Result<Self> {
-        let ty = match raw {
-            "b" => Self::Base,
-            "c" => Self::Composite,
-            "d" => Self::Domain,
-            "e" => Self::Enum,
-            "p" => Self::Pseudo,
-            "r" => Self::Range,
-            "m" => Self::Multirange,
-            _ => return Err(Self::error(raw)),
-        };
-
-        Ok(ty)
-    }
 }
 
 pub(crate) fn schema_oid(connection: &crate::Connection, name: &str) -> crate::Result<i32> {
