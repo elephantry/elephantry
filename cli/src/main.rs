@@ -93,7 +93,7 @@ enum Opt {
 }
 
 fn main() -> Result {
-    envir::dotenv();
+    envir::init();
 
     let opt = Opt::parse();
     let dsn = envir::get("DATABASE_URL")?;

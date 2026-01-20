@@ -11,6 +11,7 @@ repository.workspace = true
 
 [dependencies]
 case = "1.0"
+envir = "1.0"
 term-table = "1.1"
 thiserror.workspace = true
 
@@ -22,8 +23,3 @@ features = ["derive"]
 version = "5.1"
 features = ["all-types", "inspect"]
 path = "../core/"
-
-[dependencies.envir]
-version = "1.0"
-default-features = false
-features = ["dotenv"]
