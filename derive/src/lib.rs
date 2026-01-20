@@ -9,6 +9,8 @@ mod params;
  * Impl [`FromSql`]/[`ToSql`] traits for [composite
  * type](https://www.postgresql.org/docs/current/rowtypes.html).
  *
+ * See the `08-composite.rs` example.
+ *
  * [`FromSql`]: trait.FromSql.html
  * [`ToSql`]: trait.ToSql.html
  */
@@ -38,6 +40,8 @@ pub fn entity_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream 
 /**
  * Impl [`FromText`]/[`ToText`] traits for [enum
  * type](https://www.postgresql.org/docs/current/datatype-enum.html).
+ *
+ * See the `13-enum.rs` example.
  *
  * [`FromText`]: trait.FromText.html
  * [`ToText`]: trait.ToText.html
