@@ -9,6 +9,12 @@ pub(crate) struct Param {
     pub formats: Vec<crate::pq::Format>,
 }
 
+impl Param {
+    pub fn values(&self) -> Vec<Option<&[u8]>> {
+        self.values.iter().map(|x| x.as_deref()).collect::<Vec<_>>()
+    }
+}
+
 /**
  * Result type of [`ping`] function.
  *
@@ -22,6 +28,7 @@ pub type PingStatus = libpq::ping::Status;
 #[derive(Clone, Debug)]
 pub struct Connection {
     pub(crate) connection: std::sync::Arc<std::sync::Mutex<libpq::Connection>>,
+    pub mode: crate::pq::Format,
 }
 
 extern "C" fn notice_processor(_arg: *mut std::ffi::c_void, message: *const std::ffi::c_char) {
@@ -51,6 +58,7 @@ impl Connection {
 
         Ok(Self {
             connection: std::sync::Arc::new(std::sync::Mutex::new(connection)),
+            mode: crate::pq::Format::Text,
         })
     }
 
@@ -143,7 +151,7 @@ impl Connection {
         query: &str,
         params: &[&dyn crate::ToSql],
     ) -> crate::Result<crate::pq::Result> {
-        let param = Self::transform_params(params)?;
+        let param = Self::transform_params(self.mode, params)?;
 
         self.connection
             .lock()
@@ -151,27 +159,32 @@ impl Connection {
             .exec_params(
                 &Self::order_parameters(query),
                 &param.types,
-                &param
-                    .values
-                    .iter()
-                    .map(|x| x.as_deref())
-                    .collect::<Vec<_>>(),
+                &param.values(),
                 &param.formats,
                 crate::pq::Format::Binary,
             )
             .try_into()
     }
 
-    pub(crate) fn transform_params(params: &[&dyn crate::ToSql]) -> crate::Result<Param> {
+    pub(crate) fn transform_params(
+        mode: crate::pq::Format,
+        params: &[&dyn crate::ToSql],
+    ) -> crate::Result<Param> {
         let mut p = Param::default();
 
         for param in params {
             p.types.push(param.ty().oid);
-            p.values.push(param.to_text()?.map(|mut x| {
-                x.push('\0');
-                x.into_bytes()
-            }));
-            p.formats.push(crate::pq::Format::Text);
+
+            let value = match mode {
+                libpq::Format::Text => param.to_text()?.map(|mut x| {
+                    x.push('\0');
+                    x.into_bytes()
+                }),
+                libpq::Format::Binary => param.to_binary()?,
+            };
+
+            p.values.push(value);
+            p.formats.push(mode);
         }
 
         Ok(p)

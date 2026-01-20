@@ -36,11 +36,11 @@ pub fn entity_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream 
 }
 
 /**
- * Impl [`FromSql`]/[`ToSql`] traits for [enum
+ * Impl [`FromText`]/[`ToText`] traits for [enum
  * type](https://www.postgresql.org/docs/current/datatype-enum.html).
  *
- * [`FromSql`]: trait.FromSql.html
- * [`ToSql`]: trait.ToSql.html
+ * [`FromText`]: trait.FromText.html
+ * [`ToText`]: trait.ToText.html
  */
 #[proc_macro_derive(Enum, attributes(elephantry))]
 pub fn enum_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream {

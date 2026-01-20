@@ -7,6 +7,7 @@
 pub struct Async<'c> {
     last_result: Option<crate::Result<crate::pq::Result>>,
     connection: &'c std::sync::Mutex<libpq::Connection>,
+    mode: crate::pq::Format,
 }
 
 impl std::future::Future for Async<'_> {
@@ -41,6 +42,7 @@ impl<'c> Async<'c> {
         Self {
             last_result: None,
             connection,
+            mode: crate::pq::Format::Text,
         }
     }
 
@@ -93,7 +95,7 @@ impl<'c> Async<'c> {
         query: &str,
         params: &[&dyn crate::ToSql],
     ) -> crate::Result<crate::pq::Result> {
-        let param = crate::Connection::transform_params(params)?;
+        let param = crate::Connection::transform_params(self.mode, params)?;
 
         self.connection
             .lock()
@@ -101,12 +103,8 @@ impl<'c> Async<'c> {
             .send_query_params(
                 query,
                 &param.types,
-                &param
-                    .values
-                    .iter()
-                    .map(|x| x.as_deref())
-                    .collect::<Vec<_>>(),
-                &[],
+                &param.values(),
+                &param.formats,
                 crate::pq::Format::Binary,
             )
             .map_err(crate::Error::Async)?;
