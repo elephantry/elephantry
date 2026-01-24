@@ -1,6 +1,6 @@
-pub mod builder;
+mod builder;
 
-use builder::Builder;
+pub use builder::Builder;
 
 /**
  * This struct represents a WHERE clause of a SQL statement. It deals with AND &

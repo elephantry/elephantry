@@ -72,6 +72,7 @@ pub mod r2d2;
 pub mod rocket;
 pub mod to_sql;
 pub mod transaction;
+pub mod r#where;
 
 mod r#async;
 mod errors;
@@ -87,7 +88,6 @@ mod sql;
 mod structure;
 mod to_text;
 mod tuple;
-mod r#where;
 
 pub use crate::config::Config;
 pub use r#async::*;
