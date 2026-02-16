@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - `value` field attribute form `Enum` derive macro;
+- Supports escape bytea_output format;
 
 ## [5.1.0] - 2025-10-29
 

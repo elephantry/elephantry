@@ -9,6 +9,40 @@ impl Bytea {
     pub fn new() -> Self {
         Self(Vec::new())
     }
+
+    fn from_hex(s: &str) -> crate::Result<Self> {
+        let mut pos = 2;
+        let mut v = Vec::new();
+
+        while pos < s.len() {
+            v.push(u8::from_str_radix(&s[pos..pos + 2], 16)?);
+            pos += 2;
+        }
+
+        Ok(v.into())
+    }
+
+    fn from_escape(ty: &crate::pq::Type, s: &str) -> crate::Result<Self> {
+        let mut pos = 0;
+        let mut v = Vec::new();
+
+        while pos < s.len() {
+            let c = s.chars().nth(pos).unwrap();
+
+            if c == '\\' {
+                let n = u8::from_str_radix(&s[pos + 1..pos + 4], 8)
+                    .map_err(|_| <Self as crate::FromSql>::error(ty, Some(s)))?;
+
+                v.push(n);
+                pos += 4;
+            } else {
+                v.push(c as u8);
+                pos += 1;
+            }
+        }
+
+        Ok(v.into())
+    }
 }
 
 impl From<Vec<u8>> for Bytea {
@@ -63,18 +97,14 @@ impl crate::FromSql for Bytea {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/varlena.c#L373
      */
-    fn from_text(_: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        let x: &[_] = &['\\', 'x'];
-        let string = crate::from_sql::not_null(raw)?.trim_start_matches(x);
-        let mut pos = 0;
-        let mut v = Vec::new();
+    fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
+        let s = crate::from_sql::not_null(raw)?;
 
-        while pos < string.len() {
-            v.push(u8::from_str_radix(&string[pos..pos + 2], 16)?);
-            pos += 2;
+        if s.starts_with("\\x") {
+            Self::from_hex(s)
+        } else {
+            Self::from_escape(ty, s)
         }
-
-        Ok(v.into())
     }
 
     /*
@@ -89,9 +119,24 @@ impl crate::entity::Simple for Bytea {}
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(
-        bytea,
-        crate::Bytea,
-        [("'abcd'", crate::Bytea::from(Vec::from("abcd")))]
-    );
+    #[test]
+    fn bytea() -> crate::Result {
+        let tests = [
+            ("'abcd'", crate::Bytea::from(Vec::from("abcd"))),
+            ("'\\x123456'", crate::Bytea::from(vec![0x12, 0x34, 0x56])),
+        ];
+
+        let conn = crate::test::new_conn()?;
+
+        for output in ["escape", "hex"] {
+            conn.execute(&format!("set bytea_output = '{output}'"))?;
+
+            crate::test::to_text("bytea", &tests)?;
+            crate::test::to_binary("bytea", &tests)?;
+            crate::test::from_text("bytea", &tests)?;
+            crate::test::from_binary("bytea", &tests)?;
+        }
+
+        Ok(())
+    }
 }
