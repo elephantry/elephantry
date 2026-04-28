@@ -124,7 +124,7 @@ all-types = [
     "numeric",
     "time",
     "uuid",
-    "xml"
+    "xml",
 ]
 bit = ["bit-vec", "elephantry-derive/bit"]
 config = ["dep:config", "serde"]
@@ -144,7 +144,19 @@ pg16 = ["libpq/v16"]
 pg17 = ["libpq/v17"]
 pg18 = ["libpq/v18"]
 rocket = ["r2d2", "rocket_sync_db_pools"]
-serde = ["dep:serde", "time/serde"]
+serde = [
+    "dep:serde",
+    "bigdecimal?/serde",
+    "bit-vec?/serde",
+    "chrono?/serde",
+    "geo-types?/serde",
+    "ipnetwork?/serde",
+    "jiff?/serde",
+    "macaddr?/serde",
+    "postgres_money?/serde",
+    "time?/serde",
+    "uuid?/serde",
+]
 time = ["dep:time", "elephantry-derive/time"]
 uuid = ["dep:uuid", "elephantry-derive/uuid"]
 xml = ["xmltree", "elephantry-derive/xml"]
