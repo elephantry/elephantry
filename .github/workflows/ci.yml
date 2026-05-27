@@ -2,7 +2,6 @@ on: [pull_request, push]
 
 env:
   CARGO_TERM_COLOR: always
-  DATABASE_URL: postgres://postgres:root@localhost/
 
 jobs:
   lint_fmt:
@@ -39,22 +38,20 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@stable
-
-      - name: Install postgreSQL (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
-          sudo apt-get install -y libpq-dev postgresql-17
-          sudo service postgresql start && sleep 3
-          sudo -u postgres psql --command "ALTER USER postgres PASSWORD 'root';"
+      - uses: ikalnytskyi/action-setup-postgres@v8
+        id: postgres
 
       - name: Run tests (debug)
         if: matrix.mode == 'debug'
         run: RUST_TEST_THREADS=1 cargo test --all-features
+        env:
+          PGSERVICE: ${{ steps.postgres.outputs.service-name }}
 
       - name: Run tests (release)
         if: matrix.mode == 'release'
         run: RUST_TEST_THREADS=1 cargo test --all-features --release
+        env:
+          PGSERVICE: ${{ steps.postgres.outputs.service-name }}
 
   fuzz:
     name: Fuzz
@@ -68,15 +65,13 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: nightly
+      - uses: ikalnytskyi/action-setup-postgres@v8
+        id: postgres
 
-      - name: Install postgreSQL
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libpq-dev postgresql
-          sudo service postgresql start && sleep 3
-          sudo -u postgres psql --command "ALTER USER postgres PASSWORD 'root';"
-          cargo install cargo-fuzz
-
+      - name: Install fuzz
+        run: cargo install cargo-fuzz
       - name: Run fuzz
         working-directory: ./core
         run: cargo fuzz run fuzz_${{ matrix.target }} -- -max_total_time=10
+        env:
+          PGSERVICE: ${{ steps.postgres.outputs.service-name }}

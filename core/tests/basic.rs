@@ -1,9 +1,11 @@
 mod entity;
 
 fn main() -> elephantry::Result {
-    let database_url = std::env::var("DATABASE_URL")
+    let dsn = std::env::var("PGSERVICE")
+        .map(|x| format!("service={x}"))
+        .or_else(|_| std::env::var("DATABASE_URL"))
         .unwrap_or_else(|_| "postgres://localhost/elephantry".to_string());
-    let elephantry = elephantry::Pool::default().add_default("elephantry", &database_url)?;
+    let elephantry = elephantry::Pool::default().add_default("elephantry", &dsn)?;
 
     let count = elephantry.count_where::<entity::EventModel>("name = $1", &[&"pageview"])?;
     println!("Count events: {count}");

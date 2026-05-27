@@ -27,9 +27,12 @@ struct Entity {
 }
 
 fuzz_target!(|entity: Entity| {
-    let database_url =
-        std::env::var("DATABASE_URL").unwrap_or_else(|_| "postgres://localhost".to_string());
-    let elephantry = elephantry::Pool::new(&database_url).unwrap();
+    let dsn = std::env::var("PGSERVICE")
+        .map(|x| format!("service={x}"))
+        .or_else(|_| std::env::var("DATABASE_URL"))
+        .unwrap_or_else(|_| "postgres://localhost".to_string());
+
+    let elephantry = elephantry::Pool::new(&dsn).unwrap();
     elephantry.execute("create extension if not exists hstore").unwrap();
     elephantry.execute("create temporary table entity(
         bit bit,
