@@ -1,3 +1,4 @@
+mod builder;
 mod channel_binding;
 mod gssencmode;
 #[cfg(feature = "pg16")]
@@ -19,6 +20,8 @@ pub use sslmode::*;
 #[cfg(feature = "pg17")]
 pub use sslnegotiation::*;
 pub use target_session_attrs::*;
+
+use builder::Builder;
 
 /**
  * Connection configuration.
@@ -78,6 +81,11 @@ impl Config {
     pub fn new() -> Self {
         Self::default()
     }
+
+    #[must_use]
+    pub fn builder() -> Builder {
+        Builder::new()
+    }
 }
 
 macro_rules! display {
@@ -132,5 +140,22 @@ impl std::fmt::Display for Config {
         display!(f, self.user);
 
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod test {
+    #[test]
+    fn builder() {
+        let actual = crate::Config::builder()
+            .host("localhost")
+            .build();
+
+        let expected = crate::Config {
+            host: Some("localhost".to_string()),
+            ..Default::default()
+        };
+
+        assert_eq!(actual, expected);
     }
 }
