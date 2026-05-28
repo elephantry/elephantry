@@ -154,7 +154,13 @@ impl Config {
 macro_rules! display {
     ($f:ident, $config:ident . $name:ident) => {
         if let Some($name) = &$config.$name {
-            write!($f, "{}={} ", stringify!($name), $name)?;
+            let mut value = $name.to_string().replace('\\', "\\\\").replace('\'', "\\'");
+
+            if value.is_empty() || value.contains(' ') {
+                value = format!("'{value}'");
+            }
+
+            write!($f, "{}={value} ", stringify!($name))?;
         }
     };
 }
@@ -320,6 +326,25 @@ mod test {
         };
 
         assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn to_string() {
+        let config = crate::Config::builder().host("localhost").build();
+
+        assert_eq!(config.to_string(), "host=localhost ");
+
+        let config = crate::Config::builder()
+            .host("localhost")
+            .port("")
+            .application_name("my app")
+            .dbname(r#"db\name'"#)
+            .build();
+
+        assert_eq!(
+            config.to_string(),
+            r#"application_name='my app' dbname=db\\name\' host=localhost port='' "#
+        );
     }
 
     #[test]
