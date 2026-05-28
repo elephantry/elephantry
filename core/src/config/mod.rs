@@ -38,6 +38,8 @@ pub struct Config {
     pub connect_timeout: Option<i32>,
     pub dbname: Option<String>,
     pub fallback_application_name: Option<String>,
+    #[cfg(feature = "pg16")]
+    pub gssdelegation: Option<String>,
     pub gssencmode: Option<GssEncMode>,
     pub gsslib: Option<String>,
     pub hostaddr: Option<String>,
@@ -49,7 +51,19 @@ pub struct Config {
     pub krbsrvname: Option<String>,
     #[cfg(feature = "pg16")]
     pub load_balance_hosts: Option<LoadBalanceHosts>,
+    #[cfg(feature = "pg18")]
+    pub max_protocol_version: Option<String>,
+    #[cfg(feature = "pg18")]
+    pub min_protocol_version: Option<String>,
     pub options: Option<String>,
+    #[cfg(feature = "pg18")]
+    pub oauth_client_id: Option<String>,
+    #[cfg(feature = "pg18")]
+    pub oauth_client_secret: Option<String>,
+    #[cfg(feature = "pg18")]
+    pub oauth_issuer: Option<String>,
+    #[cfg(feature = "pg18")]
+    pub oauth_scope: Option<String>,
     pub passfile: Option<String>,
     pub password: Option<String>,
     pub port: Option<String>,
@@ -57,15 +71,25 @@ pub struct Config {
     pub requirepeer: Option<String>,
     #[cfg(feature = "pg16")]
     pub require_auth: Option<String>,
+    #[cfg(feature = "pg18")]
+    pub scram_client_key: Option<String>,
+    #[cfg(feature = "pg18")]
+    pub scram_server_key: Option<String>,
     pub service: Option<String>,
     pub sslcert: Option<String>,
     #[cfg(feature = "pg16")]
     pub sslcertmode: Option<SslCertMode>,
     pub sslcompression: Option<bool>,
     pub sslcrl: Option<String>,
+    #[cfg(feature = "pg14")]
+    pub sslcrldir: Option<String>,
     pub sslkey: Option<String>,
+    #[cfg(feature = "pg18")]
+    pub sslkeylogfile: Option<String>,
     pub ssl_max_protocol_version: Option<String>,
     pub ssl_min_protocol_version: Option<String>,
+    #[cfg(feature = "pg14")]
+    pub sslsni: Option<bool>,
     pub sslmode: Option<SslMode>,
     #[cfg(feature = "pg17")]
     pub sslnegotiation: Option<SslNegotiation>,
@@ -104,6 +128,8 @@ impl std::fmt::Display for Config {
         display!(f, self.connect_timeout);
         display!(f, self.dbname);
         display!(f, self.fallback_application_name);
+        #[cfg(feature = "pg16")]
+        display!(f, self.gssdelegation);
         display!(f, self.gssencmode);
         display!(f, self.gsslib);
         display!(f, self.hostaddr);
@@ -115,7 +141,19 @@ impl std::fmt::Display for Config {
         display!(f, self.krbsrvname);
         #[cfg(feature = "pg16")]
         display!(f, self.load_balance_hosts);
+        #[cfg(feature = "pg18")]
+        display!(f, self.max_protocol_version);
+        #[cfg(feature = "pg18")]
+        display!(f, self.min_protocol_version);
         display!(f, self.options);
+        #[cfg(feature = "pg18")]
+        display!(f, self.oauth_client_id);
+        #[cfg(feature = "pg18")]
+        display!(f, self.oauth_client_secret);
+        #[cfg(feature = "pg18")]
+        display!(f, self.oauth_issuer);
+        #[cfg(feature = "pg18")]
+        display!(f, self.oauth_scope);
         display!(f, self.passfile);
         display!(f, self.password);
         display!(f, self.port);
@@ -123,16 +161,28 @@ impl std::fmt::Display for Config {
         display!(f, self.requirepeer);
         #[cfg(feature = "pg16")]
         display!(f, self.require_auth);
+        #[cfg(feature = "pg18")]
+        display!(f, self.scram_client_key);
+        #[cfg(feature = "pg18")]
+        display!(f, self.scram_server_key);
         display!(f, self.service);
         display!(f, self.sslcert);
         #[cfg(feature = "pg16")]
         display!(f, self.sslcertmode);
         display!(f, self.sslcompression);
         display!(f, self.sslcrl);
+        #[cfg(feature = "pg14")]
+        display!(f, self.sslcrldir);
         display!(f, self.sslkey);
+        #[cfg(feature = "pg18")]
+        display!(f, self.sslkeylogfile);
         display!(f, self.ssl_max_protocol_version);
         display!(f, self.ssl_min_protocol_version);
+        #[cfg(feature = "pg14")]
+        display!(f, self.sslsni);
         display!(f, self.sslmode);
+        #[cfg(feature = "pg17")]
+        display!(f, self.sslnegotiation);
         display!(f, self.sslpassword);
         display!(f, self.sslrootcert);
         display!(f, self.target_session_attrs);

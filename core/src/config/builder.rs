@@ -51,6 +51,13 @@ impl Builder {
         self
     }
 
+    #[cfg(feature = "pg16")]
+    pub fn gssdelegation<S: ToString>(mut self, gssdelegation: S) -> Self {
+        self.config.gssdelegation = Some(gssdelegation.to_string());
+
+        self
+    }
+
     pub fn gssencmode(mut self, gssencmode: super::GssEncMode) -> Self {
         self.config.gssencmode = Some(gssencmode);
 
@@ -112,8 +119,50 @@ impl Builder {
         self
     }
 
+    #[cfg(feature = "pg18")]
+    pub fn max_protocol_version<S: ToString>(mut self, max_protocol_version: S) -> Self {
+        self.config.max_protocol_version = Some(max_protocol_version.to_string());
+
+        self
+    }
+
+    #[cfg(feature = "pg18")]
+    pub fn min_protocol_version<S: ToString>(mut self, min_protocol_version: S) -> Self {
+        self.config.min_protocol_version = Some(min_protocol_version.to_string());
+
+        self
+    }
+
     pub fn options<S: ToString>(mut self, options: S) -> Self {
         self.config.options = Some(options.to_string());
+
+        self
+    }
+
+    #[cfg(feature = "pg18")]
+    pub fn oauth_client_id<S: ToString>(mut self, oauth_client_id: S) -> Self {
+        self.config.oauth_client_id = Some(oauth_client_id.to_string());
+
+        self
+    }
+
+    #[cfg(feature = "pg18")]
+    pub fn oauth_client_secret<S: ToString>(mut self, oauth_client_secret: S) -> Self {
+        self.config.oauth_client_secret = Some(oauth_client_secret.to_string());
+
+        self
+    }
+
+    #[cfg(feature = "pg18")]
+    pub fn oauth_issuer<S: ToString>(mut self, oauth_issuer: S) -> Self {
+        self.config.oauth_issuer = Some(oauth_issuer.to_string());
+
+        self
+    }
+
+    #[cfg(feature = "pg18")]
+    pub fn oauth_scope<S: ToString>(mut self, oauth_scope: S) -> Self {
+        self.config.oauth_scope = Some(oauth_scope.to_string());
 
         self
     }
@@ -155,6 +204,20 @@ impl Builder {
         self
     }
 
+    #[cfg(feature = "pg18")]
+    pub fn scram_client_key<S: ToString>(mut self, scram_client_key: S) -> Self {
+        self.config.scram_client_key = Some(scram_client_key.to_string());
+
+        self
+    }
+
+    #[cfg(feature = "pg18")]
+    pub fn scram_server_key<S: ToString>(mut self, scram_server_key: S) -> Self {
+        self.config.scram_server_key = Some(scram_server_key.to_string());
+
+        self
+    }
+
     pub fn service<S: ToString>(mut self, service: S) -> Self {
         self.config.service = Some(service.to_string());
 
@@ -186,8 +249,22 @@ impl Builder {
         self
     }
 
+    #[cfg(feature = "pg14")]
+    pub fn sslcrldir<S: ToString>(mut self, sslcrldir: S) -> Self {
+        self.config.sslcrldir = Some(sslcrldir.to_string());
+
+        self
+    }
+
     pub fn sslkey<S: ToString>(mut self, sslkey: S) -> Self {
         self.config.sslkey = Some(sslkey.to_string());
+
+        self
+    }
+
+    #[cfg(feature = "pg18")]
+    pub fn sslkeylogfile<S: ToString>(mut self, sslkeylogfile: S) -> Self {
+        self.config.sslkeylogfile = Some(sslkeylogfile.to_string());
 
         self
     }
@@ -225,6 +302,13 @@ impl Builder {
 
     pub fn sslrootcert<S: ToString>(mut self, sslrootcert: S) -> Self {
         self.config.sslrootcert = Some(sslrootcert.to_string());
+
+        self
+    }
+
+    #[cfg(feature = "pg14")]
+    pub fn sslsni(mut self, sslsni: bool) -> Self {
+        self.config.sslsni = Some(sslsni);
 
         self
     }

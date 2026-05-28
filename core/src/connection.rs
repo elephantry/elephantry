@@ -703,6 +703,8 @@ impl Connection {
             fallback_application_name: info
                 .get("fallback_application_name")
                 .and_then(|x| x.val.clone()),
+            #[cfg(feature = "pg16")]
+            gssdelegation: info.get("gssdelegation").and_then(|x| x.val.clone()),
             gssencmode: Self::config_get(&info, "gssencmode")?,
             gsslib: info.get("gsslib").and_then(|x| x.val.clone()),
             hostaddr: info.get("hostaddr").and_then(|x| x.val.clone()),
@@ -714,7 +716,19 @@ impl Connection {
             krbsrvname: info.get("krbsrvname").and_then(|x| x.val.clone()),
             #[cfg(feature = "pg16")]
             load_balance_hosts: Self::config_get(&info, "load_balance_hosts")?,
+            #[cfg(feature = "pg18")]
+            max_protocol_version: info.get("max_protocol_version").and_then(|x| x.val.clone()),
+            #[cfg(feature = "pg18")]
+            min_protocol_version: info.get("min_protocol_version").and_then(|x| x.val.clone()),
             options: info.get("options").and_then(|x| x.val.clone()),
+            #[cfg(feature = "pg18")]
+            oauth_client_id: info.get("oauth_client_id").and_then(|x| x.val.clone()),
+            #[cfg(feature = "pg18")]
+            oauth_client_secret: info.get("oauth_client_secret").and_then(|x| x.val.clone()),
+            #[cfg(feature = "pg18")]
+            oauth_issuer: info.get("oauth_issuer").and_then(|x| x.val.clone()),
+            #[cfg(feature = "pg18")]
+            oauth_scope: info.get("oauth_scope").and_then(|x| x.val.clone()),
             passfile: info.get("passfile").and_then(|x| x.val.clone()),
             password: info.get("password").and_then(|x| x.val.clone()),
             port: info.get("port").and_then(|x| x.val.clone()),
@@ -722,6 +736,10 @@ impl Connection {
             requirepeer: info.get("requirepeer").and_then(|x| x.val.clone()),
             #[cfg(feature = "pg16")]
             require_auth: info.get("require_auth").and_then(|x| x.val.clone()),
+            #[cfg(feature = "pg18")]
+            scram_client_key: info.get("scram_client_key").and_then(|x| x.val.clone()),
+            #[cfg(feature = "pg18")]
+            scram_server_key: info.get("scram_server_key").and_then(|x| x.val.clone()),
             service: info.get("service").and_then(|x| x.val.clone()),
             sslcert: info.get("sslcert").and_then(|x| x.val.clone()),
             #[cfg(feature = "pg16")]
@@ -730,7 +748,13 @@ impl Connection {
             #[cfg(feature = "pg17")]
             sslnegotiation: Self::config_get(&info, "sslnegotiation")?,
             sslcrl: info.get("sslcrl").and_then(|x| x.val.clone()),
+            #[cfg(feature = "pg14")]
+            sslcrldir: info.get("sslcrldir").and_then(|x| x.val.clone()),
+            #[cfg(feature = "pg14")]
+            sslsni: Self::config_get::<i32>(&info, "sslsni")?.map(|x| x == 1),
             sslkey: info.get("sslkey").and_then(|x| x.val.clone()),
+            #[cfg(feature = "pg18")]
+            sslkeylogfile: info.get("sslkeylogfile").and_then(|x| x.val.clone()),
             ssl_max_protocol_version: info
                 .get("ssl_max_protocol_version")
                 .and_then(|x| x.val.clone()),
