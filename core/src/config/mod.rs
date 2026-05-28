@@ -60,8 +60,8 @@ pub struct Config {
     pub keepalives: Option<bool>,
     #[envir(name = "PGKRBSRVNAME")]
     pub krbsrvname: Option<String>,
-    #[cfg(feature = "pg16")]
     #[envir(name = "PGLOADBALANCEHOSTS")]
+    #[cfg(feature = "pg16")]
     pub load_balance_hosts: Option<LoadBalanceHosts>,
     #[envir(name = "PGMAXPROTOCOLVERSION")]
     #[cfg(feature = "pg18")]
@@ -260,6 +260,8 @@ impl TryFrom<Vec<libpq::connection::Info>> for Config {
                 "connect_timeout" => config.connect_timeout = Some(val.parse()?),
                 "dbname" => config.dbname = value.val,
                 "fallback_application_name" => config.fallback_application_name = value.val,
+                #[cfg(feature = "pg16")]
+                "gssdelegation" => config.gssdelegation = Some(val.parse()?),
                 "gssencmode" => config.gssencmode = Some(val.parse()?),
                 "gsslib" => config.gsslib = value.val,
                 "hostaddr" => config.hostaddr = value.val,
@@ -267,7 +269,7 @@ impl TryFrom<Vec<libpq::connection::Info>> for Config {
                 "keepalives_count" => config.keepalives_count = Some(val.parse()?),
                 "keepalives_idle" => config.keepalives_idle = Some(val.parse()?),
                 "keepalives_interval" => config.keepalives_interval = Some(val.parse()?),
-                "keepalives" => config.keepalives = Some(val.parse()?),
+                "keepalives" => config.keepalives = Some(val.parse::<i32>()? == 1),
                 "krbsrvname" => config.krbsrvname = value.val,
                 #[cfg(feature = "pg16")]
                 "load_balance_hosts" => config.load_balance_hosts = Some(val.parse()?),
@@ -283,7 +285,7 @@ impl TryFrom<Vec<libpq::connection::Info>> for Config {
                 "sslcert" => config.sslcert = value.val,
                 #[cfg(feature = "pg16")]
                 "sslcertmode" => config.sslcertmode = Some(val.parse()?),
-                "sslcompression" => config.sslcompression = Some(val.parse()?),
+                "sslcompression" => config.sslcompression = Some(val.parse::<i32>()? == 1),
                 "sslcrl" => config.sslcrl = value.val,
                 "sslkey" => config.sslkey = value.val,
                 "ssl_max_protocol_version" => config.ssl_max_protocol_version = value.val,
@@ -293,15 +295,12 @@ impl TryFrom<Vec<libpq::connection::Info>> for Config {
                 "sslnegotiation" => config.sslnegotiation = Some(val.parse()?),
                 "sslpassword" => config.sslpassword = value.val,
                 "sslrootcert" => config.sslrootcert = value.val,
+                #[cfg(feature = "pg14")]
+                "sslsni" => config.sslsni = Some(val.parse::<i32>()? == 1),
                 "target_session_attrs" => config.target_session_attrs = Some(val.parse()?),
                 "tcp_user_timeout" => config.tcp_user_timeout = Some(val.parse()?),
                 "user" => config.user = value.val,
-                _ => {
-                    return Err(crate::Error::Parse(format!(
-                        "Invalid config field {}",
-                        value.keyword
-                    )));
-                }
+                _ => log::warn!("Ignoning unknow config field '{}'", value.keyword),
             }
         }
 
