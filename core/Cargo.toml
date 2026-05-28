@@ -144,9 +144,9 @@ multirange = ["libpq/v14", "elephantry-derive/multirange"]
 net = ["ipnetwork", "macaddr", "elephantry-derive/net"]
 numeric = ["bigdecimal", "num", "elephantry-derive/numeric"]
 pg14 = ["libpq/v14", "multirange"]
-pg16 = ["libpq/v16"]
-pg17 = ["libpq/v17"]
-pg18 = ["libpq/v18"]
+pg16 = ["pg14", "libpq/v16"]
+pg17 = ["pg16", "libpq/v17"]
+pg18 = ["pg17", "libpq/v18"]
 rocket = ["r2d2", "rocket_sync_db_pools"]
 serde = [
     "dep:serde",
