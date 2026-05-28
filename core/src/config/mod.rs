@@ -143,13 +143,88 @@ impl std::fmt::Display for Config {
     }
 }
 
+impl std::str::FromStr for Config {
+    type Err = crate::Error;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let conninfo = libpq::connection::Info::from(s)?;
+
+        conninfo.try_into()
+    }
+}
+
+impl TryFrom<Vec<libpq::connection::Info>> for Config {
+    type Error = crate::Error;
+
+    fn try_from(values: Vec<libpq::connection::Info>) -> Result<Self, Self::Error> {
+        let mut config = Self::default();
+
+        for value in values {
+            let Some(ref val) = value.val else {
+                continue;
+            };
+
+            match value.keyword.as_str() {
+                "application_name" => config.application_name = value.val,
+                "channel_binding" => config.channel_binding = Some(val.parse()?),
+                "client_encoding" => config.client_encoding = value.val,
+                "connect_timeout" => config.connect_timeout = Some(val.parse()?),
+                "dbname" => config.dbname = value.val,
+                "fallback_application_name" => config.fallback_application_name = value.val,
+                "gssencmode" => config.gssencmode = Some(val.parse()?),
+                "gsslib" => config.gsslib = value.val,
+                "hostaddr" => config.hostaddr = value.val,
+                "host" => config.host = value.val,
+                "keepalives_count" => config.keepalives_count = Some(val.parse()?),
+                "keepalives_idle" => config.keepalives_idle = Some(val.parse()?),
+                "keepalives_interval" => config.keepalives_interval = Some(val.parse()?),
+                "keepalives" => config.keepalives = Some(val.parse()?),
+                "krbsrvname" => config.krbsrvname = value.val,
+                #[cfg(feature = "pg16")]
+                "load_balance_hosts" => config.load_balance_hosts = Some(val.parse()?),
+                "options" => config.options = value.val,
+                "passfile" => config.passfile = value.val,
+                "password" => config.password = value.val,
+                "port" => config.port = value.val,
+                "replication" => config.replication = value.val,
+                "requirepeer" => config.requirepeer = value.val,
+                #[cfg(feature = "pg16")]
+                "require_auth" => config.require_auth = value.val,
+                "service" => config.service = value.val,
+                "sslcert" => config.sslcert = value.val,
+                #[cfg(feature = "pg16")]
+                "sslcertmode" => config.sslcertmode = Some(val.parse()?),
+                "sslcompression" => config.sslcompression = Some(val.parse()?),
+                "sslcrl" => config.sslcrl = value.val,
+                "sslkey" => config.sslkey = value.val,
+                "ssl_max_protocol_version" => config.ssl_max_protocol_version = value.val,
+                "ssl_min_protocol_version" => config.ssl_min_protocol_version = value.val,
+                "sslmode" => config.sslmode = Some(val.parse()?),
+                #[cfg(feature = "pg17")]
+                "sslnegotiation" => config.sslnegotiation = Some(val.parse()?),
+                "sslpassword" => config.sslpassword = value.val,
+                "sslrootcert" => config.sslrootcert = value.val,
+                "target_session_attrs" => config.target_session_attrs = Some(val.parse()?),
+                "tcp_user_timeout" => config.tcp_user_timeout = Some(val.parse()?),
+                "user" => config.user = value.val,
+                _ => {
+                    return Err(crate::Error::Parse(format!(
+                        "Invalid config field {}",
+                        value.keyword
+                    )));
+                }
+            }
+        }
+
+        Ok(config)
+    }
+}
+
 #[cfg(test)]
 mod test {
     #[test]
     fn builder() {
-        let actual = crate::Config::builder()
-            .host("localhost")
-            .build();
+        let actual = crate::Config::builder().host("localhost").build();
 
         let expected = crate::Config {
             host: Some("localhost".to_string()),
@@ -157,5 +232,45 @@ mod test {
         };
 
         assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn parse_key_value() -> crate::Result {
+        let dsn = "host=localhost port=123 application_name='my app'";
+
+        let actual = dsn.parse()?;
+
+        let expected = crate::Config {
+            host: Some("localhost".to_string()),
+            port: Some("123".to_string()),
+            application_name: Some("my app".to_string()),
+
+            ..Default::default()
+        };
+
+        assert_eq!(expected, actual);
+
+        Ok(())
+    }
+
+    #[test]
+    fn parse_uri() -> crate::Result {
+        let dsn = "postgresql://host1:123,host2:456/somedb?target_session_attrs=any&application_name=myapp";
+
+        let actual = dsn.parse()?;
+
+        let expected = crate::Config {
+            host: Some("host1,host2".to_string()),
+            port: Some("123,456".to_string()),
+            dbname: Some("somedb".to_string()),
+            target_session_attrs: Some(crate::config::TargetSessionAttrs::Any),
+            application_name: Some("myapp".to_string()),
+
+            ..Default::default()
+        };
+
+        assert_eq!(expected, actual);
+
+        Ok(())
     }
 }

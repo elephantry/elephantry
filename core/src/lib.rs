@@ -305,11 +305,14 @@ mod test {
         };
     }
 
-    pub fn dsn() -> String {
-        std::env::var("PGSERVICE")
-            .map(|x| format!("service={x}"))
-            .or_else(|_| std::env::var("DATABASE_URL"))
-            .unwrap_or_else(|_| "host=localhost".to_string())
+    pub fn config() -> crate::Config {
+        if let Ok(pgservice) = std::env::var("PGSERVICE") {
+            crate::Config::builder().service(pgservice).build()
+        } else if let Ok(database_url) = std::env::var("DATABASE_URL") {
+            database_url.parse().unwrap()
+        } else {
+            crate::Config::default()
+        }
     }
 
     pub fn new_conn() -> crate::Result<&'static crate::Connection> {
@@ -321,7 +324,8 @@ mod test {
         // @TODO #[feature(once_cell_try)]
         static POOL: std::sync::LazyLock<crate::Result<crate::Pool>> =
             std::sync::LazyLock::new(|| {
-                let pool = crate::Pool::new(&dsn())?;
+                let config = config();
+                let pool = crate::Pool::from_config(&config)?;
                 pool.execute("create extension if not exists hstore")?;
                 pool.execute("create extension if not exists ltree")?;
                 pool.execute("set lc_monetary to 'en_US.UTF-8';")?;
