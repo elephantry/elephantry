@@ -30,11 +30,13 @@ impl r2d2::ManageConnection for ConnectionManager {
 #[cfg(test)]
 mod test {
     #[test]
-    fn r2d2() {
-        let config = crate::test::config();
+    fn r2d2() -> crate::Result {
+        let config = crate::test::config()?;
         let manager = crate::r2d2::ConnectionManager::new(&config.to_string());
         let pool = r2d2::Pool::builder().max_size(1).build(manager).unwrap();
 
-        assert!(pool.get().is_ok())
+        assert!(pool.get().is_ok());
+
+        Ok(())
     }
 }

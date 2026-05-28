@@ -305,13 +305,11 @@ mod test {
         };
     }
 
-    pub fn config() -> crate::Config {
-        if let Ok(pgservice) = std::env::var("PGSERVICE") {
-            crate::Config::builder().service(pgservice).build()
-        } else if let Ok(database_url) = std::env::var("DATABASE_URL") {
-            database_url.parse().unwrap()
+    pub fn config() -> crate::Result<crate::Config> {
+        if let Ok(database_url) = std::env::var("DATABASE_URL") {
+            database_url.parse()
         } else {
-            crate::Config::default()
+            crate::Config::from_env()
         }
     }
 
@@ -324,7 +322,7 @@ mod test {
         // @TODO #[feature(once_cell_try)]
         static POOL: std::sync::LazyLock<crate::Result<crate::Pool>> =
             std::sync::LazyLock::new(|| {
-                let config = config();
+                let config = config()?;
                 let pool = crate::Pool::from_config(&config)?;
                 pool.execute("create extension if not exists hstore")?;
                 pool.execute("create extension if not exists ltree")?;

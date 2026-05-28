@@ -28,33 +28,48 @@ use builder::Builder;
  *
  * See <https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-PARAMKEYWORDS>.
  */
-#[derive(Clone, Debug, Default, PartialEq)]
+#[derive(Clone, Debug, Default, PartialEq, envir::Deserialize)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[non_exhaustive]
 pub struct Config {
+    #[envir(name = "PGAPPNAME")]
     pub application_name: Option<String>,
+    #[envir(name = "PGCHANNELBINDING")]
     pub channel_binding: Option<ChannelBinding>,
+    #[envir(name = "PGCLIENTENCODING")]
     pub client_encoding: Option<String>,
+    #[envir(name = "PGCONNECT_TIMEOUT")]
     pub connect_timeout: Option<i32>,
+    #[envir(name = "PGDATABASE")]
     pub dbname: Option<String>,
     pub fallback_application_name: Option<String>,
+    #[envir(name = "PGGSSDELEGATION")]
     #[cfg(feature = "pg16")]
     pub gssdelegation: Option<String>,
+    #[envir(name = "PGGSSENCMODE")]
     pub gssencmode: Option<GssEncMode>,
+    #[envir(name = "PGGSSLIB")]
     pub gsslib: Option<String>,
+    #[envir(name = "PGHOSTADDR")]
     pub hostaddr: Option<String>,
+    #[envir(name = "PGHOST")]
     pub host: Option<String>,
     pub keepalives_count: Option<i32>,
     pub keepalives_idle: Option<i32>,
     pub keepalives_interval: Option<i32>,
     pub keepalives: Option<bool>,
+    #[envir(name = "PGKRBSRVNAME")]
     pub krbsrvname: Option<String>,
     #[cfg(feature = "pg16")]
+    #[envir(name = "PGLOADBALANCEHOSTS")]
     pub load_balance_hosts: Option<LoadBalanceHosts>,
+    #[envir(name = "PGMAXPROTOCOLVERSION")]
     #[cfg(feature = "pg18")]
     pub max_protocol_version: Option<String>,
+    #[envir(name = "PGMINPROTOCOLVERSION")]
     #[cfg(feature = "pg18")]
     pub min_protocol_version: Option<String>,
+    #[envir(name = "PGOPTIONS")]
     pub options: Option<String>,
     #[cfg(feature = "pg18")]
     pub oauth_client_id: Option<String>,
@@ -64,39 +79,59 @@ pub struct Config {
     pub oauth_issuer: Option<String>,
     #[cfg(feature = "pg18")]
     pub oauth_scope: Option<String>,
+    #[envir(name = "PGPASSFILE")]
     pub passfile: Option<String>,
+    #[envir(name = "PGPASSWORD")]
     pub password: Option<String>,
+    #[envir(name = "PGPORT")]
     pub port: Option<String>,
     pub replication: Option<String>,
+    #[envir(name = "PGREQUIREPEER")]
     pub requirepeer: Option<String>,
     #[cfg(feature = "pg16")]
+    #[envir(name = "PGREQUIREAUTH")]
     pub require_auth: Option<String>,
     #[cfg(feature = "pg18")]
     pub scram_client_key: Option<String>,
     #[cfg(feature = "pg18")]
     pub scram_server_key: Option<String>,
+    #[envir(name = "PGSERVICE")]
     pub service: Option<String>,
+    #[envir(name = "PGSSLCERT")]
     pub sslcert: Option<String>,
     #[cfg(feature = "pg16")]
+    #[envir(name = "PGSSLCERTMODE")]
     pub sslcertmode: Option<SslCertMode>,
+    #[envir(name = "PGSSLCOMPRESSION")]
     pub sslcompression: Option<bool>,
+    #[envir(name = "PGSSLCRL")]
     pub sslcrl: Option<String>,
+    #[envir(name = "PGSSLCRLDIR")]
     #[cfg(feature = "pg14")]
     pub sslcrldir: Option<String>,
+    #[envir(name = "PGSSLKEY")]
     pub sslkey: Option<String>,
     #[cfg(feature = "pg18")]
     pub sslkeylogfile: Option<String>,
+    #[envir(name = "PGSSLMAXPROTOCOLVERSION")]
     pub ssl_max_protocol_version: Option<String>,
+    #[envir(name = "PGSSLMINPROTOCOLVERSION")]
     pub ssl_min_protocol_version: Option<String>,
-    #[cfg(feature = "pg14")]
-    pub sslsni: Option<bool>,
+    #[envir(name = "PGSSLMODE")]
     pub sslmode: Option<SslMode>,
     #[cfg(feature = "pg17")]
+    #[envir(name = "PGSSLNEGOTIATION")]
     pub sslnegotiation: Option<SslNegotiation>,
     pub sslpassword: Option<String>,
+    #[envir(name = "PGSSLROOTCERT")]
     pub sslrootcert: Option<String>,
+    #[envir(name = "PGSSLSNI")]
+    #[cfg(feature = "pg14")]
+    pub sslsni: Option<bool>,
+    #[envir(name = "PGTARGETSESSIONATTRS")]
     pub target_session_attrs: Option<TargetSessionAttrs>,
     pub tcp_user_timeout: Option<i32>,
+    #[envir(name = "PGUSER")]
     pub user: Option<String>,
 }
 
@@ -109,6 +144,10 @@ impl Config {
     #[must_use]
     pub fn builder() -> Builder {
         Builder::new()
+    }
+
+    pub fn from_env() -> crate::Result<Self> {
+        envir::from_env().map_err(crate::Error::from)
     }
 }
 

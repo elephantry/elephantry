@@ -35,6 +35,10 @@ optional = true
 version = "0.4"
 optional = true
 
+[dependencies.envir]
+workspace = true
+features = ["derive"]
+
 [dependencies.num]
 version = "0.4"
 optional = true

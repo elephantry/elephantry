@@ -25,6 +25,8 @@ pub enum Error {
     /** Escaping error */
     #[error("Unable to escape '{0}': {1}")]
     Escape(String, libpq::errors::Error),
+    #[error("{0}")]
+    Environment(#[from] envir::Error),
     /** Unable to transform a SQL field in rust value */
     #[error("Unable to convert from SQL {} (oid={}) to {rust_type}: {value}. Try {}", pg_type.name, pg_type.oid, crate::pq::sql_to_rust(pg_type))]
     FromSql {
