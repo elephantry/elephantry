@@ -96,8 +96,14 @@ fn main() -> Result {
     envir::init();
 
     let opt = Opt::parse();
-    let dsn = envir::get("DATABASE_URL")?;
-    let elephantry = elephantry::Pool::new(&dsn).expect("Unable to connect to postgresql");
+
+    let config = envir::get("DATABASE_URL")
+        .map_err(elephantry::Error::from)
+        .and_then(|x| x.parse())
+        .or_else(|_| elephantry::Config::from_env())
+        .unwrap_or_default();
+
+    let elephantry = elephantry::Pool::from_config(&config).expect("Unable to connect to postgresql");
 
     match opt {
         Opt::InspectDatabase {} => inspect::database(&elephantry),
