@@ -1,13 +1,9 @@
 #![warn(warnings)]
 
-mod error;
 mod generate;
 mod inspect;
 
 use clap::Parser;
-use error::Error;
-
-type Result<T = ()> = std::result::Result<T, crate::Error>;
 
 #[derive(Debug, Parser)]
 enum Opt {
@@ -92,7 +88,7 @@ enum Opt {
     },
 }
 
-fn main() -> Result {
+fn main() -> elephantry::Result {
     envir::init();
     envir::dotenv();
 
@@ -104,7 +100,8 @@ fn main() -> Result {
         .or_else(|_| elephantry::Config::from_env())
         .unwrap_or_default();
 
-    let elephantry = elephantry::Pool::from_config(&config).expect("Unable to connect to postgresql");
+    let elephantry =
+        elephantry::Pool::from_config(&config).expect("Unable to connect to postgresql");
 
     match opt {
         Opt::InspectDatabase {} => inspect::database(&elephantry),

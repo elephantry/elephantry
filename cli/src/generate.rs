@@ -5,7 +5,7 @@ pub fn schema(
     connection: &elephantry::Connection,
     prefix_dir: &str,
     schema: &str,
-) -> crate::Result {
+) -> elephantry::Result {
     let relations = elephantry::inspect::schema(connection, schema)?;
 
     add_mod(&format!("{prefix_dir}/model"), schema)?;
@@ -22,7 +22,7 @@ pub fn relation(
     prefix_dir: &str,
     schema: &str,
     relation: &str,
-) -> crate::Result {
+) -> elephantry::Result {
     let dir = format!("{prefix_dir}/model/{schema}");
     add_mod(&dir, relation)?;
 
@@ -63,7 +63,7 @@ pub fn entity(
     prefix_dir: &str,
     schema: &str,
     relation: &str,
-) -> crate::Result {
+) -> elephantry::Result {
     let dir = format!("{prefix_dir}/model/{schema}");
     add_mod(&dir, relation)?;
 
@@ -80,7 +80,7 @@ fn write_entity<W>(
     connection: &elephantry::Connection,
     schema: &str,
     relation: &str,
-) -> crate::Result
+) -> elephantry::Result
 where
     W: std::io::Write,
 {
@@ -108,7 +108,11 @@ pub struct Entity {{
     Ok(())
 }
 
-pub fn enums(connection: &elephantry::Connection, prefix_dir: &str, schema: &str) -> crate::Result {
+pub fn enums(
+    connection: &elephantry::Connection,
+    prefix_dir: &str,
+    schema: &str,
+) -> elephantry::Result {
     let dir = format!("{prefix_dir}/enums");
     std::fs::create_dir_all(&dir)?;
 
@@ -125,7 +129,7 @@ pub fn enums(connection: &elephantry::Connection, prefix_dir: &str, schema: &str
 fn write_enum<W>(
     file: &mut std::io::BufWriter<W>,
     enumeration: &elephantry::inspect::Enum,
-) -> crate::Result
+) -> elephantry::Result
 where
     W: std::io::Write,
 {
@@ -153,7 +157,7 @@ pub fn composites(
     connection: &elephantry::Connection,
     prefix_dir: &str,
     schema: &str,
-) -> crate::Result {
+) -> elephantry::Result {
     let dir = format!("{prefix_dir}/composites");
     std::fs::create_dir_all(&dir)?;
 
@@ -170,7 +174,7 @@ pub fn composites(
 fn write_composite<W>(
     file: &mut std::io::BufWriter<W>,
     composite: &elephantry::inspect::Composite,
-) -> crate::Result
+) -> elephantry::Result
 where
     W: std::io::Write,
 {
@@ -253,7 +257,7 @@ fn is_keyword(name: &str) -> bool {
     KEYWORDS.contains(&name)
 }
 
-fn add_mod(dir: &str, name: &str) -> crate::Result {
+fn add_mod(dir: &str, name: &str) -> elephantry::Result {
     std::fs::create_dir_all(dir)?;
 
     let mod_filename = format!("{dir}/mod.rs");

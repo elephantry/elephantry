@@ -1,4 +1,4 @@
-pub fn database(connection: &elephantry::Connection) -> crate::Result {
+pub fn database(connection: &elephantry::Connection) -> elephantry::Result {
     let mut table = term_table::Table::new();
     table.style = term_table::TableStyle::rounded();
 
@@ -23,7 +23,7 @@ pub fn database(connection: &elephantry::Connection) -> crate::Result {
     Ok(())
 }
 
-pub fn schema(connection: &elephantry::Connection, schema: &str) -> crate::Result {
+pub fn schema(connection: &elephantry::Connection, schema: &str) -> elephantry::Result {
     let relations = elephantry::inspect::schema(connection, schema)?;
     let mut table = term_table::Table::new();
     table.style = term_table::TableStyle::rounded();
@@ -58,7 +58,7 @@ pub fn relation(
     connection: &elephantry::Connection,
     schema: &str,
     relation: &str,
-) -> crate::Result {
+) -> elephantry::Result {
     let mut table = term_table::Table::new();
     table.style = term_table::TableStyle::rounded();
 
@@ -100,7 +100,7 @@ pub fn relation(
     Ok(())
 }
 
-pub fn enums(connection: &elephantry::Connection, schema: &str) -> crate::Result {
+pub fn enums(connection: &elephantry::Connection, schema: &str) -> elephantry::Result {
     let enumerations = elephantry::inspect::enums(connection, schema)?;
 
     let mut table = term_table::Table::new();
@@ -132,7 +132,7 @@ pub fn enums(connection: &elephantry::Connection, schema: &str) -> crate::Result
     Ok(())
 }
 
-pub fn domains(connection: &elephantry::Connection, schema: &str) -> crate::Result {
+pub fn domains(connection: &elephantry::Connection, schema: &str) -> elephantry::Result {
     let domains = elephantry::inspect::domains(connection, schema)?;
 
     let mut table = term_table::Table::new();
@@ -179,7 +179,7 @@ pub fn domains(connection: &elephantry::Connection, schema: &str) -> crate::Resu
     Ok(())
 }
 
-pub fn composites(connection: &elephantry::Connection, schema: &str) -> crate::Result {
+pub fn composites(connection: &elephantry::Connection, schema: &str) -> elephantry::Result {
     let composites = elephantry::inspect::composites(connection, schema)?;
 
     let mut table = term_table::Table::new();
@@ -218,7 +218,7 @@ pub fn composites(connection: &elephantry::Connection, schema: &str) -> crate::R
     Ok(())
 }
 
-pub fn extensions(connection: &elephantry::Connection, schema: &str) -> crate::Result {
+pub fn extensions(connection: &elephantry::Connection, schema: &str) -> elephantry::Result {
     let extensions = elephantry::inspect::extensions(connection, schema)?;
 
     let mut table = term_table::Table::new();
