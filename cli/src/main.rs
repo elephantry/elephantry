@@ -94,6 +94,7 @@ enum Opt {
 
 fn main() -> Result {
     envir::init();
+    envir::dotenv();
 
     let opt = Opt::parse();
 
