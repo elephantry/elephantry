@@ -102,3 +102,21 @@ where s.nspname = $*
         )
         .map_err(|_| crate::Error::Inspect(format!("Unknow schema {name}")))
 }
+
+#[derive(Clone, Debug, Eq, PartialEq, elephantry_derive::Entity)]
+pub struct Database {
+    pub oid: crate::pq::Oid,
+    pub name: String,
+}
+
+/**
+ * Retreive databases of the current connection.
+ */
+pub fn databases(connection: &crate::Connection) -> crate::Result<Vec<Database>> {
+    connection
+        .query(
+            "select oid, datname as name from pg_database where not datistemplate",
+            &[],
+        )
+        .map(Iterator::collect)
+}
