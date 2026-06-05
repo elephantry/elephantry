@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - `Tuple::try_nth` returns an error when nth is out of bounds;
+- `#[elephantry(default)]` no longer silents conversion error;
 
 ## [5.2.0] - 2026-04-28
 
