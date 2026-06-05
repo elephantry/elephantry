@@ -225,3 +225,21 @@ impl ToSql for () {
         Ok(None)
     }
 }
+
+#[cfg(test)]
+mod test {
+    #[test]
+    fn r#enum() -> crate::Result {
+        #[derive(elephantry_derive::Enum, Debug, PartialEq)]
+        enum Mood {
+            Sad,
+            Ok,
+            Happy,
+        }
+
+        let conn = crate::test::new_conn()?;
+        conn.query::<bool>("select $* = 'Sad'::mood", &[&Mood::Sad])?;
+
+        Ok(())
+    }
+}

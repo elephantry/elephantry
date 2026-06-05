@@ -31,15 +31,25 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::Tok
 
     let r#gen = quote::quote! {
         #[automatically_derived]
-        impl #impl_generics #elephantry::FromText for #name #ty_generics #where_clause {
+        impl #impl_generics #elephantry::FromSql for #name #ty_generics #where_clause {
             /*
-             * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/enum.c#L150
-             * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/enum.c#L174
-             */
-            fn from_text(raw: &str) -> #elephantry::Result<Self> {
-                let value = match raw {
+                * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/enum.c#L174
+                */
+            fn from_binary(ty: &#elephantry::pq::Type, raw: ::std::option::Option<&[u8]>) -> #elephantry::Result<Self> {
+                let s = String::from_binary(ty, raw)?;
+
+                Self::from_text(ty, Some(&s))
+            }
+
+            /*
+                * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/enum.c#L150
+                */
+            fn from_text(ty: &#elephantry::pq::Type, raw: ::std::option::Option<&str>) -> #elephantry::Result<Self> {
+                let s = #elephantry::from_sql::not_null(raw)?;
+
+                let value = match s {
                     #(#from_text_body, )*
-                    _ => return ::std::result::Result::Err(Self::error(raw)),
+                    _ => return ::std::result::Result::Err(Self::error(ty, raw)),
                 };
 
                 ::std::result::Result::Ok(value)
@@ -47,23 +57,39 @@ pub(crate) fn impl_macro(ast: &syn::DeriveInput) -> syn::Result<proc_macro2::Tok
         }
 
         #[automatically_derived]
-        impl #impl_generics #elephantry::ToText for #name #ty_generics #where_clause {
+        impl #impl_generics #elephantry::ToSql for #name #ty_generics #where_clause {
+            fn ty(&self) -> #elephantry::pq::Type {
+                #elephantry::pq::types::Type {
+                    oid: #elephantry::pq::types::UNKNOWN.oid,
+                    descr: "",
+                    name: stringify!(#name),
+                    kind: #elephantry::pq::types::Kind::Enum,
+                }
+            }
+
             /*
-             * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/enum.c#L216
-             * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/enum.c#L110
-             */
-            fn to_text(&self) -> #elephantry::Result<String> {
+                * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/enum.c#L110
+                */
+            fn to_binary(&self) -> #elephantry::Result<::std::option::Option<::std::vec::Vec<u8>>> {
+                let s = self.to_text()?;
+
+                s.to_binary()
+            }
+
+            /*
+                * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/enum.c#L216
+                */
+            fn to_text(&self) -> #elephantry::Result<::std::option::Option<::std::string::String>> {
                 let value = match self {
                     #(#to_text_body, )*
                 };
 
-                Ok(value.to_string())
+                value.to_string().to_text()
             }
         }
 
         #[automatically_derived]
-        impl #impl_generics #elephantry::entity::Simple for #name #ty_generics #where_clause {
-        }
+        impl #impl_generics #elephantry::entity::Simple for #name #ty_generics #where_clause {}
     };
 
     Ok(r#gen)

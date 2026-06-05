@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Config::from_env`;
 - `inspect::databases()`;
 
+### Changed
+
+- Derive `FromSql`/`ToSql` for enums instead of `FromText`/`ToText`;
+-
 ### Fixed
 
 - `Tuple::try_nth` returns an error when nth is out of bounds;
