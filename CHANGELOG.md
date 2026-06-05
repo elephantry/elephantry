@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Config::from_env`;
 - `inspect::databases()`;
 
+### Fixed
+
+- `Tuple::try_nth` returns an error when nth is out of bounds;
+
 ## [5.2.0] - 2026-04-28
 
 ### Added

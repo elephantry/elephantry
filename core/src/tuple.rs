@@ -68,6 +68,10 @@ impl<'a> Tuple<'a> {
     where
         T: crate::FromSql,
     {
+        if n >= self.len() {
+            return Err(crate::Error::MissingField(n.to_string()));
+        }
+
         let ty = self.field_type(n);
         let format = self.result.field_format(n);
         let value = self.result.value(self.index, n);
@@ -111,5 +115,18 @@ impl<'a> Tuple<'a> {
                 kind: libpq::types::Kind::Composite,
             },
         }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    #[test]
+    fn unknow_field() -> crate::Result {
+        let conn = crate::test::new_conn()?;
+        let result = conn.execute("select 1;")?;
+
+        assert!(result.get(0).try_nth::<i32>(1).is_err());
+
+        Ok(())
     }
 }
