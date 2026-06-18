@@ -13,7 +13,6 @@ repository.workspace = true
 case = "1.0"
 envir.workspace = true
 term-table = "1.1"
-thiserror.workspace = true
 
 [dependencies.clap]
 version = "4.0"
