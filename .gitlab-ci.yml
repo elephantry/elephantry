@@ -26,6 +26,12 @@ lint:clippy:
         - rustup component add clippy
     script: cargo clippy --all-features --all-targets -- --deny warnings
 
+lint:shear:
+  stage: lint
+  before_script:
+    - cargo install cargo-shear
+  script: cargo shear --deny-warnings
+
 .test: &test
     stage: test
     before_script:
