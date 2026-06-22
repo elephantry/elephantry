@@ -64,7 +64,7 @@ fn entity_impl(
 
         let from_part = if field_params.default {
             quote::quote! {
-                #name: tuple.get::<::std::option::Option<#ty>>(#column).unwrap_or_default()
+                #name: tuple.try_get::<#ty>(#column).unwrap_or_default()
             }
         } else {
             quote::quote! {
