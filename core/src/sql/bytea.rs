@@ -129,10 +129,10 @@ mod test {
         for output in ["escape", "hex"] {
             connection.execute(&format!("set bytea_output = '{output}'"))?;
 
-            crate::test::to_text(&connection, "bytea", &tests)?;
-            crate::test::to_binary(&connection, "bytea", &tests)?;
-            crate::test::from_text(&connection, "bytea", &tests)?;
-            crate::test::from_binary(&connection, "bytea", &tests)?;
+            crate::testing::to_text(&connection, "bytea", &tests)?;
+            crate::testing::to_binary(&connection, "bytea", &tests)?;
+            crate::testing::from_text(&connection, "bytea", &tests)?;
+            crate::testing::from_binary(&connection, "bytea", &tests)?;
         }
 
         Ok(())

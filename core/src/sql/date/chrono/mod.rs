@@ -69,7 +69,7 @@ impl crate::entity::Simple for Date {}
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(
+    crate::testing::convertion!(
         date,
         crate::Date,
         [

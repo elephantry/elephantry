@@ -238,11 +238,11 @@ impl FromSql for () {
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(float4, f32, [("1.", 1.), ("-1.", -1.), ("2.1", 2.1)]);
+    crate::testing::convertion!(float4, f32, [("1.", 1.), ("-1.", -1.), ("2.1", 2.1)]);
 
-    crate::sql_test!(float8, f64, [("1.", 1.), ("-1.", -1.), ("2.1", 2.1)]);
+    crate::testing::convertion!(float8, f64, [("1.", 1.), ("-1.", -1.), ("2.1", 2.1)]);
 
-    crate::sql_test!(
+    crate::testing::convertion!(
         int2,
         i16,
         [
@@ -253,7 +253,7 @@ mod test {
         ]
     );
 
-    crate::sql_test!(
+    crate::testing::convertion!(
         int,
         u16,
         [
@@ -263,7 +263,7 @@ mod test {
         ]
     );
 
-    crate::sql_test!(
+    crate::testing::convertion!(
         int4,
         i32,
         [
@@ -274,7 +274,7 @@ mod test {
         ]
     );
 
-    crate::sql_test!(
+    crate::testing::convertion!(
         bigint,
         u32,
         [
@@ -284,7 +284,7 @@ mod test {
         ]
     );
 
-    crate::sql_test!(
+    crate::testing::convertion!(
         int8,
         i64,
         [
@@ -295,9 +295,9 @@ mod test {
         ]
     );
 
-    crate::sql_test!(oid, crate::pq::Oid, [("1", 1)]);
+    crate::testing::convertion!(oid, crate::pq::Oid, [("1", 1)]);
 
-    crate::sql_test!(
+    crate::testing::convertion!(
         bool,
         bool,
         [
@@ -308,19 +308,19 @@ mod test {
         ]
     );
 
-    crate::sql_test!(char, char, [("'f'", 'f'), ("'('", '(')]);
+    crate::testing::convertion!(char, char, [("'f'", 'f'), ("'('", '(')]);
 
-    crate::sql_test!(varchar, Option<String>, [("null", None::<String>)]);
+    crate::testing::convertion!(varchar, Option<String>, [("null", None::<String>)]);
 
-    crate::sql_test!(
+    crate::testing::convertion!(
         text,
         String,
         [("'foo'", "foo".to_string()), ("''", "".to_string())]
     );
 
-    crate::sql_test!(us_postal_code, String, [("'12345'", "12345".to_string()),]);
+    crate::testing::convertion!(us_postal_code, String, [("'12345'", "12345".to_string()),]);
 
-    crate::sql_test!(unknown, (), [("null", ())]);
+    crate::testing::convertion!(unknown, (), [("null", ())]);
 
     #[derive(elephantry_derive::Enum, Debug, PartialEq)]
     enum Mood {
@@ -329,7 +329,7 @@ mod test {
         Happy,
     }
 
-    crate::sql_test!(
+    crate::testing::convertion!(
         mood,
         super::Mood,
         [
@@ -347,7 +347,7 @@ mod test {
 
     impl crate::entity::Simple for CompFoo {}
 
-    crate::sql_test!(
+    crate::testing::convertion!(
         compfoo,
         super::CompFoo,
         [(

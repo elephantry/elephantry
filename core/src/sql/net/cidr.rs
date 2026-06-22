@@ -86,7 +86,7 @@ impl crate::entity::Simple for Cidr {}
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(
+    crate::testing::convertion!(
         cidr,
         crate::Cidr,
         [(

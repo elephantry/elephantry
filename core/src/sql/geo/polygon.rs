@@ -110,7 +110,7 @@ impl crate::entity::Simple for Polygon {}
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(
+    crate::testing::convertion!(
         polygon,
         crate::Polygon,
         [(

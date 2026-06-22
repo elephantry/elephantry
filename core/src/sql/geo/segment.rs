@@ -108,7 +108,7 @@ impl crate::entity::Simple for Segment {}
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(
+    crate::testing::convertion!(
         lseg,
         crate::Segment,
         [

@@ -57,7 +57,7 @@ impl crate::entity::Simple for Timestamp {}
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(
+    crate::testing::convertion!(
         timestamp,
         crate::Timestamp,
         [(

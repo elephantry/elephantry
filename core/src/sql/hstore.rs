@@ -142,7 +142,7 @@ impl crate::entity::Simple for Hstore {}
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(
+    crate::testing::convertion!(
         hstore,
         crate::Hstore,
         [("'a=>1, b => 2, c=>null'", {

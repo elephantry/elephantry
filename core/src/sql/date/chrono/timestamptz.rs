@@ -105,7 +105,7 @@ impl crate::entity::Simple for TimestampTz {}
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(
+    crate::testing::convertion!(
         timestamptz,
         chrono::DateTime<chrono::Utc>,
         [(

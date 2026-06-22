@@ -160,6 +160,7 @@ serde = [
     "time?/serde",
     "uuid?/serde",
 ]
+testing = []
 time = ["dep:time", "elephantry-derive/time"]
 uuid = ["dep:uuid", "elephantry-derive/uuid"]
 xml = ["xmltree", "elephantry-derive/xml"]
@@ -224,6 +225,6 @@ required-features = ["date", "numeric"]
 doc-scrape-examples = true
 
 [package.metadata.docs.rs]
-features = ["all-types", "config", "inspect", "jiff", "pg16", "rocket", "serde"]
+features = ["all-types", "config", "inspect", "jiff", "pg16", "rocket", "serde", "testing"]
 cargo-args = ["-Zunstable-options", "-Zrustdoc-scrape-examples"]
 rustdoc-args = ["--cfg", "docsrs"]

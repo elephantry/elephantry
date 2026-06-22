@@ -70,6 +70,7 @@ pub mod r2d2;
 #[cfg(feature = "rocket")]
 #[doc(hidden)]
 pub mod rocket;
+#[cfg(any(test, feature = "testing"))]
 pub mod testing;
 pub mod to_sql;
 pub mod transaction;
@@ -93,7 +94,9 @@ mod tuple;
 pub use crate::config::Config;
 pub use r#async::*;
 pub use connection::Connection;
-pub use elephantry_derive::*;
+#[cfg(any(test, feature = "testing"))]
+pub use elephantry_derive::test;
+pub use elephantry_derive::{Composite, Entity, Enum};
 pub use entity::Entity;
 pub use errors::*;
 pub use from_sql::FromSql;
@@ -187,133 +190,6 @@ macro_rules! values {
 
 #[cfg(test)]
 mod test {
-    use std::collections::HashMap;
-
-    #[macro_export]
-    macro_rules! sql_test_from {
-        ($sql_type:ident, $rust_type:ty, $tests:expr) => {
-            #[elephantry_derive::test(fixture = "test")]
-            fn from_text(connection: crate::Connection) -> $crate::Result {
-                $crate::test::from_text::<$rust_type>(&connection, stringify!($sql_type), &$tests)
-            }
-
-            #[elephantry_derive::test(fixture = "test")]
-            fn from_binary(connection: crate::Connection) -> $crate::Result {
-                $crate::test::from_binary::<$rust_type>(&connection, stringify!($sql_type), &$tests)
-            }
-        };
-    }
-
-    pub(crate) fn from_text<T>(
-        connection: &crate::Connection,
-        sql_type: &str,
-        tests: &[(&str, T)],
-    ) -> crate::Result
-    where
-        T: crate::FromSql + crate::ToSql + PartialEq + std::fmt::Debug,
-    {
-        for (value, expected) in tests {
-            let result = connection.execute(&format!("select {value}::{sql_type} as actual"))?;
-            assert_eq!(result.get(0).get::<T>("actual"), *expected, "from_text");
-        }
-
-        Ok(())
-    }
-
-    pub(crate) fn from_binary<T>(
-        connection: &crate::Connection,
-        sql_type: &str,
-        tests: &[(&str, T)],
-    ) -> crate::Result
-    where
-        T: crate::FromSql + crate::ToSql + PartialEq + std::fmt::Debug,
-    {
-        for (value, expected) in tests {
-            let result = connection.query::<HashMap<String, T>>(
-                &format!("select {value}::{sql_type} as actual"),
-                &[],
-            )?;
-            assert_eq!(
-                result.get(0).get("actual").unwrap(),
-                expected,
-                "from_binary"
-            );
-        }
-
-        Ok(())
-    }
-
-    #[macro_export]
-    macro_rules! sql_test_to {
-        ($sql_type:ident, $rust_type:ty, $tests:expr) => {
-            #[elephantry_derive::test(fixture = "test")]
-            fn to_text(connection: crate::Connection) -> $crate::Result {
-                $crate::test::to_text::<$rust_type>(&connection, stringify!($sql_type), &$tests)
-            }
-
-            #[elephantry_derive::test(fixture = "test")]
-            fn to_binary(connection: crate::Connection) -> $crate::Result {
-                $crate::test::to_binary::<$rust_type>(&connection, stringify!($sql_type), &$tests)
-            }
-        };
-    }
-
-    pub(crate) fn to_text<T>(
-        connection: &crate::Connection,
-        sql_type: &str,
-        tests: &[(&str, T)],
-    ) -> crate::Result
-    where
-        T: crate::Entity + crate::ToSql + PartialEq + std::fmt::Debug,
-    {
-        for (_, value) in tests {
-            let result = connection.query::<T>(&format!("select $1::{sql_type}"), &[value]);
-            assert!(dbg!(&result).is_ok());
-            assert_eq!(&result.unwrap().get(0), value, "to_text");
-        }
-
-        Ok(())
-    }
-
-    pub(crate) fn to_binary<T>(
-        connection: &crate::Connection,
-        sql_type: &str,
-        tests: &[(&str, T)],
-    ) -> crate::Result
-    where
-        T: crate::Entity + crate::ToSql + PartialEq + std::fmt::Debug,
-    {
-        for (_, value) in tests {
-            let result: crate::pq::Result = connection
-                .connection
-                .lock()
-                .map_err(|e| crate::Error::Mutex(e.to_string()))?
-                .exec_params(
-                    &format!("select $1::{sql_type}"),
-                    &[value.ty().oid],
-                    &[value.to_binary()?.as_deref()],
-                    &[crate::pq::Format::Binary],
-                    crate::pq::Format::Binary,
-                )
-                .try_into()?;
-            let rows: crate::Rows<T> = result.into();
-
-            assert_eq!(&rows.get(0), value, "to_binary");
-        }
-
-        Ok(())
-    }
-
-    #[macro_export]
-    macro_rules! sql_test {
-        ($sql_type:ident, $rust_type:ty, $tests:expr) => {
-            mod $sql_type {
-                $crate::sql_test_from!($sql_type, $rust_type, $tests);
-                $crate::sql_test_to!($sql_type, $rust_type, $tests);
-            }
-        };
-    }
-
     #[test]
     fn test_pk_one() {
         let uuid = "1234";

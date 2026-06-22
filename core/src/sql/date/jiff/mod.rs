@@ -61,7 +61,7 @@ impl crate::entity::Simple for jiff::civil::Date {}
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(
+    crate::testing::convertion!(
         date,
         jiff::civil::Date,
         [

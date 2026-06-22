@@ -63,7 +63,7 @@ mod test {
   <datum>Math &gt; others</datum>
 </data>"#;
 
-    crate::sql_test!(
+    crate::testing::convertion!(
         xml,
         crate::Xml,
         [(

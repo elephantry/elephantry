@@ -186,7 +186,7 @@ where
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(
+    crate::testing::convertion!(
         int4multirange,
         crate::Multirange<std::ops::Range<i32>, i32>,
         [(

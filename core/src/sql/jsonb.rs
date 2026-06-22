@@ -74,7 +74,7 @@ impl crate::entity::Simple for Jsonb {}
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(
+    crate::testing::convertion!(
         jsonb,
         crate::Jsonb,
         [(

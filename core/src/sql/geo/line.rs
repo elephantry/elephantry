@@ -69,7 +69,7 @@ impl crate::entity::Simple for Line {}
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(
+    crate::testing::convertion!(
         line,
         crate::Line,
         [("'{1, 2, 3}'", crate::Line::new(1., 2., 3.))]

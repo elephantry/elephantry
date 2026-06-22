@@ -55,7 +55,7 @@ impl crate::entity::Simple for jiff::civil::DateTime {}
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(
+    crate::testing::convertion!(
         timestamp,
         jiff::civil::DateTime,
         [(

@@ -55,7 +55,7 @@ impl crate::entity::Simple for Uuid {}
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(
+    crate::testing::convertion!(
         uuid,
         crate::Uuid,
         [(

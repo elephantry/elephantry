@@ -134,7 +134,7 @@ impl crate::entity::Simple for Path {}
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(
+    crate::testing::convertion!(
         path,
         crate::Path,
         [

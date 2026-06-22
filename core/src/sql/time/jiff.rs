@@ -138,7 +138,7 @@ fn parse_offset(s: &str) -> Option<jiff::tz::Offset> {
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(
+    crate::testing::convertion!(
         time,
         jiff::civil::Time,
         [
@@ -147,7 +147,7 @@ mod test {
         ]
     );
 
-    crate::sql_test!(
+    crate::testing::convertion!(
         timetz,
         (jiff::civil::Time, jiff::tz::Offset),
         [

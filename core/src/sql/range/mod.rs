@@ -101,12 +101,12 @@ impl<T: crate::ToSql> crate::ToSql for std::ops::RangeInclusive<T> {
 #[cfg(test)]
 mod test {
     mod full {
-        crate::sql_test!(int4range, std::ops::RangeFull, [("'(,)'", ..)]);
+        crate::testing::convertion!(int4range, std::ops::RangeFull, [("'(,)'", ..)]);
     }
 
-    crate::sql_test!(int4range, std::ops::Range<i32>, [("'[0, 10)'", 0_i32..10)]);
+    crate::testing::convertion!(int4range, std::ops::Range<i32>, [("'[0, 10)'", 0_i32..10)]);
 
-    crate::sql_test!(
+    crate::testing::convertion!(
         int8range,
         (std::ops::Bound<i64>, std::ops::Bound<i64>),
         [(
@@ -116,14 +116,14 @@ mod test {
     );
 
     #[cfg(feature = "numeric")]
-    crate::sql_test!(
+    crate::testing::convertion!(
         numrange,
         std::ops::RangeFrom<bigdecimal::BigDecimal>,
         [("'[3900,)'", bigdecimal::BigDecimal::from(3_900)..)]
     );
 
     #[cfg(feature = "chrono")]
-    crate::sql_test!(
+    crate::testing::convertion!(
         daterange,
         std::ops::RangeTo<chrono::NaiveDate>,
         [(
@@ -133,7 +133,7 @@ mod test {
     );
 
     #[cfg(feature = "chrono")]
-    crate::sql_test!(
+    crate::testing::convertion!(
         tstzrange,
         std::ops::Range<chrono::DateTime<chrono::Utc>>,
         [(

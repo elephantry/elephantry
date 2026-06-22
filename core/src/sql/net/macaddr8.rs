@@ -57,7 +57,7 @@ mod test {
     static MAC: crate::MacAddr8 =
         crate::MacAddr8::new(0x08, 0x00, 0x2b, 0x01, 0x02, 0x03, 0x04, 0x05);
 
-    crate::sql_test!(
+    crate::testing::convertion!(
         macaddr8,
         crate::MacAddr8,
         [

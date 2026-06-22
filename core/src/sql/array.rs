@@ -445,9 +445,9 @@ mod test {
         assert_eq!(array[(2, 1)], 6);
     }
 
-    crate::sql_test!(_int4, Vec<i32>, [("'{1, 2}'", vec![1, 2]),]);
+    crate::testing::convertion!(_int4, Vec<i32>, [("'{1, 2}'", vec![1, 2]),]);
 
-    crate::sql_test!(
+    crate::testing::convertion!(
         _int8,
         crate::Array<i64>,
         [(
@@ -463,13 +463,13 @@ mod test {
         )]
     );
 
-    crate::sql_test!(
+    crate::testing::convertion!(
         _float4,
         Vec<Option<f32>>,
         [("'{null, 2.}'", vec![None, Some(2.)]),]
     );
 
-    crate::sql_test!(
+    crate::testing::convertion!(
         _varchar,
         Vec<Option<String>>,
         [(

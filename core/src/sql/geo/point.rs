@@ -99,7 +99,7 @@ impl crate::entity::Simple for Point {}
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(
+    crate::testing::convertion!(
         point,
         crate::Point,
         [

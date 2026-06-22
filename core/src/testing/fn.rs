@@ -49,7 +49,7 @@ fn find_fixture(fixture: &str) -> Option<String> {
         .find(|x| std::fs::exists(x).unwrap_or_default())
 }
 
-impl FnTest for fn(crate::Pool) -> crate::Result {
+impl Fn for fn(crate::Pool) -> crate::Result {
     fn run(self, fixtures: &[&str]) -> crate::Result {
         let pool = Self::init(fixtures)?;
 
@@ -57,7 +57,7 @@ impl FnTest for fn(crate::Pool) -> crate::Result {
     }
 }
 
-impl FnTest for fn(crate::Pool) {
+impl Fn for fn(crate::Pool) {
     fn run(self, fixtures: &[&str]) -> crate::Result {
         let pool = Self::init(fixtures)?;
 
@@ -67,7 +67,7 @@ impl FnTest for fn(crate::Pool) {
     }
 }
 
-impl FnTest for fn(crate::Connection) -> crate::Result {
+impl Fn for fn(crate::Connection) -> crate::Result {
     fn run(self, fixtures: &[&str]) -> crate::Result {
         let pool = Self::init(fixtures)?;
 
@@ -75,7 +75,7 @@ impl FnTest for fn(crate::Connection) -> crate::Result {
     }
 }
 
-impl FnTest for fn(crate::Connection) {
+impl Fn for fn(crate::Connection) {
     fn run(self, fixtures: &[&str]) -> crate::Result {
         let pool = Self::init(fixtures)?;
 
@@ -85,7 +85,7 @@ impl FnTest for fn(crate::Connection) {
     }
 }
 
-impl FnTest for fn() -> crate::Result {
+impl Fn for fn() -> crate::Result {
     fn run(self, fixtures: &[&str]) -> crate::Result {
         Self::init(fixtures)?;
 
@@ -93,7 +93,7 @@ impl FnTest for fn() -> crate::Result {
     }
 }
 
-impl FnTest for fn() {
+impl Fn for fn() {
     fn run(self, fixtures: &[&str]) -> crate::Result {
         Self::init(fixtures)?;
 

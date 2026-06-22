@@ -170,16 +170,16 @@ impl crate::entity::Simple for Bits {}
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(bit, u8, [("'0'", 0), ("'1'", 1), ("0", 0), ("1", 1)]);
+    crate::testing::convertion!(bit, u8, [("'0'", 0), ("'1'", 1), ("0", 0), ("1", 1)]);
 
     #[elephantry_derive::test]
     fn byte(connection: crate::Connection) -> crate::Result {
         let tests = [("'00000000'", [0]), ("'11111111'", [255])];
 
-        crate::test::from_text(&connection, "bit(8)", &tests)?;
-        crate::test::from_binary(&connection, "bit(8)", &tests)?;
-        crate::test::to_text(&connection, "bit(8)", &tests)?;
-        crate::test::to_binary(&connection, "bit(8)", &tests)?;
+        crate::testing::from_text(&connection, "bit(8)", &tests)?;
+        crate::testing::from_binary(&connection, "bit(8)", &tests)?;
+        crate::testing::to_text(&connection, "bit(8)", &tests)?;
+        crate::testing::to_binary(&connection, "bit(8)", &tests)?;
 
         Ok(())
     }
@@ -191,15 +191,15 @@ mod test {
             [255, 128, 64, 32, 16],
         )];
 
-        crate::test::from_text(&connection, "bit(40)", &tests)?;
-        crate::test::from_binary(&connection, "bit(40)", &tests)?;
-        crate::test::to_text(&connection, "bit(40)", &tests)?;
-        crate::test::to_binary(&connection, "bit(40)", &tests)?;
+        crate::testing::from_text(&connection, "bit(40)", &tests)?;
+        crate::testing::from_binary(&connection, "bit(40)", &tests)?;
+        crate::testing::to_text(&connection, "bit(40)", &tests)?;
+        crate::testing::to_binary(&connection, "bit(40)", &tests)?;
 
         Ok(())
     }
 
-    crate::sql_test!(
+    crate::testing::convertion!(
         varbit,
         crate::Bits,
         [

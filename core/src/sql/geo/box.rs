@@ -94,7 +94,7 @@ impl crate::entity::Simple for Box {}
 #[cfg(test)]
 mod test {
     #![allow(non_snake_case)]
-    crate::sql_test!(
+    crate::testing::convertion!(
         Box,
         crate::Box,
         [

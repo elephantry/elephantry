@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `#[elephantry::test]`;
 
+### Changed
+
+- Testing macros are public;
+
 ## [5.3.1] - 2026-06-07
 
 ### Fixed

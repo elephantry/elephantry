@@ -144,7 +144,7 @@ impl crate::entity::Simple for TimeTz {}
 
 #[cfg(all(test, feature = "time"))]
 mod test {
-    crate::sql_test!(
+    crate::testing::convertion!(
         time,
         crate::Time,
         [
@@ -153,7 +153,7 @@ mod test {
         ]
     );
 
-    crate::sql_test!(
+    crate::testing::convertion!(
         timetz,
         crate::TimeTz,
         [

@@ -124,7 +124,7 @@ impl crate::entity::Simple for TimeTz {}
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(
+    crate::testing::convertion!(
         time,
         chrono::NaiveTime,
         [
@@ -136,7 +136,7 @@ mod test {
         ]
     );
 
-    crate::sql_test!(
+    crate::testing::convertion!(
         timetz,
         (chrono::NaiveTime, chrono::FixedOffset),
         [

@@ -85,7 +85,7 @@ impl crate::entity::Simple for Circle {}
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(
+    crate::testing::convertion!(
         circle,
         crate::Circle,
         [("'0, 0, 5'", crate::Circle::new(0., 0., 5.))]

@@ -46,7 +46,7 @@ impl crate::entity::Simple for jiff::Zoned {}
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(
+    crate::testing::convertion!(
         timestamptz,
         jiff::Zoned,
         [(

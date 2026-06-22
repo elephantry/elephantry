@@ -101,7 +101,7 @@ impl crate::entity::Simple for Ltree {}
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(
+    crate::testing::convertion!(
         ltree,
         crate::Ltree,
         [

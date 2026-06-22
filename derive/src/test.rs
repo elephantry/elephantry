@@ -17,7 +17,7 @@ pub(crate) fn expand(
             #input
 
             let f: fn(#args) -> _ = #name;
-            #elephantry::testing::FnTest::run(f, &[#(#fixtures, )*])
+            #elephantry::testing::Fn::run(f, &[#(#fixtures, )*])
         }
     };
 

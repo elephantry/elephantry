@@ -291,7 +291,7 @@ tuple_impls! {
 
 #[cfg(test)]
 mod test {
-    crate::sql_test_from!(
+    crate::testing::from!(
         record,
         (i32, String),
         [("(1, 'foo')", (1, "foo".to_string())),]

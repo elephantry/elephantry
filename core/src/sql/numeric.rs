@@ -198,7 +198,7 @@ impl Iterator for ToBase10000 {
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(
+    crate::testing::convertion!(
         numeric,
         crate::Numeric,
         [

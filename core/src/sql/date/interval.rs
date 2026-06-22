@@ -333,7 +333,7 @@ impl crate::entity::Simple for Interval {}
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(
+    crate::testing::convertion!(
         interval,
         crate::Interval,
         [

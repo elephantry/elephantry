@@ -89,7 +89,7 @@ impl crate::entity::Simple for Ltxtquery {}
 
 #[cfg(test)]
 mod test {
-    crate::sql_test!(
+    crate::testing::convertion!(
         ltxtquery,
         crate::Ltxtquery,
         [(
