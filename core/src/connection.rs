@@ -815,10 +815,8 @@ mod test {
         assert!(crate::Connection::pk_clause::<Model>(&pk).is_err());
     }
 
-    #[test]
-    fn config() -> crate::Result {
-        let conn = crate::test::new_conn()?;
-
+    #[crate::test]
+    fn config(conn: crate::Connection) -> crate::Result {
         assert!(dbg!(conn.config()).is_ok());
 
         Ok(())

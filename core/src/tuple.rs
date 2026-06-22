@@ -120,10 +120,9 @@ impl<'a> Tuple<'a> {
 
 #[cfg(test)]
 mod test {
-    #[test]
-    fn unknow_field() -> crate::Result {
-        let conn = crate::test::new_conn()?;
-        let result = conn.execute("select 1;")?;
+    #[crate::test]
+    fn unknow_field(connection: crate::Connection) -> crate::Result {
+        let result = connection.execute("select 1;")?;
 
         assert!(result.get(0).try_nth::<i32>(1).is_err());
 

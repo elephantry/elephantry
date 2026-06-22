@@ -119,22 +119,20 @@ impl crate::entity::Simple for Bytea {}
 
 #[cfg(test)]
 mod test {
-    #[test]
-    fn bytea() -> crate::Result {
+    #[elephantry_derive::test]
+    fn bytea(connection: crate::Connection) -> crate::Result {
         let tests = [
             ("'abcd'", crate::Bytea::from(Vec::from("abcd"))),
             ("'\\x123456'", crate::Bytea::from(vec![0x12, 0x34, 0x56])),
         ];
 
-        let conn = crate::test::new_conn()?;
-
         for output in ["escape", "hex"] {
-            conn.execute(&format!("set bytea_output = '{output}'"))?;
+            connection.execute(&format!("set bytea_output = '{output}'"))?;
 
-            crate::test::to_text("bytea", &tests)?;
-            crate::test::to_binary("bytea", &tests)?;
-            crate::test::from_text("bytea", &tests)?;
-            crate::test::from_binary("bytea", &tests)?;
+            crate::test::to_text(&connection, "bytea", &tests)?;
+            crate::test::to_binary(&connection, "bytea", &tests)?;
+            crate::test::from_text(&connection, "bytea", &tests)?;
+            crate::test::from_binary(&connection, "bytea", &tests)?;
         }
 
         Ok(())

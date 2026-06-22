@@ -73,20 +73,18 @@ impl<T: crate::FromSql + crate::ToSql, S: std::hash::BuildHasher + Default> Enti
 mod test {
     use std::collections::HashMap;
 
-    #[test]
-    fn hashmap_str_from_sql() -> crate::Result {
-        let elephantry = crate::test::new_conn()?;
-        let results: Vec<HashMap<String, i32>> = elephantry.query("SELECT 1 as n", &[])?.collect();
+    #[crate::test]
+    fn hashmap_str_from_sql(connection: crate::Connection) -> crate::Result {
+        let results: Vec<HashMap<String, i32>> = connection.query("SELECT 1 as n", &[])?.collect();
 
         assert_eq!(results[0].get("n"), Some(&1));
 
         Ok(())
     }
 
-    #[test]
-    fn hashmap_usize_from_sql() -> crate::Result {
-        let elephantry = crate::test::new_conn()?;
-        let results: Vec<HashMap<usize, i32>> = elephantry.query("SELECT 1 as n", &[])?.collect();
+    #[crate::test]
+    fn hashmap_usize_from_sql(connection: crate::Connection) -> crate::Result {
+        let results: Vec<HashMap<usize, i32>> = connection.query("SELECT 1 as n", &[])?.collect();
 
         assert_eq!(results[0].get(&0), Some(&1));
 

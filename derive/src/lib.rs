@@ -4,6 +4,7 @@ mod composite;
 mod entity;
 mod r#enum;
 mod params;
+mod test;
 
 /**
  * Impl [`FromSql`]/[`ToSql`] traits for [composite
@@ -30,7 +31,7 @@ pub fn composite_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStre
  */
 #[proc_macro_derive(Entity, attributes(elephantry))]
 pub fn entity_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    let ast: syn::DeriveInput = syn::parse(input).unwrap();
+    let ast = syn::parse(input).unwrap();
 
     entity::impl_macro(&ast)
         .unwrap_or_else(syn::Error::into_compile_error)
@@ -51,6 +52,42 @@ pub fn enum_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let ast = syn::parse(input).unwrap();
 
     r#enum::impl_macro(&ast)
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}
+
+/**
+ * Easily inject `elephantry::Pool` or `elephantry::Connection` built from environment
+ * (via `Config::from_env`) for testing purpose:
+ *
+ * ```rust,ignore
+ * #[elephantry::test]
+ * fn test_ping(elephantry: elephantry::Connection) -> elephantry::Result {
+ *     elephantry.ping()
+ * }
+ * ```
+ *
+ * It’s possible to execute fixtures before:
+ *
+ * ```rust,ignore
+ * #[elephantry::test(fixture = "init_test")]
+ * fn test_ping(elephantry: elephantry::Connection) -> elephantry::Result {
+ *     elephantry.ping()
+ * }
+ * ```
+ *
+ * This looking for file in `fixtures/{filename}.sql` or as full path. `fixture` could be specified
+ * multiple times to load many files.
+ */
+#[proc_macro_attribute]
+pub fn test(
+    attr: proc_macro::TokenStream,
+    item: proc_macro::TokenStream,
+) -> proc_macro::TokenStream {
+    let item = syn::parse(item).unwrap();
+    let attr = syn::parse(attr).unwrap();
+
+    test::expand(attr, item)
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }

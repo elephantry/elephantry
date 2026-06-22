@@ -22,3 +22,10 @@ pub(crate) struct Field {
 pub(crate) struct Value {
     pub value: Option<String>,
 }
+
+#[derive(Clone, Debug, darling::FromMeta)]
+#[darling(derive_syn_parse)]
+pub(crate) struct Test {
+    #[darling(default, multiple, rename = "fixture")]
+    pub fixtures: Vec<String>,
+}

@@ -70,6 +70,7 @@ pub mod r2d2;
 #[cfg(feature = "rocket")]
 #[doc(hidden)]
 pub mod rocket;
+pub mod testing;
 pub mod to_sql;
 pub mod transaction;
 pub mod r#where;
@@ -191,40 +192,44 @@ mod test {
     #[macro_export]
     macro_rules! sql_test_from {
         ($sql_type:ident, $rust_type:ty, $tests:expr) => {
-            #[test]
-            fn from_text() -> $crate::Result {
-                $crate::test::from_text::<$rust_type>(stringify!($sql_type), &$tests)
+            #[elephantry_derive::test(fixture = "test")]
+            fn from_text(connection: crate::Connection) -> $crate::Result {
+                $crate::test::from_text::<$rust_type>(&connection, stringify!($sql_type), &$tests)
             }
 
-            #[test]
-            fn from_binary() -> $crate::Result {
-                $crate::test::from_binary::<$rust_type>(stringify!($sql_type), &$tests)
+            #[elephantry_derive::test(fixture = "test")]
+            fn from_binary(connection: crate::Connection) -> $crate::Result {
+                $crate::test::from_binary::<$rust_type>(&connection, stringify!($sql_type), &$tests)
             }
         };
     }
 
-    pub(crate) fn from_text<T>(sql_type: &str, tests: &[(&str, T)]) -> crate::Result
+    pub(crate) fn from_text<T>(
+        connection: &crate::Connection,
+        sql_type: &str,
+        tests: &[(&str, T)],
+    ) -> crate::Result
     where
         T: crate::FromSql + crate::ToSql + PartialEq + std::fmt::Debug,
     {
-        let conn = crate::test::new_conn()?;
-
         for (value, expected) in tests {
-            let result = conn.execute(&format!("select {value}::{sql_type} as actual"))?;
+            let result = connection.execute(&format!("select {value}::{sql_type} as actual"))?;
             assert_eq!(result.get(0).get::<T>("actual"), *expected, "from_text");
         }
 
         Ok(())
     }
 
-    pub(crate) fn from_binary<T>(sql_type: &str, tests: &[(&str, T)]) -> crate::Result
+    pub(crate) fn from_binary<T>(
+        connection: &crate::Connection,
+        sql_type: &str,
+        tests: &[(&str, T)],
+    ) -> crate::Result
     where
         T: crate::FromSql + crate::ToSql + PartialEq + std::fmt::Debug,
     {
-        let conn = crate::test::new_conn()?;
-
         for (value, expected) in tests {
-            let result = conn.query::<HashMap<String, T>>(
+            let result = connection.query::<HashMap<String, T>>(
                 &format!("select {value}::{sql_type} as actual"),
                 &[],
             )?;
@@ -241,26 +246,28 @@ mod test {
     #[macro_export]
     macro_rules! sql_test_to {
         ($sql_type:ident, $rust_type:ty, $tests:expr) => {
-            #[test]
-            fn to_text() -> $crate::Result {
-                $crate::test::to_text::<$rust_type>(stringify!($sql_type), &$tests)
+            #[elephantry_derive::test(fixture = "test")]
+            fn to_text(connection: crate::Connection) -> $crate::Result {
+                $crate::test::to_text::<$rust_type>(&connection, stringify!($sql_type), &$tests)
             }
 
-            #[test]
-            fn to_binary() -> $crate::Result {
-                $crate::test::to_binary::<$rust_type>(stringify!($sql_type), &$tests)
+            #[elephantry_derive::test(fixture = "test")]
+            fn to_binary(connection: crate::Connection) -> $crate::Result {
+                $crate::test::to_binary::<$rust_type>(&connection, stringify!($sql_type), &$tests)
             }
         };
     }
 
-    pub(crate) fn to_text<T>(sql_type: &str, tests: &[(&str, T)]) -> crate::Result
+    pub(crate) fn to_text<T>(
+        connection: &crate::Connection,
+        sql_type: &str,
+        tests: &[(&str, T)],
+    ) -> crate::Result
     where
         T: crate::Entity + crate::ToSql + PartialEq + std::fmt::Debug,
     {
-        let conn = crate::test::new_conn()?;
-
         for (_, value) in tests {
-            let result = conn.query::<T>(&format!("select $1::{sql_type}"), &[value]);
+            let result = connection.query::<T>(&format!("select $1::{sql_type}"), &[value]);
             assert!(dbg!(&result).is_ok());
             assert_eq!(&result.unwrap().get(0), value, "to_text");
         }
@@ -268,14 +275,16 @@ mod test {
         Ok(())
     }
 
-    pub(crate) fn to_binary<T>(sql_type: &str, tests: &[(&str, T)]) -> crate::Result
+    pub(crate) fn to_binary<T>(
+        connection: &crate::Connection,
+        sql_type: &str,
+        tests: &[(&str, T)],
+    ) -> crate::Result
     where
         T: crate::Entity + crate::ToSql + PartialEq + std::fmt::Debug,
     {
-        let conn = crate::test::new_conn()?;
-
         for (_, value) in tests {
-            let result: crate::pq::Result = conn
+            let result: crate::pq::Result = connection
                 .connection
                 .lock()
                 .map_err(|e| crate::Error::Mutex(e.to_string()))?
@@ -303,60 +312,6 @@ mod test {
                 $crate::sql_test_to!($sql_type, $rust_type, $tests);
             }
         };
-    }
-
-    pub fn config() -> crate::Result<crate::Config> {
-        if let Ok(database_url) = std::env::var("DATABASE_URL") {
-            database_url.parse()
-        } else {
-            crate::Config::from_env()
-        }
-    }
-
-    pub fn new_conn() -> crate::Result<&'static crate::Connection> {
-        static INIT: std::sync::Once = std::sync::Once::new();
-        INIT.call_once(|| {
-            env_logger::init();
-        });
-
-        // @TODO #[feature(once_cell_try)]
-        static POOL: std::sync::LazyLock<crate::Result<crate::Pool>> =
-            std::sync::LazyLock::new(|| {
-                let config = config()?;
-                let pool = crate::Pool::from_config(&config)?;
-                pool.execute("create extension if not exists hstore")?;
-                pool.execute("create extension if not exists ltree")?;
-                pool.execute("set lc_monetary to 'en_US.UTF-8';")?;
-                pool.execute(
-                    "
-do $$
-begin
-    if not exists (select 1 from pg_type where typname = 'compfoo')
-    then
-        create type compfoo as (f1 int, f2 text);
-    end if;
-
-    if not exists (select 1 from pg_type where typname = 'mood')
-    then
-        create type mood as enum ('Sad', 'Ok', 'Happy');
-    end if;
-
-    if not exists (select 1 from pg_type where typname = 'us_postal_code')
-    then
-        create domain us_postal_code as text
-        check(
-            value ~ '^\\d{5}$'
-            or value ~ '^\\d{5}-\\d{4}$'
-        );
-    end if;
-end$$;
-        ",
-                )?;
-
-                Ok(pool)
-            });
-
-        Ok(POOL.as_ref().unwrap())
     }
 
     #[test]
