@@ -224,6 +224,10 @@ name = "12-copy"
 required-features = ["date", "numeric"]
 doc-scrape-examples = true
 
+[[example]]
+name = "13-enum"
+doc-scrape-examples = true
+
 [package.metadata.docs.rs]
 features = ["all-types", "config", "inspect", "jiff", "pg16", "rocket", "serde", "testing"]
 cargo-args = ["-Zunstable-options", "-Zrustdoc-scrape-examples"]
