@@ -108,10 +108,10 @@ impl crate::entity::Simple for Segment {}
 
 #[cfg(test)]
 mod test {
-    crate::testing::convertion!(
-        lseg,
-        crate::Segment,
-        [
+    crate::testing::convertion! {
+        sql_type: lseg,
+        rust_type: crate::Segment,
+        tests: [
             (
                 "'[(1, 2), (3, 4)]'",
                 crate::Segment::new(
@@ -126,6 +126,6 @@ mod test {
                     &crate::Coordinate::new(0.5, 0.003)
                 )
             ),
-        ]
-    );
+        ],
+    }
 }

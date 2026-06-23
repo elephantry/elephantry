@@ -445,12 +445,16 @@ mod test {
         assert_eq!(array[(2, 1)], 6);
     }
 
-    crate::testing::convertion!(_int4, Vec<i32>, [("'{1, 2}'", vec![1, 2]),]);
+    crate::testing::convertion! {
+        sql_type: _int4,
+        rust_type: Vec<i32>,
+        tests: [("'{1, 2}'", vec![1, 2])],
+    }
 
-    crate::testing::convertion!(
-        _int8,
-        crate::Array<i64>,
-        [(
+    crate::testing::convertion! {
+        sql_type: _int8,
+        rust_type: crate::Array<i64>,
+        tests: [(
             "'[1:1][-2:-1][3:5]={{{1,2,3},{4,5,6}}}'",
             crate::Array {
                 ndim: 3,
@@ -460,19 +464,19 @@ mod test {
                 lower_bounds: vec![1, -2, 3],
                 data: vec![1, 2, 3, 4, 5, 6],
             }
-        )]
-    );
+        )],
+    }
 
-    crate::testing::convertion!(
-        _float4,
-        Vec<Option<f32>>,
-        [("'{null, 2.}'", vec![None, Some(2.)]),]
-    );
+    crate::testing::convertion! {
+        sql_type: _float4,
+        rust_type: Vec<Option<f32>>,
+        tests: [("'{null, 2.}'", vec![None, Some(2.)])],
+    }
 
-    crate::testing::convertion!(
-        _varchar,
-        Vec<Option<String>>,
-        [(
+    crate::testing::convertion! {
+        sql_type: _varchar,
+        rust_type: Vec<Option<String>>,
+        tests: [(
             "'{str, null, \'\'null\'\', \'\'NuLl\'\', \'\'abcd\'\'}'",
             vec![
                 Some("str".to_string()),
@@ -481,6 +485,6 @@ mod test {
                 Some("NuLl".to_string()),
                 Some("'abcd'".to_string())
             ]
-        )]
-    );
+        )],
+    }
 }

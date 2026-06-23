@@ -48,5 +48,10 @@ impl crate::entity::Simple for Money {}
 
 #[cfg(test)]
 mod test {
-    crate::testing::convertion!(money, crate::Money, [("1.00", crate::Money::from(100))]);
+    crate::testing::convertion! {
+        fixture: "test",
+        sql_type: money,
+        rust_type: crate::Money,
+        tests: [("1.00", crate::Money::from(100))],
+    }
 }

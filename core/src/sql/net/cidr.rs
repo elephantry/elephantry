@@ -86,12 +86,12 @@ impl crate::entity::Simple for Cidr {}
 
 #[cfg(test)]
 mod test {
-    crate::testing::convertion!(
-        cidr,
-        crate::Cidr,
-        [(
+    crate::testing::convertion! {
+        sql_type: cidr,
+        rust_type: crate::Cidr,
+        tests: [(
             "'192.168.1.0/24'",
             crate::Cidr::V4("192.168.1.0/24".parse().unwrap())
-        )]
-    );
+        )],
+    }
 }

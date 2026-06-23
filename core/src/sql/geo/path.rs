@@ -134,10 +134,10 @@ impl crate::entity::Simple for Path {}
 
 #[cfg(test)]
 mod test {
-    crate::testing::convertion!(
-        path,
-        crate::Path,
-        [
+    crate::testing::convertion! {
+        sql_type: path,
+        rust_type: crate::Path,
+        tests: [
             (
                 "'[(0, 0), (10, 10), (10, 0), (0, 0)]'",
                 crate::Path::new(
@@ -173,6 +173,6 @@ mod test {
                     .into()
                 )
             ),
-        ]
-    );
+        ],
+    }
 }

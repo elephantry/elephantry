@@ -55,12 +55,12 @@ impl crate::entity::Simple for Uuid {}
 
 #[cfg(test)]
 mod test {
-    crate::testing::convertion!(
-        uuid,
-        crate::Uuid,
-        [(
+    crate::testing::convertion! {
+        sql_type: uuid,
+        rust_type: crate::Uuid,
+        tests: [(
             "'12edd47f-e2fc-44eb-9419-1995dfb6725d'",
             crate::Uuid::parse_str("12edd47f-e2fc-44eb-9419-1995dfb6725d").unwrap()
-        )]
-    );
+        )],
+    }
 }

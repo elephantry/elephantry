@@ -142,10 +142,11 @@ impl crate::entity::Simple for Hstore {}
 
 #[cfg(test)]
 mod test {
-    crate::testing::convertion!(
-        hstore,
-        crate::Hstore,
-        [("'a=>1, b => 2, c=>null'", {
+    crate::testing::convertion! {
+        fixture: "test",
+        sql_type: hstore,
+        rust_type: crate::Hstore,
+        tests: [("'a=>1, b => 2, c=>null'", {
             let mut hstore = crate::Hstore::new();
             hstore.insert("a".to_string(), Some("1".to_string()));
             hstore.insert("b".to_string(), Some("2".to_string()));
@@ -153,5 +154,5 @@ mod test {
 
             hstore
         })]
-    );
+    }
 }

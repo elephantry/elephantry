@@ -186,12 +186,12 @@ where
 
 #[cfg(test)]
 mod test {
-    crate::testing::convertion!(
-        int4multirange,
-        crate::Multirange<std::ops::Range<i32>, i32>,
-        [(
+    crate::testing::convertion! {
+        sql_type: int4multirange,
+        rust_type: crate::Multirange<std::ops::Range<i32>, i32>,
+        tests: [(
             "'{[0, 10),[11,20)}'",
             crate::Multirange::from(vec![0_i32..10, 11_i32..20]),
-        )]
-    );
+        )],
+    }
 }

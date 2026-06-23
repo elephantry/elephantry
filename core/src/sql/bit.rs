@@ -170,7 +170,11 @@ impl crate::entity::Simple for Bits {}
 
 #[cfg(test)]
 mod test {
-    crate::testing::convertion!(bit, u8, [("'0'", 0), ("'1'", 1), ("0", 0), ("1", 1)]);
+    crate::testing::convertion! {
+        sql_type: bit,
+        rust_type: u8,
+        tests: [("'0'", 0), ("'1'", 1), ("0", 0), ("1", 1)],
+    }
 
     #[elephantry_derive::test]
     fn byte(connection: crate::Connection) -> crate::Result {
@@ -199,14 +203,14 @@ mod test {
         Ok(())
     }
 
-    crate::testing::convertion!(
-        varbit,
-        crate::Bits,
-        [
+    crate::testing::convertion! {
+        sql_type: varbit,
+        rust_type: crate::Bits,
+        tests: [
             ("'00000000'", crate::Bits::from_bytes(&[0b0000_0000])),
             ("'11110000'", crate::Bits::from_bytes(&[0b1111_0000])),
             ("'10101010'", crate::Bits::from_bytes(&[0b1010_1010])),
             ("'11111111'", crate::Bits::from_bytes(&[0b1111_1111])),
-        ]
-    );
+        ],
+    }
 }

@@ -101,10 +101,11 @@ impl crate::entity::Simple for Ltree {}
 
 #[cfg(test)]
 mod test {
-    crate::testing::convertion!(
-        ltree,
-        crate::Ltree,
-        [
+    crate::testing::convertion! {
+        fixture: "test",
+        sql_type: ltree,
+        rust_type: crate::Ltree,
+        tests: [
             ("''", crate::Ltree::default()),
             (
                 "'Top.Countries.Europe.Russia'",
@@ -115,6 +116,6 @@ mod test {
                     "Russia".to_string()
                 ])
             ),
-        ]
-    );
+        ],
+    }
 }

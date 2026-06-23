@@ -74,12 +74,12 @@ impl crate::entity::Simple for Jsonb {}
 
 #[cfg(test)]
 mod test {
-    crate::testing::convertion!(
-        jsonb,
-        crate::Jsonb,
-        [(
+    crate::testing::convertion! {
+        sql_type: jsonb,
+        rust_type: crate::Jsonb,
+        tests: [(
             "'{\"foo\": \"bar\"}'",
             crate::Jsonb::from(serde_json::json!({"foo": "bar"}))
-        )]
-    );
+        )],
+    }
 }

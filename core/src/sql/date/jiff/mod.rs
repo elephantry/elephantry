@@ -61,16 +61,16 @@ impl crate::entity::Simple for jiff::civil::Date {}
 
 #[cfg(test)]
 mod test {
-    crate::testing::convertion!(
-        date,
-        jiff::civil::Date,
-        [
+    crate::testing::convertion! {
+        sql_type: date,
+        rust_type: jiff::civil::Date,
+        tests: [
             ("'1970-01-01'", jiff::civil::Date::new(1970, 1, 1).unwrap()),
             ("'2010-01-01'", jiff::civil::Date::new(2010, 1, 1).unwrap()),
             (
                 "'2100-12-30'",
                 jiff::civil::Date::new(2100, 12, 30).unwrap()
             ),
-        ]
-    );
+        ],
+    }
 }

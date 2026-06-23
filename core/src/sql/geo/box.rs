@@ -94,10 +94,10 @@ impl crate::entity::Simple for Box {}
 #[cfg(test)]
 mod test {
     #![allow(non_snake_case)]
-    crate::testing::convertion!(
-        Box,
-        crate::Box,
-        [
+    crate::testing::convertion! {
+        sql_type: Box,
+        rust_type: crate::Box,
+        tests: [
             (
                 "'((1, 2), (3, 4))'",
                 crate::Box::new(&crate::Point::new(1., 2.), &crate::Point::new(3., 4.))
@@ -109,6 +109,6 @@ mod test {
                     &crate::Point::new(10.3, 20.)
                 )
             ),
-        ]
-    );
+        ],
+    }
 }

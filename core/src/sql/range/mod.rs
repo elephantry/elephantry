@@ -101,42 +101,50 @@ impl<T: crate::ToSql> crate::ToSql for std::ops::RangeInclusive<T> {
 #[cfg(test)]
 mod test {
     mod full {
-        crate::testing::convertion!(int4range, std::ops::RangeFull, [("'(,)'", ..)]);
+        crate::testing::convertion! {
+            sql_type: int4range,
+            rust_type: std::ops::RangeFull,
+            tests: [("'(,)'", ..)]
+        }
     }
 
-    crate::testing::convertion!(int4range, std::ops::Range<i32>, [("'[0, 10)'", 0_i32..10)]);
+    crate::testing::convertion! {
+        sql_type: int4range,
+        rust_type: std::ops::Range<i32>,
+        tests: [("'[0, 10)'", 0_i32..10)],
+    }
 
-    crate::testing::convertion!(
-        int8range,
-        (std::ops::Bound<i64>, std::ops::Bound<i64>),
-        [(
+    crate::testing::convertion! {
+        sql_type: int8range,
+        rust_type: (std::ops::Bound<i64>, std::ops::Bound<i64>),
+        tests: [(
             "'[0, 10]'",
             (std::ops::Bound::Included(0), std::ops::Bound::Excluded(11))
-        )]
-    );
+        )],
+    }
 
     #[cfg(feature = "numeric")]
-    crate::testing::convertion!(
-        numrange,
-        std::ops::RangeFrom<bigdecimal::BigDecimal>,
-        [("'[3900,)'", bigdecimal::BigDecimal::from(3_900)..)]
-    );
+    crate::testing::convertion! {
+        sql_type: numrange,
+        rust_type: std::ops::RangeFrom<bigdecimal::BigDecimal>,
+        tests: [("'[3900,)'", bigdecimal::BigDecimal::from(3_900)..)],
+    }
 
     #[cfg(feature = "chrono")]
-    crate::testing::convertion!(
-        daterange,
-        std::ops::RangeTo<chrono::NaiveDate>,
-        [(
+    crate::testing::convertion! {
+        sql_type: daterange,
+        rust_type: std::ops::RangeTo<chrono::NaiveDate>,
+        tests: [(
             "'[, 2010-01-01)'",
             ..chrono::NaiveDate::from_ymd_opt(2010, 1, 1).unwrap(),
-        )]
-    );
+        )],
+    }
 
     #[cfg(feature = "chrono")]
-    crate::testing::convertion!(
-        tstzrange,
-        std::ops::Range<chrono::DateTime<chrono::Utc>>,
-        [(
+    crate::testing::convertion! {
+        sql_type: tstzrange,
+        rust_type: std::ops::Range<chrono::DateTime<chrono::Utc>>,
+        tests: [(
             "'[1970-01-01 00:00:00+00, 2010-01-01 00:00:00+00)'",
             chrono::TimeZone::from_utc_datetime(
                 &chrono::Utc,
@@ -150,6 +158,6 @@ mod test {
                         .and_then(|x| x.and_hms_opt(0, 0, 0))
                         .unwrap(),
                 )
-        )]
-    );
+        )],
+    }
 }

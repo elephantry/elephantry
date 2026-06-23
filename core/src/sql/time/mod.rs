@@ -144,19 +144,19 @@ impl crate::entity::Simple for TimeTz {}
 
 #[cfg(all(test, feature = "time"))]
 mod test {
-    crate::testing::convertion!(
-        time,
-        crate::Time,
-        [
+    crate::testing::convertion! {
+        sql_type: time,
+        rust_type: crate::Time,
+        tests: [
             ("'00:00:00'", crate::Time::MIDNIGHT),
             ("'01:02:03'", time::macros::time!(01:02:03)),
-        ]
-    );
+        ],
+    }
 
-    crate::testing::convertion!(
-        timetz,
-        crate::TimeTz,
-        [
+    crate::testing::convertion! {
+        sql_type: timetz,
+        rust_type: crate::TimeTz,
+        tests: [
             (
                 "'00:00:00+0000'",
                 (crate::Time::MIDNIGHT, crate::Timezone::UTC)
@@ -165,6 +165,6 @@ mod test {
                 "'01:02:03+0200'",
                 (time::macros::time!(01:02:03), time::macros::offset!(+2))
             ),
-        ]
-    );
+        ],
+    }
 }

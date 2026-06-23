@@ -69,10 +69,10 @@ impl crate::entity::Simple for Date {}
 
 #[cfg(test)]
 mod test {
-    crate::testing::convertion!(
-        date,
-        crate::Date,
-        [
+    crate::testing::convertion! {
+        sql_type: date,
+        rust_type: crate::Date,
+        tests: [
             (
                 "'1970-01-01'",
                 crate::Date::from_ymd_opt(1970, 1, 1).unwrap()
@@ -85,6 +85,6 @@ mod test {
                 "'2100-12-30'",
                 crate::Date::from_ymd_opt(2100, 12, 30).unwrap()
             ),
-        ]
-    );
+        ],
+    }
 }

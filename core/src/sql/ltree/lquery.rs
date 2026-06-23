@@ -89,9 +89,10 @@ impl crate::entity::Simple for Lquery {}
 
 #[cfg(test)]
 mod test {
-    crate::testing::convertion!(
-        lquery,
-        crate::Lquery,
-        [("'*.foo.*'", crate::Lquery::from("*.foo.*"))]
-    );
+    crate::testing::convertion! {
+        fixture: "test",
+        sql_type: lquery,
+        rust_type: crate::Lquery,
+        tests: [("'*.foo.*'", crate::Lquery::from("*.foo.*"))]
+    }
 }

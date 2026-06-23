@@ -63,12 +63,12 @@ mod test {
   <datum>Math &gt; others</datum>
 </data>"#;
 
-    crate::testing::convertion!(
-        xml,
-        crate::Xml,
-        [(
+    crate::testing::convertion! {
+        sql_type: xml,
+        rust_type: crate::Xml,
+        tests: [(
             &format!("'{}'", super::XML),
             crate::Xml::parse(super::XML.as_bytes()).unwrap()
-        )]
-    );
+        )],
+    }
 }

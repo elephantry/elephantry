@@ -55,12 +55,12 @@ impl crate::entity::Simple for jiff::civil::DateTime {}
 
 #[cfg(test)]
 mod test {
-    crate::testing::convertion!(
-        timestamp,
-        jiff::civil::DateTime,
-        [(
+    crate::testing::convertion! {
+        sql_type: timestamp,
+        rust_type: jiff::civil::DateTime,
+        tests: [(
             "'1970-01-01 00:00:00'",
             jiff::civil::date(1970, 1, 1).at(0, 0, 0, 0)
-        )]
-    );
+        )],
+    }
 }

@@ -52,10 +52,11 @@ fn main() {}
 
 #[cfg(test)]
 mod test {
-    elephantry::testing::convertion!(
-        ltree,
-        crate::Ltree,
-        [
+    elephantry::testing::convertion! {
+        fixture: "test",
+        sql_type: ltree,
+        rust_type: crate::Ltree,
+        tests: [
             ("''", crate::Ltree::default()),
             (
                 "'Top.Countries.Europe.Russia'",
@@ -66,6 +67,6 @@ mod test {
                     "Russia".to_string()
                 ])
             ),
-        ]
-    );
+        ],
+    }
 }

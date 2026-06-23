@@ -333,10 +333,10 @@ impl crate::entity::Simple for Interval {}
 
 #[cfg(test)]
 mod test {
-    crate::testing::convertion!(
-        interval,
-        crate::Interval,
-        [
+    crate::testing::convertion! {
+        sql_type: interval,
+        rust_type: crate::Interval,
+        tests: [
             ("'00:00:00'", crate::Interval::new(0, 0, 0, 0, 0, 0, 0)),
             ("'1 year'", crate::Interval::new(0, 12, 0, 0, 0, 0, 0)),
             ("'1 years'", crate::Interval::new(1, 0, 0, 0, 0, 0, 0)),
@@ -349,6 +349,6 @@ mod test {
                 "'1 year 2 months 3 days 04:05:06.000007'",
                 crate::Interval::new(1, 2, 3, 4, 5, 6, 7),
             ),
-        ]
-    );
+        ],
+    }
 }

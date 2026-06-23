@@ -99,12 +99,12 @@ impl crate::entity::Simple for Point {}
 
 #[cfg(test)]
 mod test {
-    crate::testing::convertion!(
-        point,
-        crate::Point,
-        [
+    crate::testing::convertion! {
+        sql_type: point,
+        rust_type: crate::Point,
+        tests: [
             ("'(0,0)'", crate::Point::new(0., 0.)),
             ("'(5.1, 10.12345)'", crate::Point::new(5.1, 10.12345)),
-        ]
-    );
+        ],
+    }
 }

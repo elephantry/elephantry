@@ -238,89 +238,118 @@ impl FromSql for () {
 
 #[cfg(test)]
 mod test {
-    crate::testing::convertion!(float4, f32, [("1.", 1.), ("-1.", -1.), ("2.1", 2.1)]);
+    crate::testing::convertion! {
+        sql_type: float4,
+        rust_type: f32,
+        tests: [("1.", 1.), ("-1.", -1.), ("2.1", 2.1)],
+    }
 
-    crate::testing::convertion!(float8, f64, [("1.", 1.), ("-1.", -1.), ("2.1", 2.1)]);
+    crate::testing::convertion! {
+        sql_type: float8,
+        rust_type: f64,
+        tests: [("1.", 1.), ("-1.", -1.), ("2.1", 2.1)],
+    }
 
-    crate::testing::convertion!(
-        int2,
-        i16,
-        [
+    crate::testing::convertion! {
+        sql_type: int2,
+        rust_type: i16,
+        tests: [
             (i16::MAX.to_string().as_str(), i16::MAX),
             ("1", 1),
             ("0", 0),
             ("-1", -1),
         ]
-    );
+    }
 
-    crate::testing::convertion!(
-        int,
-        u16,
-        [
+    crate::testing::convertion! {
+        sql_type: int,
+        rust_type: u16,
+        tests: [
             (u16::MAX.to_string().as_str(), u16::MAX),
             ("1", 1),
             ("0", 0)
-        ]
-    );
+        ],
+    }
 
-    crate::testing::convertion!(
-        int4,
-        i32,
-        [
+    crate::testing::convertion! {
+        sql_type: int4,
+        rust_type: i32,
+        tests: [
             (i32::MAX.to_string().as_str(), i32::MAX),
             ("1", 1),
             ("0", 0),
             ("-1", -1),
         ]
-    );
+    }
 
-    crate::testing::convertion!(
-        bigint,
-        u32,
-        [
+    crate::testing::convertion! {
+        sql_type: bigint,
+        rust_type: u32,
+        tests: [
             (u32::MAX.to_string().as_str(), u32::MAX),
             ("1", 1),
             ("0", 0)
         ]
-    );
+    }
 
-    crate::testing::convertion!(
-        int8,
-        i64,
-        [
+    crate::testing::convertion! {
+        sql_type: int8,
+        rust_type: i64,
+        tests: [
             (i64::MAX.to_string().as_str(), i64::MAX),
             ("1", 1),
             ("0", 0),
             ("-1", -1),
         ]
-    );
+    }
 
-    crate::testing::convertion!(oid, crate::pq::Oid, [("1", 1)]);
+    crate::testing::convertion! {
+        sql_type: oid,
+        rust_type: crate::pq::Oid,
+        tests: [("1", 1)],
+    }
 
-    crate::testing::convertion!(
-        bool,
-        bool,
-        [
+    crate::testing::convertion! {
+        sql_type: bool,
+        rust_type: bool,
+        tests: [
             ("'t'", true),
             ("'f'", false),
             ("true", true),
             ("false", false),
-        ]
-    );
+        ],
+    }
 
-    crate::testing::convertion!(char, char, [("'f'", 'f'), ("'('", '(')]);
+    crate::testing::convertion! {
+        sql_type: char,
+        rust_type: char,
+        tests: [("'f'", 'f'), ("'('", '(')],
+    }
 
-    crate::testing::convertion!(varchar, Option<String>, [("null", None::<String>)]);
+    crate::testing::convertion! {
+        sql_type: varchar,
+        rust_type: Option<String>,
+        tests: [("null", None::<String>)],
+    }
 
-    crate::testing::convertion!(
-        text,
-        String,
-        [("'foo'", "foo".to_string()), ("''", "".to_string())]
-    );
+    crate::testing::convertion! {
+        sql_type: text,
+        rust_type: String,
+        tests: [("'foo'", "foo".to_string()), ("''", "".to_string())],
+    }
 
-    crate::testing::convertion!(us_postal_code, String, [("'12345'", "12345".to_string()),]);
+    crate::testing::convertion! {
+        fixture: "test",
+        sql_type: us_postal_code,
+        rust_type: String,
+        tests: [("'12345'", "12345".to_string())],
+    }
 
-    crate::testing::convertion!(unknown, (), [("null", ())]);
+    crate::testing::convertion! {
+        sql_type: unknown,
+        rust_type: (),
+        tests: [("null", ())],
+    }
 
     #[derive(elephantry_derive::Enum, Debug, PartialEq)]
     enum Mood {
@@ -329,15 +358,16 @@ mod test {
         Happy,
     }
 
-    crate::testing::convertion!(
-        mood,
-        super::Mood,
-        [
+    crate::testing::convertion! {
+        fixture: "test",
+        sql_type: mood,
+        rust_type: super::Mood,
+        tests: [
             ("'Sad'", super::Mood::Sad),
             ("'Ok'", super::Mood::Ok),
             ("'Happy'", super::Mood::Happy),
-        ]
-    );
+        ],
+    }
 
     #[derive(elephantry_derive::Composite, Debug, PartialEq)]
     struct CompFoo {
@@ -347,15 +377,16 @@ mod test {
 
     impl crate::entity::Simple for CompFoo {}
 
-    crate::testing::convertion!(
-        compfoo,
-        super::CompFoo,
-        [(
+    crate::testing::convertion! {
+        fixture: "test",
+        sql_type: compfoo,
+        rust_type: super::CompFoo,
+        tests: [(
             "'(1,foo)'",
             super::CompFoo {
                 f1: 1,
                 f2: "foo".to_string()
             }
-        )]
-    );
+        )],
+    }
 }

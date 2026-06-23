@@ -51,9 +51,9 @@ impl crate::entity::Simple for serde_json::Value {}
 
 #[cfg(test)]
 mod test {
-    crate::testing::convertion!(
-        json,
-        serde_json::Value,
-        [("'{\"foo\": \"bar\"}'", serde_json::json!({"foo": "bar"}))]
-    );
+    crate::testing::convertion! {
+        sql_type: json,
+        rust_type: serde_json::Value,
+        tests: [("'{\"foo\": \"bar\"}'", serde_json::json!({"foo": "bar"}))],
+    }
 }

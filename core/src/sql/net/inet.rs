@@ -77,10 +77,10 @@ impl crate::entity::Simple for std::net::IpAddr {}
 
 #[cfg(test)]
 mod test {
-    crate::testing::convertion!(
-        inet,
-        std::net::IpAddr,
-        [
+    crate::testing::convertion! {
+        sql_type: inet,
+        rust_type: std::net::IpAddr,
+        tests: [
             (
                 "'127.0.0.1'",
                 std::net::IpAddr::V4(std::net::Ipv4Addr::LOCALHOST)
@@ -90,6 +90,6 @@ mod test {
                 std::net::IpAddr::V4(std::net::Ipv4Addr::LOCALHOST)
             ),
             ("'::1'", std::net::IpAddr::V6(std::net::Ipv6Addr::LOCALHOST)),
-        ]
-    );
+        ],
+    }
 }

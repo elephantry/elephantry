@@ -85,9 +85,9 @@ impl crate::entity::Simple for Circle {}
 
 #[cfg(test)]
 mod test {
-    crate::testing::convertion!(
-        circle,
-        crate::Circle,
-        [("'0, 0, 5'", crate::Circle::new(0., 0., 5.))]
-    );
+    crate::testing::convertion! {
+        sql_type: circle,
+        rust_type: crate::Circle,
+        tests: [("'0, 0, 5'", crate::Circle::new(0., 0., 5.))],
+    }
 }

@@ -110,10 +110,10 @@ impl crate::entity::Simple for Polygon {}
 
 #[cfg(test)]
 mod test {
-    crate::testing::convertion!(
-        polygon,
-        crate::Polygon,
-        [(
+    crate::testing::convertion! {
+        sql_type: polygon,
+        rust_type: crate::Polygon,
+        tests: [(
             "'((0, 0), (10, 10), (10, 0), (0, 0))'",
             crate::Polygon::new(&crate::Path::new(
                 &vec![
@@ -124,6 +124,6 @@ mod test {
                 ]
                 .into()
             ))
-        )]
-    );
+        )],
+    }
 }

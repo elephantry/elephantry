@@ -89,12 +89,13 @@ impl crate::entity::Simple for Ltxtquery {}
 
 #[cfg(test)]
 mod test {
-    crate::testing::convertion!(
-        ltxtquery,
-        crate::Ltxtquery,
-        [(
+    crate::testing::convertion! {
+        fixture: "test",
+        sql_type: ltxtquery,
+        rust_type: crate::Ltxtquery,
+        tests: [(
             "'Europe & Russia@* & !Transportation'",
             crate::Ltxtquery::from("Europe & Russia@* & !Transportation"),
-        )]
-    );
+        )],
+    }
 }

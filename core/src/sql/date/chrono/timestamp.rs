@@ -57,14 +57,14 @@ impl crate::entity::Simple for Timestamp {}
 
 #[cfg(test)]
 mod test {
-    crate::testing::convertion!(
-        timestamp,
-        crate::Timestamp,
-        [(
+    crate::testing::convertion! {
+        sql_type: timestamp,
+        rust_type: crate::Timestamp,
+        tests: [(
             "'1970-01-01 00:00:00'",
             chrono::DateTime::from_timestamp(0, 0)
                 .unwrap()
                 .naive_local(),
-        )]
-    );
+        )],
+    }
 }

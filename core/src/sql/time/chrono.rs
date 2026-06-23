@@ -124,22 +124,22 @@ impl crate::entity::Simple for TimeTz {}
 
 #[cfg(test)]
 mod test {
-    crate::testing::convertion!(
-        time,
-        chrono::NaiveTime,
-        [
+    crate::testing::convertion! {
+        sql_type: time,
+        rust_type: chrono::NaiveTime,
+        tests: [
             ("'00:00:00'", chrono::NaiveTime::MIN),
             (
                 "'01:02:03'",
                 chrono::NaiveTime::from_hms_opt(1, 2, 3).unwrap()
             ),
-        ]
-    );
+        ],
+    }
 
-    crate::testing::convertion!(
-        timetz,
-        (chrono::NaiveTime, chrono::FixedOffset),
-        [
+    crate::testing::convertion! {
+        sql_type: timetz,
+        rust_type: (chrono::NaiveTime, chrono::FixedOffset),
+        tests: [
             (
                 "'00:00:00+0000'",
                 (
@@ -154,6 +154,6 @@ mod test {
                     chrono::FixedOffset::east_opt(2 * 60 * 60).unwrap()
                 )
             ),
-        ]
-    );
+        ],
+    }
 }

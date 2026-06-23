@@ -56,17 +56,17 @@ mod test {
 
     static MAC: crate::MacAddr = crate::MacAddr::new(0x08, 0x00, 0x2b, 0x01, 0x02, 0x03);
 
-    crate::testing::convertion!(
-        Macaddr,
-        crate::MacAddr,
-        [
-            ("'08:00:2b:01:02:03'", crate::sql::net::macaddr::test::MAC),
-            ("'08-00-2b-01-02-03'", crate::sql::net::macaddr::test::MAC),
-            ("'08002b:010203'", crate::sql::net::macaddr::test::MAC),
-            ("'08002b-010203'", crate::sql::net::macaddr::test::MAC),
-            ("'0800.2b01.0203'", crate::sql::net::macaddr::test::MAC),
-            ("'0800-2b01-0203'", crate::sql::net::macaddr::test::MAC),
-            ("'08002b010203'", crate::sql::net::macaddr::test::MAC),
-        ]
-    );
+    crate::testing::convertion! {
+        sql_type: Macaddr,
+        rust_type: crate::MacAddr,
+        tests: [
+            ("'08:00:2b:01:02:03'", super::MAC),
+            ("'08-00-2b-01-02-03'", super::MAC),
+            ("'08002b:010203'", super::MAC),
+            ("'08002b-010203'", super::MAC),
+            ("'0800.2b01.0203'", super::MAC),
+            ("'0800-2b01-0203'", super::MAC),
+            ("'08002b010203'", super::MAC),
+        ],
+    }
 }

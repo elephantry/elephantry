@@ -57,29 +57,17 @@ mod test {
     static MAC: crate::MacAddr8 =
         crate::MacAddr8::new(0x08, 0x00, 0x2b, 0x01, 0x02, 0x03, 0x04, 0x05);
 
-    crate::testing::convertion!(
-        macaddr8,
-        crate::MacAddr8,
-        [
-            (
-                "'08:00:2b:01:02:03:04:05'",
-                crate::sql::net::macaddr8::test::MAC
-            ),
-            (
-                "'08-00-2b-01-02-03-04-05'",
-                crate::sql::net::macaddr8::test::MAC
-            ),
-            ("'08002b:0102030405'", crate::sql::net::macaddr8::test::MAC),
-            ("'08002b-0102030405'", crate::sql::net::macaddr8::test::MAC),
-            (
-                "'0800.2b01.0203.0405'",
-                crate::sql::net::macaddr8::test::MAC
-            ),
-            (
-                "'0800-2b01-0203-0405'",
-                crate::sql::net::macaddr8::test::MAC
-            ),
-            ("'08002b0102030405'", crate::sql::net::macaddr8::test::MAC),
-        ]
-    );
+    crate::testing::convertion! {
+        sql_type: macaddr8,
+        rust_type: crate::MacAddr8,
+        tests: [
+            ("'08:00:2b:01:02:03:04:05'", super::MAC),
+            ("'08-00-2b-01-02-03-04-05'", super::MAC),
+            ("'08002b:0102030405'", super::MAC),
+            ("'08002b-0102030405'", super::MAC),
+            ("'0800.2b01.0203.0405'", super::MAC),
+            ("'0800-2b01-0203-0405'", super::MAC),
+            ("'08002b0102030405'", super::MAC),
+        ],
+    }
 }

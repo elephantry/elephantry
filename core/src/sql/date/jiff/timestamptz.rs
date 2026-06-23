@@ -46,15 +46,15 @@ impl crate::entity::Simple for jiff::Zoned {}
 
 #[cfg(test)]
 mod test {
-    crate::testing::convertion!(
-        timestamptz,
-        jiff::Zoned,
-        [(
+    crate::testing::convertion! {
+        sql_type: timestamptz,
+        rust_type: jiff::Zoned,
+        tests: [(
             "'1970-01-01 00:00:00+00'",
             jiff::civil::date(1970, 1, 1)
                 .at(0, 0, 0, 0)
                 .to_zoned(jiff::tz::TimeZone::UTC)
                 .unwrap(),
-        )]
-    );
+        )],
+    }
 }

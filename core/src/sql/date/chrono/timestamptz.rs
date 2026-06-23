@@ -105,10 +105,10 @@ impl crate::entity::Simple for TimestampTz {}
 
 #[cfg(test)]
 mod test {
-    crate::testing::convertion!(
-        timestamptz,
-        chrono::DateTime<chrono::Utc>,
-        [(
+    crate::testing::convertion! {
+        sql_type: timestamptz,
+        rust_type: chrono::DateTime<chrono::Utc>,
+        tests: [(
             "'1970-01-01 00:00:00+00'",
             chrono::TimeZone::from_utc_datetime(
                 &chrono::Utc,
@@ -116,6 +116,6 @@ mod test {
                     .unwrap()
                     .naive_local(),
             ),
-        )]
-    );
+        )],
+    }
 }

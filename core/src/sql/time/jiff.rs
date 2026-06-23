@@ -138,19 +138,19 @@ fn parse_offset(s: &str) -> Option<jiff::tz::Offset> {
 
 #[cfg(test)]
 mod test {
-    crate::testing::convertion!(
-        time,
-        jiff::civil::Time,
-        [
+    crate::testing::convertion! {
+        sql_type: time,
+        rust_type: jiff::civil::Time,
+        tests: [
             ("'00:00:00'", jiff::civil::Time::midnight()),
             ("'01:02:03'", jiff::civil::time(1, 2, 3, 0)),
-        ]
-    );
+        ],
+    }
 
-    crate::testing::convertion!(
-        timetz,
-        (jiff::civil::Time, jiff::tz::Offset),
-        [
+    crate::testing::convertion! {
+        sql_type: timetz,
+        rust_type: (jiff::civil::Time, jiff::tz::Offset),
+        tests: [
             (
                 "'00:00:00+0000'",
                 (jiff::civil::Time::midnight(), jiff::tz::Offset::UTC)
@@ -159,6 +159,6 @@ mod test {
                 "'01:02:03+0200'",
                 (jiff::civil::time(1, 2, 3, 0), jiff::tz::offset(2),)
             ),
-        ]
-    );
+        ],
+    }
 }

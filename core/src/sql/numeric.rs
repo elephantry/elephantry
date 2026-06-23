@@ -198,10 +198,10 @@ impl Iterator for ToBase10000 {
 
 #[cfg(test)]
 mod test {
-    crate::testing::convertion!(
-        numeric,
-        crate::Numeric,
-        [
+    crate::testing::convertion! {
+        sql_type: numeric,
+        rust_type: crate::Numeric,
+        tests: [
             ("20000", crate::Numeric::from(20_000)),
             (
                 "20000.0000019073486328125",
@@ -211,6 +211,6 @@ mod test {
             ("3900", crate::Numeric::from(3_900)),
             ("3900.5", crate::Numeric::try_from(3_900.5).unwrap()),
             ("-0.4375", crate::Numeric::try_from(-0.4375).unwrap()),
-        ]
-    );
+        ],
+    }
 }
