@@ -228,6 +228,11 @@ doc-scrape-examples = true
 name = "13-enum"
 doc-scrape-examples = true
 
+[[example]]
+name = "14-new-type"
+required-features = ["testing"]
+doc-scrape-examples = true
+
 [package.metadata.docs.rs]
 features = ["all-types", "config", "inspect", "jiff", "pg16", "rocket", "serde", "testing"]
 cargo-args = ["-Zunstable-options", "-Zrustdoc-scrape-examples"]
