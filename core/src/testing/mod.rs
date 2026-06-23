@@ -14,11 +14,28 @@ where
     T: crate::FromSql + crate::ToSql + PartialEq + std::fmt::Debug,
 {
     for (value, expected) in tests {
-        let result = connection.execute(&format!("select {value}::{sql_type} as actual"))?;
-        assert_eq!(result.get(0).get::<T>("actual"), *expected, "from_text");
+        let result = connection.execute(&format!("select {value}::{sql_type}"));
+
+        match result {
+            Ok(actual) => assert_eq!(actual.get(0).nth::<T>(0), *expected, "from_text"),
+            Err(err) => {
+                panic!("{err}");
+            }
+        }
     }
 
     Ok(())
+}
+
+macro_rules! assert_result {
+    ($result:ident, $expected:ident, $test:literal) => {
+        match $result {
+            Ok(actual) => assert_eq!(actual.get(0), *$expected, $test),
+            Err(err) => {
+                panic!("{err}");
+            }
+        }
+    };
 }
 
 #[doc(hidden)]
@@ -28,18 +45,11 @@ pub fn from_binary<T>(
     tests: &[(&str, T)],
 ) -> crate::Result
 where
-    T: crate::FromSql + crate::ToSql + PartialEq + std::fmt::Debug,
+    T: crate::Entity + crate::ToSql + PartialEq + std::fmt::Debug,
 {
-    use std::collections::HashMap;
-
     for (value, expected) in tests {
-        let result = connection
-            .query::<HashMap<String, T>>(&format!("select {value}::{sql_type} as actual"), &[])?;
-        assert_eq!(
-            result.get(0).get("actual").unwrap(),
-            expected,
-            "from_binary"
-        );
+        let result = connection.query::<T>(&format!("select {value}::{sql_type}"), &[]);
+        assert_result!(result, expected, "from_binary");
     }
 
     Ok(())
@@ -54,10 +64,12 @@ pub fn to_text<T>(
 where
     T: crate::Entity + crate::ToSql + PartialEq + std::fmt::Debug,
 {
+    let mut connection = connection.clone();
+    connection.mode = crate::pq::Format::Text;
+
     for (_, value) in tests {
         let result = connection.query::<T>(&format!("select $1::{sql_type}"), &[value]);
-        assert!(dbg!(&result).is_ok());
-        assert_eq!(&result.unwrap().get(0), value, "to_text");
+        assert_result!(result, value, "to_text");
     }
 
     Ok(())
@@ -72,22 +84,12 @@ pub fn to_binary<T>(
 where
     T: crate::Entity + crate::ToSql + PartialEq + std::fmt::Debug,
 {
-    for (_, value) in tests {
-        let result: crate::pq::Result = connection
-            .connection
-            .lock()
-            .map_err(|e| crate::Error::Mutex(e.to_string()))?
-            .exec_params(
-                &format!("select $1::{sql_type}"),
-                &[value.ty().oid],
-                &[value.to_binary()?.as_deref()],
-                &[crate::pq::Format::Binary],
-                crate::pq::Format::Binary,
-            )
-            .try_into()?;
-        let rows: crate::Rows<T> = result.into();
+    let mut connection = connection.clone();
+    connection.mode = crate::pq::Format::Binary;
 
-        assert_eq!(&rows.get(0), value, "to_binary");
+    for (_, value) in tests {
+        let result = connection.query::<T>(&format!("select $1::{sql_type}"), &[value]);
+        assert_result!(result, value, "to_binary");
     }
 
     Ok(())
