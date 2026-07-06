@@ -27,7 +27,7 @@ features = ["derive"]
 optional = true
 
 [dependencies.bit-vec]
-version = "0.9"
+version = "0.10"
 optional = true
 
 [dependencies.bigdecimal]
