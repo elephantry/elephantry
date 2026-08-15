@@ -578,7 +578,9 @@ impl Connection {
             if clause.is_empty() {
                 clause = format!("{field} = ${}", x + 1);
             } else {
-                clause.push_str(&format!(" AND {field} = ${}", x + 1));
+                use std::fmt::Write as _;
+
+                write!(clause, " AND {field} = ${}", x + 1).ok();
             }
 
             params.push(*value);

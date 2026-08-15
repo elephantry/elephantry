@@ -260,9 +260,11 @@ impl<T: crate::ToSql> crate::ToSql for Array<T> {
             .fold(false, |acc, x| acc | (*x != 1));
 
         if need_dims {
+            use std::fmt::Write as _;
+
             for (dim, lb) in self.dimensions.iter().zip(&self.lower_bounds) {
                 let hb = lb + dim - 1;
-                data.push_str(&format!("[{lb}:{hb}]"));
+                write!(data, "[{lb}:{hb}]").ok();
             }
 
             data.push('=');
