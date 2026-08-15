@@ -345,7 +345,8 @@ impl<T: crate::FromSql + crate::ToSql> crate::entity::Simple for Array<T> {}
 
 impl<T: crate::FromSql> From<Array<T>> for Vec<T> {
     fn from(array: Array<T>) -> Self {
-        assert!(array.ndim <= 1,
+        assert!(
+            array.ndim <= 1,
             "Unable to transform {} dimension array as vector",
             array.ndim
         );
