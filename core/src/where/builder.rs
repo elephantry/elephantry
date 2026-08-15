@@ -2,26 +2,31 @@
 pub struct Builder<'a>(crate::Where<'a>);
 
 impl<'a> Builder<'a> {
+    #[must_use]
     pub fn new() -> Self {
         Self::default()
     }
 
+    #[must_use]
     pub fn build(self) -> crate::Where<'a> {
         self.0
     }
 
+    #[must_use]
     pub fn r#in(mut self, element: &str, params: Vec<&'a dyn crate::ToSql>) -> Self {
         self.0 = crate::Where::new_in(element, params);
 
         self
     }
 
+    #[must_use]
     pub fn not_in(mut self, element: &str, params: Vec<&'a dyn crate::ToSql>) -> Self {
         self.0 = crate::Where::new_not_in(element, params);
 
         self
     }
 
+    #[must_use]
     pub fn group_condition(
         mut self,
         element: &str,
@@ -33,18 +38,21 @@ impl<'a> Builder<'a> {
         self
     }
 
+    #[must_use]
     pub fn and_where(mut self, element: &str, params: Vec<&'a dyn crate::ToSql>) -> Self {
         self.0.and_where(element, params);
 
         self
     }
 
+    #[must_use]
     pub fn or_where(mut self, element: &str, params: Vec<&'a dyn crate::ToSql>) -> Self {
         self.0.or_where(element, params);
 
         self
     }
 
+    #[must_use]
     pub fn add_where(
         mut self,
         element: &str,

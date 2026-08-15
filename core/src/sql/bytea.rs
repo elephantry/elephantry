@@ -6,6 +6,7 @@
 pub struct Bytea(Vec<u8>);
 
 impl Bytea {
+    #[must_use]
     pub fn new() -> Self {
         Self(Vec::new())
     }
