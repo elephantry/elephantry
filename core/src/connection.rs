@@ -566,7 +566,7 @@ impl Connection {
         let mut structure = M::Structure::primary_key().to_vec();
         let mut clause = String::new();
         let mut params = Vec::new();
-        let pk = std::collections::BTreeMap::from_iter(pk.iter());
+        let pk = pk.iter().collect::<std::collections::BTreeMap<_, _>>();
 
         for (x, (key, value)) in pk.into_iter().enumerate() {
             if structure.extract_if(.., |x| x == key).count() == 0 {
