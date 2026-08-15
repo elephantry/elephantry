@@ -26,9 +26,8 @@ impl<T: crate::FromSql + crate::ToSql, S: std::hash::BuildHasher + Default> Enti
         let mut hashmap = HashMap::default();
 
         for x in 0..tuple.len() {
-            let name = match tuple.field_name(x) {
-                Ok(Some(name)) => name,
-                _ => continue,
+            let Ok(Some(name)) = tuple.field_name(x) else {
+                continue;
             };
             let value = tuple.nth(x);
             hashmap.insert(name, value);

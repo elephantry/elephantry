@@ -36,9 +36,8 @@ impl<'a> Tuple<'a> {
     where
         T: crate::FromSql,
     {
-        let n = match self.result.field_number(name) {
-            Some(n) => n,
-            None => return Err(crate::Error::MissingField(name.to_string())),
+        let Some(n) = self.result.field_number(name) else {
+            return Err(crate::Error::MissingField(name.to_string()));
         };
 
         self.try_nth(n)

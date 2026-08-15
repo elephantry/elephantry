@@ -18,13 +18,12 @@ impl<T> TryFrom<Bounds<T>> for std::ops::Range<T> {
     type Error = ();
 
     fn try_from(value: Bounds<T>) -> Result<Self, Self::Error> {
-        let start = match value.start {
-            Included(start) => start,
-            _ => return Err(()),
+        let Included(start) = value.start else {
+            return Err(());
         };
-        let end = match value.end {
-            Excluded(end) => end,
-            _ => return Err(()),
+
+        let Excluded(end) = value.end else {
+            return Err(());
         };
 
         Ok(Self { start, end })
@@ -48,9 +47,8 @@ impl<T> TryFrom<Bounds<T>> for std::ops::RangeFrom<T> {
             return Err(());
         }
 
-        let start = match value.start {
-            Included(start) => start,
-            _ => return Err(()),
+        let Included(start) = value.start else {
+            return Err(());
         };
 
         Ok(Self { start })
@@ -74,9 +72,8 @@ impl<T> TryFrom<Bounds<T>> for std::ops::RangeTo<T> {
             return Err(());
         }
 
-        let end = match value.end {
-            Excluded(end) => end,
-            _ => return Err(()),
+        let Excluded(end) = value.end else {
+            return Err(());
         };
 
         Ok(Self { end })

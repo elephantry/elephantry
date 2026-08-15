@@ -17,9 +17,8 @@ impl std::future::Future for Async<'_> {
         mut self: std::pin::Pin<&mut Self>,
         ctx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<Self::Output> {
-        let connection = match self.connection.lock() {
-            Ok(connection) => connection,
-            Err(_) => return std::task::Poll::Pending,
+        let Ok(connection) = self.connection.lock() else {
+            return std::task::Poll::Pending;
         };
 
         if let Some(result) = connection.result() {

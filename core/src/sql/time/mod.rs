@@ -104,9 +104,8 @@ impl crate::FromSql for TimeTz {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let value = crate::from_sql::not_null(raw)?;
 
-        let x = match value.find(['+', '-']) {
-            Some(x) => x,
-            None => return Err(Self::error(ty, raw)),
+        let Some(x) = value.find(['+', '-']) else {
+            return Err(Self::error(ty, raw));
         };
 
         let format = time::macros::format_description!("[hour]:[minute]:[second]");

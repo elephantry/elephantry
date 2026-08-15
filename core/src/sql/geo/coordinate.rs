@@ -57,9 +57,8 @@ impl std::str::FromStr for Coordinates {
         let mut matches = regex.find_iter(s);
 
         while let Some(x) = Self::coordinate(&matches.next()) {
-            let y = match Self::coordinate(&matches.next()) {
-                Some(y) => y,
-                None => break,
+            let Some(y) = Self::coordinate(&matches.next()) else {
+                break;
             };
 
             let coordinate = Coordinate::new(x, y);

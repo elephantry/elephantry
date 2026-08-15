@@ -241,9 +241,8 @@ impl crate::FromSql for Interval {
             return Ok(Self::default());
         }
 
-        let caps = match regex.captures(&s) {
-            Some(caps) => caps,
-            None => return Err(Self::error(ty, raw)),
+        let Some(caps) = regex.captures(&s) else {
+            return Err(Self::error(ty, raw));
         };
 
         let years = caps!(caps, years, ty, raw);
