@@ -187,13 +187,13 @@ impl<T: crate::ToSql> crate::ToSql for Bounds<&T> {
             Included(_) => flags.insert(Flags::LB_INC),
             Unbounded => flags.insert(Flags::LB_INF),
             Excluded(_) => (),
-        };
+        }
 
         match self.end {
             Included(_) => flags.insert(Flags::UB_INC),
             Unbounded => flags.insert(Flags::UB_INF),
             Excluded(_) => (),
-        };
+        }
 
         buf.push(flags.bits());
 

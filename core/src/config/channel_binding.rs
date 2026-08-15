@@ -17,7 +17,7 @@ impl std::str::FromStr for ChannelBinding {
             "require" => Self::Require,
             _ => {
                 return Err(crate::Error::Parse(
-                    format!("Invalid channel_binding: {s}",),
+                    format!("Invalid channel_binding: {s}")
                 ));
             }
         };
