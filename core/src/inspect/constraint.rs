@@ -60,14 +60,14 @@ pub fn indexes(
 ) -> crate::Result<Vec<Index>> {
     connection
         .query(
-            r#"
+            "
 select i.indexrelid as oid, c.relname as name, pg_get_indexdef(c.oid) as definition
     from pg_index i
     join pg_class c on c.oid = i.indexrelid
     left join pg_constraint x on x.conindid = c.oid
     where i.indrelid = $1
         and x.oid is null;
-"#,
+",
             &[&relation.oid],
         )
         .map(Iterator::collect)

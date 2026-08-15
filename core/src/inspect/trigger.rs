@@ -11,7 +11,7 @@ pub struct Trigger {
 pub fn triggers(connection: &crate::Connection, schema: &str) -> crate::Result<Vec<Trigger>> {
     connection
         .query(
-            r#"
+            "
 select t.trigger_name as name,
     t.event_manipulation as event,
     t.action_statement as action,
@@ -21,7 +21,7 @@ select t.trigger_name as name,
 from information_schema.triggers t
 where t.trigger_schema = $*
 order by t.trigger_name;
-"#,
+",
             &[&schema],
         )
         .map(Iterator::collect)
