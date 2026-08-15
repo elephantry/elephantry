@@ -15,9 +15,7 @@ pub struct Array<T> {
 
 impl<T: crate::FromSql> Array<T> {
     fn shift_idx(&self, indices: &[i32]) -> usize {
-        if self.dimensions.len() != indices.len() {
-            panic!();
-        }
+        assert_eq!(self.dimensions.len(), indices.len());
 
         let mut acc = 0;
         let mut stride = 1;
@@ -178,9 +176,7 @@ impl<T: crate::FromSql> crate::FromSql for Array<T> {
         let mut buf = crate::from_sql::not_null(raw)?;
 
         let ndim = crate::from_sql::read_i32(&mut buf)?;
-        if ndim < 0 {
-            panic!("Invalid array");
-        }
+        assert!(ndim >= 0, "Invalid array");
 
         let has_nulls = crate::from_sql::read_i32(&mut buf)? != 0;
 
@@ -349,12 +345,10 @@ impl<T: crate::FromSql + crate::ToSql> crate::entity::Simple for Array<T> {}
 
 impl<T: crate::FromSql> From<Array<T>> for Vec<T> {
     fn from(array: Array<T>) -> Self {
-        if array.ndim > 1 {
-            panic!(
-                "Unable to transform {} dimension array as vector",
-                array.ndim
-            );
-        }
+        assert!(array.ndim <= 1,
+            "Unable to transform {} dimension array as vector",
+            array.ndim
+        );
 
         array.collect()
     }
