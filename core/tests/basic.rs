@@ -84,7 +84,7 @@ where
     match event {
         Some(event) => println!("{event:?}"),
         None => println!("Event '{uuid}' not found"),
-    };
+    }
 
     Ok(())
 }

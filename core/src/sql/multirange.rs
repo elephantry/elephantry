@@ -14,6 +14,7 @@ where
     R: std::ops::RangeBounds<T> + crate::ToSql + crate::FromSql,
     T: std::fmt::Debug,
 {
+    #[must_use]
     pub fn new() -> Self {
         Self {
             ranges: Vec::new(),
@@ -21,6 +22,7 @@ where
         }
     }
 
+    #[must_use]
     pub fn from(ranges: Vec<R>) -> Self {
         Self {
             ranges,
@@ -69,9 +71,8 @@ where
     fn ty(&self) -> crate::pq::Type {
         use crate::pq::ToArray;
 
-        let range = match self.ranges.first() {
-            Some(range) => range,
-            None => return crate::pq::types::UNKNOWN,
+        let Some(range) = self.ranges.first() else {
+            return crate::pq::types::UNKNOWN;
         };
 
         range.ty().to_multi_range()
@@ -132,20 +133,13 @@ where
 
         for c in buf.chars() {
             match c {
-                '{' | '}' => continue,
                 ']' | ')' => {
                     range_str.push(c);
                     let range = R::from_text(ty, Some(&range_str))?;
                     ranges.push(range);
                     range_str = String::new();
                 }
-                ',' => {
-                    if range_str.is_empty() {
-                        continue;
-                    } else {
-                        range_str.push(c);
-                    }
-                }
+                '{' | '}' | ',' if range_str.is_empty() => continue,
                 _ => range_str.push(c),
             }
         }

@@ -15,7 +15,7 @@ impl std::future::Future for Async<'_> {
 
     fn poll(
         mut self: std::pin::Pin<&mut Self>,
-        ctx: &mut std::task::Context<'_>,
+        cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<Self::Output> {
         let Ok(connection) = self.connection.lock() else {
             return std::task::Poll::Pending;
@@ -31,7 +31,7 @@ impl std::future::Future for Async<'_> {
             }
         }
 
-        ctx.waker().wake_by_ref();
+        cx.waker().wake_by_ref();
         std::task::Poll::Pending
     }
 }

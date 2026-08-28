@@ -335,7 +335,7 @@ mod test {
     crate::testing::convertion! {
         sql_type: text,
         rust_type: String,
-        tests: [("'foo'", "foo".to_string()), ("''", "".to_string())],
+        tests: [("'foo'", "foo".to_string()), ("''", String::new())],
     }
 
     crate::testing::convertion! {

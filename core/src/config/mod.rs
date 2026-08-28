@@ -338,12 +338,12 @@ mod test {
             .host("localhost")
             .port("")
             .application_name("my app")
-            .dbname(r#"db\name'"#)
+            .dbname(r"db\name'")
             .build();
 
         assert_eq!(
             config.to_string(),
-            r#"application_name='my app' dbname=db\\name\' host=localhost port='' "#
+            r"application_name='my app' dbname=db\\name\' host=localhost port='' "
         );
     }
 

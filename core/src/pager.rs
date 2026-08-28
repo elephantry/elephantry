@@ -15,7 +15,11 @@ impl<E: crate::Entity> Pager<E> {
     /**
      * Creates a new pager.
      *
+     * <div class="warning">
+     *
      * `page` starts at 1.
+     *
+     * </div>
      */
     pub fn new(rows: crate::Rows<E>, count: usize, page: usize, max_per_page: usize) -> Self {
         Self {

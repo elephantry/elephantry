@@ -14,14 +14,12 @@ fn main() -> elephantry::Result {
     let parent_id: Option<i32> = results.get(0).get("parent_id");
     dbg!(parent_id);
 
-    match results.get(0).try_get::<i32>("parent_id") {
-        Ok(_) => (),
-        Err(err) => eprintln!("Error: {err:?}"),
+    if let Err(err) = results.get(0).try_get::<i32>("parent_id") {
+        eprintln!("Error: {err:?}");
     }
 
-    match results.get(0).try_get::<i32>("missing_field") {
-        Ok(_) => (),
-        Err(err) => eprintln!("Error: {err:?}"),
+    if let Err(err) = results.get(0).try_get::<i32>("missing_field") {
+        eprintln!("Error: {err:?}");
     }
 
     Ok(())

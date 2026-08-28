@@ -33,7 +33,7 @@ mod employee {
             let employee = <Self as elephantry::Model>::Structure::relation();
 
             let sql = format!(
-                r#"
+                "
 with recursive
     depts (department_id, name, parent_id) as (
         select d.department_id, d.name, d.parent_id from department d join {employee} e using(department_id) where e.employee_id = $1
@@ -44,7 +44,7 @@ select {employee_projection}
     from {employee} e, depts
     where e.employee_id = $1
     group by e.employee_id
-"#
+"
             );
 
             Ok(self.connection.query::<Entity>(&sql, &[&id])?.get(0))

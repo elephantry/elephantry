@@ -253,7 +253,7 @@ impl<T: crate::ToSql> crate::ToSql for Array<T> {
         let need_dims = self
             .lower_bounds
             .iter()
-            .fold(false, |acc, x| acc | (*x != 1));
+            .any(|x| *x != 1);
 
         if need_dims {
             use std::fmt::Write as _;

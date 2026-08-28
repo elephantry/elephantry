@@ -3,6 +3,7 @@ pub struct ConnectionManager {
 }
 
 impl ConnectionManager {
+    #[must_use]
     pub fn new(dsn: &str) -> Self {
         Self {
             dsn: dsn.to_string(),
