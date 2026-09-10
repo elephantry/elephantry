@@ -22,6 +22,7 @@ pub struct Constraint {
     pub ty: Type,
     pub name: String,
     pub definition: String,
+    pub columns: Vec<String>,
 }
 
 /**
@@ -34,10 +35,13 @@ pub fn constraints(
     connection
         .query(
             "
-select oid, contype as ty, conname as name, pg_get_constraintdef(oid) as definition
-    from pg_catalog.pg_constraint
-    where contypid = $1
-        or conrelid = $1;
+select c.oid, c.contype as ty, c.conname as name, pg_get_constraintdef(c.oid) as definition, array_remove(array_agg(a.attname), null) as columns
+    from pg_catalog.pg_constraint c
+    left join pg_catalog.pg_attribute a
+        on a.attnum = any(c.conkey) and a.attrelid = c.conrelid
+    where c.contypid = $1
+        or c.conrelid = $1
+    group by 1, 2, 3, 4;
 ",
             &[&oid],
         )
@@ -61,12 +65,15 @@ pub fn indexes(
     connection
         .query(
             "
-select i.indexrelid as oid, c.relname as name, pg_get_indexdef(c.oid) as definition
+select i.indexrelid as oid, c.relname as name, pg_get_indexdef(c.oid) as definition, array_remove(array_agg(a.attname), null) as columns
     from pg_index i
     join pg_class c on c.oid = i.indexrelid
     left join pg_constraint x on x.conindid = c.oid
+    left join pg_catalog.pg_attribute a
+        on a.attnum = any(i.indkey) and a.attrelid = i.indrelid
     where i.indrelid = $1
-        and x.oid is null;
+        and x.oid is null
+    group by 1, 2, 3;
 ",
             &[&relation.oid],
         )
