@@ -21,7 +21,7 @@ pub use sslmode::*;
 pub use sslnegotiation::*;
 pub use target_session_attrs::*;
 
-use builder::Builder;
+pub use builder::Builder;
 
 /**
  * Connection configuration.

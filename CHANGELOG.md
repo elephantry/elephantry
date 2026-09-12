@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Testing macros are public;
 
+### Fixed
+
+- `config::Builder` is now public;
+
 ## [5.3.1] - 2026-06-07
 
 ### Fixed
