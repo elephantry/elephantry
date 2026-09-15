@@ -1,3 +1,8 @@
+/**
+ * Rust type for [date](https://www.postgresql.org/docs/current/datatype-datetime.html).
+ */
+pub type Timestamp = jiff::civil::DateTime;
+
 impl crate::ToSql for jiff::civil::DateTime {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::TIMESTAMP

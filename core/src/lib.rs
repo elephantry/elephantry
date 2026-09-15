@@ -18,7 +18,7 @@
  * | `varchar`                   | `String`                                                                                                        |                                      |
  * | `cidr`                      | `ipnetwork::IpNetwork`<br>`elephantry::Cidr`                                                                    | net                                  |
  * | `circle`                    | `elephantry::Circle`                                                                                            | geo                                  |
- * | `date`                      | `chrono::NaiveDate`<br>`elephantry::Date`<br>`jiff::civil::Date`                                                | date<br><br>jiff                     |
+ * | `date`                      | `chrono::NaiveDate`<br>`elephantry::Date`<br>`jiff::civil::Date`                                                | chrono<br>date<br>jiff               |
  * | `double precision`/`float8` | `f64`                                                                                                           |                                      |
  * | `hstore`                    | `elephantry::Hstore`                                                                                            |                                      |
  * | `inet`                      | `std::net::IpAddr`                                                                                              | net                                  |
@@ -46,8 +46,8 @@
  * | `text`                      | `String`                                                                                                        |                                      |
  * | `time`                      | `elephantry::Time`<br>`time::Time`<br>`chrono::NaiveTime`<br>`jiff::civil::Time`                                | time<br><br>chrono<br>jiff           |
  * | `timetz`                    | `elephantry::TimeTz`<br>`(chrono::NaiveTime, chrono::FixedOffset)`<br>`(jiff::civil::Time, jiff::tz::TimeZone)` | time<br>chrono<br>jiff               |
- * | `timestamp`                 | `chrono::NaiveDateTime`<br>`elephantry::Timestamp`<br>`jiff::civil::DateTime`                                   | date<br><br>jiff                     |
- * | `timestamptz`               | `chrono::DateTime`<br>`elephantry::Timestamp`<br>`jiff::Zoned`                                                  | date<br><br>jiff                     |
+ * | `timestamp`                 | `chrono::NaiveDateTime`<br>`elephantry::Timestamp`<br>`jiff::civil::DateTime`                                   | chrono<br>date<br>jiff               |
+ * | `timestamptz`               | `chrono::DateTime`<br>`elephantry::Timestamp`<br>`jiff::Zoned`                                                  | chrono<br>date<br>jiff               |
  * | `uuid`                      | `uuid::Uuid`<br>`elephantry::Uid`                                                                               | uuid                                 |
  * | `xml`                       | `xmltree::Element`<br>`elephantry::Xml`                                                                         | xml                                  |
  * | `[x, y)`                    | `std::ops::Range`                                                                                               |                                      |

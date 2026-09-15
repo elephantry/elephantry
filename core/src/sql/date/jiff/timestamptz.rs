@@ -1,3 +1,8 @@
+/**
+ * Rust type for [timestamptz](https://www.postgresql.org/docs/current/datatype-datetime.html).
+ */
+pub type TimestampTz = jiff::Zoned;
+
 impl crate::ToSql for jiff::Zoned {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::TIMESTAMPTZ

@@ -1,25 +1,17 @@
 mod timestamp;
 mod timestamptz;
 
-pub use timestamp::*;
-pub use timestamptz::*;
-
-fn base_date() -> crate::Result<Date> {
+fn base_date() -> crate::Result<chrono::NaiveDate> {
     base_datetime().map(|x| x.date())
 }
 
-fn base_datetime() -> crate::Result<Timestamp> {
+fn base_datetime() -> crate::Result<chrono::NaiveDateTime> {
     chrono::NaiveDate::from_ymd_opt(2000, 1, 1)
         .and_then(|x| x.and_hms_opt(0, 0, 0))
         .ok_or_else(|| crate::Error::Chrono("Invalid base date".to_string()))
 }
 
-/**
- * Rust type for [date](https://www.postgresql.org/docs/current/datatype-datetime.html).
- */
-pub type Date = chrono::NaiveDate;
-
-impl crate::ToSql for Date {
+impl crate::ToSql for chrono::NaiveDate {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::DATE
     }
@@ -44,12 +36,12 @@ impl crate::ToSql for Date {
     }
 }
 
-impl crate::FromSql for Date {
+impl crate::FromSql for chrono::NaiveDate {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/date.c#L114
      */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        match Date::parse_from_str(crate::from_sql::not_null(raw)?, "%F") {
+        match chrono::NaiveDate::parse_from_str(crate::from_sql::not_null(raw)?, "%F") {
             Ok(date) => Ok(date),
             _ => Err(Self::error(ty, raw)),
         }
@@ -65,25 +57,25 @@ impl crate::FromSql for Date {
     }
 }
 
-impl crate::entity::Simple for Date {}
+impl crate::entity::Simple for chrono::NaiveDate {}
 
 #[cfg(test)]
 mod test {
     crate::testing::convertion! {
         sql_type: date,
-        rust_type: crate::Date,
+        rust_type: chrono::NaiveDate,
         tests: [
             (
                 "'1970-01-01'",
-                crate::Date::from_ymd_opt(1970, 1, 1).unwrap()
+                chrono::NaiveDate::from_ymd_opt(1970, 1, 1).unwrap()
             ),
             (
                 "'2010-01-01'",
-                crate::Date::from_ymd_opt(2010, 1, 1).unwrap()
+                chrono::NaiveDate::from_ymd_opt(2010, 1, 1).unwrap()
             ),
             (
                 "'2100-12-30'",
-                crate::Date::from_ymd_opt(2100, 12, 30).unwrap()
+                chrono::NaiveDate::from_ymd_opt(2100, 12, 30).unwrap()
             ),
         ],
     }

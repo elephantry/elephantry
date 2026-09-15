@@ -4,6 +4,6 @@ mod interval;
 #[cfg(feature = "jiff")]
 mod jiff;
 
-#[cfg(feature = "chrono")]
-pub use chrono::*;
+#[cfg(feature = "jiff")]
+pub use jiff::*;
 pub use interval::*;

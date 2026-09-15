@@ -1,6 +1,9 @@
 mod timestamp;
 mod timestamptz;
 
+pub use timestamp::*;
+pub use timestamptz::*;
+
 fn base_date() -> jiff::civil::Date {
     jiff::civil::date(2000, 1, 1)
 }
@@ -8,6 +11,11 @@ fn base_date() -> jiff::civil::Date {
 fn base_datetime() -> jiff::civil::DateTime {
     base_date().at(0, 0, 0, 0)
 }
+
+/**
+ * Rust type for [date](https://www.postgresql.org/docs/current/datatype-datetime.html).
+ */
+pub type Date = jiff::civil::Date;
 
 impl crate::ToSql for jiff::civil::Date {
     fn ty(&self) -> crate::pq::Type {
@@ -69,7 +77,7 @@ mod test {
             ("'2010-01-01'", jiff::civil::Date::new(2010, 1, 1).unwrap()),
             (
                 "'2100-12-30'",
-                jiff::civil::Date::new(2100, 12, 30).unwrap()
+                crate::Date::new(2100, 12, 30).unwrap()
             ),
         ],
     }
