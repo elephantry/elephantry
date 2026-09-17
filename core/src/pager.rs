@@ -133,7 +133,8 @@ impl<E: crate::Entity + serde::Serialize> serde::Serialize for Pager<E> {
         state.serialize_field("has_previous_page", &self.has_previous_page())?;
         state.serialize_field("count", &self.count())?;
         state.serialize_field("max_per_page", &self.max_per_page())?;
-        state.serialize_field("iterator", &self.rows)?;
+        state.serialize_field("iterator", &self.rows())?;
+        state.serialize_field("rows", &self.rows())?;
 
         state.end()
     }
