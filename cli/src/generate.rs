@@ -222,7 +222,7 @@ fn ty_to_rust(column: &elephantry::inspect::Column) -> String {
             } else if column.ty() == "public.ltxtquery" {
                 "elephantry::Ltxtquery".to_string()
             } else {
-                column.ty().replace('.', "::").to_string()
+                column.ty().replace('.', "::").clone()
             }
         }
     };
