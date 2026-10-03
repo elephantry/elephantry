@@ -5,7 +5,6 @@ pub(crate) fn expand(
     let elephantry = crate::elephantry();
 
     let name = &input.sig.ident;
-    let ret = &input.sig.output;
     let args = &input.sig.inputs;
     let attrs = &input.attrs;
     let fixtures = &params.fixtures;
@@ -13,7 +12,7 @@ pub(crate) fn expand(
     let body = quote::quote! {
         #(#attrs)*
         #[::core::prelude::v1::test]
-        fn #name() #ret {
+        fn #name() -> #elephantry::Result {
             #input
 
             let f: fn(#args) -> _ = #name;
