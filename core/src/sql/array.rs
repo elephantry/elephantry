@@ -250,10 +250,7 @@ impl<T: crate::ToSql> crate::ToSql for Array<T> {
 
         let mut data = String::new();
 
-        let need_dims = self
-            .lower_bounds
-            .iter()
-            .any(|x| *x != 1);
+        let need_dims = self.lower_bounds.iter().any(|x| *x != 1);
 
         if need_dims {
             use std::fmt::Write as _;

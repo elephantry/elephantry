@@ -87,8 +87,7 @@ pub fn test(
     let item = syn::parse(item).unwrap();
     let attr = syn::parse(attr).unwrap();
 
-    test::expand(attr, item)
-        .into()
+    test::expand(attr, item).into()
 }
 
 pub(crate) fn check_type(ty: &syn::Type) -> syn::Result<()> {

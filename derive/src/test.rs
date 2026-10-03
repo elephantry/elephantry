@@ -1,7 +1,4 @@
-pub(crate) fn expand(
-    params: crate::params::Test,
-    input: syn::ItemFn,
-) -> proc_macro2::TokenStream {
+pub(crate) fn expand(params: crate::params::Test, input: syn::ItemFn) -> proc_macro2::TokenStream {
     let elephantry = crate::elephantry();
 
     let name = &input.sig.ident;
