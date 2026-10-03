@@ -229,7 +229,7 @@ impl ToSql for () {
 #[cfg(test)]
 mod test {
     #[crate::test(fixture = "test")]
-    fn r#enum(connection: crate::Connection) -> crate::Result {
+    fn r#enum(connection: &crate::Connection) -> crate::Result {
         #[derive(elephantry_derive::Enum, Debug, PartialEq)]
         enum Mood {
             Sad,

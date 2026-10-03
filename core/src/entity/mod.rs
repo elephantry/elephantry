@@ -73,7 +73,7 @@ mod test {
     use std::collections::HashMap;
 
     #[crate::test]
-    fn hashmap_str_from_sql(connection: crate::Connection) -> crate::Result {
+    fn hashmap_str_from_sql(connection: &crate::Connection) -> crate::Result {
         let results: Vec<HashMap<String, i32>> = connection.query("SELECT 1 as n", &[])?.collect();
 
         assert_eq!(results[0].get("n"), Some(&1));
@@ -82,7 +82,7 @@ mod test {
     }
 
     #[crate::test]
-    fn hashmap_usize_from_sql(connection: crate::Connection) -> crate::Result {
+    fn hashmap_usize_from_sql(connection: &crate::Connection) -> crate::Result {
         let results: Vec<HashMap<usize, i32>> = connection.query("SELECT 1 as n", &[])?.collect();
 
         assert_eq!(results[0].get(&0), Some(&1));

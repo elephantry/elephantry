@@ -818,7 +818,7 @@ mod test {
     }
 
     #[crate::test]
-    fn config(conn: crate::Connection) {
+    fn config(conn: &crate::Connection) {
         assert!(dbg!(conn.config()).is_ok());
     }
 }

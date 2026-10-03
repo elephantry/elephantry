@@ -5,24 +5,24 @@
 macro_rules! from {
     (fixture: $fixture:literal, sql_type: $sql_type:ident, rust_type: $rust_type:ty, tests: $tests:expr $(,)*) => {
         #[$crate::test(fixture = $fixture)]
-        fn from_text(connection: $crate::Connection) -> $crate::Result {
+        fn from_text(connection: &$crate::Connection) -> $crate::Result {
             $crate::testing::from_text::<$rust_type>(&connection, stringify!($sql_type), &$tests)
         }
 
         #[$crate::test(fixture = $fixture)]
-        fn from_binary(connection: $crate::Connection) -> $crate::Result {
+        fn from_binary(connection: &$crate::Connection) -> $crate::Result {
             $crate::testing::from_binary::<$rust_type>(&connection, stringify!($sql_type), &$tests)
         }
     };
 
     (sql_type: $sql_type:ident, rust_type: $rust_type:ty, tests: $tests:expr $(,)*) => {
         #[$crate::test]
-        fn from_text(connection: $crate::Connection) -> $crate::Result {
+        fn from_text(connection: &$crate::Connection) -> $crate::Result {
             $crate::testing::from_text::<$rust_type>(&connection, stringify!($sql_type), &$tests)
         }
 
         #[$crate::test]
-        fn from_binary(connection: $crate::Connection) -> $crate::Result {
+        fn from_binary(connection: &$crate::Connection) -> $crate::Result {
             $crate::testing::from_binary::<$rust_type>(&connection, stringify!($sql_type), &$tests)
         }
     };
@@ -37,7 +37,7 @@ pub use from;
 macro_rules! to {
     (fixture: $fixture:literal, sql_type: $sql_type:ident, rust_type: $rust_type:ty, tests: $tests:expr $(,)*) => {
         #[$crate::test(fixture = $fixture)]
-        fn to_text(connection: $crate::Connection) -> $crate::Result {
+        fn to_text(connection: &$crate::Connection) -> $crate::Result {
             $crate::testing::to_text::<$rust_type>(
                 &connection.clone(),
                 stringify!($sql_type),
@@ -46,7 +46,7 @@ macro_rules! to {
         }
 
         #[$crate::test(fixture = $fixture)]
-        fn to_binary(connection: $crate::Connection) -> $crate::Result {
+        fn to_binary(connection: &$crate::Connection) -> $crate::Result {
             $crate::testing::to_binary::<$rust_type>(
                 &connection.clone(),
                 stringify!($sql_type),
@@ -57,7 +57,7 @@ macro_rules! to {
 
     (sql_type: $sql_type:ident, rust_type: $rust_type:ty, tests: $tests:expr $(,)*) => {
         #[$crate::test]
-        fn to_text(connection: $crate::Connection) -> $crate::Result {
+        fn to_text(connection: &$crate::Connection) -> $crate::Result {
             $crate::testing::to_text::<$rust_type>(
                 &connection.clone(),
                 stringify!($sql_type),
@@ -66,7 +66,7 @@ macro_rules! to {
         }
 
         #[$crate::test]
-        fn to_binary(connection: $crate::Connection) -> $crate::Result {
+        fn to_binary(connection: &$crate::Connection) -> $crate::Result {
             $crate::testing::to_binary::<$rust_type>(
                 &connection.clone(),
                 stringify!($sql_type),

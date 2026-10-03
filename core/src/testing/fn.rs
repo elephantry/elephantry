@@ -67,6 +67,24 @@ impl Fn for fn(crate::Pool) {
     }
 }
 
+impl Fn for fn(&crate::Pool) -> crate::Result {
+    fn run(self, fixtures: &[&str]) -> crate::Result {
+        let pool = Self::init(fixtures)?;
+
+        self(&pool)
+    }
+}
+
+impl Fn for fn(&crate::Pool) {
+    fn run(self, fixtures: &[&str]) -> crate::Result {
+        let pool = Self::init(fixtures)?;
+
+        self(&pool);
+
+        Ok(())
+    }
+}
+
 impl Fn for fn(crate::Connection) -> crate::Result {
     fn run(self, fixtures: &[&str]) -> crate::Result {
         let pool = Self::init(fixtures)?;
@@ -80,6 +98,24 @@ impl Fn for fn(crate::Connection) {
         let pool = Self::init(fixtures)?;
 
         self(pool.get_default().unwrap().clone());
+
+        Ok(())
+    }
+}
+
+impl Fn for fn(&crate::Connection) -> crate::Result {
+    fn run(self, fixtures: &[&str]) -> crate::Result {
+        let pool = Self::init(fixtures)?;
+
+        self(pool.get_default().unwrap())
+    }
+}
+
+impl Fn for fn(&crate::Connection) {
+    fn run(self, fixtures: &[&str]) -> crate::Result {
+        let pool = Self::init(fixtures)?;
+
+        self(pool.get_default().unwrap());
 
         Ok(())
     }

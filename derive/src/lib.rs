@@ -62,7 +62,7 @@ pub fn enum_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
  *
  * ```rust,ignore
  * #[elephantry::test]
- * fn test_ping(elephantry: elephantry::Connection) -> elephantry::Result {
+ * fn test_ping(elephantry: &elephantry::Connection) -> elephantry::Result {
  *     elephantry.ping()
  * }
  * ```
@@ -71,7 +71,7 @@ pub fn enum_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
  *
  * ```rust,ignore
  * #[elephantry::test(fixture = "init_test")]
- * fn test_ping(elephantry: elephantry::Connection) -> elephantry::Result {
+ * fn test_ping(elephantry: &elephantry::Connection) -> elephantry::Result {
  *     elephantry.ping()
  * }
  * ```

@@ -176,29 +176,29 @@ mod test {
         tests: [("'0'", 0), ("'1'", 1), ("0", 0), ("1", 1)],
     }
 
-    #[elephantry_derive::test]
-    fn byte(connection: crate::Connection) -> crate::Result {
+    #[crate::test]
+    fn byte(connection: &crate::Connection) -> crate::Result {
         let tests = [("'00000000'", [0]), ("'11111111'", [255])];
 
-        crate::testing::from_text(&connection, "bit(8)", &tests)?;
-        crate::testing::from_binary(&connection, "bit(8)", &tests)?;
-        crate::testing::to_text(&connection, "bit(8)", &tests)?;
-        crate::testing::to_binary(&connection, "bit(8)", &tests)?;
+        crate::testing::from_text(connection, "bit(8)", &tests)?;
+        crate::testing::from_binary(connection, "bit(8)", &tests)?;
+        crate::testing::to_text(connection, "bit(8)", &tests)?;
+        crate::testing::to_binary(connection, "bit(8)", &tests)?;
 
         Ok(())
     }
 
-    #[elephantry_derive::test]
-    fn bytes(connection: crate::Connection) -> crate::Result {
+    #[crate::test]
+    fn bytes(connection: &crate::Connection) -> crate::Result {
         let tests = [(
             "'1111111110000000010000000010000000010000'",
             [255, 128, 64, 32, 16],
         )];
 
-        crate::testing::from_text(&connection, "bit(40)", &tests)?;
-        crate::testing::from_binary(&connection, "bit(40)", &tests)?;
-        crate::testing::to_text(&connection, "bit(40)", &tests)?;
-        crate::testing::to_binary(&connection, "bit(40)", &tests)?;
+        crate::testing::from_text(connection, "bit(40)", &tests)?;
+        crate::testing::from_binary(connection, "bit(40)", &tests)?;
+        crate::testing::to_text(connection, "bit(40)", &tests)?;
+        crate::testing::to_binary(connection, "bit(40)", &tests)?;
 
         Ok(())
     }
