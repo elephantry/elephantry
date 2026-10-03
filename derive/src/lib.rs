@@ -88,7 +88,6 @@ pub fn test(
     let attr = syn::parse(attr).unwrap();
 
     test::expand(attr, item)
-        .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
 
