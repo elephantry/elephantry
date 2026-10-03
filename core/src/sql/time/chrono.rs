@@ -48,7 +48,7 @@ impl crate::FromSql for chrono::NaiveTime {
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
         let usec = i64::from_binary(ty, raw)?;
 
-        Ok(Self::MIN + std::time::Duration::from_micros(usec as u64))
+        Ok(Self::MIN + std::time::Duration::from_micros(usec.cast_unsigned()))
     }
 }
 
@@ -113,7 +113,7 @@ impl crate::FromSql for TimeTz {
         let zone = crate::from_sql::read_i32(&mut buf)?;
 
         Ok((
-            chrono::NaiveTime::MIN + std::time::Duration::from_micros(time as u64),
+            chrono::NaiveTime::MIN + std::time::Duration::from_micros(time.cast_unsigned()),
             chrono::FixedOffset::west_opt(zone).ok_or_else(|| Self::error(ty, raw))?,
         ))
     }
