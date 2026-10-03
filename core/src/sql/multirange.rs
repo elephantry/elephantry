@@ -139,7 +139,7 @@ where
                     ranges.push(range);
                     range_str = String::new();
                 }
-                '{' | '}' | ',' if range_str.is_empty() => continue,
+                '{' | '}' | ',' if range_str.is_empty() => {}
                 _ => range_str.push(c),
             }
         }
