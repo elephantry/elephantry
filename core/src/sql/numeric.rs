@@ -111,7 +111,7 @@ impl TryFrom<PgNumeric> for Numeric {
         };
 
         let mut result = num::bigint::BigUint::default();
-        let count = value.ndigits() as i64;
+        let count = i64::from(value.ndigits());
         for digit in value.digits {
             result *= num::bigint::BigUint::from(10_000u64);
             result += num::bigint::BigUint::from(digit as u64);

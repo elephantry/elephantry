@@ -71,7 +71,7 @@ impl crate::ToSql for Path {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L1485
      */
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
-        let mut buf = vec![self.0.is_closed() as u8];
+        let mut buf = vec![u8::from(self.0.is_closed())];
 
         let points = self.0.clone().into_points();
         crate::to_sql::write_i32(&mut buf, points.len() as i32)?;

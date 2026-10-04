@@ -14,11 +14,11 @@ impl crate::ToSql for jiff::civil::Time {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/date.c#L1281
      */
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
-        let usecs = self.hour() as i64 * 60 * 60 * 1_000_000
-            + self.minute() as i64 * 60 * 1_000_000
-            + self.second() as i64 * 1_000_000
-            + self.millisecond() as i64 * 1_000
-            + self.microsecond() as i64;
+        let usecs = i64::from(self.hour()) * 60 * 60 * 1_000_000
+            + i64::from(self.minute()) * 60 * 1_000_000
+            + i64::from(self.second()) * 1_000_000
+            + i64::from(self.millisecond()) * 1_000
+            + i64::from(self.microsecond());
 
         let mut buf = Vec::new();
         crate::to_sql::write_i64(&mut buf, usecs)?;

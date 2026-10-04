@@ -317,7 +317,7 @@ impl<T: crate::ToSql> crate::ToSql for Array<T> {
         let mut buf = Vec::new();
 
         crate::to_sql::write_i32(&mut buf, self.ndim as i32)?;
-        crate::to_sql::write_i32(&mut buf, self.has_nulls as i32)?;
+        crate::to_sql::write_i32(&mut buf, i32::from(self.has_nulls))?;
         crate::to_sql::write_i32(&mut buf, self.ty().elementype().oid as i32)?;
 
         for x in 0..self.ndim {

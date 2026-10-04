@@ -38,7 +38,7 @@ impl TryFrom<&[u8]> for Network {
         let _nb = crate::from_sql::read_u8(&mut buf)? as usize;
 
         let ip = match ip_familly {
-            IpFamilly::Inet => crate::from_sql::read_u32(&mut buf)? as u128,
+            IpFamilly::Inet => u128::from(crate::from_sql::read_u32(&mut buf)?),
             IpFamilly::Inet6 => crate::from_sql::read_u128(&mut buf)?,
         };
 

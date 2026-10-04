@@ -20,10 +20,10 @@ impl crate::ToSql for chrono::NaiveTime {
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
         use chrono::Timelike as _;
 
-        let usecs = self.hour() as i64 * 60 * 60 * 1_000_000
-            + self.minute() as i64 * 60 * 1_000_000
-            + self.second() as i64 * 1_000_000
-            + self.nanosecond() as i64 / 1_000;
+        let usecs = i64::from(self.hour()) * 60 * 60 * 1_000_000
+            + i64::from(self.minute()) * 60 * 1_000_000
+            + i64::from(self.second()) * 1_000_000
+            + i64::from(self.nanosecond()) / 1_000;
 
         let mut buf = Vec::new();
         crate::to_sql::write_i64(&mut buf, usecs)?;

@@ -109,13 +109,13 @@ impl Interval {
 
 impl From<&Interval> for i64 {
     fn from(interval: &Interval) -> Self {
-        interval.years as i64 * 12 * 30 * 24 * 60 * 60 * 1_000_000
-            + interval.months as i64 * 30 * 24 * 60 * 60 * 1_000_000
-            + interval.days as i64 * 24 * 60 * 60 * 1_000_000
-            + interval.hours as i64 * 60 * 60 * 1_000_000
-            + interval.mins as i64 * 60 * 1_000_000
-            + interval.secs as i64 * 1_000_000
-            + interval.usecs as i64
+        i64::from(interval.years) * 12 * 30 * 24 * 60 * 60 * 1_000_000
+            + i64::from(interval.months) * 30 * 24 * 60 * 60 * 1_000_000
+            + i64::from(interval.days) * 24 * 60 * 60 * 1_000_000
+            + i64::from(interval.hours) * 60 * 60 * 1_000_000
+            + i64::from(interval.mins) * 60 * 1_000_000
+            + i64::from(interval.secs) * 1_000_000
+            + i64::from(interval.usecs)
     }
 }
 
@@ -312,10 +312,10 @@ impl crate::ToSql for Interval {
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
         let mut buf = Vec::new();
 
-        let usecs = self.hours as i64 * 60 * 60 * 1_000_000
-            + self.mins as i64 * 60 * 1_000_000
-            + self.secs as i64 * 1_000_000
-            + self.usecs as i64;
+        let usecs = i64::from(self.hours) * 60 * 60 * 1_000_000
+            + i64::from(self.mins) * 60 * 1_000_000
+            + i64::from(self.secs) * 1_000_000
+            + i64::from(self.usecs);
         crate::to_sql::write_i64(&mut buf, usecs)?;
 
         let days = self.days;
