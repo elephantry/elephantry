@@ -316,9 +316,12 @@ impl<T: crate::ToSql> crate::ToSql for Array<T> {
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
         let mut buf = Vec::new();
 
-        crate::to_sql::write_i32(&mut buf, self.ndim as i32)?;
+        let ndim = i32::try_from(self.ndim)?;
+        crate::to_sql::write_i32(&mut buf, ndim)?;
         crate::to_sql::write_i32(&mut buf, i32::from(self.has_nulls))?;
-        crate::to_sql::write_i32(&mut buf, self.ty().elementype().oid as i32)?;
+
+        let oid = i32::try_from(self.ty().elementype().oid)?;
+        crate::to_sql::write_i32(&mut buf, oid)?;
 
         for x in 0..self.ndim {
             crate::to_sql::write_i32(&mut buf, self.dimensions[x])?;
@@ -327,7 +330,8 @@ impl<T: crate::ToSql> crate::ToSql for Array<T> {
 
         for d in &self.data {
             if let Some(raw) = d.to_binary()? {
-                crate::to_sql::write_i32(&mut buf, raw.len() as i32)?;
+                let len = i32::try_from(raw.len())?;
+                crate::to_sql::write_i32(&mut buf, len)?;
                 buf.extend(&raw);
             } else {
                 crate::to_sql::write_i32(&mut buf, -1)?;

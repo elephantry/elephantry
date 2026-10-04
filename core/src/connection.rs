@@ -736,7 +736,8 @@ impl Connection {
         crate::to_sql::write_i32(&mut buf, 0)?;
 
         for entity in entities {
-            crate::to_sql::write_i16(&mut buf, field_names.len() as i16)?;
+            let len = i16::try_from(field_names.len())?;
+            crate::to_sql::write_i16(&mut buf, len)?;
 
             for field in &field_names {
                 let value = match entity.get(field) {
@@ -745,7 +746,8 @@ impl Connection {
                 };
 
                 if let Some(mut value) = value {
-                    crate::to_sql::write_i32(&mut buf, value.len() as i32)?;
+                    let len = i32::try_from(value.len())?;
+                    crate::to_sql::write_i32(&mut buf, len)?;
                     buf.append(&mut value);
                 } else {
                     crate::to_sql::write_i32(&mut buf, -1)?;

@@ -231,7 +231,8 @@ fn bound_to_text<T: crate::ToSql>(buf: &mut String, bound: &Bound<&T>) -> crate:
 fn bound_to_binary<T: crate::ToSql>(buf: &mut Vec<u8>, bound: &Bound<&T>) -> crate::Result<()> {
     if !matches!(bound, Unbounded) {
         let mut b = bound!(bound, to_binary);
-        crate::to_sql::write_i32(buf, b.len() as i32)?;
+        let len = i32::try_from(b.len())?;
+        crate::to_sql::write_i32(buf, len)?;
         buf.append(&mut b);
     }
 

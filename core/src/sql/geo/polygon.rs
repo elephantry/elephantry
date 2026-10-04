@@ -61,11 +61,12 @@ impl crate::ToSql for Polygon {
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/geo_ops.c#L3440
      */
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
-        let points = &self.0.exterior().0;
-
         let mut buf = Vec::new();
 
-        crate::to_sql::write_i32(&mut buf, points.len() as i32)?;
+        let points = &self.0.exterior().0;
+        let len = i32::try_from(points.len())?;
+
+        crate::to_sql::write_i32(&mut buf, len)?;
 
         for point in points {
             crate::to_sql::write_f64(&mut buf, point.x)?;

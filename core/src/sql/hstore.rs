@@ -78,15 +78,18 @@ impl crate::ToSql for crate::Hstore {
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
         let mut buf = Vec::new();
 
-        crate::to_sql::write_i32(&mut buf, self.len() as i32)?;
+        let len = i32::try_from(self.len())?;
+        crate::to_sql::write_i32(&mut buf, len)?;
 
         for (key, value) in self.iter() {
             let k = key.to_text()?.unwrap();
-            crate::to_sql::write_i32(&mut buf, k.len() as i32)?;
+            let len = i32::try_from(k.len())?;
+            crate::to_sql::write_i32(&mut buf, len)?;
             buf.append(&mut k.into_bytes());
 
             if let Some(v) = value.to_text()? {
-                crate::to_sql::write_i32(&mut buf, v.len() as i32)?;
+                let len = i32::try_from(v.len())?;
+                crate::to_sql::write_i32(&mut buf, len)?;
                 buf.append(&mut v.into_bytes());
             } else {
                 crate::to_sql::write_i32(&mut buf, -1)?;

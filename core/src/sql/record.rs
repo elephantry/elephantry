@@ -24,18 +24,20 @@ pub fn vec_to_text(vec: &[&dyn crate::ToSql]) -> crate::Result<Option<String>> {
  */
 #[doc(hidden)]
 pub fn vec_to_binary(vec: &[&dyn crate::ToSql]) -> crate::Result<Option<Vec<u8>>> {
-    use crate::ToSql;
+    use crate::ToSql as _;
 
     let mut buf = Vec::new();
 
-    crate::to_sql::write_i32(&mut buf, vec.len() as i32)?;
+    let len = i32::try_from(vec.len())?;
+    crate::to_sql::write_i32(&mut buf, len)?;
 
     for elem in vec {
         let mut column_type = elem.ty().to_binary()?.unwrap();
         buf.append(&mut column_type);
 
         if let Some(mut raw) = elem.to_binary()? {
-            crate::to_sql::write_i32(&mut buf, raw.len() as i32)?;
+            let len = i32::try_from(raw.len())?;
+            crate::to_sql::write_i32(&mut buf, len)?;
             buf.append(&mut raw);
         } else {
             crate::to_sql::write_i32(&mut buf, -1)?;

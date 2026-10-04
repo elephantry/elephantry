@@ -74,7 +74,9 @@ impl crate::ToSql for Path {
         let mut buf = vec![u8::from(self.0.is_closed())];
 
         let points = self.0.clone().into_points();
-        crate::to_sql::write_i32(&mut buf, points.len() as i32)?;
+        let len = i32::try_from(points.len())?;
+
+        crate::to_sql::write_i32(&mut buf, len)?;
 
         for point in points {
             crate::to_sql::write_f64(&mut buf, point.x())?;

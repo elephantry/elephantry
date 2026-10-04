@@ -127,7 +127,8 @@ impl crate::ToSql for Bits {
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
         let mut buf = Vec::new();
 
-        crate::to_sql::write_i32(&mut buf, self.len() as i32)?;
+        let len = i32::try_from(self.len())?;
+        crate::to_sql::write_i32(&mut buf, len)?;
 
         for byte in self.to_bytes() {
             buf.push(byte);

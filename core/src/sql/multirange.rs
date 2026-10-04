@@ -102,11 +102,13 @@ where
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
         let mut buf = Vec::new();
 
-        crate::to_sql::write_i32(&mut buf, self.ranges.len() as i32)?;
+        let len = i32::try_from(self.ranges.len())?;
+        crate::to_sql::write_i32(&mut buf, len)?;
 
         for range in &self.ranges {
             if let Some(raw) = range.to_binary()? {
-                crate::to_sql::write_i32(&mut buf, raw.len() as i32)?;
+                let len = i32::try_from(raw.len())?;
+                crate::to_sql::write_i32(&mut buf, len)?;
                 buf.extend(&raw);
             } else {
                 return Err(self.error("range element could not be null"));
