@@ -50,7 +50,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@stable
-      - uses: ikalnytskyi/action-setup-postgres@v8
+      - uses: ikalnytskyi/action-setup-postgres@v9
         id: postgres
 
       - name: Run tests (debug)
@@ -77,7 +77,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: nightly
-      - uses: ikalnytskyi/action-setup-postgres@v8
+      - uses: ikalnytskyi/action-setup-postgres@v9
         id: postgres
 
       - name: Install fuzz
