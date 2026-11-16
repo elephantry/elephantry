@@ -120,7 +120,9 @@ number!(i64, read_i64);
 
 impl FromSql for u16 {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        i32::from_text(ty, raw).map(|x| x as u16)
+        let value = i32::from_text(ty, raw)?;
+
+        u16::try_from(value).map_err(crate::Error::from)
     }
 
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
@@ -130,13 +132,17 @@ impl FromSql for u16 {
             vec
         });
 
-        i32::from_binary(ty, raw.as_deref()).map(|x| x as u16)
+        let value = i32::from_binary(ty, raw.as_deref())?;
+
+        u16::try_from(value).map_err(crate::Error::from)
     }
 }
 
 impl FromSql for u32 {
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
-        i64::from_text(ty, raw).map(|x| x as u32)
+        let value = i64::from_text(ty, raw)?;
+
+        u32::try_from(value).map_err(crate::Error::from)
     }
 
     fn from_binary(ty: &crate::pq::Type, raw: Option<&[u8]>) -> crate::Result<Self> {
@@ -146,7 +152,9 @@ impl FromSql for u32 {
             vec
         });
 
-        i64::from_binary(ty, raw.as_deref()).map(|x| x as u32)
+        let value = i64::from_binary(ty, raw.as_deref())?;
+
+        u32::try_from(value).map_err(crate::Error::from)
     }
 }
 
@@ -166,7 +174,7 @@ impl FromSql for usize {
             return Err(Self::error(ty, raw));
         }
 
-        Ok(v as usize)
+        usize::try_from(v).map_err(crate::Error::from)
     }
 }
 

@@ -60,7 +60,8 @@ impl crate::FromSql for std::net::IpAddr {
 
         let ip = match network.ip_familly {
             super::IpFamilly::Inet => {
-                let ipv4 = std::net::Ipv4Addr::from(network.ip as u32);
+                let ip = u32::try_from(network.ip)?;
+                let ipv4 = std::net::Ipv4Addr::from(ip);
                 ipv4.into()
             }
             super::IpFamilly::Inet6 => {

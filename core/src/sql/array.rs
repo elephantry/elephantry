@@ -223,7 +223,7 @@ impl<T: crate::FromSql> crate::FromSql for Array<T> {
         }
 
         let array = Self {
-            ndim: ndim as usize,
+            ndim: usize::try_from(ndim)?,
             elemtype,
             has_nulls,
             dimensions,

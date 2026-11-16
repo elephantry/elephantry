@@ -66,9 +66,9 @@ impl crate::FromSql for Cidr {
 
         let cidr = match network.ip_familly {
             super::IpFamilly::Inet => {
-                let cidr =
-                    ipnetwork::Ipv4Network::new((network.ip as u32).into(), network.netmask_bits)
-                        .map_err(|_| Self::error(ty, raw))?;
+                let ip = u32::try_from(network.ip)?;
+                let cidr = ipnetwork::Ipv4Network::new(ip.into(), network.netmask_bits)
+                    .map_err(|_| Self::error(ty, raw))?;
                 Cidr::V4(cidr)
             }
             super::IpFamilly::Inet6 => {

@@ -20,9 +20,10 @@ impl crate::ToSql for jiff::civil::DateTime {
      */
     fn to_binary(&self) -> crate::Result<Option<Vec<u8>>> {
         let t = self.duration_since(super::base_datetime());
+        let micros = i64::try_from(t.as_micros())?;
 
         let mut buf = Vec::new();
-        crate::to_sql::write_i64(&mut buf, t.as_micros() as i64)?;
+        crate::to_sql::write_i64(&mut buf, micros)?;
 
         Ok(Some(buf))
     }

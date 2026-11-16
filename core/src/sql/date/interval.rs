@@ -284,10 +284,10 @@ impl crate::FromSql for Interval {
             years,
             months,
             days,
-            hours as i32,
-            minutes as i32,
-            secs as i32,
-            usecs as i32,
+            i32::try_from(hours)?,
+            i32::try_from(minutes)?,
+            i32::try_from(secs)?,
+            i32::try_from(usecs)?,
         );
 
         Ok(interval)
