@@ -1,9 +1,9 @@
 /**
  * Rust type for [timestamptz](https://www.postgresql.org/docs/current/datatype-datetime.html).
  */
-pub type TimestampTz = jiff::Zoned;
+pub type TimestampTz = jiff::ZonedDateTime;
 
-impl crate::ToSql for jiff::Zoned {
+impl crate::ToSql for jiff::ZonedDateTime {
     fn ty(&self) -> crate::pq::Type {
         crate::pq::types::TIMESTAMPTZ
     }
@@ -25,14 +25,14 @@ impl crate::ToSql for jiff::Zoned {
     }
 }
 
-impl crate::FromSql for jiff::Zoned {
+impl crate::FromSql for jiff::ZonedDateTime {
     /*
      * https://github.com/postgres/postgres/blob/REL_12_0/src/backend/utils/adt/timestamp.c#L386
      */
     fn from_text(ty: &crate::pq::Type, raw: Option<&str>) -> crate::Result<Self> {
         let s = crate::from_sql::not_null(raw)?;
 
-        jiff::Zoned::strptime("%F %T%z", format!("{s}00")).map_err(|_| Self::error(ty, raw))
+        jiff::ZonedDateTime::strptime("%F %T%z", format!("{s}00")).map_err(|_| Self::error(ty, raw))
     }
 
     /*
@@ -42,23 +42,23 @@ impl crate::FromSql for jiff::Zoned {
         let civil = jiff::civil::DateTime::from_binary(ty, raw)?;
 
         civil
-            .to_zoned(jiff::tz::TimeZone::UTC)
+            .to_zoned_datetime(jiff::tz::TimeZone::UTC)
             .map_err(|_| Self::error(ty, raw))
     }
 }
 
-impl crate::entity::Simple for jiff::Zoned {}
+impl crate::entity::Simple for jiff::ZonedDateTime {}
 
 #[cfg(test)]
 mod test {
     crate::testing::convertion! {
         sql_type: timestamptz,
-        rust_type: jiff::Zoned,
+        rust_type: jiff::ZonedDateTime,
         tests: [(
             "'1970-01-01 00:00:00+00'",
             jiff::civil::date(1970, 1, 1)
                 .at(0, 0, 0, 0)
-                .to_zoned(jiff::tz::TimeZone::UTC)
+                .to_zoned_datetime(jiff::tz::TimeZone::UTC)
                 .unwrap(),
         )],
     }

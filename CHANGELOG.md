@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- jiff 1.0;
 - jiff is now the default crate for date feature;
 - Testing macros are public;
 
