@@ -18,8 +18,8 @@ begin
     then
         create domain us_postal_code as text
         check(
-            value ~ '^\\d{5}$'
-            or value ~ '^\\d{5}-\\d{4}$'
+            value ~ '^\d{5}$'
+            or value ~ '^\d{5}-\d{4}$'
         );
     end if;
 end$$;
