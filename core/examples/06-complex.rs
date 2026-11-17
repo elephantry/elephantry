@@ -6,7 +6,7 @@ mod employee {
         pub employee_id: i32,
         pub first_name: String,
         pub last_name: String,
-        pub birth_date: elephantry::Timestamp,
+        pub birth_date: elephantry::Date,
         pub is_manager: bool,
         pub day_salary: bigdecimal::BigDecimal,
         pub department_id: i32,
