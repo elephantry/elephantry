@@ -83,7 +83,7 @@ version = "0.8"
 optional = true
 
 [dependencies.rocket_sync_db_pools]
-version = "0.1"
+version = "0.2"
 optional = true
 
 [dependencies.serde]
